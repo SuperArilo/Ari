@@ -1,0 +1,13 @@
+name: Ari
+version: '${project.version}'
+folia-supported: true
+main: ari.superarilo.SuperArilo
+#depend: ['']
+#softdepend: ['']
+api-version: 1.20
+commands:
+  tpa:
+    permission: "ari.command.tpa"
+files-path:
+  - path: 'lang/message_cn.yml'
+    name: 'message'

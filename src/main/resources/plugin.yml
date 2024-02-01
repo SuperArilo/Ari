@@ -1,13 +1,23 @@
 name: Ari
 version: '${project.version}'
+author: Arilo007
 folia-supported: true
 main: ari.superarilo.SuperArilo
 #depend: ['']
 #softdepend: ['']
 api-version: 1.20
 commands:
+  arilo:
+    aliases:
+      - 'ari'
+    usage: '插件主要指令'
   tpa:
     permission: "ari.command.tpa"
-files-path:
-  - path: 'lang/message_cn.yml'
-    name: 'message'
+    permission-message: '无权限'
+  tpahere:
+    permission: "ari.command.tpahere"
+    permission-message: '无权限'
+  reload:
+    usage: '重载插件'
+    permission: "ari.admin.command.reload"
+    permission-message: '无权限'

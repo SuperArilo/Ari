@@ -1,10 +1,13 @@
 package ari.superarilo.tool;
 
+import ari.superarilo.SuperArilo;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
-import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,28 +16,51 @@ public class TextTool {
     public static TextComponent setHEXColorText(String content) {
         if(content.contains("&")) {
             return Component.text(ChatColor.translateAlternateColorCodes('&', content));
-        } else if(content.contains("<#") && content.contains("/>")) {
-            Matcher matcher = Pattern.compile("(<#[a-z]+>.*?<#[a-z]+/>)|([^<]+)").matcher(content);
-            while (matcher.find()) {
-                System.out.println(matcher.group());
-            }
-            return Component.text("114514");
+        } else if(content.contains("<#") && content.contains("</#")) {
+            TextComponent.Builder builder = Component.text();
+            //处理后的字符串文字
+            hexadecimalStrings(content).forEach(e -> {
+                //获取遍历的字符串前后的十六进制颜色字符串
+                List<String> li = separateHexString(e);
+                if (li.size() < 2) return;
+                String be = e.replace("<" + li.get(0) + ">", "").replace("</" + li.get(1) + ">", "");
+
+                int length = be.length();
+
+                for (double i = 0;i < length; i++) {
+                    double ratio = i / (length - 1);
+                    builder.append(Component.text(be.charAt((int) i), HexColorMake(li.get(0), li.get(1), ratio)));
+                }
+            });
+            return builder.build();
         } else {
             return Component.text(content);
         }
     }
 
+    //分离具有16进制标签的文本
+    private static List<String> hexadecimalStrings(String content) {
 
-    public static TextComponent setGradientText(@NotNull String content, String startColor, String endColor) {
-        int length = content.length();
-        if (length == 0 || startColor == null || startColor.equals("") || endColor == null || endColor.equals("")) return Component.text(content);
-        TextComponent.Builder builder = Component.text();
-        for (double i = 0;i < length; i++) {
-            double ratio = i / (length - 1);
-            TextColor color = HexColorMake(startColor, endColor, ratio);
-            builder.append(Component.text(content.charAt((int) i), color));
+        SuperArilo.logger.warning("1");
+        List<String> l = new ArrayList<>();
+
+        Matcher matcher = Pattern.compile("<#.*?>.*?</#.*?>").matcher(content);
+
+        while (matcher.find()) {
+            l.add(matcher.group());
         }
-        return builder.build();
+        return l;
+    }
+
+    //获取具有十六进制的字符串的开始颜色和结束颜色
+    private static List<String> separateHexString(String content) {
+        List<String> i = new ArrayList<>();
+        Matcher matcher = Pattern.compile("<#([^<>]+)>([^<>]+)</#([^<>]+)>").matcher(content);
+        if (matcher.find()) {
+            i.add("#" + matcher.group(1));
+            i.add("#" + matcher.group(3)) ;
+        }
+        return i;
     }
 
     private static TextColor HexColorMake(String startColor, String endColor, Double ratio) {

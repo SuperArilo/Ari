@@ -19,12 +19,14 @@ public class ConfigFiles {
         checkFiles();
     }
     public static void checkFiles() {
+        configs = new ConcurrentHashMap<>();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
             File file = new File(SuperArilo.instance.getDataFolder(), path);
-            if(!file.exists()) {
-                SuperArilo.instance.saveResource(path, false);
-            }
+            SuperArilo.instance.saveResource(path, true);
+//            if(!file.exists()) {
+//                SuperArilo.instance.saveResource(path, false);
+//            }
             configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }

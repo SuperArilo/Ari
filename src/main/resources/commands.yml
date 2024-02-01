@@ -1,0 +1,12 @@
+reload:
+  show: 'reload'
+  describe: '重启服务器的配置选项'
+  usage: '&a/reload <参数>'
+  permission: "ari.command.tpa"
+  permission-message: '无权限'
+tpa:
+  show: 'tpa'
+  describe: '玩家用于传送的指令'
+  usage: '&a使用方法: /tpa <玩家>'
+  permission: "ari.command.tpa"
+  permission-message: '无权限'

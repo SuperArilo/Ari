@@ -1,0 +1,4 @@
+Teleport:
+  # 检测延迟时间
+  delay: 3
+experimental:

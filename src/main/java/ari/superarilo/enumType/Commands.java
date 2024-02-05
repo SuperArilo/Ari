@@ -1,12 +1,12 @@
 package ari.superarilo.enumType;
 
 import ari.superarilo.command.Arilo;
-import ari.superarilo.command.Reload;
-import ari.superarilo.command.tpa.Tpa;
-import ari.superarilo.command.tpa.Tpahere;
+import ari.superarilo.command.teleport.Tpa;
+import ari.superarilo.command.teleport.TpaAccept;
+import ari.superarilo.command.teleport.TpaRefuse;
+import ari.superarilo.command.teleport.TpaHere;
 import org.bukkit.command.TabExecutor;
 
-import java.util.Arrays;
 import java.util.List;
 
 public enum Commands {
@@ -15,34 +15,33 @@ public enum Commands {
             "插件的主要指令",
             null,
             null,
-            new Arilo(),
-            false,
-            Arrays.asList("tpa", "tpahere", "reload")),
+            new Arilo()),
 
     TPA("tpa",
             null,
             "传送指令",
             "ari.command.tpa",
             "无权限",
-            new Tpa(),
-            false,
-            null),
+            new Tpa()),
     TPAHERE("tpahere",
             null,
             "让玩家传送到您此处",
             "ari.command.tpahere",
             "无权限",
-            new Tpahere(),
-            false,
-            null),
-    RELOAD("reload",
+            new TpaHere()),
+    TPAACCEPT("tpaaccept",
             null,
-            "重载插件",
-            "ari.admin.command.reload",
+            "接受此次传送请求",
+            "ari.command.tpaaccept",
             "无权限",
-            new Reload(),
-            true,
-            null),
+            new TpaAccept()),
+    TPAREFUSE("tparefuse",
+            null,
+            "拒绝当前的传送请求",
+            "ari.command.tparefuse",
+            "无权限",
+            new TpaRefuse()),
+    RELOAD,
     NONE;
 
     private String show;
@@ -51,25 +50,19 @@ public enum Commands {
     private String permission;
     private String permissionMessage;
     private TabExecutor commandClass;
-    private Boolean isAdmin;
-    private List<String> tabCompleteList;
 
     Commands(String show,
              List<String> aliases,
              String usage,
              String permission,
              String permissionMessage,
-             TabExecutor commandClass,
-             Boolean isAdmin,
-             List<String> tabCompleteList){
+             TabExecutor commandClass){
         this.show = show;
         this.aliases = aliases;
         this.usage = usage;
         this.permission = permission;
         this.permissionMessage = permissionMessage;
         this.commandClass = commandClass;
-        this.isAdmin = isAdmin;
-        this.tabCompleteList = tabCompleteList;
     }
 
     Commands() {
@@ -95,16 +88,10 @@ public enum Commands {
         return permissionMessage;
     }
 
-    public Boolean getAdmin() {
-        return isAdmin;
-    }
 
     public TabExecutor getCommandClass() {
         return commandClass;
     }
 
-    public List<String> getTabCompleteList() {
-        return tabCompleteList;
-    }
 }
 

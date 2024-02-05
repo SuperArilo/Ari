@@ -12,12 +12,10 @@ commands:
       - 'ari'
     usage: '插件主要指令'
   tpa:
-    permission: "ari.command.tpa"
-    permission-message: '无权限'
+    usage: '传送指令'
+  tpaaccept:
+    usage: '传送接受指令'
   tpahere:
-    permission: "ari.command.tpahere"
-    permission-message: '无权限'
-  reload:
-    usage: '重载插件'
-    permission: "ari.admin.command.reload"
-    permission-message: '无权限'
+    usage: '传送指令'
+  tparefuse:
+    usage: '拒绝传送指令'

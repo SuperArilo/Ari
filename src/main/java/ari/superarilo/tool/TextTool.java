@@ -1,8 +1,8 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.SuperArilo;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
 
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("deprecation")
 public class TextTool {
 
     public static TextComponent setHEXColorText(String content) {
@@ -36,12 +37,16 @@ public class TextTool {
         } else {
             return Component.text(content);
         }
+
+    }
+
+    public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
+        return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));
     }
 
     //分离具有16进制标签的文本
     private static List<String> hexadecimalStrings(String content) {
 
-        SuperArilo.logger.warning("1");
         List<String> l = new ArrayList<>();
 
         Matcher matcher = Pattern.compile("<#.*?>.*?</#.*?>").matcher(content);

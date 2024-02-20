@@ -1,6 +1,7 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.SuperArilo;
+import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.Commands;
 import ari.superarilo.enumType.KeyType;
@@ -23,26 +24,30 @@ public class Tpa implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!command.getName().equalsIgnoreCase(Commands.TPA.getShow())) return false;
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.not-player","null")));
-            return true;
-        }
-        if(!commandSender.hasPermission(Commands.TPA.getPermission())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.permission-message", "null")));
-            return true;
-        }
-        //指令不全
+        CommandCheck check = CommandCheck.create();
+
+        //判断指令是否匹配
+        if (!check.isTheInstructionCorrect(command, Commands.TPA)) return false;
+        //是否是玩家
+        if(!check.isPlayer(commandSender, Commands.TPA)) return true;
+        //是否具有权限
+        if (!check.commandSenderHavePermission(commandSender, Commands.TPA)) return true;
+        //是否指令指令参数不对或者不全
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.fail", "null")));
             return true;
         }
+        //判断指令参数获取的玩家是否存在
         Player player = SuperArilo.instance.getServer().getPlayerExact(strings[0]);
         if (player == null) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.unable-player", "null")));
             return true;
         }
-        if(SuperArilo.getTeleportStatusList().stream().filter(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList().isEmpty()) {
+        //判断上一个请求是否存在
+        if(SuperArilo.getTeleportStatusList().stream().filter(obj ->
+                obj.getPlayUUID().equals(((Player) commandSender).getUniqueId())
+                        && obj.getBePlayerUUID().equals(player.getUniqueId())
+                        && obj.getType().equals(TeleportThread.Type.PLAYER)).toList().isEmpty()) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.send-message", "null")));
 
             //开始向传送发起者和接收者发送消息

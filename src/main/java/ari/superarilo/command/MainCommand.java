@@ -1,9 +1,10 @@
 package ari.superarilo.command;
 
-import ari.superarilo.SuperArilo;
+import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
-import ari.superarilo.enumType.Commands;
+import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.KeyType;
+import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
@@ -20,14 +21,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class Arilo implements TabExecutor {
+public class MainCommand implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!(command.getName().equalsIgnoreCase(Commands.ARILO.getShow()) || Commands.ARILO.getAliases().contains(s))) return false;
+        if (!(command.getName().equalsIgnoreCase(AriCommand.ARILO.getShow()) || AriCommand.ARILO.getAliases().contains(s))) return false;
         if (strings.length == 0) return false;
-        Commands type;
+        AriCommand type;
         try {
-            type = Commands.valueOf(strings[0].toUpperCase(Locale.ROOT));
+            type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
         } catch (Exception e) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.unknown", "null")));
             return true;
@@ -49,50 +50,27 @@ public class Arilo implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.fail", "null")));
                     return true;
                 }
-                player = SuperArilo.instance.getServer().getPlayerExact(strings[1]);
+                player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if(player == null) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.unable-player", "null")));
                     return true;
                 }
+                TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
 
-                commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.send-message", "null")));
-
-                //开始向传送发起者和接收者发送消息
-                player.sendMessage(
-                        TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.get-message", "null").replace(KeyType.TPASENDER.getType(), commandSender.getName()))
-                                .appendNewline()
-                                .append(TextTool.setClickEventText("&a[同意]",ClickEvent.Action.RUN_COMMAND, "/tpaaccept " + commandSender.getName()))
-                                .append(TextTool.setHEXColorText("&f或者"))
-                                .append(TextTool.setClickEventText("&c[拒绝]", ClickEvent.Action.RUN_COMMAND, "/tparefuse " + commandSender.getName())));
-
-                Bukkit.getAsyncScheduler().runNow(SuperArilo.instance, t -> {
-                    if(SuperArilo.getTeleportStatusList().stream().filter(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList().isEmpty()) {
-                        TeleportStatus status = new TeleportStatus();
-                        status.setType(TeleportThread.Type.PLAYER);
-                        status.setCommandType(Commands.TPA);
-                        status.setPlayUUID(((Player) commandSender).getUniqueId());
-                        status.setBePlayerUUID(player.getUniqueId());
-                        SuperArilo.addTeleportStatus(status);
-                        //设置定时任务来移除该玩家已经发送的请求状态
-                        Bukkit.getAsyncScheduler().runDelayed(SuperArilo.instance, i -> SuperArilo.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)), 10L, TimeUnit.SECONDS);
-                    } else {
-                        commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.again","null").replace(KeyType.TPABESENDER.getType(), player.getName())));
-                    }
-                });
                 break;
             case TPAACCEPT:
                 if (strings.length < 2 || strings[1].equals(commandSender.getName())) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.fail", "null")));
                     return true;
                 }
-                player = SuperArilo.instance.getServer().getPlayerExact(strings[1]);
+                player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 //判断玩家是否存在
                 if (player == null) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.unable-player", "null")));
                     return true;
                 }
                 //判断请求是否还存在
-                List<TeleportStatus> statusList = SuperArilo.getTeleportStatusList().stream().filter(obj ->
+                List<TeleportStatus> statusList = Ari.getTeleportStatusList().stream().filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId())
                                 && obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId())
                                 && obj.getType().equals(TeleportThread.Type.PLAYER)).toList();
@@ -103,7 +81,7 @@ public class Arilo implements TabExecutor {
                 }
                 //请求成功，移除该请求
                 commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.agree","null")));
-                SuperArilo.deleteAddTeleportStatus(player.getUniqueId(), TeleportThread.Type.PLAYER);
+                Ari.deleteAddTeleportStatus(player.getUniqueId(), TeleportThread.Type.PLAYER);
                 TeleportThread teleportThread = switch (status.getCommandType()) {
                     case TPA -> new TeleportThread(player, ((Player) commandSender), TeleportThread.Type.PLAYER);
                     case TPAHERE -> new TeleportThread(((Player) commandSender), player, TeleportThread.Type.PLAYER);
@@ -121,13 +99,13 @@ public class Arilo implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.fail", "null")));
                     return true;
                 }
-                player = SuperArilo.instance.getServer().getPlayerExact(strings[1]);
+                player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.unable-player", "null")));
                     return true;
                 }
 
-                if(SuperArilo.getTeleportStatusList().stream().filter(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList().isEmpty()) {
+                if(Ari.getTeleportStatusList().stream().filter(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList().isEmpty()) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.send-message", "null")));
 
                     //开始向传送发起者和接收者发送消息
@@ -137,15 +115,15 @@ public class Arilo implements TabExecutor {
                                     .append(TextTool.setClickEventText("&a[同意]", ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + commandSender.getName()))
                                     .append(TextTool.setHEXColorText("&f或者"))
                                     .append(TextTool.setClickEventText("&c[拒绝]", ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + commandSender.getName())));
-                    Bukkit.getAsyncScheduler().runNow(SuperArilo.instance, t -> {
+                    Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {
                         TeleportStatus hereStatus = new TeleportStatus();
                         hereStatus.setType(TeleportThread.Type.PLAYER);
-                        hereStatus.setCommandType(Commands.TPAHERE);
+                        hereStatus.setCommandType(AriCommand.TPAHERE);
                         hereStatus.setPlayUUID(((Player) commandSender).getUniqueId());
                         hereStatus.setBePlayerUUID(player.getUniqueId());
-                        SuperArilo.addTeleportStatus(hereStatus);
+                        Ari.addTeleportStatus(hereStatus);
                         //设置定时任务来移除该玩家已经发送的请求状态
-                        Bukkit.getAsyncScheduler().runDelayed(SuperArilo.instance, i -> SuperArilo.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)), 10L, TimeUnit.SECONDS);
+                        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)), 10L, TimeUnit.SECONDS);
                     });
                 } else {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.again","null").replace(KeyType.TPABESENDER.getType(), player.getName())));
@@ -157,19 +135,19 @@ public class Arilo implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.fail", "null")));
                     return true;
                 }
-                player = SuperArilo.instance.getServer().getPlayerExact(strings[1]);
+                player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 //判断玩家是否存在
                 if (player == null) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.unable-player", "null")));
                     return true;
                 }
                 //判断请求是否还存在
-                if(SuperArilo.getTeleportStatusList().stream().noneMatch(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+                if(Ari.getTeleportStatusList().stream().noneMatch(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.been-done", "null")));
                     return true;
                 }
 
-                if (SuperArilo.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+                if (Ari.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
                     commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.success", "null")));
                     player.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.get-message", "null").replace("[TpaBeSender]", commandSender.getName())));
                 } else {
@@ -183,12 +161,12 @@ public class Arilo implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(!(command.getName().equalsIgnoreCase(Commands.ARILO.getShow()) || Commands.ARILO.getAliases().contains(s))) return List.of("");
+        if(!(command.getName().equalsIgnoreCase(AriCommand.ARILO.getShow()) || AriCommand.ARILO.getAliases().contains(s))) return List.of("");
         //返回所有具有权限的指令给玩家
         if (strings[0].isEmpty()) {
             List<String> commandList = new ArrayList<>();
-            for (Commands type : Commands.values()) {
-                if (type.getShow() == null || type.equals(Commands.ARILO)) continue;
+            for (AriCommand type : AriCommand.values()) {
+                if (type.getShow() == null || type.equals(AriCommand.ARILO)) continue;
                 if (type.getPermission() == null) {
                     commandList.add(type.getShow());
                     continue;
@@ -201,8 +179,8 @@ public class Arilo implements TabExecutor {
             return commandList;
         } else if (strings.length == 1) {
             List<String> st = new ArrayList<>();
-            for (Commands type : Commands.values()) {
-                if (type.getShow() == null || type.equals(Commands.ARILO)) continue;
+            for (AriCommand type : AriCommand.values()) {
+                if (type.getShow() == null || type.equals(AriCommand.ARILO)) continue;
                 if (type.getPermission() == null) {
                     st.add(type.getShow());
                     continue;
@@ -215,13 +193,13 @@ public class Arilo implements TabExecutor {
             return st;
         } else if (strings.length == 2) {
             List<String> st = new ArrayList<>();
-            Commands c;
+            AriCommand c;
             try {
-                c = Commands.valueOf(strings[0].toUpperCase(Locale.ROOT));
+                c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
             } catch (Exception e) {
                 return st;
             }
-            Server server = SuperArilo.instance.getServer();
+            Server server = Ari.instance.getServer();
             switch (c) {
                 case TPAHERE:
                 case TPA:
@@ -233,7 +211,7 @@ public class Arilo implements TabExecutor {
                     break;
                 case TPAACCEPT:
                 case TPAREFUSE:
-                    SuperArilo.getTeleportStatusList().stream().filter(obj ->
+                    Ari.getTeleportStatusList().stream().filter(obj ->
                                     obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList()
                             .forEach(e -> {
                                 Player player = server.getPlayer(e.getPlayUUID());

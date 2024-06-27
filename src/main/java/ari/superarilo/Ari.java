@@ -1,7 +1,8 @@
 package ari.superarilo;
 
 import ari.superarilo.entity.TeleportStatus;
-import ari.superarilo.enumType.Commands;
+import ari.superarilo.entity.TpStatusValue;
+import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import org.bukkit.command.PluginCommand;
@@ -12,12 +13,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class SuperArilo extends JavaPlugin {
-    public static SuperArilo instance;
+public class Ari extends JavaPlugin {
+    public static Ari instance;
     //severe error
     public static Logger logger;
 
     private static final List<TeleportStatus> teleportStatusList = new ArrayList<>();
+
+    private TpStatusValue tpStatusValue;
 
     @Override
     public void onLoad() {
@@ -29,16 +32,17 @@ public class SuperArilo extends JavaPlugin {
     @Override
     public void onEnable() {
         this.registerCommands();
+        this.tpStatusValue = new TpStatusValue();
     }
     @Override
     public void onDisable() {
     }
 
     private void registerCommands() {
-        for (Commands command : Commands.values()) {
+        for (AriCommand command : AriCommand.values()) {
             String showName = command.getShow();
             if (showName == null) return;
-            PluginCommand pluginCommand = SuperArilo.instance.getCommand(showName);
+            PluginCommand pluginCommand = Ari.instance.getCommand(showName);
             if(pluginCommand == null) return;
             pluginCommand.setExecutor(command.getCommandClass());
             if(command.getShow() != null) {
@@ -56,5 +60,9 @@ public class SuperArilo extends JavaPlugin {
     }
     public static List<TeleportStatus> getTeleportStatusList() {
         return teleportStatusList;
+    }
+
+    public TpStatusValue getTpStatusValue() {
+        return tpStatusValue;
     }
 }

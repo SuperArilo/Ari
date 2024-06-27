@@ -1,6 +1,6 @@
 package ari.superarilo.enumType;
 
-import ari.superarilo.command.Arilo;
+import ari.superarilo.command.MainCommand;
 import ari.superarilo.command.teleport.Tpa;
 import ari.superarilo.command.teleport.TpaAccept;
 import ari.superarilo.command.teleport.TpaRefuse;
@@ -9,13 +9,13 @@ import org.bukkit.command.TabExecutor;
 
 import java.util.List;
 
-public enum Commands {
+public enum AriCommand {
     ARILO("arilo",
             List.of("ari"),
             "插件的主要指令",
             null,
             null,
-            new Arilo()),
+            new MainCommand()),
 
     TPA("tpa",
             null,
@@ -51,12 +51,12 @@ public enum Commands {
     private String permissionMessage;
     private TabExecutor commandClass;
 
-    Commands(String show,
-             List<String> aliases,
-             String usage,
-             String permission,
-             String permissionMessage,
-             TabExecutor commandClass){
+    AriCommand(String show,
+               List<String> aliases,
+               String usage,
+               String permission,
+               String permissionMessage,
+               TabExecutor commandClass){
         this.show = show;
         this.aliases = aliases;
         this.usage = usage;
@@ -65,7 +65,7 @@ public enum Commands {
         this.commandClass = commandClass;
     }
 
-    Commands() {
+    AriCommand() {
     }
 
     public String getShow() {

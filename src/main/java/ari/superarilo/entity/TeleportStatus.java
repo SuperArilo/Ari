@@ -1,6 +1,6 @@
 package ari.superarilo.entity;
 
-import ari.superarilo.enumType.Commands;
+import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.tool.TeleportThread;
 
 import java.util.UUID;
@@ -12,7 +12,7 @@ public class TeleportStatus {
     //被接收者
     private UUID bePlayerUUID;
     private TeleportThread.Type type;
-    private Commands commandType;
+    private AriCommand commandType;
 
     public UUID getPlayUUID() {
         return playUUID;
@@ -38,11 +38,11 @@ public class TeleportStatus {
         this.bePlayerUUID = bePlayerUUID;
     }
 
-    public Commands getCommandType() {
+    public AriCommand getCommandType() {
         return commandType;
     }
 
-    public void setCommandType(Commands commandType) {
+    public void setCommandType(AriCommand commandType) {
         this.commandType = commandType;
     }
 }

@@ -2,7 +2,7 @@ name: Ari
 version: '${project.version}'
 author: Arilo007
 folia-supported: true
-main: ari.superarilo.SuperArilo
+main: ari.superarilo.Ari
 #depend: ['']
 #softdepend: ['']
 api-version: 1.20

@@ -1,7 +1,6 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.SuperArilo;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import ari.superarilo.Ari;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -47,11 +46,11 @@ public class TeleportThread {
     //开始传送
     public void teleport() {
         //设置传送冷却时间
-        final int[] timerIndex = {this.player.isOp() ? 1 : SuperArilo.instance.getConfig().getInt("Teleport.delay", 1)};
+        final int[] timerIndex = {this.player.isOp() ? 1 : Ari.instance.getConfig().getInt("Teleport.delay", 1)};
         this.player.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.ing","null")));
-        Bukkit.getAsyncScheduler().runAtFixedRate(SuperArilo.instance, t -> {
+        Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
             //在任务里获取现在玩家的状态
-            Player threadPlayer = SuperArilo.instance.getServer().getPlayer(this.player.getUniqueId());
+            Player threadPlayer = Ari.instance.getServer().getPlayer(this.player.getUniqueId());
             if (threadPlayer == null) {
                 t.cancel();
                 return;
@@ -63,16 +62,16 @@ public class TeleportThread {
                 return;
             }
             timerIndex[0]--;
-            SuperArilo.logger.warning(String.valueOf(timerIndex[0]));
+            Ari.logger.warning(String.valueOf(timerIndex[0]));
             //传送时间到达
             if (timerIndex[0] == 0) {
                 t.cancel();
-                SuperArilo.logger.warning("执行");
+                Ari.logger.warning("执行");
                 switch (this.type) {
                     case POINT:
                         break;
                     case PLAYER:
-                        Bukkit.getRegionScheduler().run(SuperArilo.instance, threadPlayer.getLocation(), (i) -> {
+                        Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
                             threadPlayer.teleportAsync(this.targetPlayer.getLocation());
                             threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
                             threadPlayer.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.success","null")));

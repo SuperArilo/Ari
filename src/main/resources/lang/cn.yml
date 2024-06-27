@@ -1,4 +1,9 @@
 command:
+  tpa-tpahere:
+    agree: '&a[同意]'
+    center: '&f或者'
+    refuse: '&c[拒绝]'
+
   tpa:
     ing:  '传送过程中！请不要移动...'
     success: '传送成功！'

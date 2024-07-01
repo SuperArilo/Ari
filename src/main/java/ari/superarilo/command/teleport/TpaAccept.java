@@ -1,6 +1,7 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
+import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.function.teleport.TeleportPrecondition;
@@ -22,11 +23,8 @@ import java.util.List;
 public class TpaAccept implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!command.getName().equalsIgnoreCase(AriCommand.TPAACCEPT.getShow())) return false;
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.not-player", "null")));
-            return true;
-        }
+        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAACCEPT)) return false;
+
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.fail", "null")));
             return true;
@@ -39,10 +37,7 @@ public class TpaAccept implements TabExecutor {
         }
         //判断请求是否还存在
 
-
-        TeleportPrecondition precondition = TeleportPrecondition.create();
-
-        TeleportStatus status = precondition.checkStatusV(player, (Player) commandSender);
+        TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
 
         if(status == null) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.been-done", "null")));

@@ -1,6 +1,7 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
+import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
@@ -18,15 +19,9 @@ import java.util.List;
 public class TpaHere implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAHERE)) return false;
         if (!command.getName().equalsIgnoreCase(AriCommand.TPAHERE.getShow())) return false;
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.not-player","null")));
-            return true;
-        }
-        if(!commandSender.hasPermission(AriCommand.TPAHERE.getPermission())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.permission-message", "null")));
-            return true;
-        }
+
         //指令不全
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpahere.fail", "null")));

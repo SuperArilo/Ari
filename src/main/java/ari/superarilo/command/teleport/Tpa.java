@@ -19,14 +19,8 @@ public class Tpa implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheck check = CommandCheck.create();
+        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPA)) return false;
 
-        //判断指令是否匹配
-        if (!check.isTheInstructionCorrect(command, AriCommand.TPA)) return false;
-        //是否是玩家
-        if(!check.isPlayer(commandSender, AriCommand.TPA)) return true;
-        //是否具有权限
-        if (!check.commandSenderHavePermission(commandSender, AriCommand.TPA)) return true;
         //是否指令指令参数不对或者不全
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.fail", "null")));

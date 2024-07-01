@@ -1,7 +1,10 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
+import ari.superarilo.command.tool.CommandCheck;
+import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
@@ -19,36 +22,30 @@ import java.util.List;
 public class TpaRefuse implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!command.getName().equalsIgnoreCase(AriCommand.TPAREFUSE.getShow())) return false;
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.not-player","null")));
-            return true;
-        }
-        if(!commandSender.hasPermission(AriCommand.TPAREFUSE.getPermission())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.permission-message", "null")));
-            return true;
-        }
+        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAREFUSE)) return false;
         //指令不全
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.fail", "null")));
             return true;
         }
+
         Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
         if (player == null) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.unable-player", "null")));
             return true;
         }
-        //判断请求是否还存在
-        if(Ari.getTeleportStatusList().stream().noneMatch(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+
+        TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
+        if (status == null) {
             commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.been-done", "null")));
             return true;
-        }
-
-        if (Ari.getTeleportStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.success", "null")));
-            player.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.get-message", "null").replace("[TpaBeSender]", commandSender.getName())));
         } else {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.break", "null")));
+            if (Ari.instance.getTpStatusValue().getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+                commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.success", "null")));
+                player.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.get-message", "null").replace("[TpaBeSender]", commandSender.getName())));
+            } else {
+                commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tparefuse.break", "null")));
+            }
         }
 
         return true;

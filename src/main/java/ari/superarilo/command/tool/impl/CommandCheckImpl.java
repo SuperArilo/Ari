@@ -44,6 +44,21 @@ public class CommandCheckImpl implements CommandCheck {
     }
 
     @Override
+    public boolean allCheck(CommandSender commandSender, Command command, AriCommand ariCommand) {
+        if (this.isTheInstructionCorrect(command, ariCommand)) {
+            if (!this.isPlayer(commandSender, ariCommand)) {
+                commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + ariCommand.getShow() + d + NOTPLAYER, "null")));
+                return false;
+            }
+            if (!this.commandSenderHavePermission(commandSender, ariCommand)) {
+                commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + ariCommand.getShow() + d + PERMISSIONMESSAGE, "null")));
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean isTheCommandIncomplete(String[] strings, String senderName) {
         return false;
     }

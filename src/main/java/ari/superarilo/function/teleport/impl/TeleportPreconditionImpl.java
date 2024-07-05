@@ -3,6 +3,7 @@ package ari.superarilo.function.teleport.impl;
 import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.KeyType;
 import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
@@ -19,9 +20,11 @@ import java.util.concurrent.TimeUnit;
 public class TeleportPreconditionImpl implements TeleportPrecondition {
 
     private final Ari instance;
+    private final ConfigFiles config;
 
     public TeleportPreconditionImpl(Ari instance) {
         this.instance = instance;
+        this.config = instance.getConfigFiles();
     }
 
     @Override
@@ -36,12 +39,12 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
         if (first.isPresent()) {
             sender.sendMessage(
                     TextTool.setHEXColorText(
-                            ConfigFiles.configs.get("lang").getString("command." + ariCommand.getShow() + ".again","null")
+                            this.config.getValue("command." + ariCommand.getShow() + ".again", FilePath.Lang, String.class)
                                     .replace(
                                             KeyType.TPABESENDER.getType(),
                                             targetPlayer.getName())));
         } else {
-            sender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command." + ariCommand.getShow() + ".send-message", "null")));
+            sender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command." + ariCommand.getShow() + ".send-message", FilePath.Lang, String.class)));
             this.sendMessageToBePlayer(sender, targetPlayer, ariCommand);
             this.startAddTask(sender, targetPlayer, ariCommand);
         }
@@ -66,7 +69,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     protected void sendMessageToBePlayer(Player player, Player targetPlayer, AriCommand ariCommand) {
         targetPlayer.sendMessage(
                 TextTool.setHEXColorText(
-                        ConfigFiles.configs.get("lang").getString("command." + ariCommand.getShow() + ".get-message", "null")
+                        this.config.getValue("command." + ariCommand.getShow() + ".get-message", FilePath.Lang, String.class)
                                 .replace(
                                         ariCommand.equals(AriCommand.TPA) ? KeyType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? KeyType.TPAHERESENDER.getType():"",
                                         player.getName()))

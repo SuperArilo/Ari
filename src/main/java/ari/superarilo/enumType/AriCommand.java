@@ -10,7 +10,7 @@ import org.bukkit.command.TabExecutor;
 import java.util.List;
 
 public enum AriCommand {
-    ARILO("arilo",
+    ARI("ari",
             List.of("ari"),
             "插件的主要指令",
             null,
@@ -41,15 +41,19 @@ public enum AriCommand {
             "ari.command.tparefuse",
             "无权限",
             new TpaRefuse()),
-    RELOAD,
-    NONE;
+    RELOAD("reload",
+            null,
+            "重新加载插件",
+            "ari.command.reload",
+            "无权限",
+            null);
 
-    private String show;
-    private List<String> aliases;
-    private String usage;
-    private String permission;
-    private String permissionMessage;
-    private TabExecutor commandClass;
+    private final String show;
+    private final List<String> aliases;
+    private final String usage;
+    private final String permission;
+    private final String permissionMessage;
+    private final TabExecutor commandClass;
 
     AriCommand(String show,
                List<String> aliases,
@@ -65,8 +69,6 @@ public enum AriCommand {
         this.commandClass = commandClass;
     }
 
-    AriCommand() {
-    }
 
     public String getShow() {
         return show;

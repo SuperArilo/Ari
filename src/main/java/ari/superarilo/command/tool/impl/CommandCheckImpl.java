@@ -2,10 +2,11 @@ package ari.superarilo.command.tool.impl;
 
 import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.enumType.FilePath;
+import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class CommandCheckImpl implements CommandCheck {
@@ -14,9 +15,9 @@ public class CommandCheckImpl implements CommandCheck {
     private static final String d = ".";
     private static final String NOTPLAYER = "not-player";
     private static final String PERMISSIONMESSAGE = "permission-message";
-    private final FileConfiguration config;
+    private final ConfigFiles config;
 
-    public CommandCheckImpl(FileConfiguration config) {
+    public CommandCheckImpl(ConfigFiles config) {
         this.config = config;
     }
 
@@ -27,17 +28,13 @@ public class CommandCheckImpl implements CommandCheck {
 
     @Override
     public boolean isPlayer(CommandSender commandSender, AriCommand type) {
-        if (!(commandSender instanceof Player)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + type.getShow() + d + NOTPLAYER, "null")));
-            return false;
-        }
-        return true;
+        return commandSender instanceof Player;
     }
 
     @Override
     public boolean commandSenderHavePermission(CommandSender commandSender, AriCommand type) {
         if (!commandSender.hasPermission(type.getPermission())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + type.getShow() + d + PERMISSIONMESSAGE, "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue(i + d + type.getShow() + d + PERMISSIONMESSAGE, FilePath.Lang, String.class)));
             return false;
         }
         return true;
@@ -47,11 +44,12 @@ public class CommandCheckImpl implements CommandCheck {
     public boolean allCheck(CommandSender commandSender, Command command, AriCommand ariCommand) {
         if (this.isTheInstructionCorrect(command, ariCommand)) {
             if (!this.isPlayer(commandSender, ariCommand)) {
-                commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + ariCommand.getShow() + d + NOTPLAYER, "null")));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue(i + d + ariCommand.getShow() + d + NOTPLAYER, FilePath.Lang, String.class)));
                 return false;
             }
             if (!this.commandSenderHavePermission(commandSender, ariCommand)) {
-                commandSender.sendMessage(TextTool.setHEXColorText(config.getString(i + d + ariCommand.getShow() + d + PERMISSIONMESSAGE, "null")));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue(i + d + ariCommand.getShow() + d + PERMISSIONMESSAGE, FilePath.Lang, String.class)));
+                return false;
             }
             return true;
         }

@@ -4,6 +4,7 @@ import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
@@ -21,18 +22,19 @@ import java.util.List;
 
 
 public class TpaAccept implements TabExecutor {
+    private final ConfigFiles config = Ari.instance.getConfigFiles();
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAACCEPT)) return false;
 
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.fail", "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.fail", FilePath.Lang, String.class)));
             return true;
         }
         Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
         //判断玩家是否存在
         if (player == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.unable-player", "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.unable-player", FilePath.Lang, String.class)));
             return true;
         }
         //判断请求是否还存在
@@ -40,11 +42,11 @@ public class TpaAccept implements TabExecutor {
         TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
 
         if(status == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.been-done", "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.been-done", FilePath.Lang, String.class)));
             return true;
         }
         //请求成功，移除该请求
-        commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpaaccept.agree","null")));
+        commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
         Ari.instance.getTpStatusValue().remove(player, TeleportThread.Type.PLAYER);
 
         TeleportThread teleportThread = switch (status.getCommandType()) {
@@ -64,7 +66,7 @@ public class TpaAccept implements TabExecutor {
         if (commandSender instanceof Player) {
             List<String> i = new ArrayList<>();
             Server tempServer = Ari.instance.getServer();
-            Ari.getTeleportStatusList().stream().filter(obj ->
+            Ari.instance.getTpStatusValue().getStatusList().stream().filter(obj ->
                     obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))
                     .forEach(e -> {
                         Player p = tempServer.getPlayer(e.getPlayUUID());

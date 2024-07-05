@@ -7,9 +7,7 @@ main: ari.superarilo.Ari
 #softdepend: ['']
 api-version: 1.20
 commands:
-  arilo:
-    aliases:
-      - 'ari'
+  ari:
     usage: '插件主要指令'
   tpa:
     usage: '传送指令'

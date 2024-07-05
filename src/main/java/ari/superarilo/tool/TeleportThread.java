@@ -1,6 +1,7 @@
 package ari.superarilo.tool;
 
 import ari.superarilo.Ari;
+import ari.superarilo.enumType.FilePath;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -9,6 +10,8 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.TimeUnit;
 
 public class TeleportThread {
+
+    private final ConfigFiles config = Ari.instance.getConfigFiles();
 
     private final Type type;
     private final Player player;
@@ -47,7 +50,7 @@ public class TeleportThread {
     public void teleport() {
         //设置传送冷却时间
         final int[] timerIndex = {this.player.isOp() ? 1 : Ari.instance.getConfig().getInt("Teleport.delay", 1)};
-        this.player.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.ing","null")));
+        this.player.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.ing", FilePath.Lang, String.class)));
         Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
             //在任务里获取现在玩家的状态
             Player threadPlayer = Ari.instance.getServer().getPlayer(this.player.getUniqueId());
@@ -58,7 +61,7 @@ public class TeleportThread {
             //判断玩家是否在传送过程中移动或者受伤
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
-                threadPlayer.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.break", "null")));
+                threadPlayer.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.break", FilePath.Lang, String.class)));
                 return;
             }
             timerIndex[0]--;
@@ -74,7 +77,7 @@ public class TeleportThread {
                         Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
                             threadPlayer.teleportAsync(this.targetPlayer.getLocation());
                             threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
-                            threadPlayer.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.success","null")));
+                            threadPlayer.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.success", FilePath.Lang, String.class)));
                         });
                         break;
                     case BACK:

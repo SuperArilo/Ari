@@ -1,33 +1,59 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 public class ConfigFiles {
 
-    public static Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private final JavaPlugin instance;
 
-    public static void reloadAllConfig() {
-        Ari.instance.saveDefaultConfig();
-        Ari.instance.reloadConfig();
-        checkFiles();
+    public ConfigFiles(JavaPlugin instance) {
+        this.instance = instance;
+        this.reloadAllConfig();
     }
-    public static void checkFiles() {
-        configs = new ConcurrentHashMap<>();
+
+    public void reloadAllConfig() {
+        this.instance.saveDefaultConfig();
+        this.instance.reloadConfig();
+        this.checkFiles();
+    }
+    protected void checkFiles() {
+        this.configs = new ConcurrentHashMap<>();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
-            File file = new File(Ari.instance.getDataFolder(), path);
-            Ari.instance.saveResource(path, true);
+            File file = new File(this.instance.getDataFolder(), path);
+            this.instance.saveResource(path, true);
 //            if(!file.exists()) {
 //                Ari.instance.saveResource(path, false);
 //            }
-            configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
+            this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
+        }
+    }
+    public <T> T getValue(String valuePath, FilePath filePath, Class<T> clazz) {
+        String fileName = filePath.getName();
+        FileConfiguration fileConfiguration = this.configs.get(fileName);
+        if (fileConfiguration == null) {
+            this.instance.getLogger().log(Level.WARNING, "Config file not found: " + fileName);
+            return null;
+        }
+        Object value = fileConfiguration.get(valuePath);
+        if (value == null) {
+            this.instance.getLogger().log(Level.WARNING, "Value not found for path: " + valuePath + " in file: " + fileName);
+            return null;
+        }
+        if (clazz.isInstance(value)) {
+            return clazz.cast(value);
+        } else {
+            this.instance.getLogger().log(Level.WARNING, "Value type mismatch for path: " + valuePath + " in file: " + fileName);
+            return null;
         }
     }
 }

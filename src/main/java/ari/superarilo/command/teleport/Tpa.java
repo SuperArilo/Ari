@@ -3,6 +3,7 @@ package ari.superarilo.command.teleport;
 import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.teleport.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TextTool;
@@ -17,22 +18,23 @@ import java.util.List;
 
 public class Tpa implements TabExecutor {
 
+    private final ConfigFiles config = Ari.instance.getConfigFiles();
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPA)) return false;
 
         //是否指令指令参数不对或者不全
         if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.fail", "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
             return true;
         }
         //判断指令参数获取的玩家是否存在
         Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
         if (player == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(ConfigFiles.configs.get("lang").getString("command.tpa.unable-player", "null")));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.unable-player", FilePath.Lang, String.class)));
             return true;
         }
-
         TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
         return true;
     }

@@ -37,7 +37,6 @@ public class TextTool {
         } else {
             return Component.text(content);
         }
-
     }
 
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {

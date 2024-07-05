@@ -100,7 +100,7 @@ public class MainCommand implements TabExecutor {
                 }
                 player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-playe", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-player", FilePath.Lang, String.class)));
                     return true;
                 }
 

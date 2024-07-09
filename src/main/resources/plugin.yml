@@ -4,7 +4,7 @@ author: Arilo007
 folia-supported: true
 main: ari.superarilo.Ari
 #depend: ['']
-#softdepend: ['']
+softdepend: ['PlaceholderAPI']
 api-version: 1.20
 commands:
   ari:
@@ -17,3 +17,7 @@ commands:
     usage: '传送指令'
   tparefuse:
     usage: '拒绝传送指令'
+  home:
+    aliases:
+      - homes
+    usage: '打开家列表GUI'

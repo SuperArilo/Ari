@@ -2,6 +2,7 @@ package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
+import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.teleport.TeleportPrecondition;
@@ -23,21 +24,21 @@ public class TpaHere implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAHERE)) return false;
-        if (!command.getName().equalsIgnoreCase(AriCommand.TPAHERE.getShow())) return false;
-
-        //指令不全
-        if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.fail", FilePath.Lang, String.class)));
-            return true;
+        CommandCheckImpl check = CommandCheck.create();
+        if (!check.isTheInstructionCorrect(command, AriCommand.TPAHERE)) return false;
+        if (check.allCheck(commandSender, command, AriCommand.TPAHERE)) {
+            //指令不全
+            if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.fail", FilePath.Lang, String.class)));
+                return true;
+            }
+            Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
+            if (player == null) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-player", FilePath.Lang, String.class)));
+                return true;
+            }
+            TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);
         }
-        Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
-        if (player == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-player", FilePath.Lang, String.class)));
-            return true;
-        }
-        TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);
-
         return true;
     }
     @Override

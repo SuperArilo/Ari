@@ -74,9 +74,9 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                                         ariCommand.equals(AriCommand.TPA) ? KeyType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? KeyType.TPAHERESENDER.getType():"",
                                         player.getName()))
                         .appendNewline()
-                        .append(TextTool.setClickEventText("&a[同意]", ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                        .append(TextTool.setHEXColorText("&f或者"))
-                        .append(TextTool.setClickEventText("&c[拒绝]", ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                        .append(TextTool.setClickEventText(this.config.getValue("command.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                        .append(TextTool.setHEXColorText(this.config.getValue("command.public.center", FilePath.Lang, String.class)))
+                        .append(TextTool.setClickEventText(this.config.getValue("command.public.agree.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
     }
     protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {

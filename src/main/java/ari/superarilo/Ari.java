@@ -2,8 +2,13 @@ package ari.superarilo;
 
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.listener.home.HomeListListener;
+import ari.superarilo.papi.HomePAPI;
 import ari.superarilo.tool.ConfigFiles;
+import ari.superarilo.tool.ObjectConvert;
+import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.logging.Logger;
@@ -15,17 +20,26 @@ public class Ari extends JavaPlugin {
 
     private TpStatusValue tpStatusValue;
     private ConfigFiles configFiles;
+    private ObjectConvert objectConvert;
 
     @Override
     public void onLoad() {
         instance = this;
         logger = instance.getLogger();
         this.configFiles = new ConfigFiles(this);
+        this.objectConvert = new ObjectConvert();
     }
 
     @Override
     public void onEnable() {
         this.registerCommands();
+        this.registerListener();
+
+        //PAPI
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+            new HomePAPI(this).register();
+        }
+
         this.tpStatusValue = new TpStatusValue();
     }
     @Override
@@ -42,6 +56,10 @@ public class Ari extends JavaPlugin {
             pluginCommand.setTabCompleter(command.getCommandClass());
         }
     }
+    protected void registerListener() {
+        PluginManager pluginManager = this.getServer().getPluginManager();
+        pluginManager.registerEvents(new HomeListListener(), this);
+    }
 
     public TpStatusValue getTpStatusValue() {
         return tpStatusValue;
@@ -49,5 +67,9 @@ public class Ari extends JavaPlugin {
 
     public ConfigFiles getConfigFiles() {
         return configFiles;
+    }
+
+    public ObjectConvert getGsonConvert() {
+        return objectConvert;
     }
 }

@@ -2,6 +2,7 @@ package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
+import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.teleport.TeleportPrecondition;
@@ -22,20 +23,23 @@ public class Tpa implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPA)) return false;
+        CommandCheckImpl check = CommandCheck.create();
+        if (!check.isTheInstructionCorrect(command, AriCommand.TPA)) return false;
+        if (check.allCheck(commandSender, command, AriCommand.TPA)) {
+            //是否指令指令参数不对或者不全
+            if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
+                return true;
+            }
+            //判断指令参数获取的玩家是否存在
+            Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
+            if (player == null) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.unable-player", FilePath.Lang, String.class)));
+                return true;
+            }
+            TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
+        }
 
-        //是否指令指令参数不对或者不全
-        if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
-            return true;
-        }
-        //判断指令参数获取的玩家是否存在
-        Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
-        if (player == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.unable-player", FilePath.Lang, String.class)));
-            return true;
-        }
-        TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
         return true;
     }
 

@@ -1,6 +1,7 @@
 package ari.superarilo.enumType;
 
 import ari.superarilo.command.MainCommand;
+import ari.superarilo.command.home.Home;
 import ari.superarilo.command.teleport.Tpa;
 import ari.superarilo.command.teleport.TpaAccept;
 import ari.superarilo.command.teleport.TpaRefuse;
@@ -41,6 +42,12 @@ public enum AriCommand {
             "ari.command.tparefuse",
             "无权限",
             new TpaRefuse()),
+    HOME("home",
+            List.of("homes"),
+            "打开您保存的home列表",
+            "ari.command.home",
+            "无权限",
+            new Home()),
     RELOAD("reload",
             null,
             "重新加载插件",

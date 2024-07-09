@@ -1,20 +1,36 @@
 package ari.superarilo.tool;
 
+import ari.superarilo.Ari;
+import ari.superarilo.enumType.FilePath;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class TextTool {
-
+    public static TextComponent setHEXColorText(String path, FilePath filePath) {
+        String content = Ari.instance.getConfigFiles().getValue(path, filePath, String.class);
+        if (content == null) {
+            Ari.logger.log(Level.SEVERE, path + " path does not exist in the " + filePath.getName() + " file");
+            Ari.logger.log(Level.SEVERE, filePath.getName() + " path: " + filePath.getPath());
+            return Component.text("Warning: content is null, see in the console");
+        }
+        return renderComponent(content);
+    }
     public static TextComponent setHEXColorText(String content) {
+        return renderComponent(content);
+    }
+    @NotNull
+    protected static TextComponent renderComponent(String content) {
         if(content.contains("&")) {
             return Component.text(ChatColor.translateAlternateColorCodes('&', content));
         } else if(content.contains("<#") && content.contains("</#")) {
@@ -39,12 +55,14 @@ public class TextTool {
         }
     }
 
+
+
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
         return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));
     }
 
     //分离具有16进制标签的文本
-    private static List<String> hexadecimalStrings(String content) {
+    protected static List<String> hexadecimalStrings(String content) {
 
         List<String> l = new ArrayList<>();
 
@@ -57,7 +75,7 @@ public class TextTool {
     }
 
     //获取具有十六进制的字符串的开始颜色和结束颜色
-    private static List<String> separateHexString(String content) {
+    protected static List<String> separateHexString(String content) {
         List<String> i = new ArrayList<>();
         Matcher matcher = Pattern.compile("<#([^<>]+)>([^<>]+)</#([^<>]+)>").matcher(content);
         if (matcher.find()) {
@@ -67,7 +85,7 @@ public class TextTool {
         return i;
     }
 
-    private static TextColor HexColorMake(String startColor, String endColor, Double ratio) {
+    protected static TextColor HexColorMake(String startColor, String endColor, Double ratio) {
         TextColor start = TextColor.fromHexString(startColor);
         TextColor end = TextColor.fromHexString(endColor);
         if(start == null || end == null){
@@ -76,7 +94,7 @@ public class TextTool {
         return TextColor.color(interpolate(start.value(), end.value(), ratio));
     }
 
-    private static int interpolate(int start, int end, double ratio) {
+    protected static int interpolate(int start, int end, double ratio) {
 
         int r = (int) ((start >> 16 & 0xFF) * (1 - ratio) + (end >> 16 & 0xFF) * ratio);
         int g = (int) ((start >> 8 & 0xFF) * (1 - ratio) + (end >> 8 & 0xFF) * ratio);

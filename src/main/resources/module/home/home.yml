@@ -1,0 +1,18 @@
+title: '<#00EEEE>家列表</#FFF5EE>'
+layout:
+  - '#########'
+  - '|       |'
+  - '|       |'
+  - '|       |'
+  - '#########'
+items:
+  '#':
+    name: ''
+    material: glass_pane
+    lore:
+      - '&6111111'
+  '|':
+    name: ''
+    material: glass_pane
+    lore:
+      - '&6222222'

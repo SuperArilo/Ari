@@ -2,6 +2,7 @@ package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
+import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
@@ -25,40 +26,43 @@ public class TpaAccept implements TabExecutor {
     private final ConfigFiles config = Ari.instance.getConfigFiles();
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if (!CommandCheck.create().allCheck(commandSender, command, AriCommand.TPAACCEPT)) return false;
+        CommandCheckImpl check = CommandCheck.create();
+        if (!check.isTheInstructionCorrect(command, AriCommand.TPAACCEPT)) return false;
+        if (check.allCheck(commandSender, command, AriCommand.TPAACCEPT)) {
+            if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.fail", FilePath.Lang, String.class)));
+                return true;
+            }
+            Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
+            //判断玩家是否存在
+            if (player == null) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.unable-player", FilePath.Lang, String.class)));
+                return true;
+            }
+            //判断请求是否还存在
 
-        if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.fail", FilePath.Lang, String.class)));
-            return true;
-        }
-        Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
-        //判断玩家是否存在
-        if (player == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.unable-player", FilePath.Lang, String.class)));
-            return true;
-        }
-        //判断请求是否还存在
+            TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
 
-        TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
+            if(status == null) {
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.been-done", FilePath.Lang, String.class)));
+                return true;
+            }
+            //请求成功，移除该请求
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
+            Ari.instance.getTpStatusValue().remove(player, TeleportThread.Type.PLAYER);
 
-        if(status == null) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.been-done", FilePath.Lang, String.class)));
-            return true;
+            TeleportThread teleportThread = switch (status.getCommandType()) {
+                case TPA -> new TeleportThread(player, ((Player) commandSender), TeleportThread.Type.PLAYER);
+                case TPAHERE -> new TeleportThread(((Player) commandSender), player, TeleportThread.Type.PLAYER);
+                default -> null;
+            };
+            if (teleportThread != null) {
+                teleportThread.teleport();
+            } else {
+                commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
+            }
         }
-        //请求成功，移除该请求
-        commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
-        Ari.instance.getTpStatusValue().remove(player, TeleportThread.Type.PLAYER);
 
-        TeleportThread teleportThread = switch (status.getCommandType()) {
-            case TPA -> new TeleportThread(player, ((Player) commandSender), TeleportThread.Type.PLAYER);
-            case TPAHERE -> new TeleportThread(((Player) commandSender), player, TeleportThread.Type.PLAYER);
-            default -> null;
-        };
-        if (teleportThread != null) {
-            teleportThread.teleport();
-        } else {
-            commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
-        }
         return true;
     }
     @Override

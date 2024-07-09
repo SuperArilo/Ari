@@ -1,9 +1,8 @@
 command:
-  tpa-tpahere:
+  public:
     agree: '&a[同意]'
     center: '&f或者'
     refuse: '&c[拒绝]'
-
   tpa:
     ing:  '传送过程中！请不要移动...'
     success: '传送成功！'
@@ -51,4 +50,6 @@ command:
     doing: '&6重载插件中...'
     success: '&2重载插件成功！'
     permission-message: '&4这是OP才能用的指令哦！'
+  home:
+    permission-message: '<#114514>抱歉，你没有该指令权限</#abcdef>'
   unknown: '&4未知指令，请重新输入'

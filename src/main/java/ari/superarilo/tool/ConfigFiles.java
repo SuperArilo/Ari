@@ -1,7 +1,6 @@
 package ari.superarilo.tool;
 
 import ari.superarilo.enumType.FilePath;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -12,7 +11,7 @@ import java.util.logging.Level;
 
 public class ConfigFiles {
 
-    private Map<String, FileConfiguration> configs = new ConcurrentHashMap<>();
+    private Map<String, YamlConfiguration> configs = new ConcurrentHashMap<>();
     private final JavaPlugin instance;
 
     public ConfigFiles(JavaPlugin instance) {
@@ -32,14 +31,14 @@ public class ConfigFiles {
             File file = new File(this.instance.getDataFolder(), path);
             this.instance.saveResource(path, true);
 //            if(!file.exists()) {
-//                Ari.instance.saveResource(path, false);
+//                this.instance.saveResource(path, false);
 //            }
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
     public <T> T getValue(String valuePath, FilePath filePath, Class<T> clazz) {
         String fileName = filePath.getName();
-        FileConfiguration fileConfiguration = this.configs.get(fileName);
+        YamlConfiguration fileConfiguration = this.configs.get(fileName);
         if (fileConfiguration == null) {
             this.instance.getLogger().log(Level.WARNING, "Config file not found: " + fileName);
             return null;
@@ -55,5 +54,8 @@ public class ConfigFiles {
             this.instance.getLogger().log(Level.WARNING, "Value type mismatch for path: " + valuePath + " in file: " + fileName);
             return null;
         }
+    }
+    public YamlConfiguration getObject(String fileName) {
+        return this.configs.get(fileName);
     }
 }

@@ -5,6 +5,7 @@ import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;
 import ari.superarilo.tool.ConfigFiles;
+import ari.superarilo.tool.CustomLogger;
 import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.ObjectConvert;
 import org.bukkit.Bukkit;
@@ -29,10 +30,10 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        logger = instance.getLogger();
+        debug = this.getConfig().getBoolean("debug.enable", false);
+        logger = new CustomLogger(debug).getLogger();
         this.configFiles = new ConfigFiles(this);
         this.objectConvert = new ObjectConvert();
-
     }
 
     @Override
@@ -40,7 +41,7 @@ public class Ari extends JavaPlugin {
         this.registerCommands();
         this.registerListener();
         //PAPI
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new HomePAPI(this).register();
         }
         //sql

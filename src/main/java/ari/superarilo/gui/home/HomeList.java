@@ -4,15 +4,18 @@ import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.menu.home.HomeListGUI;
 import ari.superarilo.entity.menu.home.RenderItem;
+import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.gui.InitGui;
+import ari.superarilo.mapper.PlayerHomeMapper;
+import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TextTool;
+import org.apache.ibatis.session.SqlSession;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -44,8 +47,12 @@ public class HomeList extends InitGui {
 
     public void open() {
         this.player.openInventory(this.inventory);
-
         long startTime = System.currentTimeMillis();
+        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+            List<PlayerHome> playerHomes = sqlSession.getMapper(PlayerHomeMapper.class).getHomeList(this.player.getUniqueId().toString(), this.instance.getServer().getName());
+            System.out.println(playerHomes);
+        }
+
         for (int i = 0; i < this.itemLayout.size(); i++) {
             RenderItem renderItem = this.gui.getItems().get(this.itemLayout.get(i));
             if (renderItem == null) continue;

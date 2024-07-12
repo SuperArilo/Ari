@@ -25,12 +25,9 @@ public class ConfigFiles {
         this.instance.saveDefaultConfig();
 
         this.instance.reloadConfig();
-        Ari.debug = this.instance.getConfig().getBoolean("debug.enable", false);
-        if (Ari.debug) {
-            Ari.logger.log(Level.INFO, "----------------");
-            Ari.logger.log(Level.INFO, "   调试模式开启   ");
-            Ari.logger.log(Level.INFO, "----------------");
-        }
+        Ari.logger.log(Level.FINE, "----------------");
+        Ari.logger.log(Level.FINE, "   调试模式开启   ");
+        Ari.logger.log(Level.FINE, "----------------");
         this.checkFiles();
     }
     protected void checkFiles() {

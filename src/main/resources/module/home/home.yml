@@ -1,18 +1,21 @@
-title: '<#00EEEE>家列表</#FFF5EE>'
+title: '<#4682B4>%player_name%</#4682B4><#00EEEE>家列表</#FFF5EE>'
 layout:
   - '#########'
   - '|       |'
   - '|       |'
   - '|       |'
-  - '#########'
+  - '####(back)####'
 items:
   '#':
     name: ''
     material: glass_pane
     lore:
-      - '&6111111'
   '|':
     name: ''
     material: glass_pane
     lore:
-      - '&6222222'
+  'back':
+    name: '返回'
+    material: redstone
+    lore:
+      - '点击返回或者关闭'

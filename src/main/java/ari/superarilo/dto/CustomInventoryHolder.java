@@ -1,5 +1,6 @@
 package ari.superarilo.dto;
 
+import ari.superarilo.enumType.GuiType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -7,21 +8,23 @@ import org.jetbrains.annotations.NotNull;
 
 public class CustomInventoryHolder implements InventoryHolder {
     private final Player player;
-    private final String meta;
-    public CustomInventoryHolder(Player player, String meta) {
+    private final GuiType type;
+
+    public CustomInventoryHolder(Player player, GuiType type) {
         this.player = player;
-        this.meta = meta;
-    }
-    @Override
-    public @NotNull Inventory getInventory() {
-        return this.player.getInventory();
+        this.type = type;
     }
 
     public Player getPlayer() {
         return player;
     }
 
-    public String getMeta() {
-        return meta;
+    public GuiType getType() {
+        return type;
+    }
+
+    @Override
+    public @NotNull Inventory getInventory() {
+        return this.player.getOpenInventory().getTopInventory();
     }
 }

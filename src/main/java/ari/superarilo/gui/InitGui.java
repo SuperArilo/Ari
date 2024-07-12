@@ -6,7 +6,7 @@ import org.bukkit.inventory.Inventory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class InitGui {
+public abstract class InitGui {
 
     protected final Player player;
     protected Inventory inventory;
@@ -18,17 +18,33 @@ public class InitGui {
     }
 
     protected List<String> parseLayout(List<String> layout) {
-        int rowCount = Math.min(layout.size(), 6);
-        List<String> parsedLayout = new ArrayList<>(rowCount * 9);
-        for (int i = 0; i < rowCount; i++) {
-            String line = layout.get(i);
-            if (line.length() != 9) {
-                throw new IllegalArgumentException("Each line must be 9 characters long.");
+        List<String> result = new ArrayList<>(layout.size() * 9);
+        StringBuilder bracketContent = null;
+        for (String line : layout) {
+            boolean inBrackets = false;
+            for (int i = 0; i < line.length(); i++) {
+                char c = line.charAt(i);
+                if (c == '(') {
+                    if (!inBrackets) {
+                        inBrackets = true;
+                        bracketContent = new StringBuilder();
+                    }
+                } else if (c == ')') {
+                    if (inBrackets) {
+                        inBrackets = false;
+                        result.add(bracketContent.toString());
+                        bracketContent = null;
+                    }
+                } else if (inBrackets) {
+                    bracketContent.append(c);
+                } else {
+                    result.add(String.valueOf(c));
+                }
             }
-            for (int j = 0; j < 9; j++) {
-                parsedLayout.add(String.valueOf(line.charAt(j)));
+            if (inBrackets) {
+                bracketContent = null;
             }
         }
-        return parsedLayout;
+        return result;
     }
 }

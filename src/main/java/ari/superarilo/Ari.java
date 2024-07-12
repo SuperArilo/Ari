@@ -5,6 +5,7 @@ import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;
 import ari.superarilo.tool.ConfigFiles;
+import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.ObjectConvert;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
@@ -14,13 +15,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Logger;
 
 public class Ari extends JavaPlugin {
+
     public static Ari instance;
-    //severe error
     public static Logger logger;
+    public static Boolean debug;
 
     private TpStatusValue tpStatusValue;
     private ConfigFiles configFiles;
     private ObjectConvert objectConvert;
+
+    private SQLInstance SQLInstance;
 
     @Override
     public void onLoad() {
@@ -28,19 +32,23 @@ public class Ari extends JavaPlugin {
         logger = instance.getLogger();
         this.configFiles = new ConfigFiles(this);
         this.objectConvert = new ObjectConvert();
+
     }
 
     @Override
     public void onEnable() {
         this.registerCommands();
         this.registerListener();
-
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) { //
             new HomePAPI(this).register();
         }
+        //sql
+        this.SQLInstance = new SQLInstance(this);
+
 
         this.tpStatusValue = new TpStatusValue();
+
     }
     @Override
     public void onDisable() {
@@ -71,5 +79,9 @@ public class Ari extends JavaPlugin {
 
     public ObjectConvert getGsonConvert() {
         return objectConvert;
+    }
+
+    public SQLInstance getSQLInstance() {
+        return SQLInstance;
     }
 }

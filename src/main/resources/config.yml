@@ -1,5 +1,21 @@
 Teleport:
   # 检测延迟时间
   delay: 3
-debug: true
+data:
+  # mysql, sqlite
+  storage-type: mysql
+  # mysql 才有效
+  address: asuka.superarilo.icu
+  port: 3306
+  database: ari
+  username: root
+  password: TnpaMAspcmncN3g7aCt3vo5X
+  maximum-pool-size: 10
+  minimum-idle: 10
+  maximum-lifetime: 1800000
+  connection-timeout: 5000
+  keepalive-time: 0
+debug:
+  enable: true
+  overwrite-file: true
 experimental:

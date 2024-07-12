@@ -1,5 +1,6 @@
 package ari.superarilo.tool;
 
+import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,8 +21,16 @@ public class ConfigFiles {
     }
 
     public void reloadAllConfig() {
+        //config.yml
         this.instance.saveDefaultConfig();
+
         this.instance.reloadConfig();
+        Ari.debug = this.instance.getConfig().getBoolean("debug.enable", false);
+        if (Ari.debug) {
+            Ari.logger.log(Level.INFO, "----------------");
+            Ari.logger.log(Level.INFO, "   调试模式开启   ");
+            Ari.logger.log(Level.INFO, "----------------");
+        }
         this.checkFiles();
     }
     protected void checkFiles() {
@@ -29,10 +38,9 @@ public class ConfigFiles {
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
             File file = new File(this.instance.getDataFolder(), path);
-            this.instance.saveResource(path, true);
-//            if(!file.exists()) {
-//                this.instance.saveResource(path, false);
-//            }
+            if(!file.exists() || this.instance.getConfig().getBoolean("debug.overwrite-fil", false)) {
+                this.instance.saveResource(path, true);
+            }
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }

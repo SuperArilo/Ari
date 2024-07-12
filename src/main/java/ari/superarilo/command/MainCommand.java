@@ -45,6 +45,9 @@ public class MainCommand implements TabExecutor {
             case RELOAD:
                 commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.reload.doing", FilePath.Lang, String.class)));
                 Ari.instance.getConfigFiles().reloadAllConfig();
+                if (Ari.debug) {
+                    Ari.instance.getSQLInstance().reconnect();
+                }
                 commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.reload.success", FilePath.Lang, String.class)));
                 break;
             case TPA:

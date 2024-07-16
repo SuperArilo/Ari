@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public abstract class InitGui {
+public class InitGui {
 
     protected final Player player;
     protected Inventory inventory;

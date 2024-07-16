@@ -5,12 +5,14 @@ import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FunctionType;
+import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TeleportThread;
 import org.apache.ibatis.session.SqlSession;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
@@ -46,18 +48,19 @@ public class HomeListListener implements Listener {
                         break;
                 }
             }
-
             String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
             if (homeId == null) return;
-            ClickType click = event.getClick();
-            if (click.equals(ClickType.LEFT)) {
-                try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                    PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
-                    new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
+                ClickType click = event.getClick();
+                if (click.equals(ClickType.LEFT)) {
                     inventory.close();
+                    new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
+                } else if (click.equals(ClickType.RIGHT)) {
+                    inventory.close();
+                    new HomeEditor(Ari.instance, home,(Player) event.getWhoClicked()).open();
+                    sqlSession.close();
                 }
-            } else if (click.equals(ClickType.RIGHT)) {
-
             }
         }
     }

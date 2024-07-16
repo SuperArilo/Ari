@@ -9,10 +9,12 @@ import org.jetbrains.annotations.NotNull;
 public class CustomInventoryHolder implements InventoryHolder {
     private final Player player;
     private final GuiType type;
+    private final String meta;
 
-    public CustomInventoryHolder(Player player, GuiType type) {
+    public CustomInventoryHolder(Player player, GuiType type, String meta) {
         this.player = player;
         this.type = type;
+        this.meta = meta;
     }
 
     public Player getPlayer() {
@@ -26,5 +28,9 @@ public class CustomInventoryHolder implements InventoryHolder {
     @Override
     public @NotNull Inventory getInventory() {
         return this.player.getOpenInventory().getTopInventory();
+    }
+
+    public String getMeta() {
+        return meta;
     }
 }

@@ -32,11 +32,11 @@ public class HomeList extends InitGui {
         super(player);
         this.instance = instance;
         this.gui = instance.getGsonConvert().yamlConvertToObj(this.instance.getConfigFiles().getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, "HomeGUI"), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 
     public void open() {
-        this.player.openInventory(this.inventory);
+        super.open();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, e -> {
             this.renderMasks(this.gui.getMask());
             this.renderFunctionItems(this.gui.getFunctionItems());

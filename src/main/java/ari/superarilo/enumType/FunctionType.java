@@ -1,7 +1,10 @@
 package ari.superarilo.enumType;
 
 public enum FunctionType {
-    BACK("返回");
+    BACK("返回"),
+    ICON("图标"),
+    LOCATION("位置"),
+    DELETE("删除");
     private final String name;
 
     FunctionType(String name) {

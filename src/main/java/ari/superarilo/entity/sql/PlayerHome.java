@@ -9,25 +9,8 @@ public class PlayerHome {
     private Double x;
     private Double y;
     private Double z;
-    private String serverName;
     private String world;
     private String showMaterial;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getHomeId() {
-        return homeId;
-    }
-
-    public void setHomeId(String homeId) {
-        this.homeId = homeId;
-    }
 
     public String getHomeName() {
         return homeName;
@@ -69,14 +52,6 @@ public class PlayerHome {
         this.z = z;
     }
 
-    public String getServerName() {
-        return serverName;
-    }
-
-    public void setServerName(String serverName) {
-        this.serverName = serverName;
-    }
-
     public String getWorld() {
         return world;
     }
@@ -91,5 +66,17 @@ public class PlayerHome {
 
     public void setShowMaterial(String showMaterial) {
         this.showMaterial = showMaterial;
+    }
+
+    public String getHomeId() {
+        return homeId;
+    }
+
+    public void setHomeId(String homeId) {
+        this.homeId = homeId;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

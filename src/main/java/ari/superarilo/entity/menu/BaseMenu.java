@@ -7,11 +7,10 @@ import java.util.Map;
 
 public class BaseMenu {
     private String title;
-    private List<String> layout;
-    private Map<String, RenderItem> items;
-    public BaseMenu() {
-    }
-
+    private Integer row;
+    private Mask mask;
+    private Map<String, FunctionItem> functionItems;
+    public BaseMenu() {}
     public String getTitle() {
         return title;
     }
@@ -20,19 +19,27 @@ public class BaseMenu {
         this.title = title;
     }
 
-    public List<String> getLayout() {
-        return layout;
+    public Integer getRow() {
+        return row;
     }
 
-    public void setLayout(List<String> layout) {
-        this.layout = layout;
+    public void setRow(Integer row) {
+        this.row = row;
     }
 
-    public Map<String, RenderItem> getItems() {
-        return items;
+    public Mask getMask() {
+        return mask;
     }
 
-    public void setItems(Map<String, RenderItem> items) {
-        this.items = items;
+    public void setMask(Mask mask) {
+        this.mask = mask;
+    }
+
+    public Map<String, FunctionItem> getFunctionItems() {
+        return functionItems;
+    }
+
+    public void setFunctionItems(Map<String, FunctionItem> functionItems) {
+        this.functionItems = functionItems;
     }
 }

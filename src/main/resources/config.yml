@@ -9,7 +9,7 @@ data:
   port: 3306
   database: ari
   username: root
-  password: TnpaMAspcmncN3g7aCt3vo5X
+  password: LmUZceL5tU9CdEp1
   maximum-pool-size: 10
   minimum-idle: 10
   maximum-lifetime: 1800000

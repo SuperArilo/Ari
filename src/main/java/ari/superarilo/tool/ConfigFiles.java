@@ -35,7 +35,7 @@ public class ConfigFiles {
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
             File file = new File(this.instance.getDataFolder(), path);
-            if(!file.exists() || this.instance.getConfig().getBoolean("debug.overwrite-fil", false)) {
+            if(!file.exists() || this.instance.getConfig().getBoolean("debug.overwrite-file", false)) {
                 this.instance.saveResource(path, true);
             }
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));

@@ -2,6 +2,7 @@ package ari.superarilo.enumType;
 
 import ari.superarilo.command.MainCommand;
 import ari.superarilo.command.home.Home;
+import ari.superarilo.command.home.SetHome;
 import ari.superarilo.command.teleport.Tpa;
 import ari.superarilo.command.teleport.TpaAccept;
 import ari.superarilo.command.teleport.TpaRefuse;
@@ -48,6 +49,12 @@ public enum AriCommand {
             "ari.command.home",
             "无权限",
             new Home()),
+    SETHOME("sethome",
+            null,
+            "将当前所处位置保存为您的家",
+            "ari.command.sethome",
+            "无权限",
+            new SetHome()),
     RELOAD("reload",
             null,
             "重新加载插件",

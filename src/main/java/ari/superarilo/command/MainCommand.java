@@ -6,7 +6,7 @@ import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.teleport.TeleportPrecondition;
+import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
@@ -37,7 +37,7 @@ public class MainCommand implements TabExecutor {
         }
         //判断是否有对应的权限
         if(!commandCheck.commandSenderHavePermission(commandSender, type)) {
-            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.permission-message", FilePath.Lang, String.class)));
+            commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.permission-message", FilePath.Lang, String.class)));
             return true;
         }
         Player player;
@@ -52,12 +52,12 @@ public class MainCommand implements TabExecutor {
                 break;
             case TPA:
                 if (strings.length < 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                     return true;
                 }
                 player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if(player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.unable-player", FilePath.Lang, String.class)));
                     return true;
                 }
                 TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
@@ -65,13 +65,13 @@ public class MainCommand implements TabExecutor {
                 break;
             case TPAACCEPT:
                 if (strings.length < 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                     return true;
                 }
                 player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 //判断玩家是否存在
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpaaccept.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.unable-player", FilePath.Lang, String.class)));
                     return true;
                 }
 
@@ -98,12 +98,12 @@ public class MainCommand implements TabExecutor {
                 break;
             case TPAHERE:
                 if (strings.length < 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                     return true;
                 }
                 player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.public.unable-player", FilePath.Lang, String.class)));
                     return true;
                 }
 
@@ -112,13 +112,13 @@ public class MainCommand implements TabExecutor {
                 break;
             case TPAREFUSE:
                 if (strings.length < 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                     return true;
                 }
                 player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 //判断玩家是否存在
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.unable-player", FilePath.Lang, String.class)));
                     return true;
                 }
                 if (TeleportPrecondition.create().checkStatusV(player, (Player) commandSender) == null) {
@@ -129,7 +129,7 @@ public class MainCommand implements TabExecutor {
                         commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
                         player.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
                     } else {
-                        commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.break", FilePath.Lang, String.class)));
+                        commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.break", FilePath.Lang, String.class)));
                     }
                 }
                 break;

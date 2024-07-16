@@ -2,21 +2,36 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ari.superarilo.mapper.PlayerHomeMapper">
     <resultMap id="playerHome" type="ari.superarilo.entity.sql.PlayerHome">
-        <id property="id" column="id" />
         <result property="homeId" column="home_id" />
         <result property="homeName" column="home_name" />
         <result property="playerUUID" column="player_uuid" />
         <result property="x" column="x" />
         <result property="y" column="y" />
         <result property="z" column="z" />
-        <result property="serverName" column="server_name" />
         <result property="world" column="world" />
         <result property="showMaterial" column="show_material" />
     </resultMap>
-    <select id="getHomeList" resultType="ari.superarilo.entity.sql.PlayerHome">
+    <select id="getHomeList" resultMap="playerHome">
         select
-          ph.id, ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.server_name, ph.world, ph.show_material
+          ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from player_home as ph
-        where ph.player_uuid = #{playerUUID} and ph.server_name = #{serverName}
+        where ph.player_uuid = #{playerUUID}
+    </select>
+
+    <insert id="save">
+        insert into player_home
+        (home_id, home_name, player_uuid, x, y, z, world, show_material)
+        values
+        (#{playerhome.homeId}, #{playerhome.homeName},#{playerhome.playerUUID}, #{playerhome.x}, #{playerhome.y}, #{playerhome.z}, #{playerhome.world}, #{playerhome.showMaterial})
+    </insert>
+
+    <select id="exist" resultType="boolean">
+        select count(*) from player_home as ph where ph.home_id = #{home_id}
+    </select>
+
+    <select id="getHome" resultMap="playerHome">
+        select ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
+        from player_home as ph
+        where ph.home_id = #{home_id}
     </select>
 </mapper>

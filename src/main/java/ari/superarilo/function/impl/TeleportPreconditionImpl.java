@@ -1,11 +1,11 @@
-package ari.superarilo.function.teleport.impl;
+package ari.superarilo.function.impl;
 
 import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.KeyType;
-import ari.superarilo.function.teleport.TeleportPrecondition;
+import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;

@@ -3,66 +3,64 @@ package ari.superarilo.gui.home;
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.menu.home.HomeListGUI;
-import ari.superarilo.entity.menu.home.RenderItem;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.function.HomeManager;
 import ari.superarilo.gui.InitGui;
-import ari.superarilo.mapper.PlayerHomeMapper;
-import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TextTool;
-import org.apache.ibatis.session.SqlSession;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
-
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
+
 
 public class HomeList extends InitGui {
     private final Ari instance;
     private final HomeListGUI gui;
-    private final YamlConfiguration config;
-    private final List<String> itemLayout;
 
 
     public HomeList(Ari instance, Player player) {
         super(player);
         this.instance = instance;
-        this.config = this.instance.getConfigFiles().getObject(FilePath.HomeList.getName());
-
-        long startTime = System.currentTimeMillis();
-        this.gui = instance.getGsonConvert().yamlConvertToObj(this.config.saveToString(), HomeListGUI.class);
-        this.instance.getLogger().log(Level.INFO, "转换 Time: " + (System.currentTimeMillis() - startTime));
-
-        this.itemLayout = this.parseLayout(gui.getLayout());
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST), this.itemLayout.size(), TextTool.setHEXColorText("title", FilePath.HomeList, player));
+        this.gui = instance.getGsonConvert().yamlConvertToObj(this.instance.getConfigFiles().getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 
     public void open() {
         this.player.openInventory(this.inventory);
-        long startTime = System.currentTimeMillis();
-        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            List<PlayerHome> playerHomes = sqlSession.getMapper(PlayerHomeMapper.class).getHomeList(this.player.getUniqueId().toString(), this.instance.getServer().getName());
-            System.out.println(playerHomes);
-        }
-
-        for (int i = 0; i < this.itemLayout.size(); i++) {
-            RenderItem renderItem = this.gui.getItems().get(this.itemLayout.get(i));
-            if (renderItem == null) continue;
-            ItemStack itemStack = new ItemStack(Material.valueOf(renderItem.getMaterial().toUpperCase()));
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, e -> {
+            this.renderMasks(this.gui.getMask());
+            this.renderFunctionItems(this.gui.getFunctionItems());
+        });
+        Ari.logger.log(Level.FINE, "start render home list");
+        long start = System.currentTimeMillis();
+        List<Integer> dataSlot = this.gui.getDataSlot();
+        List<PlayerHome> playerHomes = HomeManager.create(this.player).asyncGetHomeList();
+        for (int i = 0; i < playerHomes.size(); i++) {
+            PlayerHome ph = playerHomes.get(i);
+            ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(TextTool.setHEXColorText(renderItem.getName()));
-            itemMeta.lore(renderItem.getLore().stream().map(TextTool::setHEXColorText).collect(Collectors.toList()));
+            itemMeta.displayName(TextTool.setHEXColorText(ph.getHomeName(), this.player));
+            List<TextComponent> textComponents = new ArrayList<>();
+            textComponents.add(TextTool.setHEXColorText("&2ID: " + "&6" + ph.getHomeId(), this.player));
+            textComponents.add(TextTool.setHEXColorText("&2x: &6" + ph.getX() + " &2y: &6" + ph.getY() + " &2z: &6" + ph.getZ(), this.player));
+            textComponents.add(TextTool.setHEXColorText("&2" + ph.getWorld(), this.player));
+            textComponents.addAll(this.gui.getDataItem().get("homeItem").getLore().stream().map(k -> TextTool.setHEXColorText(k, this.player)).toList());
+            itemMeta.lore(textComponents);
+            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());
             itemStack.setItemMeta(itemMeta);
-            this.inventory.setItem(i, itemStack);
+            this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-        this.instance.getLogger().log(Level.INFO, "Render Time: " + (System.currentTimeMillis() - startTime));
+        Ari.logger.log(Level.FINE, "render time: " + (System.currentTimeMillis() - start) + "ms");
     }
+
 }

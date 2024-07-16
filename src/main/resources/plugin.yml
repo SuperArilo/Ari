@@ -21,3 +21,5 @@ commands:
     aliases:
       - homes
     usage: '打开家列表GUI'
+  sethome:
+    usage: '将当前所处位置保存为您的家'

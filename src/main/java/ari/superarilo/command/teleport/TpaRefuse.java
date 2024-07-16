@@ -6,7 +6,7 @@ import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.teleport.TeleportPrecondition;
+import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
@@ -32,13 +32,13 @@ public class TpaRefuse implements TabExecutor {
         if (check.allCheck(commandSender, command, AriCommand.TPAREFUSE)) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;
             }
 
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.unable-player", FilePath.Lang, String.class)));
                 return true;
             }
 
@@ -51,7 +51,7 @@ public class TpaRefuse implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
                     player.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
                 } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.break", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.break", FilePath.Lang, String.class)));
                 }
             }
         }

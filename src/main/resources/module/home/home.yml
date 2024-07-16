@@ -1,21 +1,20 @@
 title: '<#4682B4>%player_name%</#4682B4><#00EEEE>家列表</#FFF5EE>'
-layout:
-  - '#########'
-  - '|       |'
-  - '|       |'
-  - '|       |'
-  - '####(back)####'
-items:
-  '#':
-    name: ''
-    material: glass_pane
-    lore:
-  '|':
-    name: ''
-    material: glass_pane
-    lore:
-  'back':
+row: 3
+mask:
+  name: ''
+  material: glass_pane
+  slot: [0,1,2,3,4,5,6,7,8,9,17,18,19,20,21,23,24,25,26]
+functionItems:
+  back:
     name: '返回'
+    type: BACK
     material: redstone
+    slot: [22]
     lore:
-      - '点击返回或者关闭'
+      - '&6点击返回或者关闭'
+dataItem:
+  homeItem:
+    lore:
+      - '&7左击: &6传送'
+      - '&7右击: &6编辑'
+dataSlot: [10,11,12,13,14,15,16]

@@ -3,12 +3,21 @@ package ari.superarilo.listener.home;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import org.bukkit.Material;
+import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.enumType.FunctionType;
+import ari.superarilo.mapper.PlayerHomeMapper;
+import ari.superarilo.tool.SQLInstance;
+import ari.superarilo.tool.TeleportThread;
+import org.apache.ibatis.session.SqlSession;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.logging.Level;
 
@@ -19,6 +28,37 @@ public class HomeListListener implements Listener {
         Inventory inventory = event.getInventory();
         if (inventory.getHolder() instanceof CustomInventoryHolder holder) {
             event.setCancelled(true);
+            if (event.getSlot() > inventory.getSize()) return;
+            ItemStack currentItem = event.getCurrentItem();
+            if (currentItem == null) return;
+            String type = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING);
+            if (type != null) {
+                FunctionType functionType;
+                try {
+                    functionType = FunctionType.valueOf(type.toUpperCase());
+                } catch (Exception e) {
+                    Ari.logger.log(Level.FINE, "Function type error", e);
+                    return;
+                }
+                switch (functionType) {
+                    case BACK:
+                        inventory.close();
+                        break;
+                }
+            }
+
+            String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
+            if (homeId == null) return;
+            ClickType click = event.getClick();
+            if (click.equals(ClickType.LEFT)) {
+                try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                    PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
+                    new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
+                    inventory.close();
+                }
+            } else if (click.equals(ClickType.RIGHT)) {
+
+            }
         }
     }
 }

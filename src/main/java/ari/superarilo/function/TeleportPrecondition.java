@@ -1,9 +1,9 @@
-package ari.superarilo.function.teleport;
+package ari.superarilo.function;
 
 import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
-import ari.superarilo.function.teleport.impl.TeleportPreconditionImpl;
+import ari.superarilo.function.impl.TeleportPreconditionImpl;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

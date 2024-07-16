@@ -5,7 +5,7 @@ import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.teleport.TeleportPrecondition;
+import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.command.Command;
@@ -29,12 +29,12 @@ public class TpaHere implements TabExecutor {
         if (check.allCheck(commandSender, command, AriCommand.TPAHERE)) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;
             }
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpahere.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.unable-player", FilePath.Lang, String.class)));
                 return true;
             }
             TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);

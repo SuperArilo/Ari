@@ -4,10 +4,7 @@ import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;
-import ari.superarilo.tool.ConfigFiles;
-import ari.superarilo.tool.CustomLogger;
-import ari.superarilo.tool.SQLInstance;
-import ari.superarilo.tool.ObjectConvert;
+import ari.superarilo.tool.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
@@ -18,9 +15,7 @@ import java.util.logging.Logger;
 public class Ari extends JavaPlugin {
 
     public static Ari instance;
-    public static Logger logger;
     public static Boolean debug;
-
     private TpStatusValue tpStatusValue;
     private ConfigFiles configFiles;
     private ObjectConvert objectConvert;
@@ -30,8 +25,8 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
+        Log.setLogger(this.getLogger());
         debug = this.getConfig().getBoolean("debug.enable", false);
-        logger = new CustomLogger(debug).getLogger();
         this.configFiles = new ConfigFiles(this);
         this.objectConvert = new ObjectConvert();
     }

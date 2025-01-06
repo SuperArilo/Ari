@@ -1,6 +1,5 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,9 +24,9 @@ public class ConfigFiles {
         this.instance.saveDefaultConfig();
 
         this.instance.reloadConfig();
-        Ari.logger.log(Level.FINE, "----------------");
-        Ari.logger.log(Level.FINE, "   调试模式开启   ");
-        Ari.logger.log(Level.FINE, "----------------");
+        Log.debug(Level.INFO, "----------------");
+        Log.debug(Level.INFO, "   调试模式开启   ");
+        Log.debug(Level.INFO, "----------------");
         this.checkFiles();
     }
     protected void checkFiles() {

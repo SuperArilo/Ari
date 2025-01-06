@@ -7,6 +7,7 @@ import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.mapper.PlayerHomeMapper;
+import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TeleportThread;
 import org.apache.ibatis.session.SqlSession;
@@ -39,7 +40,7 @@ public class HomeListListener implements Listener {
                 try {
                     functionType = FunctionType.valueOf(type.toUpperCase());
                 } catch (Exception e) {
-                    Ari.logger.log(Level.FINE, "Function type error", e);
+                    Log.debug(Level.INFO, "Function type error", e);
                     return;
                 }
                 switch (functionType) {

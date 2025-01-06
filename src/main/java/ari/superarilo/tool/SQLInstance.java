@@ -21,8 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
-import static ari.superarilo.Ari.logger;
-
 public class SQLInstance {
     private final Ari instance;
     private final FileConfiguration config;
@@ -36,14 +34,14 @@ public class SQLInstance {
     }
 
     private void start() {
-        logger.log(Level.INFO, "Start connecting");
+        Log.debug(Level.INFO, "Start connecting");
         try {
             sqlType = SQLType.valueOf(config.getString("data.storage-type", "null").toUpperCase());
         } catch (Exception e) {
             this.instance.getLogger().log(Level.WARNING, "storage-type is null, Running sqlite mode");
             sqlType = SQLType.SQLITE;
         }
-        logger.log(Level.INFO, "The database type is " + sqlType.getType());
+        Log.debug(Level.INFO, "The database type is " + sqlType.getType());
         switch (sqlType) {
             case MYSQL:
                 this.createMysql();
@@ -57,20 +55,20 @@ public class SQLInstance {
             Connection connection = sqlSession.getConnection();
             try(Statement statement = connection.createStatement()) {
                 for (CreateTableSql tableSql : CreateTableSql.values()) {
-                    logger.log(Level.FINE, "creating table " + tableSql.getTableName());
+                    Log.debug(Level.INFO, "creating table " + tableSql.getTableName());
                     statement.execute(tableSql.getSql());
-                    logger.log(Level.FINE, "created table " + tableSql.getTableName());
+                    Log.debug(Level.INFO, "created table " + tableSql.getTableName());
                 }
             } catch (SQLException e) {
-                logger.log(Level.SEVERE, "create table error", e);
+                Log.debug(Level.SEVERE, "create table error", e);
             }
         }
 
     }
     public void reconnect() {
-        logger.log(Level.INFO, "Connection is closing...");
+        Log.debug(Level.INFO, "Connection is closing...");
         sessionFactory = null;
-        logger.log(Level.INFO, "Connection closed successfully");
+        Log.debug(Level.INFO, "Connection closed successfully");
         this.start();
     }
     protected void createMysql() {

@@ -71,11 +71,11 @@ public class TeleportThread {
                 return;
             }
             timerIndex[0]--;
-            Ari.logger.log(Level.FINE, "start time: " + timerIndex[0] + "s");
+            Log.debug(Level.INFO, "start time: " + timerIndex[0] + "s");
             //传送时间到达
             if (timerIndex[0] == 0) {
                 t.cancel();
-                Ari.logger.log(Level.FINE, "传送执行");
+                Log.debug(Level.INFO, "传送执行");
                 switch (this.type) {
                     case POINT:
                         Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {

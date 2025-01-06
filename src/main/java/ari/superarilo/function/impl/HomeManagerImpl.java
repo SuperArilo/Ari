@@ -5,6 +5,7 @@ import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.HomeManager;
 import ari.superarilo.mapper.PlayerHomeMapper;
+import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TextTool;
 import org.apache.ibatis.session.SqlSession;
@@ -39,10 +40,10 @@ public class HomeManagerImpl implements HomeManager {
             }
         });
         try {
-            Ari.logger.log(Level.FINE, "get home list time: " + (System.currentTimeMillis() - start) + "ms");
+            Log.debug(Level.INFO, "get home list time: " + (System.currentTimeMillis() - start) + "ms");
             return future.get();
         } catch (Exception e) {
-            Ari.logger.log(Level.FINE, "get home list error", e);
+            Log.debug(Level.INFO, "get home list error", e);
             return new ArrayList<>();
         }
     }
@@ -73,9 +74,9 @@ public class HomeManagerImpl implements HomeManager {
 
                 mapper.save(playerHome);
                 this.player.sendMessage(TextTool.setHEXColorText("command.sethome.success", FilePath.Lang, this.player));
-                Ari.logger.log(Level.FINE, "save home done. time: " + (System.currentTimeMillis() - start));
+                Log.debug(Level.INFO, "save home done. time: " + (System.currentTimeMillis() - start));
             } catch (Exception e) {
-                Ari.logger.log(Level.FINE, "create SqlSession error on get home lists", e);
+                Log.debug(Level.INFO, "create SqlSession error on get home lists", e);
             }
         });
     }

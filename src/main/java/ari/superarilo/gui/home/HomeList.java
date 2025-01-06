@@ -8,6 +8,7 @@ import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.function.HomeManager;
 import ari.superarilo.gui.InitGui;
+import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -41,7 +42,7 @@ public class HomeList extends InitGui {
             this.renderMasks(this.gui.getMask());
             this.renderFunctionItems(this.gui.getFunctionItems());
         });
-        Ari.logger.log(Level.FINE, "start render home list");
+        Log.debug(Level.INFO, "start render home list");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataSlot();
         List<PlayerHome> playerHomes = HomeManager.create(this.player).asyncGetHomeList();
@@ -60,7 +61,7 @@ public class HomeList extends InitGui {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-        Ari.logger.log(Level.FINE, "render time: " + (System.currentTimeMillis() - start) + "ms");
+        Log.debug(Level.INFO, "render time: " + (System.currentTimeMillis() - start) + "ms");
     }
 
 }

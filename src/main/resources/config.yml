@@ -5,11 +5,11 @@ data:
   # mysql, sqlite
   storage-type: mysql
   # mysql 才有效
-  address: asuka.superarilo.icu
+  address: localhost
   port: 3306
   database: ari
   username: root
-  password: LmUZceL5tU9CdEp1
+  password: 123456
   maximum-pool-size: 10
   minimum-idle: 10
   maximum-lifetime: 1800000

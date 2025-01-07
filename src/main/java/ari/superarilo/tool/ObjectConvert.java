@@ -1,27 +1,19 @@
 package ari.superarilo.tool;
 
-import com.google.gson.Gson;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
 
 public class ObjectConvert {
-    private final Yaml yaml;
-    private final Gson gson = new Gson();
-
+    private final LoaderOptions loaderOptions = new LoaderOptions();
     public ObjectConvert() {
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setAllowRecursiveKeys(true);
-        loaderOptions.setAllowDuplicateKeys(false);
-        this.yaml = new Yaml(loaderOptions);
+        this.loaderOptions.setAllowRecursiveKeys(true);
+        this.loaderOptions.setAllowDuplicateKeys(false);
     }
 
-    public <T> T convert(Object raw, Class<T> clazz) {
-        return this.gson.fromJson(this.gson.toJsonTree(raw), clazz);
-    }
     public <T> T yamlConvertToObj(String raw, Class<T> clazz) {
         try {
-            Object yamlData = this.yaml.load(raw);
-            return this.gson.fromJson(this.gson.toJsonTree(yamlData), clazz);
+            return new Yaml(new Constructor(clazz, this.loaderOptions)).load(raw);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to convert YAML to object: " + e.getMessage(), e);
         }

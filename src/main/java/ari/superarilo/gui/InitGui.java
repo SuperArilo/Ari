@@ -21,6 +21,7 @@ public class InitGui {
 
     protected final Player player;
     protected Inventory inventory;
+
     public InitGui(Player player) {
         this.player = player;
     }

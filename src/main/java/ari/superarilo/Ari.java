@@ -73,7 +73,7 @@ public class Ari extends JavaPlugin {
         return configFiles;
     }
 
-    public ObjectConvert getGsonConvert() {
+    public ObjectConvert getConvert() {
         return objectConvert;
     }
 

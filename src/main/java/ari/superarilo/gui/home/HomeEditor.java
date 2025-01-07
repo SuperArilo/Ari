@@ -21,7 +21,7 @@ public class HomeEditor extends InitGui {
         super(player);
         this.instance = instance;
         this.currentHome = playerHome;
-        this.gui = instance.getGsonConvert().yamlConvertToObj(this.instance.getConfigFiles().getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
+        this.gui = instance.getConvert().yamlConvertToObj(this.instance.getConfigFiles().getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.EDITHOME, "EditorHomeGui"), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 

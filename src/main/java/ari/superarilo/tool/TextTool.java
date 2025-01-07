@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,8 +25,8 @@ public class TextTool {
     public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
         String content = Ari.instance.getConfigFiles().getValue(path, filePath, String.class);
         if (content == null) {
-            Ari.logger.log(Level.SEVERE, path + " path does not exist in the " + filePath.getName() + " file");
-            Ari.logger.log(Level.SEVERE, filePath.getName() + " path: " + filePath.getPath());
+            Log.error(path + " path does not exist in the " + filePath.getName() + " file");
+            Log.error(filePath.getName() + " path: " + filePath.getPath());
             return Component.text("Warning: content is null, see in the console");
         }
         return renderComponent(content, player);
@@ -35,16 +34,18 @@ public class TextTool {
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
         String content = Ari.instance.getConfigFiles().getValue(path, filePath, String.class);
         if (content == null) {
-            Ari.logger.log(Level.SEVERE, path + " path does not exist in the " + filePath.getName() + " file");
-            Ari.logger.log(Level.SEVERE, filePath.getName() + " path: " + filePath.getPath());
+            Log.error(path + " path does not exist in the " + filePath.getName() + " file");
+            Log.error(filePath.getName() + " path: " + filePath.getPath());
             return Component.text("Warning: content is null, see in the console");
         }
         return renderComponent(content, null);
     }
     public static TextComponent setHEXColorText(String content, Player player) {
+        if(content == null) return Component.text("");
         return renderComponent(content, player);
     }
     public static TextComponent setHEXColorText(String content) {
+        if(content == null) return Component.text("");
         return renderComponent(content, null);
     }
     @NotNull
@@ -75,8 +76,6 @@ public class TextTool {
             return Component.text(ChatColor.translateAlternateColorCodes('&', content));
         }
     }
-
-
 
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
         return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));

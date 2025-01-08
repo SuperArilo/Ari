@@ -22,14 +22,12 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SQLInstance {
-    private final Ari instance;
     private final FileConfiguration config;
     private SQLType sqlType;
     public static SqlSessionFactory sessionFactory;
 
-    public SQLInstance(Ari instance)  {
-        this.instance = instance;
-        this.config = instance.getConfig();
+    public SQLInstance()  {
+        this.config = Ari.instance.getConfig();
         this.start();
     }
 
@@ -38,7 +36,7 @@ public class SQLInstance {
         try {
             sqlType = SQLType.valueOf(config.getString("data.storage-type", "null").toUpperCase());
         } catch (Exception e) {
-            this.instance.getLogger().log(Level.WARNING, "storage-type is null, Running sqlite mode");
+            Log.warning("storage-type is null, Running sqlite mode");
             sqlType = SQLType.SQLITE;
         }
         Log.debug(Level.INFO, "The database type is " + sqlType.getType());
@@ -86,7 +84,7 @@ public class SQLInstance {
     protected void createSQLite() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
-        hikariDataSource.setJdbcUrl("jdbc:sqlite:" + this.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
+        hikariDataSource.setJdbcUrl("jdbc:sqlite:" + Ari.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
         setSessionFactory(hikariDataSource);
     }
     protected List<Class<?>> getMapperClasses() {

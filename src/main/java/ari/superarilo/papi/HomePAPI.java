@@ -8,10 +8,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class HomePAPI extends PlaceholderExpansion {
 
-    private final Ari instance;
 
-    public HomePAPI(Ari instance) {
-        this.instance = instance;
+    public HomePAPI() {
     }
 
     @Override

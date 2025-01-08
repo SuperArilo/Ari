@@ -5,6 +5,7 @@ import ari.superarilo.entity.menu.FunctionItem;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -17,15 +18,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class InitGui {
+public abstract class BaseGui {
 
     protected final Player player;
     protected Inventory inventory;
 
-    public InitGui(Player player) {
+    public BaseGui(Player player) {
         this.player = player;
     }
     public void open() {
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, e -> {
+           this.renderMasks(this.getMask());
+           this.renderFunctionItems(this.getFunctionItems());
+        });
         this.player.openInventory(this.inventory);
     }
 
@@ -85,4 +90,6 @@ public class InitGui {
             }
         });
     }
+    protected abstract Mask getMask();
+    protected abstract Map<String, FunctionItem> getFunctionItems();
 }

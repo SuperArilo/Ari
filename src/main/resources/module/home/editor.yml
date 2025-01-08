@@ -7,11 +7,11 @@ mask:
 functionItems:
   back:
     name: '返回'
-    type: BACK
+    type: REBACK
     material: redstone
     slot: [40]
     lore:
-      - '&6点击返回或者关闭'
+      - '&6点击返回到家列表'
   icon:
     name: '当前图标'
     type: ICON
@@ -20,12 +20,17 @@ functionItems:
     lore:
       - '&6拖拽其他方块替换图标'
   location:
-    name: '当前位置'
     type: LOCATION
     material: compass
     slot: [20]
     lore:
       - '&2左击: &6设置为当前位置'
+  rename:
+    type: RENAME
+    material: name_tag
+    slot: [24]
+    lore:
+      - '&2左击: &6重新设置显示名称'
   delete:
     name: '&c删除家'
     type: DELETE

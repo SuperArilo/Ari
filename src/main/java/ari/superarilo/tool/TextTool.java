@@ -22,6 +22,13 @@ public class TextTool {
 
     private static final Pattern TAG_PATTERN = Pattern.compile("<#\\w+>.*?</#\\w+>");
 
+    /**
+     * 设置彩色文本格式
+     * @param path 内容在yaml的路径
+     * @param filePath yaml文件路径
+     * @param player 需要PAPI变量时的玩家对象
+     * @return 返回彩色文本
+     */
     public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
         String content = Ari.instance.configManager.getValue(path, filePath, String.class);
         if (content == null) {
@@ -31,6 +38,13 @@ public class TextTool {
         }
         return renderComponent(content, player);
     }
+
+    /**
+     * 设置彩色文本格式
+     * @param path 内容在yaml的路径
+     * @param filePath yaml文件路径
+     * @return 返回彩色文本
+     */
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
         String content = Ari.instance.configManager.getValue(path, filePath, String.class);
         if (content == null) {
@@ -40,13 +54,29 @@ public class TextTool {
         }
         return renderComponent(content, null);
     }
+
+    /**
+     * 设置彩色文本格式
+     * @param content 被设置的内容
+     * @param player 需要PAPI变量时的玩家对象
+     * @return 返回彩色文本
+     */
     public static TextComponent setHEXColorText(String content, Player player) {
         if(content == null) return returnNoContentText();
         return renderComponent(content, player);
     }
+
+    /**
+     * 设置彩色文本格式
+     * @param content 被设置的内容
+     * @return 返回彩色文本
+     */
     public static TextComponent setHEXColorText(String content) {
         if(content == null) return returnNoContentText();
         return renderComponent(content, null);
+    }
+    public static String XYZText(Double x, Double y, Double z) {
+        return "&2x: &6" + x + " &2y: &6" + y + " &2z: &6" + z;
     }
     @NotNull
     protected static TextComponent renderComponent(String content, Player player) {

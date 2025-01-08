@@ -5,6 +5,7 @@ import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FunctionType;
+import ari.superarilo.enumType.GuiType;
 import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.Log;
@@ -19,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -29,7 +31,8 @@ public class HomeListListener implements Listener {
     @EventHandler
     public void HomeListClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
-        if (inventory.getHolder() instanceof CustomInventoryHolder holder) {
+        CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
+        if (holder.getType().equals(GuiType.HOMELIST)) {
             event.setCancelled(true);
             if (event.getSlot() > inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
@@ -55,13 +58,11 @@ public class HomeListListener implements Listener {
                 PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
                 ClickType click = event.getClick();
                 if (click.equals(ClickType.LEFT)) {
-                    inventory.close();
                     new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
                 } else if (click.equals(ClickType.RIGHT)) {
-                    inventory.close();
                     new HomeEditor(home,(Player) event.getWhoClicked()).open();
-                    sqlSession.close();
                 }
+                inventory.close();
             }
         }
     }

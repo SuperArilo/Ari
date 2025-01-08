@@ -1,6 +1,5 @@
 package ari.superarilo.papi;
 
-import ari.superarilo.Ari;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

@@ -23,29 +23,29 @@ public class TextTool {
     private static final Pattern TAG_PATTERN = Pattern.compile("<#\\w+>.*?</#\\w+>");
 
     public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
-        String content = Ari.instance.getConfigFiles().getValue(path, filePath, String.class);
+        String content = Ari.instance.configManager.getValue(path, filePath, String.class);
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
-            return Component.text("Warning: content is null, see in the console");
+            return returnNoContentText();
         }
         return renderComponent(content, player);
     }
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
-        String content = Ari.instance.getConfigFiles().getValue(path, filePath, String.class);
+        String content = Ari.instance.configManager.getValue(path, filePath, String.class);
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
-            return Component.text("Warning: content is null, see in the console");
+            return returnNoContentText();
         }
         return renderComponent(content, null);
     }
     public static TextComponent setHEXColorText(String content, Player player) {
-        if(content == null) return Component.text("");
+        if(content == null) return returnNoContentText();
         return renderComponent(content, player);
     }
     public static TextComponent setHEXColorText(String content) {
-        if(content == null) return Component.text("");
+        if(content == null) return returnNoContentText();
         return renderComponent(content, null);
     }
     @NotNull
@@ -141,6 +141,13 @@ public class TextTool {
         int g = (int) ((start >> 8 & 0xFF) * (1 - ratio) + (end >> 8 & 0xFF) * ratio);
         int b = (int) ((start & 0xFF) * (1 - ratio) + (end & 0xFF) * ratio);
         return (r << 16) | (g << 8) | b;
+    }
+
+    /**
+     * 当出错时候返回到客户端的文本
+     */
+    protected static TextComponent returnNoContentText() {
+        return Component.text("Warning: content is null, see in the console");
     }
 
 }

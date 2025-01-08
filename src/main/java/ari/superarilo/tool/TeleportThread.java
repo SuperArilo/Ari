@@ -11,9 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class TeleportThread {
-
-    private final ConfigFiles config = Ari.instance.getConfigFiles();
-
     private final Type type;
     private final Player player;
     private Player targetPlayer;
@@ -25,9 +22,15 @@ public class TeleportThread {
         PLAYER,
         BACK,
         DBACK,
-        RANDOM;
+        RANDOM
     }
 
+    /**
+     * 玩家定点传送
+     * @param player 被传送的玩家
+     * @param targetLocation 目标位置
+     * @param type 传送类型
+     */
     //定点传送
     public TeleportThread(Player player, Location targetLocation, Type type){
         this.player = player;
@@ -37,6 +40,12 @@ public class TeleportThread {
         this.initialHealth = player.getHealth();
     }
 
+    /**
+     * 玩家之间的传送
+     * @param player 被传送玩家
+     * @param targetPlayer 目标玩家
+     * @param type 传送类型
+     */
     //玩家之间传送
     public TeleportThread(Player player, Player targetPlayer, Type type){
         this.player = player;
@@ -47,7 +56,9 @@ public class TeleportThread {
         this.initialHealth = player.getHealth();
     }
 
-    //开始传送
+    /**
+     * 开始传送
+     */
     public void teleport() {
         //设置传送冷却时间
         final int[] timerIndex;
@@ -55,7 +66,7 @@ public class TeleportThread {
             timerIndex = new int[]{1};
         } else {
             timerIndex = new int[]{Ari.instance.getConfig().getInt("Teleport.delay", 1)};
-            this.player.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.ing", FilePath.Lang, String.class)));
+            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.ing", FilePath.Lang, String.class)));
         }
         Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
             //在任务里获取现在玩家的状态
@@ -67,7 +78,7 @@ public class TeleportThread {
             //判断玩家是否在传送过程中移动或者受伤
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
-                threadPlayer.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.break", FilePath.Lang, String.class)));
+                threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.break", FilePath.Lang, String.class)));
                 return;
             }
             timerIndex[0]--;
@@ -81,14 +92,14 @@ public class TeleportThread {
                         Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {
                            threadPlayer.teleportAsync(this.targetLocation);
                            threadPlayer.playEffect(this.targetLocation, Effect.ANVIL_BREAK, null);
-                           threadPlayer.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.success", FilePath.Lang, String.class)));
+                           threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                         });
                         break;
                     case PLAYER:
                         Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
                             threadPlayer.teleportAsync(this.targetPlayer.getLocation());
                             threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
-                            threadPlayer.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.success", FilePath.Lang, String.class)));
+                            threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                         });
                         break;
                     case BACK:
@@ -100,17 +111,26 @@ public class TeleportThread {
         }, 0, 1L, TimeUnit.SECONDS);
     }
 
-    //设置之前存在的位置
+    /**
+     * 设置之前传送存在的位置
+     * @param location 位置
+     */
     private void setBeforeLocation(Location location) {
 
     }
 
-    //检查是否受伤
+    /**
+     * 检查是否受伤
+     * @param p 被检查的玩家
+     */
     private boolean hasLostHealth(Player p) {
         return p.getHealth() < initialHealth;
     }
 
-    //检查是否移动
+    /**
+     * 检查是否移动
+     * @param p 被检查的玩家
+     */
     private boolean hasMoved(Player p) {
         Location currentLocation = p.getLocation();
         return makePositive(initialLocation.getX() - currentLocation.getX()) + makePositive(initialLocation.getY() - currentLocation.getY()) + makePositive(initialLocation.getZ() - currentLocation.getZ()) > 0.1;

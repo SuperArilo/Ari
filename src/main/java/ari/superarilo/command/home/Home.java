@@ -1,6 +1,5 @@
 package ari.superarilo.command.home;
 
-import ari.superarilo.Ari;
 import ari.superarilo.command.tool.CommandCheck;
 import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
@@ -20,7 +19,7 @@ public class Home implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create();
         if (!check.isTheInstructionCorrect(command, AriCommand.HOME)) return false;
         if (check.allCheck(commandSender, command, AriCommand.HOME)) {
-            new HomeList(Ari.instance, (Player) commandSender).open();
+            new HomeList((Player) commandSender).open();
         }
 
         return true;

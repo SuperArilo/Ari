@@ -3,7 +3,7 @@ Teleport:
   delay: 3
 data:
   # mysql, sqlite
-  storage-type: mysql
+  storage-type: sqlite
   # mysql 才有效
   address: localhost
   port: 3306

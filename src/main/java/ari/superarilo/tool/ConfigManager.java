@@ -9,12 +9,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class ConfigFiles {
+public class ConfigManager {
 
     private Map<String, YamlConfiguration> configs = new ConcurrentHashMap<>();
     private final JavaPlugin instance;
 
-    public ConfigFiles(JavaPlugin instance) {
+    public ConfigManager(JavaPlugin instance) {
         this.instance = instance;
         this.reloadAllConfig();
     }

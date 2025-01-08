@@ -50,7 +50,6 @@ public class HomeManagerImpl implements HomeManager {
 
     @Override
     public void createNewHome(String homeId) {
-
         Material material = location.getBlock().getRelative(BlockFace.DOWN).getType();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             long start = System.currentTimeMillis();
@@ -65,12 +64,11 @@ public class HomeManagerImpl implements HomeManager {
                 playerHome.setHomeId(homeId);
                 playerHome.setHomeName(homeId);
                 playerHome.setPlayerUUID(player.getUniqueId().toString());
-                playerHome.setX(location.getX());
-                playerHome.setY(location.getY());
-                playerHome.setZ(location.getZ());
+                playerHome.setX(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getX())));
+                playerHome.setY(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getY())));
+                playerHome.setZ(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getZ())));
                 playerHome.setWorld(player.getWorld().getName());
                 playerHome.setShowMaterial(material.name());
-
 
                 mapper.save(playerHome);
                 this.player.sendMessage(TextTool.setHEXColorText("command.sethome.success", FilePath.Lang, this.player));

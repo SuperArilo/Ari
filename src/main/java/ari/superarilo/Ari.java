@@ -10,24 +10,24 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
-
 public class Ari extends JavaPlugin {
 
     public static Ari instance;
     public static Boolean debug;
-    private TpStatusValue tpStatusValue;
-    private ConfigFiles configFiles;
-    private ObjectConvert objectConvert;
+    public TpStatusValue tpStatusValue;
 
-    private SQLInstance SQLInstance;
+    public ConfigManager configManager;
+    public ObjectConvert objectConvert;
+    public SQLInstance SQLInstance;
+    public NumberFormatUtil numberFormatUtil;
 
     @Override
     public void onLoad() {
         instance = this;
         Log.setLogger(this.getLogger());
         debug = this.getConfig().getBoolean("debug.enable", false);
-        this.configFiles = new ConfigFiles(this);
+        this.numberFormatUtil = new NumberFormatUtil();
+        this.configManager = new ConfigManager(this);
         this.objectConvert = new ObjectConvert();
     }
 
@@ -63,21 +63,5 @@ public class Ari extends JavaPlugin {
     protected void registerListener() {
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new HomeListListener(), this);
-    }
-
-    public TpStatusValue getTpStatusValue() {
-        return tpStatusValue;
-    }
-
-    public ConfigFiles getConfigFiles() {
-        return configFiles;
-    }
-
-    public ObjectConvert getConvert() {
-        return objectConvert;
-    }
-
-    public SQLInstance getSQLInstance() {
-        return SQLInstance;
     }
 }

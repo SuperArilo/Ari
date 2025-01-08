@@ -7,7 +7,6 @@ import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.TeleportPrecondition;
-import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Server;
@@ -22,9 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TpaRefuse implements TabExecutor {
-
-    private final ConfigFiles config = Ari.instance.getConfigFiles();
-
+    
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         CommandCheckImpl check = CommandCheck.create();
@@ -32,26 +29,26 @@ public class TpaRefuse implements TabExecutor {
         if (check.allCheck(commandSender, command, AriCommand.TPAREFUSE)) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;
             }
 
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
                 return true;
             }
 
             TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
             if (status == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.been-done", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.been-done", FilePath.Lang, String.class)));
                 return true;
             } else {
-                if (Ari.instance.getTpStatusValue().getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
-                    player.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
+                if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
+                    player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
                 } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("teleport.break", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.break", FilePath.Lang, String.class)));
                 }
             }
         }
@@ -64,7 +61,7 @@ public class TpaRefuse implements TabExecutor {
         if(commandSender instanceof Player && commandSender.hasPermission(AriCommand.TPAREFUSE.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
-            Ari.instance.getTpStatusValue().getStatusList().stream().filter(obj ->
+            Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
                     obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))
                     .forEach(e -> {
                         Player p = server.getPlayer(e.getPlayUUID());

@@ -81,17 +81,13 @@ public class SQLInstance {
         hikariDataSource.setMinimumIdle(config.getInt("data.minimum-idle"));
         hikariDataSource.setMaxLifetime(config.getInt("data.connection-timeout"));
         hikariDataSource.setKeepaliveTime(config.getLong("data.keepalive-time"));
-        Configuration configuration = new Configuration(new Environment("development", new JdbcTransactionFactory(), hikariDataSource));
-        this.getMapperClasses().forEach(configuration::addMapper);
-        configuration.addMappers("ari.superarilo.mapper");
-
-        sessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+        setSessionFactory(hikariDataSource);
     }
     protected void createSQLite() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
         hikariDataSource.setJdbcUrl("jdbc:sqlite:" + this.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
-        sessionFactory = new SqlSessionFactoryBuilder().build(new Configuration(new Environment("development", new JdbcTransactionFactory(), hikariDataSource)));
+        setSessionFactory(hikariDataSource);
     }
     protected List<Class<?>> getMapperClasses() {
         List<Class<?>> classList = new ArrayList<>();
@@ -99,5 +95,11 @@ public class SQLInstance {
             classList.add(mapperList.getClazz());
         }
         return classList;
+    }
+    protected void setSessionFactory(HikariDataSource dataSource) {
+        Configuration configuration = new Configuration(new Environment("development", new JdbcTransactionFactory(), dataSource));
+        this.getMapperClasses().forEach(configuration::addMapper);
+        configuration.addMappers("ari.superarilo.mapper");
+        sessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }

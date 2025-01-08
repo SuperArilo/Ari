@@ -6,7 +6,6 @@ import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.HomeManager;
-import ari.superarilo.tool.ConfigFiles;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,15 +18,13 @@ import java.util.List;
 
 public class SetHome implements TabExecutor {
 
-    private final ConfigFiles config = Ari.instance.getConfigFiles();
-
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         CommandCheckImpl check = CommandCheck.create();
         if (!check.isTheInstructionCorrect(command, AriCommand.SETHOME)) return false;
         if (check.allCheck(commandSender, command, AriCommand.SETHOME)) {
             if (strings.length != 1) {
-                commandSender.sendMessage(TextTool.setHEXColorText(this.config.getValue("command.tpa.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;
             }
             HomeManager.create((Player) commandSender).createNewHome(strings[0]);

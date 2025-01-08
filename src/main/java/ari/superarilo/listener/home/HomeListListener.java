@@ -59,7 +59,7 @@ public class HomeListListener implements Listener {
                     new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
                 } else if (click.equals(ClickType.RIGHT)) {
                     inventory.close();
-                    new HomeEditor(Ari.instance, home,(Player) event.getWhoClicked()).open();
+                    new HomeEditor(home,(Player) event.getWhoClicked()).open();
                     sqlSession.close();
                 }
             }

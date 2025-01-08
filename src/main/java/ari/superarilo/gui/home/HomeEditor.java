@@ -13,15 +13,13 @@ import org.bukkit.entity.Player;
 
 public class HomeEditor extends InitGui {
 
-    private final Ari instance;
     private final HomeEditorGUI gui;
     private final PlayerHome currentHome;
 
-    public HomeEditor(Ari instance, PlayerHome playerHome,Player player) {
+    public HomeEditor( PlayerHome playerHome,Player player) {
         super(player);
-        this.instance = instance;
         this.currentHome = playerHome;
-        this.gui = instance.getConvert().yamlConvertToObj(this.instance.getConfigFiles().getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
+        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.EDITHOME, "EditorHomeGui"), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 

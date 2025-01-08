@@ -1,6 +1,5 @@
 package ari.superarilo.function;
 
-import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.function.impl.TeleportPreconditionImpl;
@@ -12,6 +11,6 @@ public interface TeleportPrecondition {
     TeleportStatus preCheckStatus(Player sender, Location targetLocation);
     TeleportStatus checkStatusV(Player sender, Player targetPlayer);
     static TeleportPrecondition create() {
-        return new TeleportPreconditionImpl(Ari.instance);
+        return new TeleportPreconditionImpl();
     }
 }

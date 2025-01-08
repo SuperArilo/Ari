@@ -8,7 +8,6 @@ import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.mapper.PlayerHomeMapper;
-import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;
 import ari.superarilo.tool.TeleportThread;
 import org.apache.ibatis.session.SqlSession;
@@ -20,37 +19,28 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.logging.Level;
-
 
 public class HomeListListener implements Listener {
     @EventHandler
     public void HomeListClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
         CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
+        if(holder == null) return;
         if (holder.getType().equals(GuiType.HOMELIST)) {
             event.setCancelled(true);
             if (event.getSlot() > inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
-            String type = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING);
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             if (type != null) {
-                FunctionType functionType;
-                try {
-                    functionType = FunctionType.valueOf(type.toUpperCase());
-                } catch (Exception e) {
-                    Log.debug(Level.INFO, "Function type error", e);
-                    return;
-                }
-                switch (functionType) {
+                switch (type) {
                     case BACK:
                         inventory.close();
                         break;
                 }
+                return;
             }
             String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
             if (homeId == null) return;

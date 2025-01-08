@@ -1,8 +1,11 @@
 package ari.superarilo.tool;
 
+import ari.superarilo.enumType.FunctionType;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+
+import java.util.logging.Level;
 
 public class ObjectConvert {
     private final LoaderOptions loaderOptions = new LoaderOptions();
@@ -16,6 +19,17 @@ public class ObjectConvert {
             return new Yaml(new Constructor(clazz, this.loaderOptions)).load(raw);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to convert YAML to object: " + e.getMessage(), e);
+        }
+    }
+    public FunctionType ItemNBT_TypeCheck(String rawType) {
+        if(rawType == null) return null;
+        FunctionType type;
+        try {
+            type = FunctionType.valueOf(rawType.toUpperCase());
+            return type;
+        } catch (Exception e) {
+            Log.debug(Level.INFO, "Function type error", e);
+            return null;
         }
     }
 }

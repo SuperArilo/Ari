@@ -2,6 +2,7 @@ package ari.superarilo;
 
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;
 import ari.superarilo.tool.*;
@@ -59,5 +60,6 @@ public class Ari extends JavaPlugin {
     protected void registerListener() {
         PluginManager pluginManager = this.getServer().getPluginManager();
         pluginManager.registerEvents(new HomeListListener(), this);
+        pluginManager.registerEvents(new EditHomeListener(), this);
     }
 }

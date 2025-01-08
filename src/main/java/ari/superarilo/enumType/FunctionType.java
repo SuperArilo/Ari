@@ -2,6 +2,7 @@ package ari.superarilo.enumType;
 
 public enum FunctionType {
     BACK("返回"),
+    REBACK("返回"),
     ICON("图标"),
     LOCATION("位置"),
     RENAME("重命名"),

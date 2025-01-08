@@ -25,9 +25,8 @@ public class Ari extends JavaPlugin {
     public void onLoad() {
         instance = this;
         Log.setLogger(this.getLogger());
-        debug = this.getConfig().getBoolean("debug.enable", false);
+        this.configManager = new ConfigManager();
         this.numberFormatUtil = new NumberFormatUtil();
-        this.configManager = new ConfigManager(this);
         this.objectConvert = new ObjectConvert();
     }
 
@@ -37,14 +36,11 @@ public class Ari extends JavaPlugin {
         this.registerListener();
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new HomePAPI(this).register();
+            new HomePAPI().register();
         }
         //sql
-        this.SQLInstance = new SQLInstance(this);
-
-
+        this.SQLInstance = new SQLInstance();
         this.tpStatusValue = new TpStatusValue();
-
     }
     @Override
     public void onDisable() {

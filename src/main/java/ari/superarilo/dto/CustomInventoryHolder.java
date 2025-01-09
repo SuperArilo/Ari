@@ -9,9 +9,9 @@ import org.jetbrains.annotations.NotNull;
 public class CustomInventoryHolder implements InventoryHolder {
     private final Player player;
     private final GuiType type;
-    private final String meta;
+    private final Object meta;
 
-    public CustomInventoryHolder(Player player, GuiType type, String meta) {
+    public CustomInventoryHolder(Player player, GuiType type, Object meta) {
         this.player = player;
         this.type = type;
         this.meta = meta;
@@ -30,7 +30,7 @@ public class CustomInventoryHolder implements InventoryHolder {
         return this.player.getOpenInventory().getTopInventory();
     }
 
-    public String getMeta() {
+    public Object getMeta() {
         return meta;
     }
 }

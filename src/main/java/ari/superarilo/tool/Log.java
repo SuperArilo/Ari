@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class Log {
     private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();
-
+    private static final String st = "[DEBUG] ";
     public static void info(String s) {
         getLogger().info(s);
     }
@@ -23,12 +23,17 @@ public class Log {
     }
     public static void debug(Level level, String s) {
         if(Ari.debug) {
-            getLogger().log(level, "[DEBUG] " + s);
+            getLogger().log(level, st + s);
         }
     }
-    public static void debug( Level level, String s, Throwable throwable) {
+    public static void debug(Level level, String s, Throwable throwable) {
         if(Ari.debug) {
-            getLogger().log(level,"[DEBUG] " + s, throwable);
+            getLogger().log(level,st + s, throwable);
+        }
+    }
+    public static void debug(String s) {
+        if(Ari.debug) {
+            getLogger().log(Level.INFO, st + s);
         }
     }
     public static void setLogger(Logger logger) {

@@ -3,6 +3,7 @@ package ari.superarilo.gui;
 import ari.superarilo.Ari;
 import ari.superarilo.entity.menu.FunctionItem;
 import ari.superarilo.entity.menu.Mask;
+import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -65,17 +66,16 @@ public abstract class BaseGui {
         return result;
     }
     protected void renderMasks(Mask mask) {
-        this.player.getScheduler().run(Ari.instance, o -> {
-            List<TextComponent> collect = mask.getLore().stream().map(i -> TextTool.setHEXColorText(i, this.player)).toList();
-            for (Integer i : mask.getSlot()) {
-                ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
-                ItemMeta itemMeta = itemStack.getItemMeta();
-                itemMeta.displayName(TextTool.setHEXColorText(mask.getName(), this.player));
-                itemMeta.lore(collect);
-                itemStack.setItemMeta(itemMeta);
-                this.inventory.setItem(i, itemStack);
-            }
-        }, () -> this.inventory.close());
+        List<TextComponent> collect = mask.getLore().stream().map(i -> TextTool.setHEXColorText(i, this.player)).toList();
+        for (Integer i : mask.getSlot()) {
+            ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.displayName(TextTool.setHEXColorText(mask.getName(), this.player));
+            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.ICON.name());
+            itemMeta.lore(collect);
+            itemStack.setItemMeta(itemMeta);
+            this.inventory.setItem(i, itemStack);
+        }
     }
     protected void renderFunctionItems(Map<String, FunctionItem> functionItemMap) {
         functionItemMap.forEach((k, v) -> {

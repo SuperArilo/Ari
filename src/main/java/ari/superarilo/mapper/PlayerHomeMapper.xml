@@ -34,4 +34,8 @@
         from player_home as ph
         where ph.home_id = #{home_id}
     </select>
+
+    <delete id="delete">
+        delete from player_home where home_id = #{home_id}
+    </delete>
 </mapper>

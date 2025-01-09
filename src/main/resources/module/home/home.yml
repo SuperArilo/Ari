@@ -12,9 +12,4 @@ functionItems:
     slot: [22]
     lore:
       - '&6点击返回或者关闭'
-dataItem:
-  homeItem:
-    lore:
-      - '&7左击: &6传送'
-      - '&7右击: &6编辑'
 dataSlot: [10,11,12,13,14,15,16]

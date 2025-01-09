@@ -1,6 +1,5 @@
 package ari.superarilo.listener.home;
 
-
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.PlayerHome;
@@ -25,34 +24,31 @@ import org.bukkit.persistence.PersistentDataType;
 public class HomeListListener implements Listener {
     @EventHandler
     public void HomeListClick(InventoryClickEvent event) {
-        Inventory inventory = event.getInventory();
-        CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
-        if(holder == null) return;
-        if (holder.getType().equals(GuiType.HOMELIST)) {
+        Inventory inventory = event.getView().getTopInventory();
+        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMELIST)) {
             event.setCancelled(true);
-            if (event.getSlot() > inventory.getSize()) return;
+            if(event.getSlot() > inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
-            if (type != null) {
-                switch (type) {
-                    case BACK:
+            if(type == null) return;
+            switch (type) {
+                case BACK:
+                    inventory.close();
+                    break;
+                case DATA:
+                    String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
+                    if (homeId == null) break;
+                    try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                        PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
+                        ClickType click = event.getClick();
+                        if (click.equals(ClickType.LEFT)) {
+                            new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
+                        } else if (click.equals(ClickType.RIGHT)) {
+                            new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                        }
                         inventory.close();
-                        break;
-                }
-                return;
-            }
-            String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
-            if (homeId == null) return;
-            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
-                ClickType click = event.getClick();
-                if (click.equals(ClickType.LEFT)) {
-                    new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
-                } else if (click.equals(ClickType.RIGHT)) {
-                    new HomeEditor(home,(Player) event.getWhoClicked()).open();
-                }
-                inventory.close();
+                    }
             }
         }
     }

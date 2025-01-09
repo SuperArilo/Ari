@@ -79,8 +79,16 @@ public class HomeManagerImpl implements HomeManager {
         });
     }
     @Override
-    public void deleteHome(String homeId) {
-
+    public Integer deleteHome(String homeId) {
+        long start = System.currentTimeMillis();
+        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+            Integer deleteStatus = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId);
+            Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
+            return deleteStatus;
+        } catch (Exception e) {
+            Log.error("remove home fail, id: " + homeId, e);
+            return null;
+        }
     }
 
     @Override

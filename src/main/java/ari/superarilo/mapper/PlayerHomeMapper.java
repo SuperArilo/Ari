@@ -12,4 +12,5 @@ public interface PlayerHomeMapper  {
     PlayerHome getHome(@Param("home_id") String homeId);
     boolean exist(@Param("home_id") String homeId);
     void save(@Param("playerhome") PlayerHome playerHome);
+    Integer delete(@Param("home_id") String homeId);
 }

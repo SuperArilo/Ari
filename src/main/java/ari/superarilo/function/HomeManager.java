@@ -23,7 +23,7 @@ public interface HomeManager {
      * 删除指定ID的家
      * @param homeId 指定homeId
      */
-    void deleteHome(String homeId);
+    Integer deleteHome(String homeId);
 
     /**
      * 修改家的信息

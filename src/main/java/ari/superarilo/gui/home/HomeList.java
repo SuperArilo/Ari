@@ -7,6 +7,7 @@ import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.entity.menu.home.HomeListGUI;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
+import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.function.HomeManager;
 import ari.superarilo.gui.BaseGui;
@@ -28,6 +29,7 @@ import java.util.logging.Level;
 
 public class HomeList extends BaseGui {
     private final HomeListGUI gui;
+    private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
 
     public HomeList(Player player) {
         super(player);
@@ -50,9 +52,10 @@ public class HomeList extends BaseGui {
             textComponents.add(TextTool.setHEXColorText("&2ID: " + "&6" + ph.getHomeId(), this.player));
             textComponents.add(TextTool.setHEXColorText(TextTool.XYZText(ph.getX(), ph.getY(), ph.getZ())));
             textComponents.add(TextTool.setHEXColorText("&2世界: " + "&6" + ph.getWorld(), this.player));
-            textComponents.addAll(this.gui.getDataItem().get("homeItem").getLore().stream().map(k -> TextTool.setHEXColorText(k, this.player)).toList());
+            textComponents.addAll(this.addLore.stream().map(k -> TextTool.setHEXColorText(k, this.player)).toList());
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());
+            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }

@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 public class HomeEditor extends BaseGui {
-
     private final HomeEditorGUI gui;
     private final PlayerHome currentHome;
 
@@ -24,7 +23,7 @@ public class HomeEditor extends BaseGui {
         super(player);
         this.currentHome = playerHome;
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.EDITHOME, "EditorHomeGui"), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.EDITHOME, this.currentHome), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 
     @Override

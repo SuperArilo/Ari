@@ -42,6 +42,7 @@ public class HomeEditor extends BaseGui {
         if (functionItems != null) {
             for (FunctionItem item : functionItems.values()) {
                 switch (item.getType()) {
+                    case ICON -> item.setMaterial(this.currentHome.getShowMaterial());
                     case RENAME -> item.setName(this.currentHome.getHomeName());
                     case LOCATION -> item.setName(TextTool.XYZText(this.currentHome.getX(), this.currentHome.getY(), this.currentHome.getZ()));
                 }

@@ -38,4 +38,9 @@
     <delete id="delete">
         delete from player_home where home_id = #{home_id}
     </delete>
+    <update id="update">
+        update player_home
+        set home_name = #{playerhome.homeName}, x = #{playerhome.x}, y = #{playerhome.y}, z = #{playerhome.z}, world = #{playerhome.world}, show_material = #{playerhome.showMaterial}
+        where home_id = #{playerhome.homeId}
+    </update>
 </mapper>

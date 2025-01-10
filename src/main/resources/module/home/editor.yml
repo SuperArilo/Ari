@@ -39,3 +39,8 @@ functionItems:
     lore:
       - '&5点击删除家'
       - '&c此操作不可逆'
+  save:
+      name: '&6保存修改'
+      type: SAVE
+      material: GREEN_CARPET
+      slot: [44]

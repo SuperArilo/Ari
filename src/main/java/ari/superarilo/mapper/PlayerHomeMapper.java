@@ -13,4 +13,5 @@ public interface PlayerHomeMapper  {
     boolean exist(@Param("home_id") String homeId);
     void save(@Param("playerhome") PlayerHome playerHome);
     Integer delete(@Param("home_id") String homeId);
+    Integer update(@Param("playerhome") PlayerHome playerHome);
 }

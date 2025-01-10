@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class HomeManagerImpl implements HomeManager {
@@ -93,6 +94,14 @@ public class HomeManagerImpl implements HomeManager {
 
     @Override
     public boolean modifyHome(PlayerHome modify) {
-        return false;
+        long start = System.currentTimeMillis();
+        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+            sqlSession.getMapper(PlayerHomeMapper.class).update(modify);
+            Log.debug("save time: " + (System.currentTimeMillis() - start) + "ms");
+            return true;
+        } catch (Exception e) {
+            Log.error("save home error", e);
+            return false;
+        }
     }
 }

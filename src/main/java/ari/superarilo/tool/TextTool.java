@@ -7,11 +7,13 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -75,8 +77,33 @@ public class TextTool {
         if(content == null) return returnNoContentText();
         return renderComponent(content, null);
     }
+
+    /**
+     * 返回 基础格式化的文本坐标
+     * @param x x轴
+     * @param y y轴
+     * @param z z轴
+     * @return 返回基础格式化的文本坐标
+     */
     public static String XYZText(Double x, Double y, Double z) {
         return "&2x: &6" + x + " &2y: &6" + y + " &2z: &6" + z;
+    }
+
+    /**
+     * 设置MC的全屏通知效果(Title
+     * @param title 显示的title文本
+     * @param subTitle 显示的副标题文本
+     * @param fadeIn 进入动画时间
+     * @param stay 停留时间
+     * @param fadeOut 退出动画时间
+     * @return 返沪一个为Player设置的Title对象
+     */
+    public static Title setPlayerTitle(@NotNull String title, @NotNull String subTitle, long fadeIn, long stay, long fadeOut) {
+        return Title.title(
+                setHEXColorText(title),
+                setHEXColorText(subTitle),
+                Title.Times.times(Duration.ofMillis(fadeIn), Duration.ofMillis(stay), Duration.ofMillis(fadeOut))
+        );
     }
     @NotNull
     protected static TextComponent renderComponent(String content, Player player) {

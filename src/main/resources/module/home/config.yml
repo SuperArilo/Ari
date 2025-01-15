@@ -1,0 +1,7 @@
+main:
+  enable: true
+  set-home:
+    quantity:
+      owner: -1
+      default: 5
+  edit-home:

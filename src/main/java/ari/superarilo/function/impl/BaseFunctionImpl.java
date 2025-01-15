@@ -1,0 +1,24 @@
+package ari.superarilo.function.impl;
+
+import ari.superarilo.function.BaseFunction;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+
+public class BaseFunctionImpl implements BaseFunction {
+    @Override
+    public Material checkIsItem(Material material) {
+        if(material.isItem() || material.equals(Material.WATER) || material.equals(Material.LAVA)) {
+            return Material.DIRT;
+        }
+        return material;
+    }
+
+    @Override
+    public ItemStack checkIsItemStack(ItemStack itemStack) {
+        if (itemStack.isEmpty()) {
+            itemStack = new ItemStack(Material.DIRT);
+            itemStack.setItemMeta(itemStack.getItemMeta());
+        }
+        return itemStack;
+    }
+}

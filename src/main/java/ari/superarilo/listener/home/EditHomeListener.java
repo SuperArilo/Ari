@@ -3,9 +3,11 @@ package ari.superarilo.listener.home;
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.function.HomeManager;
+import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
@@ -25,14 +27,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class EditHomeListener implements Listener {
+
+    private final List<CustomInventoryHolder> editStatus = new CopyOnWriteArrayList<>();
+
     @EventHandler
     public void editGuiClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         if(inventory == null || event.getSlot() > inventory.getSize()) return;
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.EDITHOME)) {
+            Player player = holder.getPlayer();
+            this.removeIfPlayInEditList(player);
             ItemStack clickItem = event.getCurrentItem();
 
             //当拖起物品点击的地方为null取消操作
@@ -43,7 +51,7 @@ public class EditHomeListener implements Listener {
             ItemMeta clickMeta = clickItem.getItemMeta();
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             event.setCancelled(true);
-            Player player = holder.getPlayer();
+
             PlayerHome home = (PlayerHome) holder.getMeta();
             HomeManager homeManager = HomeManager.create(player);
             switch (type) {
@@ -59,6 +67,16 @@ public class EditHomeListener implements Listener {
                 }
                 case RENAME -> {
                     Log.debug(clickItem.getType().name());
+                    Audience audience = Audience.audience(player);
+                    audience.showTitle(
+                            TextTool.setPlayerTitle(
+                                    Ari.instance.configManager.getValue("on-edit-home.rename.title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("on-edit-home.rename.sub-title", FilePath.Lang, String.class),
+                                    1000,
+                                    10000 ,
+                                    1000));
+                    inventory.close();
+                    this.editStatus.add(holder);
                     //rename home
                 }
                 case LOCATION -> {
@@ -104,6 +122,29 @@ public class EditHomeListener implements Listener {
     }
     @EventHandler
     public void getNeedEditHomeChat(AsyncChatEvent event) {
-
+        if (this.editStatus.isEmpty()) return;
+        event.setCancelled(true);
+        Player player = event.getPlayer();
+        Audience.audience(player).clearTitle();
+        String message = TextTool.componentToString(event.message());
+        if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
+            this.removeIfPlayInEditList(player);
+            player.sendMessage(TextTool.setHEXColorText("on-edit-home.rename.cancel", FilePath.Lang));
+            return;
+        }
+        // 使用 removeIf 删除满足条件的元素
+        this.editStatus.removeIf(i -> {
+            if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                Log.debug(event.getPlayer().getUniqueId() + " removed");
+                PlayerHome home = (PlayerHome) i.getMeta();
+                home.setHomeName(message);
+                new HomeEditor(home, player).open();
+                return true;
+            }
+            return false;
+        });
+    }
+    protected synchronized void removeIfPlayInEditList(Player player) {
+        this.editStatus.removeIf(e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()));
     }
 }

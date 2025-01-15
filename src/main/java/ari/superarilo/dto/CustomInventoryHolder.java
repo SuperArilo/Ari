@@ -27,7 +27,7 @@ public class CustomInventoryHolder implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        return this.player.getOpenInventory().getTopInventory();
+        return this.player.getInventory();
     }
 
     public Object getMeta() {

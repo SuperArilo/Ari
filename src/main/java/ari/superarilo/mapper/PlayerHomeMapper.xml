@@ -18,7 +18,7 @@
         where ph.player_uuid = #{playerUUID}
     </select>
 
-    <insert id="save">
+    <insert id="save" useGeneratedKeys="true" keyProperty="id">
         insert into player_home
         (home_id, home_name, player_uuid, x, y, z, world, show_material)
         values

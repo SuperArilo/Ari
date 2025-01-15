@@ -77,6 +77,9 @@ public class TextTool {
         if(content == null) return returnNoContentText();
         return renderComponent(content, null);
     }
+    public static TextComponent setNoColorText(String content) {
+        return Component.text(content);
+    }
 
     /**
      * 返回 基础格式化的文本坐标
@@ -90,12 +93,24 @@ public class TextTool {
     }
 
     /**
+     * 将 Component 转成 String
+     * @param component 被转对象
+     * @return 返回String
+     */
+    public static String componentToString(Component component) {
+        if(component instanceof TextComponent) {
+            return ((TextComponent) component).content();
+        }
+        return component.toString();
+    }
+
+    /**
      * 设置MC的全屏通知效果(Title
      * @param title 显示的title文本
      * @param subTitle 显示的副标题文本
-     * @param fadeIn 进入动画时间
-     * @param stay 停留时间
-     * @param fadeOut 退出动画时间
+     * @param fadeIn 进入动画时间 毫秒
+     * @param stay 停留时间 毫秒
+     * @param fadeOut 退出动画时间 毫秒
      * @return 返沪一个为Player设置的Title对象
      */
     public static Title setPlayerTitle(@NotNull String title, @NotNull String subTitle, long fadeIn, long stay, long fadeOut) {

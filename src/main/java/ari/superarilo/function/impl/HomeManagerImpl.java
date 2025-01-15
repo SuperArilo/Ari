@@ -18,10 +18,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public class HomeManagerImpl implements HomeManager {
+public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
 
     private final Player player;
     private final Location location;
@@ -51,11 +50,18 @@ public class HomeManagerImpl implements HomeManager {
 
     @Override
     public void createNewHome(String homeId) {
-        Material material = location.getBlock().getRelative(BlockFace.DOWN).getType();
+        Material material = this.checkIsItem(location.getBlock().getRelative(BlockFace.DOWN).getType());
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
+                int size = mapper.getHomeList(String.valueOf(this.player.getUniqueId())).size();
+                Integer value = Ari.instance.configManager.getValue("main.set-home.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
+                if(size >= value) {
+                    Log.debug("Exceeds the specified quantity");
+                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.exceeds", FilePath.Lang, String.class)));
+                    return;
+                }
                 if (mapper.exist(homeId)) {
                     this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exist", FilePath.Lang, this.player));
                     i.cancel();
@@ -75,7 +81,7 @@ public class HomeManagerImpl implements HomeManager {
                 this.player.sendMessage(TextTool.setHEXColorText("command.sethome.success", FilePath.Lang, this.player));
                 Log.debug(Level.INFO, "save home done. time: " + (System.currentTimeMillis() - start));
             } catch (Exception e) {
-                Log.debug(Level.INFO, "create SqlSession error on get home lists", e);
+                Log.error(e.getMessage());
             }
         });
     }

@@ -28,11 +28,11 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
+        Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> this.player.openInventory(this.inventory));
         Bukkit.getAsyncScheduler().runNow(Ari.instance, e -> {
            this.renderMasks(this.getMask());
            this.renderFunctionItems(this.getFunctionItems());
         });
-        this.player.openInventory(this.inventory);
     }
 
     protected List<String> parseLayout(List<String> layout) {

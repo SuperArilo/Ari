@@ -2,8 +2,9 @@ package ari.superarilo.enumType;
 
 public enum FilePath {
     Lang("lang","lang/cn.yml"),
-    HomeList("homeList", "module/home/home.yml"),
-    HomeEditor("homeEditor", "module/home/editor.yml");
+    HomeList("homeList", "module/home/edit-home-gui.yml"),
+    HomeEditor("homeEditor", "module/home/home-gui.yml"),
+    HomeConfig("homeConfig", "module/home/config.yml");
 
     private final String name;
     private final String path;

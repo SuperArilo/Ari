@@ -16,12 +16,12 @@ public class Ari extends JavaPlugin {
     public static Ari instance;
     public static Boolean debug;
     public TpStatusValue tpStatusValue;
-
+    public final PluginManager pluginManager = Bukkit.getPluginManager();
     public ConfigManager configManager;
     public ObjectConvert objectConvert;
     public SQLInstance SQLInstance;
     public NumberFormatUtil numberFormatUtil;
-
+    public PermissionUtils permissionUtils;
     @Override
     public void onLoad() {
         instance = this;
@@ -35,8 +35,10 @@ public class Ari extends JavaPlugin {
     public void onEnable() {
         this.registerCommands();
         this.registerListener();
+        //group
+        this.permissionUtils = new PermissionUtils();
         //PAPI
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+        if (this.pluginManager.isPluginEnabled("PlaceholderAPI")) {
             new HomePAPI().register();
         }
         //sql
@@ -51,15 +53,14 @@ public class Ari extends JavaPlugin {
         for (AriCommand command : AriCommand.values()) {
             String showName = command.getShow();
             if (showName == null) return;
-            PluginCommand pluginCommand = Ari.instance.getCommand(showName);
+            PluginCommand pluginCommand = this.getCommand(showName);
             if(pluginCommand == null) return;
             pluginCommand.setExecutor(command.getCommandClass());
             pluginCommand.setTabCompleter(command.getCommandClass());
         }
     }
     protected void registerListener() {
-        PluginManager pluginManager = this.getServer().getPluginManager();
-        pluginManager.registerEvents(new HomeListListener(), this);
-        pluginManager.registerEvents(new EditHomeListener(), this);
+        this.pluginManager.registerEvents(new HomeListListener(), this);
+        this.pluginManager.registerEvents(new EditHomeListener(), this);
     }
 }

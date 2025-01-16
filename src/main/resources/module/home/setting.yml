@@ -4,7 +4,11 @@ main:
     # 检测延迟时间
     delay: 3
   set-home:
+    ban-words:
+      - 'fuck'
     quantity:
       owner: -1
       default: 5
   edit-home:
+    bad-words:
+      - 'fuck'

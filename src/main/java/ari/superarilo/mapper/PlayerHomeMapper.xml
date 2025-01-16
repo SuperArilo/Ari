@@ -26,21 +26,21 @@
     </insert>
 
     <select id="exist" resultType="boolean">
-        select count(*) from player_home as ph where ph.home_id = #{home_id}
+        select count(*) from player_home as ph where ph.home_id = #{home_id} and player_uuid = #{playerUUID}
     </select>
 
     <select id="getHome" resultMap="playerHome">
         select ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from player_home as ph
-        where ph.home_id = #{home_id}
+        where ph.home_id = #{home_id} and player_uuid = #{playerUUID}
     </select>
 
     <delete id="delete">
-        delete from player_home where home_id = #{home_id}
+        delete from player_home where home_id = #{home_id} and player_uuid = #{playerUUID}
     </delete>
     <update id="update">
         update player_home
         set home_name = #{playerhome.homeName}, x = #{playerhome.x}, y = #{playerhome.y}, z = #{playerhome.z}, world = #{playerhome.world}, show_material = #{playerhome.showMaterial}
-        where home_id = #{playerhome.homeId}
+        where home_id = #{playerhome.homeId} and player_uuid = #{playerhome.playerUUID}
     </update>
 </mapper>

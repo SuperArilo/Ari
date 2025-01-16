@@ -10,6 +10,7 @@ import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.TextTool;
 import ari.superarilo.function.TeleportThread;
+import com.google.gson.reflect.TypeToken;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -126,7 +127,9 @@ public class MainCommand implements TabExecutor {
                 } else {
                     if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
                         commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
-                        player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
+                        if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, new TypeToken<String>() {}.getType()) instanceof String message) {
+                            player.sendMessage(TextTool.setHEXColorText(message.replace("[TpaBeSender]", commandSender.getName())));
+                        }
                     } else {
                         commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.break", FilePath.Lang, String.class)));
                     }

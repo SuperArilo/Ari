@@ -2,7 +2,10 @@ package ari.superarilo.tool;
 
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
+import com.google.gson.JsonSyntaxException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import com.google.gson.Gson;
+import java.lang.reflect.Type;
 
 import java.io.File;
 import java.util.Map;
@@ -11,6 +14,7 @@ import java.util.logging.Level;
 
 public class ConfigManager {
     private Map<String, YamlConfiguration> configs = new ConcurrentHashMap<>();
+    private final Gson gson = new Gson();
     public ConfigManager() {
         this.reloadAllConfig();
     }
@@ -35,7 +39,7 @@ public class ConfigManager {
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
-    public <T> T getValue(String valuePath, FilePath filePath, Class<T> clazz) {
+    public <T> T getValue(String valuePath, FilePath filePath, Type type) {
         String fileName = filePath.getName();
         YamlConfiguration fileConfiguration = this.configs.get(fileName);
         if (fileConfiguration == null) {
@@ -47,10 +51,10 @@ public class ConfigManager {
             Log.error("Value not found for path: " + valuePath + " in file: " + fileName);
             return null;
         }
-        if (clazz.isInstance(value)) {
-            return clazz.cast(value);
-        } else {
-            Log.error("Value type mismatch for path: " + valuePath + " in file: " + fileName);
+        try {
+            return this.gson.fromJson(this.gson.toJsonTree(value), type);
+        } catch (JsonSyntaxException e) {
+            Log.error("Failed to convert value at path: " + valuePath + " in file: " + fileName + " to type: " + type.getTypeName(), e);
             return null;
         }
     }

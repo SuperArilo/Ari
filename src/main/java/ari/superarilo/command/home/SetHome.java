@@ -27,7 +27,11 @@ public class SetHome implements TabExecutor {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;
             }
-            HomeManager.create((Player) commandSender).createNewHome(strings[0]);
+            if(Ari.instance.formatUtil.checkIdName(strings[0])) {
+                HomeManager.create((Player) commandSender).createNewHome(strings[0]);
+            } else {
+                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.id-error", FilePath.Lang, String.class)));
+            }
         }
         return true;
     }

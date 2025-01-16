@@ -33,6 +33,7 @@ public class HomeListListener implements Listener {
             if (currentItem == null) return;
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             if(type == null) return;
+            Player player = holder.getPlayer();
             switch (type) {
                 case BACK:
                     inventory.close();
@@ -41,12 +42,12 @@ public class HomeListListener implements Listener {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
                     try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                        PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
+                        PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId, player.getUniqueId().toString());
                         ClickType click = event.getClick();
                         if (click.equals(ClickType.LEFT)) {
                             TeleportThread.playerToLocation(
-                                    holder.getPlayer(),
-                                    new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()))
+                                            player,
+                                    new Location(player.getWorld(), home.getX(), home.getY(), home.getZ()))
                                     .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
                         } else if (click.equals(ClickType.RIGHT)) {
                             new HomeEditor(home,(Player) event.getWhoClicked()).open();

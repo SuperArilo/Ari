@@ -62,7 +62,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                     this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.exceeds", FilePath.Lang, String.class)));
                     return;
                 }
-                if (mapper.exist(homeId)) {
+                if (mapper.exist(homeId, this.player.getUniqueId().toString())) {
                     this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exist", FilePath.Lang, this.player));
                     i.cancel();
                     return;
@@ -70,10 +70,10 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 PlayerHome playerHome = new PlayerHome();
                 playerHome.setHomeId(homeId);
                 playerHome.setHomeName(homeId);
-                playerHome.setPlayerUUID(player.getUniqueId().toString());
-                playerHome.setX(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getX())));
-                playerHome.setY(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getY())));
-                playerHome.setZ(Double.valueOf(Ari.instance.numberFormatUtil.format_2(location.getZ())));
+                playerHome.setPlayerUUID(this.player.getUniqueId().toString());
+                playerHome.setX(Double.valueOf(Ari.instance.formatUtil.format_2(location.getX())));
+                playerHome.setY(Double.valueOf(Ari.instance.formatUtil.format_2(location.getY())));
+                playerHome.setZ(Double.valueOf(Ari.instance.formatUtil.format_2(location.getZ())));
                 playerHome.setWorld(player.getWorld().getName());
                 playerHome.setShowMaterial(material.name());
 
@@ -89,7 +89,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     public Integer deleteHome(String homeId) {
         long start = System.currentTimeMillis();
         try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            Integer deleteStatus = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId);
+            Integer deleteStatus = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
             Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
             return deleteStatus;
         } catch (Exception e) {

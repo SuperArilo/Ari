@@ -30,12 +30,9 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                 .findFirst();
 
         if (first.isPresent()) {
-            sender.sendMessage(
-                    TextTool.setHEXColorText(
-                            Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".again", FilePath.Lang, String.class)
-                                    .replace(
-                                            KeyType.TPABESENDER.getType(),
-                                            targetPlayer.getName())));
+            if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".again", FilePath.Lang, String.class) instanceof String message) {
+                sender.sendMessage(TextTool.setHEXColorText(message.replace(KeyType.TPABESENDER.getType(), targetPlayer.getName())));
+            }
         } else {
             sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".send-message", FilePath.Lang, String.class)));
             this.sendMessageToBePlayer(sender, targetPlayer, ariCommand);
@@ -60,16 +57,19 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     }
 
     protected void sendMessageToBePlayer(Player player, Player targetPlayer, AriCommand ariCommand) {
-        targetPlayer.sendMessage(
-                TextTool.setHEXColorText(
-                        Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".get-message", FilePath.Lang, String.class)
-                                .replace(
-                                        ariCommand.equals(AriCommand.TPA) ? KeyType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? KeyType.TPAHERESENDER.getType():"",
-                                        player.getName()))
-                        .appendNewline()
-                        .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                        .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.center", FilePath.Lang, String.class)))
-                        .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+        if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".get-message", FilePath.Lang, String.class) instanceof String message) {
+            targetPlayer.sendMessage(
+                            TextTool.setHEXColorText(
+                                    message
+                                    .replace(
+                                            ariCommand.equals(AriCommand.TPA) ? KeyType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? KeyType.TPAHERESENDER.getType():"",
+                                            player.getName()))
+                    .appendNewline()
+                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                    .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.center", FilePath.Lang, String.class)))
+                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+        }
+
     }
     protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {

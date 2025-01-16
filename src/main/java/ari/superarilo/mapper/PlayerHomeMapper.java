@@ -9,9 +9,9 @@ import java.util.List;
 @Mapper
 public interface PlayerHomeMapper  {
     List<PlayerHome> getHomeList(@Param("playerUUID") String playerUUID);
-    PlayerHome getHome(@Param("home_id") String homeId);
-    boolean exist(@Param("home_id") String homeId);
+    PlayerHome getHome(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
+    boolean exist(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
     void save(@Param("playerhome") PlayerHome playerHome);
-    Integer delete(@Param("home_id") String homeId);
+    Integer delete(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
     Integer update(@Param("playerhome") PlayerHome playerHome);
 }

@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 public class BaseFunctionImpl implements BaseFunction {
     @Override
     public Material checkIsItem(Material material) {
-        if(material.isItem() || material.equals(Material.WATER) || material.equals(Material.LAVA)) {
+        if(!material.isItem() || material.equals(Material.WATER) || material.equals(Material.LAVA)) {
             return Material.DIRT;
         }
         return material;

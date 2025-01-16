@@ -11,6 +11,7 @@ import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
+import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
@@ -66,9 +67,7 @@ public class EditHomeListener implements Listener {
                     new HomeList(player).open();
                 }
                 case RENAME -> {
-                    Log.debug(clickItem.getType().name());
-                    Audience audience = Audience.audience(player);
-                    audience.showTitle(
+                    Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
                                     Ari.instance.configManager.getValue("on-edit-home.rename.title", FilePath.Lang, String.class),
                                     Ari.instance.configManager.getValue("on-edit-home.rename.sub-title", FilePath.Lang, String.class),
@@ -82,9 +81,9 @@ public class EditHomeListener implements Listener {
                 case LOCATION -> {
                     //reset LOCATION
                     Location newLocation = player.getLocation();
-                    home.setX(Double.valueOf(Ari.instance.numberFormatUtil.format_2(newLocation.getX())));
-                    home.setY(Double.valueOf(Ari.instance.numberFormatUtil.format_2(newLocation.getY())));
-                    home.setZ(Double.valueOf(Ari.instance.numberFormatUtil.format_2(newLocation.getZ())));
+                    home.setX(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getX())));
+                    home.setY(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getY())));
+                    home.setZ(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getZ())));
                     clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(home.getX(), home.getY(), home.getZ())));
                     clickItem.setItemMeta(clickMeta);
                 }
@@ -110,7 +109,7 @@ public class EditHomeListener implements Listener {
                             Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
                                 clickMeta.lore(List.of());
                                 finalClickItem.setItemMeta(clickMeta);
-                            }, 2, TimeUnit.SECONDS);
+                            }, 1, TimeUnit.SECONDS);
                         } else {
                             //error
                             Log.error("save home error");
@@ -125,8 +124,17 @@ public class EditHomeListener implements Listener {
         if (this.editStatus.isEmpty()) return;
         event.setCancelled(true);
         Player player = event.getPlayer();
-        Audience.audience(player).clearTitle();
         String message = TextTool.componentToString(event.message());
+        List<String> value = Ari.instance.configManager.getValue("main.edit-home.bad-words", FilePath.HomeConfig, new TypeToken<List<String>>(){}.getType());
+        Log.debug(String.valueOf(Ari.instance.formatUtil.checkName(message)));
+        Log.debug(String.valueOf(value.contains(message)));
+        if(!Ari.instance.formatUtil.checkName(message) || value.contains(message)) {
+            player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.name-error", FilePath.Lang, String.class)));
+            return;
+        }
+
+        Audience.audience(player).clearTitle();
+
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
             this.removeIfPlayInEditList(player);
             player.sendMessage(TextTool.setHEXColorText("on-edit-home.rename.cancel", FilePath.Lang));

@@ -46,7 +46,9 @@ public class TpaRefuse implements TabExecutor {
             } else {
                 if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
                     commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
-                    player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
+                    if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
+                        player.sendMessage(TextTool.setHEXColorText(message.replace("[TpaBeSender]", commandSender.getName())));
+                    }
                 } else {
                     commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.break", FilePath.Lang, String.class)));
                 }

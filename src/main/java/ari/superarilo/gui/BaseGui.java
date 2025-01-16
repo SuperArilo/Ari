@@ -71,7 +71,7 @@ public abstract class BaseGui {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(TextTool.setHEXColorText(mask.getName(), this.player));
-            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.ICON.name());
+            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.MASKICON.name());
             itemMeta.lore(collect);
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);

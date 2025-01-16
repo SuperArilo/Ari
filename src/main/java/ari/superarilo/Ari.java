@@ -20,14 +20,14 @@ public class Ari extends JavaPlugin {
     public ConfigManager configManager;
     public ObjectConvert objectConvert;
     public SQLInstance SQLInstance;
-    public NumberFormatUtil numberFormatUtil;
+    public FormatUtil formatUtil;
     public PermissionUtils permissionUtils;
     @Override
     public void onLoad() {
         instance = this;
         Log.setLogger(this.getLogger());
         this.configManager = new ConfigManager();
-        this.numberFormatUtil = new NumberFormatUtil();
+        this.formatUtil = new FormatUtil();
         this.objectConvert = new ObjectConvert();
     }
 

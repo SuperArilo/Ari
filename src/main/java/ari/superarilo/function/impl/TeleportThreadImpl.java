@@ -1,7 +1,11 @@
-package ari.superarilo.tool;
+package ari.superarilo.function.impl;
 
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
+import ari.superarilo.enumType.TeleportType;
+import ari.superarilo.function.TeleportThread;
+import ari.superarilo.tool.Log;
+import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
@@ -10,62 +14,47 @@ import org.bukkit.entity.Player;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
-public class TeleportThread {
-    private final Type type;
+public class TeleportThreadImpl implements TeleportThread {
+    //被传送玩家
     private final Player player;
-    private Player targetPlayer;
-    private final Location initialLocation;
+    //目标玩家
+    private final Player targetPlayer;
+    //目标地址
     private final Location targetLocation;
-    private final double initialHealth;
-    public enum Type {
-        POINT,
-        PLAYER,
-        BACK,
-        DBACK,
-        RANDOM
-    }
+    //玩家初始位置
+    private final Location initLocation;
+    //玩家开始传送时的生命值
+    private final double initHealth;
+    //传送类型
+    private final TeleportType type;
 
-    /**
-     * 玩家定点传送
-     * @param player 被传送的玩家
-     * @param targetLocation 目标位置
-     * @param type 传送类型
-     */
-    //定点传送
-    public TeleportThread(Player player, Location targetLocation, Type type){
+    public TeleportThreadImpl(Player player, Location location) {
         this.player = player;
-        this.targetLocation = targetLocation;
-        this.type = type;
-        this.initialLocation = player.getLocation();
-        this.initialHealth = player.getHealth();
-    }
+        this.initLocation = player.getLocation();
+        this.initHealth = player.getHealth();
+        this.targetLocation = location;
+        this.type = TeleportType.POINT;
 
-    /**
-     * 玩家之间的传送
-     * @param player 被传送玩家
-     * @param targetPlayer 目标玩家
-     * @param type 传送类型
-     */
-    //玩家之间传送
-    public TeleportThread(Player player, Player targetPlayer, Type type){
+        this.targetPlayer = null;
+    }
+    public TeleportThreadImpl(Player player, Player targetPlayer) {
         this.player = player;
         this.targetPlayer = targetPlayer;
+        this.initLocation = player.getLocation();
+        this.initHealth = player.getHealth();
+        this.type = TeleportType.PLAYER;
+
         this.targetLocation = null;
-        this.type = type;
-        this.initialLocation = player.getLocation();
-        this.initialHealth = player.getHealth();
     }
 
-    /**
-     * 开始传送
-     */
-    public void teleport() {
+    @Override
+    public void teleport(int delay) {
         //设置传送冷却时间
         final int[] timerIndex;
         if (this.player.isOp()) {
             timerIndex = new int[]{1};
         } else {
-            timerIndex = new int[]{Ari.instance.getConfig().getInt("Teleport.delay", 1)};
+            timerIndex = new int[]{delay};
             this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.ing", FilePath.Lang, String.class)));
         }
         Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
@@ -90,9 +79,9 @@ public class TeleportThread {
                 switch (this.type) {
                     case POINT:
                         Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {
-                           threadPlayer.teleportAsync(this.targetLocation);
-                           threadPlayer.playEffect(this.targetLocation, Effect.ANVIL_BREAK, null);
-                           threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
+                            threadPlayer.teleportAsync(this.targetLocation);
+                            threadPlayer.playEffect(this.targetLocation, Effect.ANVIL_BREAK, null);
+                            threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                         });
                         break;
                     case PLAYER:
@@ -110,33 +99,30 @@ public class TeleportThread {
             }
         }, 0, 1L, TimeUnit.SECONDS);
     }
-
     /**
      * 设置之前传送存在的位置
      * @param location 位置
      */
-    private void setBeforeLocation(Location location) {
+    protected void setBeforeLocation(Location location) {
 
     }
-
     /**
      * 检查是否受伤
-     * @param p 被检查的玩家
+     * @param player 被检查的玩家
      */
-    private boolean hasLostHealth(Player p) {
-        return p.getHealth() < initialHealth;
+    protected boolean hasLostHealth(Player player) {
+        return player.getHealth() < this.initHealth;
     }
-
     /**
      * 检查是否移动
      * @param p 被检查的玩家
      */
-    private boolean hasMoved(Player p) {
+    protected boolean hasMoved(Player p) {
         Location currentLocation = p.getLocation();
-        return makePositive(initialLocation.getX() - currentLocation.getX()) + makePositive(initialLocation.getY() - currentLocation.getY()) + makePositive(initialLocation.getZ() - currentLocation.getZ()) > 0.1;
+        return makePositive(this.initLocation.getX() - currentLocation.getX()) + makePositive(this.initLocation.getY() - currentLocation.getY()) + makePositive(this.initLocation.getZ() - currentLocation.getZ()) > 0.1;
     }
 
-    private double makePositive(double d) {
+    protected double makePositive(double d) {
         if (d < 0) {
             d = d * -1D;
         }

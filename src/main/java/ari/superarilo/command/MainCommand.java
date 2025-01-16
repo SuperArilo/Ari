@@ -6,9 +6,10 @@ import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
+import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
-import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
+import ari.superarilo.function.TeleportThread;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -81,14 +82,14 @@ public class MainCommand implements TabExecutor {
                 }
                 //请求成功，移除该请求
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
-                Ari.instance.tpStatusValue.remove(player, TeleportThread.Type.PLAYER);
+                Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
                 TeleportThread teleportThread = switch (status.getCommandType()) {
-                    case TPA -> new TeleportThread(player, ((Player) commandSender), TeleportThread.Type.PLAYER);
-                    case TPAHERE -> new TeleportThread(((Player) commandSender), player, TeleportThread.Type.PLAYER);
+                    case TPA -> TeleportThread.playerToPlayer(player, ((Player) commandSender));
+                    case TPAHERE -> TeleportThread.playerToPlayer((Player) commandSender, player);
                     default -> null;
                 };
                 if (teleportThread != null) {
-                    teleportThread.teleport();
+                    teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
                 } else {
                     commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
                 }
@@ -123,7 +124,7 @@ public class MainCommand implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.been-done", FilePath.Lang, String.class)));
                     return true;
                 } else {
-                    if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))) {
+                    if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
                         commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
                         player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class).replace("[TpaBeSender]", commandSender.getName())));
                     } else {
@@ -188,7 +189,7 @@ public class MainCommand implements TabExecutor {
                 case TPAACCEPT:
                 case TPAREFUSE:
                     Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
-                                    obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER)).toList()
+                                    obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER)).toList()
                             .forEach(e -> {
                                 Player player = server.getPlayer(e.getPlayUUID());
                                 if (player != null) {

@@ -5,8 +5,8 @@ import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.KeyType;
+import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
-import ari.superarilo.tool.TeleportThread;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
@@ -26,7 +26,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                 .filter(obj ->
                         obj.getPlayUUID().equals(sender.getUniqueId()) &&
                         obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
-                        obj.getType().equals(TeleportThread.Type.PLAYER))
+                        obj.getType().equals(TeleportType.PLAYER))
                 .findFirst();
 
         if (first.isPresent()) {
@@ -54,7 +54,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                 .filter(obj ->
                         obj.getPlayUUID().equals(sender.getUniqueId()) &&
                                 obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
-                                obj.getType().equals(TeleportThread.Type.PLAYER))
+                                obj.getType().equals(TeleportType.PLAYER))
                 .findFirst();
         return first.orElse(null);
     }
@@ -74,13 +74,13 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {
             TeleportStatus status = new TeleportStatus();
-            status.setType(TeleportThread.Type.PLAYER);
+            status.setType(TeleportType.PLAYER);
             status.setCommandType(ariCommand);
             status.setPlayUUID(player.getUniqueId());
             status.setBePlayerUUID(targetPlayer.getUniqueId());
             Ari.instance.tpStatusValue.addStatus(status);
             //设置定时任务来移除该玩家已经发送的请求状态
-            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportThread.Type.PLAYER), 10L, TimeUnit.SECONDS);
+            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER), 10L, TimeUnit.SECONDS);
         });
     }
 

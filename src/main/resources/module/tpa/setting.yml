@@ -1,0 +1,5 @@
+main:
+  enable: true
+  teleport:
+    # 检测延迟时间
+    delay: 3

@@ -6,8 +6,9 @@ import ari.superarilo.command.tool.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
+import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
-import ari.superarilo.tool.TeleportThread;
+import ari.superarilo.function.TeleportThread;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -48,15 +49,15 @@ public class TpaAccept implements TabExecutor {
             }
             //请求成功，移除该请求
             commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
-            Ari.instance.tpStatusValue.remove(player, TeleportThread.Type.PLAYER);
+            Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
 
             TeleportThread teleportThread = switch (status.getCommandType()) {
-                case TPA -> new TeleportThread(player, ((Player) commandSender), TeleportThread.Type.PLAYER);
-                case TPAHERE -> new TeleportThread(((Player) commandSender), player, TeleportThread.Type.PLAYER);
+                case TPA -> TeleportThread.playerToPlayer(player, ((Player) commandSender));
+                case TPAHERE -> TeleportThread.playerToPlayer(((Player) commandSender), player);
                 default -> null;
             };
             if (teleportThread != null) {
-                teleportThread.teleport();
+                teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
             } else {
                 commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
             }
@@ -70,7 +71,7 @@ public class TpaAccept implements TabExecutor {
             List<String> i = new ArrayList<>();
             Server tempServer = Ari.instance.getServer();
             Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
-                    obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportThread.Type.PLAYER))
+                    obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
                     .forEach(e -> {
                         Player p = tempServer.getPlayer(e.getPlayUUID());
                         if (p != null) {

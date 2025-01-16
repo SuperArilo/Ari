@@ -3,12 +3,13 @@ package ari.superarilo.listener.home;
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.SQLInstance;
-import ari.superarilo.tool.TeleportThread;
 import org.apache.ibatis.session.SqlSession;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -43,7 +44,10 @@ public class HomeListListener implements Listener {
                         PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId);
                         ClickType click = event.getClick();
                         if (click.equals(ClickType.LEFT)) {
-                            new TeleportThread(holder.getPlayer(), new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()), TeleportThread.Type.POINT).teleport();
+                            TeleportThread.playerToLocation(
+                                    holder.getPlayer(),
+                                    new Location(holder.getPlayer().getWorld(), home.getX(), home.getY(), home.getZ()))
+                                    .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
                         } else if (click.equals(ClickType.RIGHT)) {
                             new HomeEditor(home,(Player) event.getWhoClicked()).open();
                         }

@@ -1,6 +1,6 @@
 package ari.superarilo.entity;
 
-import ari.superarilo.tool.TeleportThread;
+import ari.superarilo.enumType.TeleportType;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ public class TpStatusValue {
     public synchronized void addStatus(TeleportStatus teleportStatus) {
         this.statusList.add(teleportStatus);
     }
-    public synchronized void remove(Player player, TeleportThread.Type type) {
+    public synchronized void remove(Player player, TeleportType type) {
         this.statusList.removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(type));
     }
 }

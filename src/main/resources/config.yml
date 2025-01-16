@@ -1,6 +1,3 @@
-Teleport:
-  # 检测延迟时间
-  delay: 3
 data:
   # mysql, sqlite
   storage-type: sqlite

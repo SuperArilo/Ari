@@ -40,6 +40,7 @@ command:
     success: '<#90EE90>创建家成功！</#90EE90>'
     id-error: 'home的id不满足'
     name-error: 'home的名称不满足'
+    name-too-long: 'home的名称过长'
     exist: '已存在相同ID的家'
     exceeds: '超出数量！'
   unknown: '&4未知指令，请重新输入'

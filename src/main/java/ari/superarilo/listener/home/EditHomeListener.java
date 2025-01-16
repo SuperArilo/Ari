@@ -126,10 +126,12 @@ public class EditHomeListener implements Listener {
         Player player = event.getPlayer();
         String message = TextTool.componentToString(event.message());
         List<String> value = Ari.instance.configManager.getValue("main.edit-home.bad-words", FilePath.HomeConfig, new TypeToken<List<String>>(){}.getType());
-        Log.debug(String.valueOf(Ari.instance.formatUtil.checkName(message)));
-        Log.debug(String.valueOf(value.contains(message)));
         if(!Ari.instance.formatUtil.checkName(message) || value.contains(message)) {
             player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.name-error", FilePath.Lang, String.class)));
+            return;
+        }
+        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.edit-home.name-length", FilePath.HomeEditor, Integer.class)) {
+            player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.name-too-long", FilePath.Lang, String.class)));
             return;
         }
 

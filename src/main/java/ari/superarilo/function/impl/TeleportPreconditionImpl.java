@@ -47,15 +47,15 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
 
     @Override
     public TeleportStatus checkStatusV(Player sender, Player targetPlayer) {
-        Optional<TeleportStatus> first = Ari.instance.tpStatusValue.getStatusList().stream()
+        return Ari.instance.tpStatusValue.getStatusList().stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(sender.getUniqueId()) &&
                                 obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
                                 obj.getType().equals(TeleportType.PLAYER))
-                .findFirst();
-        return first.orElse(null);
+                .findFirst()
+                .orElse(null);
     }
-
+    //向接收玩家发送接受传送邀请信息
     protected void sendMessageToBePlayer(Player player, Player targetPlayer, AriCommand ariCommand) {
         if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".get-message", FilePath.Lang, String.class) instanceof String message) {
             targetPlayer.sendMessage(
@@ -67,10 +67,17 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                     .appendNewline()
                     .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
                     .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.center", FilePath.Lang, String.class)))
-                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
         }
 
     }
+
+    /**
+     * 添加玩家传送到玩家的状态
+     * @param player 被传送玩家
+     * @param targetPlayer 接收玩家
+     * @param ariCommand 传送类型
+     */
     protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {
             TeleportStatus status = new TeleportStatus();

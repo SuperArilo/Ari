@@ -29,6 +29,7 @@ command:
     again: '您已经发送过请求了给 [TpaBeSender]'
     get-message: '玩家 [TpaHereSender] 想让您传送到他那里'
   tparefuse:
+    success: '拒绝成功！'
     been-done: '该请求已经处理过了哦！'
     get-message: '&6玩家 &a[TpaBeSender] &6拒绝了您的传送请求'
   reload:

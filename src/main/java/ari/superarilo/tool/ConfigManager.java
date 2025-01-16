@@ -39,9 +39,17 @@ public class ConfigManager {
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
+
+    /**
+     * 根据指定的文件和路径获取指定的值
+     * @param valuePath 值的路径
+     * @param filePath 文件对象Type
+     * @param type 值的类型
+     * @return 返回指定类型
+     */
     public <T> T getValue(String valuePath, FilePath filePath, Type type) {
         String fileName = filePath.getName();
-        YamlConfiguration fileConfiguration = this.configs.get(fileName);
+        YamlConfiguration fileConfiguration = this.getObject(fileName);
         if (fileConfiguration == null) {
             Log.error("Config file not found: " + fileName);
             return null;
@@ -58,6 +66,12 @@ public class ConfigManager {
             return null;
         }
     }
+    /**
+     *
+     * 获取指定文件名的yaml配置文件对象
+     * @param fileName 文件名
+     * @return 返回 YamlConfiguration
+     */
     public YamlConfiguration getObject(String fileName) {
         return this.configs.get(fileName);
     }

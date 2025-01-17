@@ -1,46 +1,15 @@
-title: '家编辑'
-row: 5
+title: '<#4682B4>%player_name%</#4682B4><#00EEEE>家列表</#FFF5EE>'
+row: 3
 mask:
   name: ''
   material: glass_pane
-  slot: [0,1,2,3,4,5,6,7,9,17,18,26,27,35,36,37,38,39,41,42,43,44]
+  slot: [0,1,2,3,4,5,6,7,8,9,17,18,19,20,21,23,24,25,26]
 functionItems:
   back:
     name: '返回'
-    type: REBACK
+    type: BACK
     material: redstone
-    slot: [40]
+    slot: [22]
     lore:
-      - '&6点击返回到家列表'
-  icon:
-    name: '当前图标'
-    type: ICON
-    material: stone
-    slot: [13]
-    lore:
-      - '&6拖拽其他方块替换图标'
-  location:
-    type: LOCATION
-    material: compass
-    slot: [20]
-    lore:
-      - '&2左击: &6设置为当前位置'
-  rename:
-    type: RENAME
-    material: name_tag
-    slot: [24]
-    lore:
-      - '&2左击: &6重新设置显示名称'
-  delete:
-    name: '&c删除家'
-    type: DELETE
-    material: barrier
-    slot: [8]
-    lore:
-      - '&5点击删除家'
-      - '&c此操作不可逆'
-  save:
-      name: '&6保存修改'
-      type: SAVE
-      material: GREEN_CARPET
-      slot: [44]
+      - '&6点击返回或者关闭'
+dataSlot: [10,11,12,13,14,15,16]

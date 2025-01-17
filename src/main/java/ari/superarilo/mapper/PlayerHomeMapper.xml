@@ -16,6 +16,7 @@
           ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from player_home as ph
         where ph.player_uuid = #{playerUUID}
+        limit #{page.limit} offset #{page.offset}
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">

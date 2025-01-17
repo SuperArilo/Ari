@@ -8,6 +8,7 @@ import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.home.HomeEditor;
+import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.SQLInstance;
 import org.apache.ibatis.session.SqlSession;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+
 public class HomeListListener implements Listener {
     @EventHandler
     public void HomeListClick(InventoryClickEvent event) {
@@ -34,11 +36,10 @@ public class HomeListListener implements Listener {
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             if(type == null) return;
             Player player = holder.getPlayer();
+            HomeList homeList = (HomeList) holder.getMeta();
             switch (type) {
-                case BACK:
-                    inventory.close();
-                    break;
-                case DATA:
+                case BACK -> inventory.close();
+                case DATA -> {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
                     try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
@@ -47,13 +48,28 @@ public class HomeListListener implements Listener {
                         if (click.equals(ClickType.LEFT)) {
                             TeleportThread.playerToLocation(
                                             player,
-                                    new Location(player.getWorld(), home.getX(), home.getY(), home.getZ()))
+                                            new Location(player.getWorld(), home.getX(), home.getY(), home.getZ()))
                                     .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
                         } else if (click.equals(ClickType.RIGHT)) {
                             new HomeEditor(home,(Player) event.getWhoClicked()).open();
                         }
                         inventory.close();
                     }
+                }
+                case PREV -> {
+                    int pageNum = homeList.getPageNum();
+                    if(pageNum != 1) {
+                        pageNum--;
+                        homeList.setPageNum(pageNum);
+                        homeList.renderItem();
+                    }
+                }
+                case NEXT -> {
+                    int pageNum = homeList.getPageNum();
+                    pageNum++;
+                    homeList.setPageNum(pageNum);
+                    homeList.renderItem();
+                }
             }
         }
     }

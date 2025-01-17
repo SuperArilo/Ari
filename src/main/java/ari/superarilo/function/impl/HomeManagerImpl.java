@@ -1,6 +1,7 @@
 package ari.superarilo.function.impl;
 
 import ari.superarilo.Ari;
+import ari.superarilo.dto.Page;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.HomeManager;
@@ -31,12 +32,15 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     }
 
     @Override
-    public List<PlayerHome> asyncGetHomeList() {
+    public List<PlayerHome> asyncGetHomeList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
         CompletableFuture<List<PlayerHome>> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHomeList(this.player.getUniqueId().toString()));
+                future.complete(sqlSession.getMapper(PlayerHomeMapper.class)
+                        .getHomeList(
+                                this.player.getUniqueId().toString(),
+                                Page.create(pageNum, pageSize)));
             }
         });
         try {
@@ -55,7 +59,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
-                int size = mapper.getHomeList(String.valueOf(this.player.getUniqueId())).size();
+                int size = mapper.getHomeList(String.valueOf(this.player.getUniqueId()), Page.create(1, Integer.MAX_VALUE)).size();
                 Integer value = Ari.instance.configManager.getValue("main.set-home.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
                 if(size >= value) {
                     Log.debug("Exceeds the specified quantity");
@@ -86,15 +90,13 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         });
     }
     @Override
-    public Integer deleteHome(String homeId) {
+    public void deleteHome(String homeId) {
         long start = System.currentTimeMillis();
         try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
             Integer deleteStatus = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
             Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
-            return deleteStatus;
         } catch (Exception e) {
             Log.error("remove home fail, id: " + homeId, e);
-            return null;
         }
     }
 

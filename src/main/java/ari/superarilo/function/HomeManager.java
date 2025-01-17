@@ -9,9 +9,11 @@ import java.util.List;
 public interface HomeManager {
     /**
      * 异步获取玩家保存的家列表
+     * @param pageNum 页数
+     * @param pageSize 每页的数量
      * @return 家列表
      */
-    List<PlayerHome> asyncGetHomeList();
+    List<PlayerHome> asyncGetHomeList(int pageNum, int pageSize);
 
     /**
      * 保存家
@@ -21,9 +23,10 @@ public interface HomeManager {
 
     /**
      * 删除指定ID的家
+     *
      * @param homeId 指定homeId
      */
-    Integer deleteHome(String homeId);
+    void deleteHome(String homeId);
 
     /**
      * 修改家的信息

@@ -11,7 +11,9 @@ public enum FunctionType {
     SAVE("保存"),
     DELETE("删除"),
     CANCEL("取消"),
-    CONFIRM("确认");
+    CONFIRM("确认"),
+    PREV("上一页"),
+    NEXT("下一页");
     private final String name;
 
     FunctionType(String name) {

@@ -130,7 +130,7 @@ public class EditHomeListener implements Listener {
             player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.name-error", FilePath.Lang, String.class)));
             return;
         }
-        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.edit-home.name-length", FilePath.HomeEditor, Integer.class)) {
+        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.edit-home.name-length", FilePath.HomeConfig, Integer.class)) {
             player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.name-too-long", FilePath.Lang, String.class)));
             return;
         }

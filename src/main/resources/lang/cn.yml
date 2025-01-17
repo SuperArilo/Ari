@@ -2,6 +2,7 @@ teleport:
   ing: '传送过程中！请不要移动...'
   success: '传送成功！'
   break: '传送失败了哦！'
+  unable-player: '<#FFE4B5>该玩家离线或者不存在！</#FFE4B5>'
 on-edit-home:
   rename:
     title: '&7请输入新名称'
@@ -15,7 +16,6 @@ command:
     not-player: '这个指令只能在游戏里使用！'
     fail: '指令缺少集合或者输入不正确！'
     permission-message: '<#114514>没有权限</#abcdef>'
-    unable-player: '<#FFE4B5>该玩家离线或者不存在！</#FFE4B5>'
   tpa:
     send-message: '已发送传送请求给玩家...'
     again: '您已经发送过请求了给 [TpaBeSender]'

@@ -1,6 +1,7 @@
-package ari.superarilo.command.tool.impl;
+package ari.superarilo.function.impl;
 
-import ari.superarilo.command.tool.CommandCheck;
+import ari.superarilo.Ari;
+import ari.superarilo.function.CommandCheck;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.tool.TextTool;
@@ -26,7 +27,7 @@ public class CommandCheckImpl implements CommandCheck {
 
     @Override
     public boolean commandSenderHavePermission(CommandSender commandSender, AriCommand type) {
-        if (!commandSender.hasPermission(type.getPermission())) {
+        if (!Ari.instance.permissionUtils.hasPermission(commandSender, type.getPermission())) {
             commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
         }
         return true;
@@ -40,7 +41,7 @@ public class CommandCheckImpl implements CommandCheck {
             return false;
         }
         //判断是否有相应的权限
-        if (!commandSender.hasPermission(ariCommand.getPermission())) {
+        if (!Ari.instance.permissionUtils.hasPermission(commandSender, ariCommand.getPermission())) {
             commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
             return false;
         }

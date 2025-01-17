@@ -1,8 +1,8 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
-import ari.superarilo.command.tool.CommandCheck;
-import ari.superarilo.command.tool.impl.CommandCheckImpl;
+import ari.superarilo.function.CommandCheck;
+import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.function.TeleportPrecondition;
@@ -43,7 +43,7 @@ public class Tpa implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TPA.getShow())) return List.of("");
-        if (commandSender instanceof Player && commandSender.hasPermission(AriCommand.TPA.getPermission()) && strings.length == 1) {
+        if (commandSender instanceof Player && Ari.instance.permissionUtils.hasPermission(commandSender, AriCommand.TPA.getPermission()) && strings.length == 1) {
             List<String> players = new ArrayList<>();
             Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
                 if(commandSender.getName().equals(e.getName())) return;

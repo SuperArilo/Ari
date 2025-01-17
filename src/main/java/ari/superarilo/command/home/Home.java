@@ -1,7 +1,7 @@
 package ari.superarilo.command.home;
 
-import ari.superarilo.command.tool.CommandCheck;
-import ari.superarilo.command.tool.impl.CommandCheckImpl;
+import ari.superarilo.function.CommandCheck;
+import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.gui.home.HomeList;
 import org.bukkit.command.Command;

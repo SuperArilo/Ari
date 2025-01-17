@@ -1,8 +1,8 @@
 package ari.superarilo.command.teleport;
 
 import ari.superarilo.Ari;
-import ari.superarilo.command.tool.CommandCheck;
-import ari.superarilo.command.tool.impl.CommandCheckImpl;
+import ari.superarilo.function.CommandCheck;
+import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
@@ -60,7 +60,7 @@ public class TpaRefuse implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if (!command.getName().equalsIgnoreCase(AriCommand.TPAREFUSE.getShow())) return List.of("");
-        if(commandSender instanceof Player && commandSender.hasPermission(AriCommand.TPAREFUSE.getPermission())) {
+        if(commandSender instanceof Player && Ari.instance.permissionUtils.hasPermission(commandSender, AriCommand.TPAREFUSE.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
             Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->

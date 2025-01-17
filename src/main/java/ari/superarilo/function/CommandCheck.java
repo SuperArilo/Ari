@@ -1,6 +1,6 @@
-package ari.superarilo.command.tool;
+package ari.superarilo.function;
 
-import ari.superarilo.command.tool.impl.CommandCheckImpl;
+import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

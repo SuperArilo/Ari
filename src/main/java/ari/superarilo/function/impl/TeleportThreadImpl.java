@@ -9,6 +9,8 @@ import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
+import net.kyori.adventure.sound.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
@@ -80,7 +82,7 @@ public class TeleportThreadImpl implements TeleportThread {
                     case POINT:
                         Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {
                             threadPlayer.teleportAsync(this.targetLocation);
-                            threadPlayer.playEffect(this.targetLocation, Effect.ANVIL_BREAK, null);
+                            threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                         });
                         break;

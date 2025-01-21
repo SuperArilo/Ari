@@ -28,10 +28,13 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
-        Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> this.player.openInventory(this.inventory));
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, e -> {
-           this.renderMasks(this.getMask());
-           this.renderFunctionItems(this.getFunctionItems());
+        Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> {
+            this.renderDataItem();
+            this.player.openInventory(this.inventory);
+            Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+                this.renderMasks(this.getMask());
+                this.renderFunctionItems(this.getFunctionItems());
+            });
         });
     }
 
@@ -92,4 +95,14 @@ public abstract class BaseGui {
     }
     protected abstract Mask getMask();
     protected abstract Map<String, FunctionItem> getFunctionItems();
+    public abstract void renderDataItem();
+
+    /**
+     * 清除指定位置已经渲染的item
+     * @param list 指定位置列表
+     */
+    protected void cleanRenderDataItem(List<Integer> list) {
+        if(this.inventory == null) return;
+        list.forEach(i -> this.inventory.clear(i));
+    }
 }

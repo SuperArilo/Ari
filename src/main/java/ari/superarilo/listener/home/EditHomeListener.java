@@ -21,6 +21,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -39,7 +40,12 @@ public class EditHomeListener implements Listener {
     public void editGuiClick(InventoryClickEvent event) {
         Inventory inventory = event.getClickedInventory();
         if(inventory == null || event.getSlot() > inventory.getSize()) return;
+        if(!(inventory.getHolder() instanceof CustomInventoryHolder) && (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT))) {
+            event.setCancelled(true);
+            return;
+        }
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.EDITHOME)) {
+
             Player player = holder.getPlayer();
             this.removeIfPlayInEditList(player);
             ItemStack clickItem = event.getCurrentItem();

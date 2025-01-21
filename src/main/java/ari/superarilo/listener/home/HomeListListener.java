@@ -56,20 +56,8 @@ public class HomeListListener implements Listener {
                         inventory.close();
                     }
                 }
-                case PREV -> {
-                    int pageNum = homeList.getPageNum();
-                    if(pageNum != 1) {
-                        pageNum--;
-                        homeList.setPageNum(pageNum);
-                        homeList.renderItem();
-                    }
-                }
-                case NEXT -> {
-                    int pageNum = homeList.getPageNum();
-                    pageNum++;
-                    homeList.setPageNum(pageNum);
-                    homeList.renderItem();
-                }
+                case PREV -> homeList.prev();
+                case NEXT -> homeList.next();
             }
         }
     }

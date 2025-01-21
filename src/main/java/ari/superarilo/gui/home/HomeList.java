@@ -32,25 +32,31 @@ public class HomeList extends BaseGui {
     private final HomeListGUI gui;
     private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
     private int pageNum = 1;
-    private int pageSize;
-
+    List<PlayerHome> playerHomes;
     public HomeList(Player player) {
         super(player);
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-
-        this.pageSize = this.gui.getDataSlot().size();
+        this.playerHomes = this.requestPlayerHomes();
     }
 
-    public void open() {
-        super.open();
-        this.renderItem();
+
+    @Override
+    protected Mask getMask() {
+        return this.gui.getMask();
     }
-    public void renderItem() {
+
+    @Override
+    protected Map<String, FunctionItem> getFunctionItems() {
+        return this.gui.getFunctionItems();
+    }
+
+    @Override
+    public void renderDataItem() {
         Log.debug(Level.INFO, "start render home list");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataSlot();
-        List<PlayerHome> playerHomes = HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.pageSize);
+        List<PlayerHome> playerHomes = this.getPlayerHomes();
         for (int i = 0; i < playerHomes.size(); i++) {
             PlayerHome ph = playerHomes.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
@@ -69,34 +75,35 @@ public class HomeList extends BaseGui {
         }
         Log.debug(Level.INFO, "render time: " + (System.currentTimeMillis() - start) + "ms");
     }
-
-    @Override
-    protected Mask getMask() {
-        return this.gui.getMask();
+    public void prev() {
+        this.pageNum--;
+        if(this.pageNum <= 0) {
+            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.home.none-prev", FilePath.Lang, String.class)));
+            Log.debug("home list: 第一页");
+            this.pageNum = 1;
+            return;
+        }
+        this.playerHomes = this.requestPlayerHomes();
+        this.renderDataItem();
+    }
+    public void next() {
+        this.pageNum++;
+        this.playerHomes = this.requestPlayerHomes();
+        if(this.playerHomes.isEmpty()) {
+            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.home.none-next", FilePath.Lang, String.class)));
+            Log.debug("home list: 最后一页");
+            this.pageNum--;
+        } else {
+            this.cleanRenderDataItem(this.gui.getDataSlot());
+            this.renderDataItem();
+        }
     }
 
-    @Override
-    protected Map<String, FunctionItem> getFunctionItems() {
-        return this.gui.getFunctionItems();
+    public List<PlayerHome> getPlayerHomes() {
+        return playerHomes;
     }
 
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
-    }
-
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public void setPageNum(int pageNum) {
-        this.pageNum = pageNum;
-    }
-
-    public HomeListGUI getGui() {
-        return gui;
+    public List<PlayerHome> requestPlayerHomes() {
+        return HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.gui.getDataSlot().size());
     }
 }

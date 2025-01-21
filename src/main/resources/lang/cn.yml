@@ -37,6 +37,8 @@ command:
     success: '&2重载插件成功！'
   home:
     success: '传送成功！'
+    none-prev: '这已经是第一页了哦'
+    none-next: '这已经是最后一页了哦'
   sethome:
     success: '<#90EE90>创建家成功！</#90EE90>'
     id-error: 'home的id不满足'

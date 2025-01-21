@@ -27,11 +27,6 @@ public class HomeEditor extends BaseGui {
     }
 
     @Override
-    public void open() {
-        super.open();
-    }
-
-    @Override
     protected Mask getMask() {
         return this.gui.getMask();
     }
@@ -49,5 +44,10 @@ public class HomeEditor extends BaseGui {
             }
         }
         return functionItems;
+    }
+
+    @Override
+    public void renderDataItem() {
+
     }
 }

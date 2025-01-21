@@ -37,8 +37,9 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         CompletableFuture<List<PlayerHome>> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                future.complete(sqlSession.getMapper(PlayerHomeMapper.class)
-                        .getHomeList(
+                PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
+                future.complete(
+                        mapper.getHomeList(
                                 this.player.getUniqueId().toString(),
                                 Page.create(pageNum, pageSize)));
             }
@@ -61,7 +62,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
                 int size = mapper.getHomeList(String.valueOf(this.player.getUniqueId()), Page.create(1, Integer.MAX_VALUE)).size();
                 Integer value = Ari.instance.configManager.getValue("main.set-home.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
-                if(size >= value) {
+                if(size >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
                     this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.exceeds", FilePath.Lang, String.class)));
                     return;
@@ -93,7 +94,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     public void deleteHome(String homeId) {
         long start = System.currentTimeMillis();
         try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            Integer deleteStatus = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
+            sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
             Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
         } catch (Exception e) {
             Log.error("remove home fail, id: " + homeId, e);

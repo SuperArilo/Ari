@@ -28,7 +28,7 @@ public class TpaAccept implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         CommandCheckImpl check = CommandCheck.create();
         if (!check.isTheInstructionCorrect(command, AriCommand.TPAACCEPT)) return false;
-        if (check.allCheck(commandSender, command, AriCommand.TPAACCEPT)) {
+        if (check.allCheck(commandSender, AriCommand.TPAACCEPT)) {
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;

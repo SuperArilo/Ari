@@ -18,9 +18,10 @@ public class CommandCheckImpl implements CommandCheck {
     }
 
     @Override
-    public boolean isPlayer(CommandSender commandSender, AriCommand type) {
+    public boolean isPlayer(CommandSender commandSender) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(TextTool.setHEXColorText("command.public.not-player", FilePath.Lang));
+            return false;
         }
         return true;
     }
@@ -29,23 +30,20 @@ public class CommandCheckImpl implements CommandCheck {
     public boolean commandSenderHavePermission(CommandSender commandSender, AriCommand type) {
         if (!Ari.instance.permissionUtils.hasPermission(commandSender, type.getPermission())) {
             commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
+            return false;
         }
         return true;
     }
 
     @Override
-    public boolean allCheck(CommandSender commandSender, Command command, AriCommand ariCommand) {
+    public boolean allCheck(CommandSender commandSender, AriCommand ariCommand) {
         //判断是否是玩家
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(TextTool.setHEXColorText("command.public.not-player", FilePath.Lang));
             return false;
         }
         //判断是否有相应的权限
-        if (!Ari.instance.permissionUtils.hasPermission(commandSender, ariCommand.getPermission())) {
-            commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
-            return false;
-        }
-        return true;
+        return this.commandSenderHavePermission(commandSender, ariCommand);
     }
 
     @Override

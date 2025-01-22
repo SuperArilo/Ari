@@ -4,6 +4,7 @@ public enum FilePath {
     Lang("lang","lang/cn.yml"),
     TPA("tpa", "module/tpa/setting.yml"),
     HomeList("homeList", "module/home/home-gui.yml"),
+    CommandAlias("commandAlias", "module/command-alias.yml"),
     HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
     HomeConfig("homeConfig", "module/home/setting.yml");
 

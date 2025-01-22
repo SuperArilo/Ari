@@ -23,7 +23,7 @@ public class TpaHere implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         CommandCheckImpl check = CommandCheck.create();
         if (!check.isTheInstructionCorrect(command, AriCommand.TPAHERE)) return false;
-        if (check.allCheck(commandSender, command, AriCommand.TPAHERE)) {
+        if (check.allCheck(commandSender, AriCommand.TPAHERE)) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));

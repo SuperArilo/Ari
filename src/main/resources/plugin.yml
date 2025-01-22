@@ -9,17 +9,7 @@ api-version: 1.20
 commands:
   ari:
     usage: '插件主要指令'
-  tpa:
-    usage: '传送指令'
-  tpaaccept:
-    usage: '传送接受指令'
-  tpahere:
-    usage: '传送指令'
-  tparefuse:
-    usage: '拒绝传送指令'
-  home:
-    aliases:
-      - homes
-    usage: '打开家列表GUI'
-  sethome:
-    usage: '将当前所处位置保存为您的家'
+permissions:
+  ari.command:
+    description: "授予对基本命令的访问权限"
+    default: true

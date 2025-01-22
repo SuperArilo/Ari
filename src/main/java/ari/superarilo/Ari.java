@@ -11,6 +11,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 public class Ari extends JavaPlugin {
 
     public static Ari instance;
@@ -22,6 +23,7 @@ public class Ari extends JavaPlugin {
     public SQLInstance SQLInstance;
     public FormatUtil formatUtil;
     public PermissionUtils permissionUtils;
+    public CommandAlias commandAlias;
     @Override
     public void onLoad() {
         instance = this;
@@ -35,6 +37,9 @@ public class Ari extends JavaPlugin {
     public void onEnable() {
         this.registerCommands();
         this.registerListener();
+
+        this.commandAlias = new CommandAlias();
+
         //group
         this.permissionUtils = new PermissionUtils();
         //PAPI
@@ -52,9 +57,8 @@ public class Ari extends JavaPlugin {
     protected void registerCommands() {
         for (AriCommand command : AriCommand.values()) {
             String showName = command.getShow();
-            if (showName == null) return;
             PluginCommand pluginCommand = this.getCommand(showName);
-            if(pluginCommand == null) return;
+            if(pluginCommand == null) continue;
             pluginCommand.setExecutor(command.getCommandClass());
             pluginCommand.setTabCompleter(command.getCommandClass());
         }

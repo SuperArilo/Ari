@@ -17,7 +17,6 @@ public class CommandAlias {
 
     private static final String localPath = "ari.superarilo.command.lists.";
     private Constructor<PluginCommand> constructor;
-    private YamlConfiguration aliasFile;
     private Map<String, AliasItem> alias;
 
     public CommandAlias() {
@@ -32,29 +31,47 @@ public class CommandAlias {
     }
 
     public void init() {
-        if(this.aliasFile == null) {
-            this.aliasFile = Ari.instance.configManager.getObject(FilePath.CommandAlias.getName());
-        }
-        this.alias = Ari.instance.objectConvert.yamlConvertToObj(this.aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
+        YamlConfiguration aliasFile = Ari.instance.configManager.getObject(FilePath.CommandAlias.getName());
+        this.alias = Ari.instance.objectConvert.yamlConvertToObj(aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
         this.registerAlias();
     }
     private void registerAlias() {
+        Log.debug("----------register command ----------");
         long start = System.currentTimeMillis();
         CommandMap commandMap = Ari.instance.getServer().getCommandMap();
         this.alias.forEach((k, v) -> {
             if(!v.isEnable()) return;
             PluginCommand pluginCommand = this.build(k);
-            if(pluginCommand == null) return;
+            if(pluginCommand == null) {
+                Log.debug("register command [" + k + "] error");
+                return;
+            };
             pluginCommand.setPermission(AriCommand.valueOf(k.toUpperCase()).getPermission());
             pluginCommand.setName(k);
             pluginCommand.setLabel(k);
-            commandMap.register(Ari.instance.getName() + ":" + k, pluginCommand);
+            //这里必须添加插件的名称
+            boolean register = commandMap.register(Ari.instance.getName(), pluginCommand);
+            Log.debug("register command [" + k + "] status: " + register);
         });
-        Log.debug("alias time: " + (System.currentTimeMillis() - start) + "ms");
+        Log.debug("register alias time: " + (System.currentTimeMillis() - start) + "ms");
+        Log.debug("----------register command end ----------");
     }
-
+    public void reloadAllAlias() {
+        Log.debug("---------- unregister command ----------");
+        CommandMap commandMap = Ari.instance.getServer().getCommandMap();
+        Map<String, Command> knownCommands = commandMap.getKnownCommands();
+        this.alias.forEach((k, v) -> {
+            Command command = commandMap.getCommand(k);
+            if(command == null) return;
+            knownCommands.remove(Ari.instance.getName() + ":" + k);
+            knownCommands.remove(k);
+            boolean unregister = command.unregister(commandMap);
+            Log.debug("unregister command [" + k + "] status: " + unregister);
+        });
+        this.init();
+        Log.debug("---------- unregister command end ----------");
+    }
     private PluginCommand build(String commandName) {
-
         PluginCommand pluginCommand;
         try {
             pluginCommand = this.constructor.newInstance(commandName, Ari.instance);

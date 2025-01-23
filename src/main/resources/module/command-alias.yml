@@ -1,6 +1,14 @@
 tpa:
   enable: true
+tpahere:
+  enable: true
+tpaaccept:
+  enable: true
+tparefuse:
+  enable: true
 home:
+  enable: true
+deletehome:
   enable: true
 sethome:
   enable: true

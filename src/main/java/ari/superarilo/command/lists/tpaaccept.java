@@ -1,4 +1,4 @@
-package ari.superarilo.command.teleport;
+package ari.superarilo.command.lists;
 
 import ari.superarilo.Ari;
 import ari.superarilo.function.CommandCheck;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TpaAccept implements TabExecutor {
+public class tpaaccept implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {

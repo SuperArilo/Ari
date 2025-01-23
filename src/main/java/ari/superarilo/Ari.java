@@ -2,12 +2,14 @@ package ari.superarilo;
 
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.listener.command.PreCommandListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;
 import ari.superarilo.tool.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -39,7 +41,6 @@ public class Ari extends JavaPlugin {
         this.registerListener();
 
         this.commandAlias = new CommandAlias();
-
         //group
         this.permissionUtils = new PermissionUtils();
         //PAPI
@@ -59,8 +60,9 @@ public class Ari extends JavaPlugin {
             String showName = command.getShow();
             PluginCommand pluginCommand = this.getCommand(showName);
             if(pluginCommand == null) continue;
-            pluginCommand.setExecutor(command.getCommandClass());
-            pluginCommand.setTabCompleter(command.getCommandClass());
+            TabExecutor commandClass = command.getCommandClass();
+            pluginCommand.setExecutor(commandClass);
+            pluginCommand.setTabCompleter(commandClass);
         }
     }
     protected void registerListener() {

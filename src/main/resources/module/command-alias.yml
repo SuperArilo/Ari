@@ -1,12 +1,6 @@
 tpa:
   enable: true
-  alias:
-    - 'tpa'
 home:
   enable: true
-  alias:
-    - 'home'
 sethome:
   enable: true
-  alias:
-    - 'sethome'

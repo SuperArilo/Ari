@@ -1,12 +1,12 @@
 package ari.superarilo.enumType;
 
 import ari.superarilo.command.MainCommand;
-import ari.superarilo.command.home.Home;
-import ari.superarilo.command.home.SetHome;
-import ari.superarilo.command.teleport.Tpa;
-import ari.superarilo.command.teleport.TpaAccept;
-import ari.superarilo.command.teleport.TpaRefuse;
-import ari.superarilo.command.teleport.TpaHere;
+import ari.superarilo.command.lists.home;
+import ari.superarilo.command.lists.sethome;
+import ari.superarilo.command.lists.tpa;
+import ari.superarilo.command.lists.tpaaccept;
+import ari.superarilo.command.lists.tparefuse;
+import ari.superarilo.command.lists.tpahere;
 import org.bukkit.command.TabExecutor;
 
 import java.util.List;
@@ -24,37 +24,37 @@ public enum AriCommand {
             "传送指令",
             "ari.command.tpa",
             "无权限",
-            new Tpa()),
+            new tpa()),
     TPAHERE("tpahere",
             null,
             "让玩家传送到您此处",
             "ari.command.tpahere",
             "无权限",
-            new TpaHere()),
+            new tpahere()),
     TPAACCEPT("tpaaccept",
             null,
             "接受此次传送请求",
             "ari.command.tpaaccept",
             "无权限",
-            new TpaAccept()),
+            new tpaaccept()),
     TPAREFUSE("tparefuse",
             null,
             "拒绝当前的传送请求",
             "ari.command.tparefuse",
             "无权限",
-            new TpaRefuse()),
+            new tparefuse()),
     HOME("home",
             List.of("homes"),
             "打开您保存的home列表",
             "ari.command.home",
             "无权限",
-            new Home()),
+            new home()),
     SETHOME("sethome",
             null,
             "将当前所处位置保存为您的家",
             "ari.command.sethome",
             "无权限",
-            new SetHome()),
+            new sethome()),
     RELOAD("reload",
             null,
             "重新加载插件",

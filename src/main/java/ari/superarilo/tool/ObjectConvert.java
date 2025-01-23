@@ -1,25 +1,31 @@
 package ari.superarilo.tool;
 
 import ari.superarilo.enumType.FunctionType;
+import com.google.gson.Gson;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
 
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class ObjectConvert {
-    private final LoaderOptions loaderOptions = new LoaderOptions();
+    private final Gson gson = new Gson();
+    private final Yaml yaml;
     public ObjectConvert() {
-        this.loaderOptions.setAllowRecursiveKeys(true);
-        this.loaderOptions.setAllowDuplicateKeys(false);
+        LoaderOptions loaderOptions = new LoaderOptions();
+        loaderOptions.setAllowRecursiveKeys(true);
+        loaderOptions.setAllowDuplicateKeys(false);
+        this.yaml = new Yaml(loaderOptions);
     }
 
-    public <T> T yamlConvertToObj(String raw, Class<T> clazz) {
-        try {
-            return new Yaml(new Constructor(clazz, this.loaderOptions)).load(raw);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to convert YAML to object: " + e.getMessage(), e);
+    public <T> T yamlConvertToObj(String raw, Type type) {
+        Object intermediateObj = yaml.load(raw);
+        if (intermediateObj instanceof Map || intermediateObj instanceof List) {
+            return gson.fromJson(gson.toJson(intermediateObj), type);
         }
+        return gson.fromJson(gson.toJsonTree(intermediateObj), type);
     }
     public FunctionType ItemNBT_TypeCheck(String rawType) {
         if(rawType == null) return null;

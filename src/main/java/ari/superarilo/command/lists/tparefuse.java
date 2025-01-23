@@ -1,4 +1,4 @@
-package ari.superarilo.command.teleport;
+package ari.superarilo.command.lists;
 
 import ari.superarilo.Ari;
 import ari.superarilo.function.CommandCheck;
@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TpaRefuse implements TabExecutor {
+public class tparefuse implements TabExecutor {
     
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {

@@ -21,9 +21,9 @@ public class tpahere implements TabExecutor {
     
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl check = CommandCheck.create();
-        if (!check.isTheInstructionCorrect(command, AriCommand.TPAHERE)) return false;
-        if (check.allCheck(commandSender, AriCommand.TPAHERE)) {
+        CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.TPAHERE);
+        if (!check.isTheInstructionCorrect()) return false;
+        if (check.allCheck()) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
@@ -40,7 +40,7 @@ public class tpahere implements TabExecutor {
     }
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(!command.getName().equalsIgnoreCase(AriCommand.TPA.getShow())) return List.of("");
+        if(!command.getName().equalsIgnoreCase(AriCommand.TPA.getShow())) return List.of();
         if (commandSender instanceof Player && Ari.instance.permissionUtils.hasPermission(commandSender, AriCommand.TPA.getPermission()) && strings.length == 1) {
             List<String> players = new ArrayList<>();
             Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
@@ -49,7 +49,7 @@ public class tpahere implements TabExecutor {
             });
             return players;
         }
-        return List.of("");
+        return List.of();
     }
 
 

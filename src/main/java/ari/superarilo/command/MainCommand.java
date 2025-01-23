@@ -1,6 +1,7 @@
 package ari.superarilo.command;
 
 import ari.superarilo.Ari;
+import ari.superarilo.enumType.TeleportObjectType;
 import ari.superarilo.function.CommandCheck;
 import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
@@ -22,10 +23,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class MainCommand implements TabExecutor {
+
+    private final String commandPublicFail = Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class);
+    private final String teleportUnablePlayer = Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class);
+
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl commandCheck = CommandCheck.create();
-        if (!commandCheck.isTheInstructionCorrect(command, AriCommand.ARI)) return false;
+        CommandCheckImpl commandCheck = CommandCheck.create(commandSender, command, AriCommand.ARI);
+        if (!commandCheck.isTheInstructionCorrect()) return false;
         if (strings.length == 0) return false;
 
         AriCommand type;
@@ -35,42 +40,48 @@ public class MainCommand implements TabExecutor {
             commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.unknown", FilePath.Lang, String.class)));
             return true;
         }
-        //判断是否有对应的权限
-        if(!commandCheck.commandSenderHavePermission(commandSender, type)) {
-            return true;
-        }
         switch (type) {
             case RELOAD -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) {
+                    return true;
+                }
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.reload.doing", FilePath.Lang, String.class)));
                 Ari.instance.configManager.reloadAllConfig();
                 if (Ari.debug) {
                     Ari.instance.SQLInstance.reconnect();
                 }
+                Ari.instance.commandAlias.reloadAllAlias();
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.reload.success", FilePath.Lang, String.class)));
             }
             case TPA -> {
-                if(!commandCheck.isPlayer(commandSender)) break;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
                     return true;
                 }
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if(player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
                     return true;
                 }
                 TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
             }
             case TPAACCEPT -> {
-                if(!commandCheck.isPlayer(commandSender)) break;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
                     return true;
                 }
                 //判断玩家是否存在
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
                     return true;
                 }
 
@@ -95,29 +106,35 @@ public class MainCommand implements TabExecutor {
                 }
             }
             case TPAHERE -> {
-                if(!commandCheck.isPlayer(commandSender)) break;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
                     return true;
                 }
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
                     return true;
                 }
 
                 TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);
             }
             case TPAREFUSE -> {
-                if(!commandCheck.isPlayer(commandSender)) break;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
                     return true;
                 }
                 //判断玩家是否存在
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
                     return true;
                 }
                 if (TeleportPrecondition.create().checkStatusV(player, (Player) commandSender) == null) {
@@ -127,7 +144,7 @@ public class MainCommand implements TabExecutor {
                     if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
                         commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
                         if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
-                            player.sendMessage(TextTool.setHEXColorText(message.replace("[TpaBeSender]", commandSender.getName())));
+                            player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), commandSender.getName())));
                         }
                     } else {
                         commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.break", FilePath.Lang, String.class)));
@@ -135,7 +152,10 @@ public class MainCommand implements TabExecutor {
                 }
             }
             case HOME -> {
-                if(!commandCheck.isPlayer(commandSender)) break;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.HOME)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
                 new HomeList((Player) commandSender).open();
             }
         }

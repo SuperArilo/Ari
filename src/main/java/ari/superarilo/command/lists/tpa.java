@@ -20,9 +20,9 @@ public class tpa implements TabExecutor {
     
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl check = CommandCheck.create();
-        if (!check.isTheInstructionCorrect(command, AriCommand.TPA)) return false;
-        if (check.allCheck(commandSender, AriCommand.TPA)) {
+        CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.TPA);
+        if (!check.isTheInstructionCorrect()) return false;
+        if (check.allCheck()) {
             //是否指令指令参数不对或者不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));

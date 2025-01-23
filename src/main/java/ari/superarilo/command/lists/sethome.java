@@ -20,9 +20,9 @@ public class sethome implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl check = CommandCheck.create();
-        if (!check.isTheInstructionCorrect(command, AriCommand.SETHOME)) return false;
-        if (check.allCheck(commandSender, AriCommand.SETHOME)) {
+        CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.SETHOME);
+        if (!check.isTheInstructionCorrect()) return false;
+        if (check.allCheck()) {
             if (strings.length != 1) {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
                 return true;

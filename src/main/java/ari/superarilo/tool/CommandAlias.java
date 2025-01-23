@@ -45,7 +45,7 @@ public class CommandAlias {
             if(pluginCommand == null) {
                 Log.debug("register command [" + k + "] error");
                 return;
-            };
+            }
             pluginCommand.setPermission(AriCommand.valueOf(k.toUpperCase()).getPermission());
             pluginCommand.setName(k);
             pluginCommand.setLabel(k);

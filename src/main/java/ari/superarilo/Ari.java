@@ -2,7 +2,6 @@ package ari.superarilo;
 
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
-import ari.superarilo.listener.command.PreCommandListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.papi.HomePAPI;

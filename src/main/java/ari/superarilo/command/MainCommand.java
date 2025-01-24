@@ -13,7 +13,6 @@ import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.TextTool;
 import ari.superarilo.function.TeleportThread;
-import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -164,11 +163,33 @@ public class MainCommand implements TabExecutor {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    return true;
+                }
                 if(Ari.instance.formatUtil.checkIdName(strings[1])) {
                     HomeManager.create((Player) commandSender).createNewHome(strings[1]);
                 } else {
                     commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
                             "command.sethome.id-error",
+                            FilePath.Lang,
+                            String.class)));
+                }
+            }
+            case DELETEHOME -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    return true;
+                }
+                if(Ari.instance.formatUtil.checkIdName(strings[1])) {
+                    HomeManager.create((Player) commandSender).deleteHome(strings[1]);
+                } else {
+                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                            "command.deletehome.id-error",
                             FilePath.Lang,
                             String.class)));
                 }
@@ -210,37 +231,41 @@ public class MainCommand implements TabExecutor {
             Collections.sort(st);
             return st;
         } else if (strings.length == 2) {
-            List<String> st = new ArrayList<>();
             AriCommand c;
             try {
                 c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
             } catch (Exception e) {
-                return st;
+                return List.of();
             }
-            Server server = Ari.instance.getServer();
             switch (c) {
-                case TPAHERE:
-                case TPA:
-                    server.getOnlinePlayers().forEach(e -> {
-                        if(!e.getName().equals(commandSender.getName())) {
-                            st.add(e.getName());
+                case TPA, TPAHERE -> {
+                    List<String> list = new ArrayList<>();
+                    Ari.instance.getServer().getOnlinePlayers().forEach(p -> {
+                        if(!p.getName().equals(commandSender.getName())) {
+                            list.add(p.getName());
                         }
                     });
-                    break;
-                case TPAACCEPT:
-                case TPAREFUSE:
-                    Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
-                                    obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER)).toList()
+                    return list;
+                }
+                case TPAACCEPT, TPAREFUSE -> {
+                    List<String> list = new ArrayList<>();
+                    Ari.instance.tpStatusValue.getStatusList().stream().filter(obj -> obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER)).toList()
                             .forEach(e -> {
-                                Player player = server.getPlayer(e.getPlayUUID());
+                                Player player = Ari.instance.getServer().getPlayer(e.getPlayUUID());
                                 if (player != null) {
-                                    st.add(player.getName());
+                                    list.add(player.getName());
                                 }
                             });
-                    break;
+                    return list;
+                }
+                case DELETEHOME -> {
+                    List<String> list = HomeManager.create((Player) commandSender).asyncGetHomeIdList();
+                    Collections.sort(list);
+                    return list;
+                }
+
             }
-            return st;
         }
-        return List.of("");
+        return List.of();
     }
 }

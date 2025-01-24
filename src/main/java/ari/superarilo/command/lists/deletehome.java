@@ -28,19 +28,7 @@ public class deletehome implements TabExecutor {
                 commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.delete.id-error", FilePath.Lang, String.class)));
                 return true;
             }
-            Integer i = HomeManager.create((Player) commandSender).deleteHome(strings[0]);
-            if(i == 1){
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                        "command.deletehome.success",
-                        FilePath.Lang,
-                        String.class)));
-            } else {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                        "command.deletehome.error",
-                        FilePath.Lang,
-                        String.class
-                )));
-            }
+            HomeManager.create((Player) commandSender).deleteHome(strings[0]);
         }
         return true;
     }
@@ -52,7 +40,7 @@ public class deletehome implements TabExecutor {
             AriCommand deletehome = AriCommand.DELETEHOME;
             if(!command.getName().equalsIgnoreCase(deletehome.getShow())) return List.of();
             if(Ari.instance.permissionUtils.hasPermission(player, deletehome.getPermission())) {
-                List<String> list = HomeManager.create(player).asyncGetHomeIdList(player.getUniqueId().toString());
+                List<String> list = HomeManager.create(player).asyncGetHomeIdList();
                 Collections.sort(list);
                 return list;
             }

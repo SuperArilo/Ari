@@ -10,9 +10,12 @@ import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
+import ari.superarilo.function.impl.TeleportThreadImpl;
 import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.TextTool;
 import ari.superarilo.function.TeleportThread;
+import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -24,8 +27,8 @@ import java.util.*;
 
 public class MainCommand implements TabExecutor {
 
-    private final String commandPublicFail = Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class);
-    private final String teleportUnablePlayer = Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class);
+    private final TextComponent commandPublicFail = TextTool.setHEXColorText("command.public.fail", FilePath.Lang);
+    private final TextComponent teleportUnablePlayer = TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang);
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
@@ -37,7 +40,7 @@ public class MainCommand implements TabExecutor {
         try {
             type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
         } catch (Exception e) {
-            commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.unknown", FilePath.Lang, String.class)));
+            commandSender.sendMessage(TextTool.setHEXColorText("command.unknown", FilePath.Lang));
             return true;
         }
         switch (type) {
@@ -45,13 +48,13 @@ public class MainCommand implements TabExecutor {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) {
                     return true;
                 }
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.reload.doing", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.reload.doing", FilePath.Lang));
                 Ari.instance.configManager.reloadAllConfig();
                 if (Ari.debug) {
                     Ari.instance.SQLInstance.reconnect();
                 }
                 Ari.instance.commandAlias.reloadAllAlias();
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.reload.success", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.reload.success", FilePath.Lang));
             }
             case TPA -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPA)) {
@@ -59,12 +62,12 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if(player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
+                    commandSender.sendMessage(this.teleportUnablePlayer);
                     return true;
                 }
                 TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
@@ -75,24 +78,24 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 //判断玩家是否存在
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
+                    commandSender.sendMessage(this.teleportUnablePlayer);
                     return true;
                 }
 
                 //判断请求是否还存在
                 TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
                 if(status == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.been-done", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.been-done", FilePath.Lang));
                     return true;
                 }
                 //请求成功，移除该请求
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.agree", FilePath.Lang));
                 Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
                 TeleportThread teleportThread = switch (status.getCommandType()) {
                     case TPA -> TeleportThread.playerToPlayer(player, ((Player) commandSender));
@@ -111,12 +114,12 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
+                    commandSender.sendMessage(this.teleportUnablePlayer);
                     return true;
                 }
 
@@ -128,26 +131,26 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 //判断玩家是否存在
                 Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
                 if (player == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.teleportUnablePlayer));
+                    commandSender.sendMessage(this.teleportUnablePlayer);
                     return true;
                 }
                 if (TeleportPrecondition.create().checkStatusV(player, (Player) commandSender) == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.been-done", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.been-done", FilePath.Lang));
                     return true;
                 } else {
                     if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
-                        commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
+                        commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.success", FilePath.Lang));
                         if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
                             player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), commandSender.getName())));
                         }
                     } else {
-                        commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.break", FilePath.Lang, String.class)));
+                        commandSender.sendMessage(TextTool.setHEXColorText("command.public.break", FilePath.Lang));
                     }
                 }
             }
@@ -164,16 +167,13 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 if(Ari.instance.formatUtil.checkIdName(strings[1])) {
                     HomeManager.create((Player) commandSender).createNewHome(strings[1]);
                 } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                            "command.sethome.id-error",
-                            FilePath.Lang,
-                            String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.sethome.id-error", FilePath.Lang));
                 }
             }
             case DELETEHOME -> {
@@ -182,16 +182,34 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(this.commandPublicFail));
+                    commandSender.sendMessage(this.commandPublicFail);
                     return true;
                 }
                 if(Ari.instance.formatUtil.checkIdName(strings[1])) {
                     HomeManager.create((Player) commandSender).deleteHome(strings[1]);
                 } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                            "command.deletehome.id-error",
-                            FilePath.Lang,
-                            String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.deletehome.id-error", FilePath.Lang));
+                }
+            }
+            case BACK -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.BACK)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                Player player = (Player) commandSender;
+                Location beforeLocation = TeleportThreadImpl.lastLocation.get(player.getUniqueId());
+                if(beforeLocation == null) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
+                }
+                if(TeleportPrecondition.create().preCheckStatus(player, beforeLocation, AriCommand.BACK)) {
+                    TeleportThread
+                            .playerToLocation(
+                                    player,
+                                    beforeLocation)
+                            .teleport(Ari.instance.configManager.getValue(
+                                    "main.teleport.delay",
+                                    FilePath.TPA,
+                                    Integer.class));
                 }
             }
         }

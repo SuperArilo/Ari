@@ -30,28 +30,28 @@ public class tparefuse implements TabExecutor {
         if (check.allCheck()) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                 return true;
             }
 
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
                 return true;
             }
 
             TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
             if (status == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.been-done", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.been-done", FilePath.Lang));
                 return true;
             } else {
                 if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tparefuse.success", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.success", FilePath.Lang));
                     if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
                         player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), commandSender.getName())));
                     }
                 } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.break", FilePath.Lang, String.class)));
+                    commandSender.sendMessage(TextTool.setHEXColorText("teleport.break", FilePath.Lang));
                 }
             }
         }

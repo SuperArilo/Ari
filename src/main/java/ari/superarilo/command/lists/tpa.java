@@ -1,6 +1,7 @@
 package ari.superarilo.command.lists;
 
 import ari.superarilo.Ari;
+import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.function.CommandCheck;
 import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
@@ -25,13 +26,13 @@ public class tpa implements TabExecutor {
         if (check.allCheck()) {
             //是否指令指令参数不对或者不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                 return true;
             }
             //判断指令参数获取的玩家是否存在
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
                 return true;
             }
             TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);

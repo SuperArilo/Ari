@@ -81,7 +81,7 @@ public class HomeList extends BaseGui {
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
-            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.home.none-prev", FilePath.Lang, String.class)));
+            this.player.sendMessage(TextTool.setHEXColorText("command.home.none-prev", FilePath.Lang));
             Log.debug("home list: 第一页");
             this.pageNum = 1;
             return;
@@ -93,7 +93,7 @@ public class HomeList extends BaseGui {
         this.pageNum++;
         this.playerHomes = this.requestPlayerHomes();
         if(this.playerHomes.isEmpty()) {
-            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.home.none-next", FilePath.Lang, String.class)));
+            this.player.sendMessage(TextTool.setHEXColorText("command.home.none-next", FilePath.Lang));
             Log.debug("home list: 最后一页");
             this.pageNum--;
         } else {

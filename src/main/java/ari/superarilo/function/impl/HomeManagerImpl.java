@@ -105,7 +105,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 Integer value = Ari.instance.configManager.getValue("main.set-home.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
                 if(size >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
-                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.exceeds", FilePath.Lang, String.class)));
+                    this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exceeds", FilePath.Lang));
                     return;
                 }
                 if (mapper.exist(homeId, this.player.getUniqueId().toString())) {
@@ -138,16 +138,9 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
                 if(delete == 1){
-                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                            "command.deletehome.success",
-                            FilePath.Lang,
-                            String.class)));
+                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.success", FilePath.Lang));
                 } else {
-                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                            "command.deletehome.error",
-                            FilePath.Lang,
-                            String.class
-                    )));
+                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.error", FilePath.Lang));
                 }
                 Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
             } catch (Exception e) {

@@ -30,13 +30,13 @@ public class tpaaccept implements TabExecutor {
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck()) {
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                 return true;
             }
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             //判断玩家是否存在
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
                 return true;
             }
             //判断请求是否还存在
@@ -44,11 +44,11 @@ public class tpaaccept implements TabExecutor {
             TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
 
             if(status == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.been-done", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.been-done", FilePath.Lang));
                 return true;
             }
             //请求成功，移除该请求
-            commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.tpaaccept.agree", FilePath.Lang, String.class)));
+            commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.agree", FilePath.Lang));
             Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
 
             TeleportThread teleportThread = switch (status.getCommandType()) {

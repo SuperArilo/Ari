@@ -26,12 +26,12 @@ public class tpahere implements TabExecutor {
         if (check.allCheck()) {
             //指令不全
             if (strings.length != 1 || strings[0].equals(commandSender.getName())) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                 return true;
             }
             Player player = Ari.instance.getServer().getPlayerExact(strings[0]);
             if (player == null) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.unable-player", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
                 return true;
             }
             TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);

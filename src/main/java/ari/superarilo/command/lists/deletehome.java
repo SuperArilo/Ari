@@ -25,7 +25,7 @@ public class deletehome implements TabExecutor {
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck()) {
             if(strings.length != 1 || !Ari.instance.formatUtil.checkIdName(strings[0])) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.delete.id-error", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.delete.id-error", FilePath.Lang));
                 return true;
             }
             HomeManager.create((Player) commandSender).deleteHome(strings[0]);

@@ -24,13 +24,13 @@ public class sethome implements TabExecutor {
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck()) {
             if (strings.length != 1) {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.fail", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                 return true;
             }
             if(Ari.instance.formatUtil.checkIdName(strings[0])) {
                 HomeManager.create((Player) commandSender).createNewHome(strings[0]);
             } else {
-                commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.sethome.id-error", FilePath.Lang, String.class)));
+                commandSender.sendMessage(TextTool.setHEXColorText("command.sethome.id-error", FilePath.Lang));
             }
         }
         return true;

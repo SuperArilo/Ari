@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class TeleportPreconditionImpl implements TeleportPrecondition {
@@ -22,27 +21,47 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
 
     @Override
     public void preCheckStatus(Player sender, Player targetPlayer, AriCommand ariCommand) {
-        Optional<TeleportStatus> first = Ari.instance.tpStatusValue.getStatusList().stream()
-                .filter(obj ->
-                        obj.getPlayUUID().equals(sender.getUniqueId()) &&
-                        obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
-                        obj.getType().equals(TeleportType.PLAYER))
-                .findFirst();
-
-        if (first.isPresent()) {
+        if (this.checkStatusV(sender, targetPlayer) != null) {
             if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".again", FilePath.Lang, String.class) instanceof String message) {
                 sender.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), targetPlayer.getName())));
             }
         } else {
-            sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".send-message", FilePath.Lang, String.class)));
+            sender.sendMessage(
+                    TextTool.setHEXColorText(
+                            Ari.instance.configManager.getValue(
+                                            "command." + ariCommand.getShow() + ".send-message",
+                                            FilePath.Lang,
+                                            String.class)));
             this.sendMessageToBePlayer(sender, targetPlayer, ariCommand);
-            this.startAddTask(sender, targetPlayer, ariCommand);
+            this.startAddTask(sender, targetPlayer, null, ariCommand);
         }
     }
 
     @Override
-    public TeleportStatus preCheckStatus(Player sender, Location targetLocation) {
-        return null;
+    public boolean preCheckStatus(Player player, Location targetLocation, AriCommand ariCommand) {
+        if (this.checkStatusV(player, targetLocation) != null) {
+            player.sendMessage(TextTool.setHEXColorText(
+                    Ari.instance.configManager.getValue(
+                            "teleport.cooling",
+                            FilePath.Lang,
+                            String.class
+                    )
+            ));
+            return false;
+        } else {
+            this.startAddTask(player, null, targetLocation, ariCommand);
+            return true;
+        }
+    }
+
+    @Override
+    public TeleportStatus checkStatusV(Player sender, Location targetLocation) {
+        return Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
+                obj.getPlayUUID().equals(sender.getUniqueId()) &&
+                        obj.getLocation().equals(targetLocation) &&
+                        obj.getType().equals(TeleportType.BACK))
+                .findFirst()
+                .orElse(null);
     }
 
     @Override
@@ -78,13 +97,16 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
      * @param targetPlayer 接收玩家
      * @param ariCommand 传送类型
      */
-    protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
+    protected void startAddTask(Player player, Player targetPlayer, Location targetLocation, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {
             TeleportStatus status = new TeleportStatus();
             status.setType(TeleportType.PLAYER);
             status.setCommandType(ariCommand);
+            status.setLocation(targetLocation);
             status.setPlayUUID(player.getUniqueId());
-            status.setBePlayerUUID(targetPlayer.getUniqueId());
+            if(targetPlayer != null) {
+                status.setBePlayerUUID(targetPlayer.getUniqueId());
+            }
             Ari.instance.tpStatusValue.addStatus(status);
             //设置定时任务来移除该玩家已经发送的请求状态
             Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER), 10L, TimeUnit.SECONDS);

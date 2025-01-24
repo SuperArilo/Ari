@@ -6,17 +6,27 @@ import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 public class TeleportThreadImpl implements TeleportThread {
+
+    private final TextComponent teleportSuccess = TextTool.setHEXColorText("teleport.success", FilePath.Lang);
+
+    //保存的玩家上一个传送位置
+    public static final Map<UUID, Location> lastLocation = new HashMap<>();
     //被传送玩家
     private final Player player;
     //目标玩家
@@ -57,7 +67,7 @@ public class TeleportThreadImpl implements TeleportThread {
             timerIndex = new int[]{1};
         } else {
             timerIndex = new int[]{delay};
-            this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.ing", FilePath.Lang, String.class)));
+            this.player.sendMessage(TextTool.setHEXColorText("teleport.ing", FilePath.Lang));
         }
         Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
             //在任务里获取现在玩家的状态
@@ -69,7 +79,7 @@ public class TeleportThreadImpl implements TeleportThread {
             //判断玩家是否在传送过程中移动或者受伤
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
-                threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.break", FilePath.Lang, String.class)));
+                threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.break", FilePath.Lang));
                 return;
             }
             timerIndex[0]--;
@@ -77,26 +87,21 @@ public class TeleportThreadImpl implements TeleportThread {
             //传送时间到达
             if (timerIndex[0] == 0) {
                 t.cancel();
-                Log.debug(Level.INFO, "传送执行");
                 switch (this.type) {
-                    case POINT:
+                    case POINT -> {
+                        if(this.targetLocation == null) return;
                         Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {
                             threadPlayer.teleportAsync(this.targetLocation);
                             threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
-                            threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
+                            threadPlayer.sendMessage(this.teleportSuccess);
+                            Ari.instance.pluginManager.callEvent(new PlayerTeleportEvent(threadPlayer, this.initLocation, this.targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
                         });
-                        break;
-                    case PLAYER:
-                        Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
-                            threadPlayer.teleportAsync(this.targetPlayer.getLocation());
-                            threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
-                            threadPlayer.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
-                        });
-                        break;
-                    case BACK:
-                        break;
-                    case DBACK:
-                        break;
+                    }
+                    case PLAYER -> Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
+                        threadPlayer.teleportAsync(this.targetPlayer.getLocation());
+                        threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
+                        threadPlayer.sendMessage(this.teleportSuccess);
+                    });
                 }
             }
         }, 0, 1L, TimeUnit.SECONDS);

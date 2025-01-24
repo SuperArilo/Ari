@@ -53,7 +53,7 @@ public class HomeList extends BaseGui {
 
     @Override
     public void renderDataItem() {
-        Log.debug(Level.INFO, "start render home list");
+        Log.debug(Level.INFO, "---------- render home list ----------");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataSlot();
         List<PlayerHome> playerHomes = this.getPlayerHomes();
@@ -78,7 +78,7 @@ public class HomeList extends BaseGui {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-        Log.debug(Level.INFO, "render time: " + (System.currentTimeMillis() - start) + "ms");
+        Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
     public void prev() {
         this.pageNum--;

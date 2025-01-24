@@ -28,10 +28,8 @@ import java.util.logging.Level;
 
 
 public class HomeList extends BaseGui {
-
     private final HomeListGUI gui;
     private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
-    private int pageNum = 1;
     List<PlayerHome> playerHomes;
     public HomeList(Player player) {
         super(player);

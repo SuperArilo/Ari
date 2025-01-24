@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseGui {
+    protected int pageNum = 1;
 
     protected final Player player;
     protected Inventory inventory;

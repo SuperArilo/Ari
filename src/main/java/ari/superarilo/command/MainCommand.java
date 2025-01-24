@@ -200,7 +200,7 @@ public class MainCommand implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(!(command.getName().equalsIgnoreCase(AriCommand.ARI.getShow()) || AriCommand.ARI.getAliases().contains(s))) return List.of("");
+        if(!(command.getName().equalsIgnoreCase(AriCommand.ARI.getShow()))) return List.of();
         //返回所有具有权限的指令给玩家
         if (strings[0].isEmpty()) {
             List<String> commandList = new ArrayList<>();

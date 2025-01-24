@@ -68,8 +68,8 @@ public class CommandAlias {
             boolean unregister = command.unregister(commandMap);
             Log.debug("unregister command [" + k + "] status: " + unregister);
         });
-        this.init();
         Log.debug("---------- unregister command end ----------");
+        this.init();
     }
     private PluginCommand build(String commandName) {
         PluginCommand pluginCommand;

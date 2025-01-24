@@ -15,7 +15,7 @@ public class BaseFunctionImpl implements BaseFunction {
 
     @Override
     public ItemStack checkIsItemStack(ItemStack itemStack) {
-        if (itemStack.isEmpty()) {
+        if (itemStack == null) {
             itemStack = new ItemStack(Material.DIRT);
             itemStack.setItemMeta(itemStack.getItemMeta());
         }

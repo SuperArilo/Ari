@@ -7,6 +7,7 @@ import ari.superarilo.function.CommandCheck;
 import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.function.impl.TeleportThreadImpl;
+import ari.superarilo.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -25,6 +26,10 @@ public class back implements TabExecutor {
         if(check.allCheck()) {
             Player player = (Player) commandSender;
             Location beforeLocation = TeleportThreadImpl.lastLocation.get(player.getUniqueId());
+            if(beforeLocation == null) {
+                commandSender.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
+                return true;
+            }
             if(TeleportPrecondition.create().preCheckStatus(player, beforeLocation, AriCommand.BACK)) {
                 TeleportThread
                         .playerToLocation(

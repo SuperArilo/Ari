@@ -200,6 +200,7 @@ public class MainCommand implements TabExecutor {
                 Location beforeLocation = TeleportThreadImpl.lastLocation.get(player.getUniqueId());
                 if(beforeLocation == null) {
                     commandSender.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
+                    return true;
                 }
                 if(TeleportPrecondition.create().preCheckStatus(player, beforeLocation, AriCommand.BACK)) {
                     TeleportThread

@@ -61,6 +61,11 @@ public class HomeList extends BaseGui {
             PlayerHome ph = playerHomes.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
+            if(itemMeta == null) {
+                Log.warning("There is a problem with the homeID: [" + ph.getHomeId() + "] of the player: [" + this.player.getName() + "]");
+                Log.error("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
+                continue;
+            }
             itemMeta.displayName(TextTool.setHEXColorText(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             textComponents.add(TextTool.setHEXColorText("&2ID: " + "&6" + ph.getHomeId(), this.player));

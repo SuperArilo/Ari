@@ -134,35 +134,51 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     @Override
     public void deleteHome(String homeId) {
         long start = System.currentTimeMillis();
-        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
-            if(delete == 1){
-                this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                        "command.deletehome.success",
-                        FilePath.Lang,
-                        String.class)));
-            } else {
-                this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
-                        "command.deletehome.error",
-                        FilePath.Lang,
-                        String.class
-                )));
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
+                if(delete == 1){
+                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                            "command.deletehome.success",
+                            FilePath.Lang,
+                            String.class)));
+                } else {
+                    this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                            "command.deletehome.error",
+                            FilePath.Lang,
+                            String.class
+                    )));
+                }
+                Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
+            } catch (Exception e) {
+                Log.error("remove home fail, id: " + homeId, e);
             }
-            Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
-        } catch (Exception e) {
-            Log.error("remove home fail, id: " + homeId, e);
-        }
+        });
     }
 
     @Override
     public boolean modifyHome(PlayerHome modify) {
         long start = System.currentTimeMillis();
-        try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            sqlSession.getMapper(PlayerHomeMapper.class).update(modify);
-            Log.debug("save time: " + (System.currentTimeMillis() - start) + "ms");
-            return true;
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                Integer update = sqlSession.getMapper(PlayerHomeMapper.class).update(modify);
+                if(update == 1) {
+                    Log.debug("save time: " + (System.currentTimeMillis() - start) + "ms");
+                    future.complete(true);
+                } else {
+                    future.complete(false);
+                    Log.error("save homeId: [" + modify.getHomeId() + "] error");
+                }
+            } catch (Exception e) {
+                Log.error("save home error", e);
+                future.complete(false);
+            }
+        });
+        try {
+            return future.get();
         } catch (Exception e) {
-            Log.error("save home error", e);
+            Log.error("get completableFuture error", e);
             return false;
         }
     }

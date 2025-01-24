@@ -75,12 +75,12 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     }
 
     @Override
-    public List<String> asyncGetHomeIdList(String uuid) {
+    public List<String> asyncGetHomeIdList() {
         long start = System.currentTimeMillis();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-               future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHomeIdList(uuid));
+               future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHomeIdList(this.player.getUniqueId().toString()));
            } catch (Exception e) {
                Log.error("SqlSession error", e);
            }
@@ -132,15 +132,25 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         });
     }
     @Override
-    public Integer deleteHome(String homeId) {
+    public void deleteHome(String homeId) {
         long start = System.currentTimeMillis();
         try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
             Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
+            if(delete == 1){
+                this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                        "command.deletehome.success",
+                        FilePath.Lang,
+                        String.class)));
+            } else {
+                this.player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                        "command.deletehome.error",
+                        FilePath.Lang,
+                        String.class
+                )));
+            }
             Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
-            return delete;
         } catch (Exception e) {
             Log.error("remove home fail, id: " + homeId, e);
-            return 0;
         }
     }
 

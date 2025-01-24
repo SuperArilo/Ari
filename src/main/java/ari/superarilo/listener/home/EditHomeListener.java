@@ -151,10 +151,10 @@ public class EditHomeListener implements Listener {
         // 使用 removeIf 删除满足条件的元素
         this.editStatus.removeIf(i -> {
             if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                Log.debug(event.getPlayer().getUniqueId() + " removed");
                 PlayerHome home = (PlayerHome) i.getMeta();
                 home.setHomeName(message);
                 new HomeEditor(home, player).open();
+                Log.debug("player: [" + player.getName() + "] edit home-name status removed");
                 return true;
             }
             return false;

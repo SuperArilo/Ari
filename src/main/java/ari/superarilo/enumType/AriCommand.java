@@ -29,6 +29,9 @@ public enum AriCommand {
     DELETEHOME("deletehome",
             "ari.command.deletehome",
             new deletehome()),
+    BACK("back",
+            "ari.command.back",
+            new back()),
     RELOAD("reload",
             "ari.command.reload",
             null);

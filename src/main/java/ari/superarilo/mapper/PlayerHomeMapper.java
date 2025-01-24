@@ -11,6 +11,7 @@ import java.util.List;
 public interface PlayerHomeMapper  {
     List<PlayerHome> getHomeList(@Param("playerUUID") String playerUUID,
                                  @Param("page") Page page);
+    List<String> getHomeIdList(@Param("playerUUID") String playerUUID);
     PlayerHome getHome(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
     boolean exist(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
     void save(@Param("playerhome") PlayerHome playerHome);

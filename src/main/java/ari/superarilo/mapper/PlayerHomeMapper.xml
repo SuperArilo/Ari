@@ -16,7 +16,9 @@
           ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from player_home as ph
         where ph.player_uuid = #{playerUUID}
-        limit #{page.limit} offset #{page.offset}
+        <if test="page.limit != null">
+            limit #{page.limit} offset #{page.offset}
+        </if>
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
@@ -44,4 +46,8 @@
         set home_name = #{playerhome.homeName}, x = #{playerhome.x}, y = #{playerhome.y}, z = #{playerhome.z}, world = #{playerhome.world}, show_material = #{playerhome.showMaterial}
         where home_id = #{playerhome.homeId} and player_uuid = #{playerhome.playerUUID}
     </update>
+
+    <select id="getHomeIdList" resultType="java.lang.String">
+        select home_id from player_home where player_uuid = #{playerUUID}
+    </select>
 </mapper>

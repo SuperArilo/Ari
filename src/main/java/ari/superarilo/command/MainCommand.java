@@ -3,6 +3,7 @@ package ari.superarilo.command;
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.TeleportObjectType;
 import ari.superarilo.function.CommandCheck;
+import ari.superarilo.function.HomeManager;
 import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
@@ -157,6 +158,20 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 new HomeList((Player) commandSender).open();
+            }
+            case SETHOME -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                if(Ari.instance.formatUtil.checkIdName(strings[1])) {
+                    HomeManager.create((Player) commandSender).createNewHome(strings[1]);
+                } else {
+                    commandSender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue(
+                            "command.sethome.id-error",
+                            FilePath.Lang,
+                            String.class)));
+                }
             }
         }
         return true;

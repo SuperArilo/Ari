@@ -16,6 +16,18 @@ public interface HomeManager {
     List<PlayerHome> asyncGetHomeList(int pageNum, int pageSize);
 
     /**
+     * 异步获取玩家保存的所有家列表
+     * @return 家列表
+     */
+    List<PlayerHome> asyncGetHomeList();
+
+    /**
+     * 查询满足条件的homeId
+     * @param uuid 玩家uuid
+     * @return 家id列表
+     */
+    List<String> asyncGetHomeIdList(String uuid);
+    /**
      * 保存家
      * @param homeId 家的ID，不能重复
      */
@@ -26,7 +38,7 @@ public interface HomeManager {
      *
      * @param homeId 指定homeId
      */
-    void deleteHome(String homeId);
+    Integer deleteHome(String homeId);
 
     /**
      * 修改家的信息

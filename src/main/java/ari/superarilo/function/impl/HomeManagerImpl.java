@@ -54,6 +54,47 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
     }
 
     @Override
+    public List<PlayerHome> asyncGetHomeList() {
+        long start = System.currentTimeMillis();
+        CompletableFuture<List<PlayerHome>> future = new CompletableFuture<>();
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
+                future.complete(mapper.getHomeList(this.player.getUniqueId().toString(), null));
+            } catch (Exception e) {
+                Log.error("SqlSession error", e);
+            }
+        });
+        try {
+            Log.debug(Level.INFO, "get home list time: " + (System.currentTimeMillis() - start) + "ms");
+            return future.get();
+        } catch (Exception e) {
+            Log.debug(Level.INFO, "get home list error", e);
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public List<String> asyncGetHomeIdList(String uuid) {
+        long start = System.currentTimeMillis();
+        CompletableFuture<List<String>> future = new CompletableFuture<>();
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+           try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+               future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHomeIdList(uuid));
+           } catch (Exception e) {
+               Log.error("SqlSession error", e);
+           }
+        });
+        try {
+            Log.debug(Level.INFO, "query homeId list time: " + (System.currentTimeMillis() - start) + "ms");
+            return future.get();
+        } catch (Exception e) {
+            Log.debug(Level.INFO, "query homeId list error", e);
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
     public void createNewHome(String homeId) {
         Material material = this.checkIsItem(location.getBlock().getRelative(BlockFace.DOWN).getType());
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
@@ -91,13 +132,15 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         });
     }
     @Override
-    public void deleteHome(String homeId) {
+    public Integer deleteHome(String homeId) {
         long start = System.currentTimeMillis();
         try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
+            Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
             Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
+            return delete;
         } catch (Exception e) {
             Log.error("remove home fail, id: " + homeId, e);
+            return 0;
         }
     }
 

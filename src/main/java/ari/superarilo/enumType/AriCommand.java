@@ -1,12 +1,7 @@
 package ari.superarilo.enumType;
 
 import ari.superarilo.command.MainCommand;
-import ari.superarilo.command.lists.home;
-import ari.superarilo.command.lists.sethome;
-import ari.superarilo.command.lists.tpa;
-import ari.superarilo.command.lists.tpaaccept;
-import ari.superarilo.command.lists.tparefuse;
-import ari.superarilo.command.lists.tpahere;
+import ari.superarilo.command.lists.*;
 import org.bukkit.command.TabExecutor;
 
 import java.util.List;
@@ -55,6 +50,12 @@ public enum AriCommand {
             "ari.command.sethome",
             "无权限",
             new sethome()),
+    DELETEHOME("deletehome",
+            null,
+            "删除指定家",
+            "ari.command.deletehome",
+            "无权限",
+            new deletehome()),
     RELOAD("reload",
             null,
             "重新加载插件",

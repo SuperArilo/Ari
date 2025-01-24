@@ -8,7 +8,6 @@ import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.SoundCategory;
@@ -90,28 +89,28 @@ public class TeleportThreadImpl implements TeleportThread {
                 switch (this.type) {
                     case POINT -> {
                         if(this.targetLocation == null) return;
-                        Bukkit.getRegionScheduler().run(Ari.instance, this.targetLocation, i -> {
+                        threadPlayer.getScheduler().run(Ari.instance, i -> {
                             threadPlayer.teleportAsync(this.targetLocation);
                             threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             threadPlayer.sendMessage(this.teleportSuccess);
-                            Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(threadPlayer, this.initLocation, this.targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
-                        });
+                        }, () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
                     }
-                    case PLAYER -> Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {
+                    case PLAYER -> threadPlayer.getScheduler().run(Ari.instance, i -> {
                         threadPlayer.teleportAsync(this.targetPlayer.getLocation());
-                        threadPlayer.playEffect(this.targetPlayer.getLocation(), Effect.ANVIL_USE, null);
+                        threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                         threadPlayer.sendMessage(this.teleportSuccess);
-                    });
+                    }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
                 }
+                Bukkit.getRegionScheduler().run(
+                        Ari.instance, this.initLocation,
+                        i -> Bukkit.getPluginManager().callEvent(
+                                new PlayerTeleportEvent(
+                                        threadPlayer,
+                                        this.initLocation,
+                                        this.targetLocation,
+                                        PlayerTeleportEvent.TeleportCause.PLUGIN)));
             }
         }, 0, 1L, TimeUnit.SECONDS);
-    }
-    /**
-     * 设置之前传送存在的位置
-     * @param location 位置
-     */
-    protected void setBeforeLocation(Location location) {
-
     }
     /**
      * 检查是否受伤

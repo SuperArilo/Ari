@@ -46,4 +46,8 @@ command:
     name-too-long: 'home的名称过长'
     exist: '已存在相同ID的家'
     exceeds: '超出数量！'
+  deletehome:
+    success: '删除成功'
+    id-error: 'home的id错误或者找不到'
+    error: '删除失败，尝试联系管理员'
   unknown: '&4未知指令，请重新输入'

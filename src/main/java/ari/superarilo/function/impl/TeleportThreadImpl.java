@@ -94,7 +94,7 @@ public class TeleportThreadImpl implements TeleportThread {
                             threadPlayer.teleportAsync(this.targetLocation);
                             threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             threadPlayer.sendMessage(this.teleportSuccess);
-                            Ari.instance.pluginManager.callEvent(new PlayerTeleportEvent(threadPlayer, this.initLocation, this.targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
+                            Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(threadPlayer, this.initLocation, this.targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
                         });
                     }
                     case PLAYER -> Bukkit.getRegionScheduler().run(Ari.instance, threadPlayer.getLocation(), (i) -> {

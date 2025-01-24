@@ -29,6 +29,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -95,7 +96,7 @@ public class EditHomeListener implements Listener {
                 }
                 case ICON -> {
                     //修改显示ICON
-                    Material curM = event.getCursor().getType();
+                    Material curM = Objects.requireNonNull(event.getCursor()).getType();
                     if(curM.equals(Material.AIR)) return;
                     clickItem = new ItemStack(curM);
                     clickItem.setItemMeta(clickMeta);

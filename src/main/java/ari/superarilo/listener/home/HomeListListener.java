@@ -27,7 +27,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class HomeListListener implements Listener {
     @EventHandler
     public void HomeListClick(InventoryClickEvent event) {
-        Inventory inventory = event.getView().getTopInventory();
+        Inventory inventory = event.getInventory();
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMELIST)) {
             event.setCancelled(true);
             if(event.getSlot() > inventory.getSize()) return;

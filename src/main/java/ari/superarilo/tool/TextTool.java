@@ -89,7 +89,7 @@ public class TextTool {
      * @return 返回基础格式化的文本坐标
      */
     public static String XYZText(Double x, Double y, Double z) {
-        return "&2x: &6" + x + " &2y: &6" + y + " &2z: &6" + z;
+        return "&2x: &6" + Ari.instance.formatUtil.format_2(x) + " &2y: &6" + Ari.instance.formatUtil.format_2(y) + " &2z: &6" + Ari.instance.formatUtil.format_2(z);
     }
 
     /**

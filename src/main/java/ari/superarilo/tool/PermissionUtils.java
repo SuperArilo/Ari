@@ -1,6 +1,5 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.Ari;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -12,7 +11,7 @@ public class PermissionUtils {
     public Permission permission;
 
     public PermissionUtils() {
-        if(Ari.instance.pluginManager.isPluginEnabled("Vault")) {
+        if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Permission> registration = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
             if(registration != null) {
                 this.permission = registration.getProvider();

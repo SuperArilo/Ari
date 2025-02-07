@@ -3,6 +3,7 @@ package ari.superarilo.tool;
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
 import com.google.gson.JsonSyntaxException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.gson.Gson;
 import java.lang.reflect.Type;
@@ -30,11 +31,16 @@ public class ConfigManager {
     }
     protected void checkFiles() {
         this.configs = new ConcurrentHashMap<>();
+        FileConfiguration pluginConfig = Ari.instance.getConfig();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
             File file = new File(Ari.instance.getDataFolder(), path);
-            if(!file.exists() || Ari.instance.getConfig().getBoolean("debug.overwrite-file", false)) {
+            if (!file.exists()) {
                 Ari.instance.saveResource(path, true);
+            } else if (pluginConfig.getBoolean("debug.enable", false)) {
+                if (pluginConfig.getBoolean("debug.overwrite-file", false)) {
+                    Ari.instance.saveResource(path, true);
+                }
             }
             this.configs.put(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }

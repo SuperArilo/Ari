@@ -44,8 +44,8 @@ public class SQLInstance {
 
         try(SqlSession sqlSession = sessionFactory.openSession()) {
             CreateTable mapper = sqlSession.getMapper(CreateTable.class);
-            mapper.createPlayers(sqlType.getType());
-            mapper.createHomeList(sqlType.getType());
+            mapper.createPlayers();
+            mapper.createHomeList();
         } catch (Exception e) {
             Log.error( "executing sql error", e);
         }
@@ -84,6 +84,7 @@ public class SQLInstance {
     }
     protected void setSessionFactory(HikariDataSource dataSource) {
         Configuration configuration = new Configuration(new Environment("development", new JdbcTransactionFactory(), dataSource));
+        configuration.getVariables().put("table_prefix", this.config.getString("data.table-prefix", "ari_"));
         this.getMapperClasses().forEach(configuration::addMapper);
         configuration.addMappers("ari.superarilo.mapper");
         sessionFactory = new SqlSessionFactoryBuilder().build(configuration);

@@ -2,13 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ari.superarilo.mapper.CreateTable">
     <select id="createPlayers">
-        CREATE TABLE IF NOT EXISTS ari_players
+        CREATE TABLE IF NOT EXISTS ${table_prefix}players
         (
         id INTEGER PRIMARY KEY
-        <if test="sqlType == 'mysql'">
+        <if test="'${_databaseId}' == 'mysql'">
             AUTO_INCREMENT
         </if>
-        <if test="sqlType == 'sqlite'">
+        <if test="'${_databaseId}' == 'sqlite'">
             AUTOINCREMENT
         </if>
         , player_name varchar(64) NOT NULL,

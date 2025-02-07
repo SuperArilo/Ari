@@ -14,7 +14,7 @@
     <select id="getHomeList" resultMap="playerHome">
         select
           ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
-        from ari_player_home as ph
+        from ${table_prefix}player_home as ph
         where ph.player_uuid = #{playerUUID}
         <if test="page.limit != null">
             limit #{page.limit} offset #{page.offset}
@@ -22,7 +22,7 @@
     </select>
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
-        insert into ari_player_home
+        insert into ${table_prefix}player_home
         (home_id, home_name, player_uuid, x, y, z, world, show_material)
         values
         (#{playerhome.homeId}, #{playerhome.homeName},#{playerhome.playerUUID}, #{playerhome.x}, #{playerhome.y}, #{playerhome.z}, #{playerhome.world}, #{playerhome.showMaterial})
@@ -34,20 +34,20 @@
 
     <select id="getHome" resultMap="playerHome">
         select ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
-        from ari_player_home as ph
+        from ${table_prefix}player_home as ph
         where ph.home_id = #{home_id} and player_uuid = #{playerUUID}
     </select>
 
     <delete id="delete">
-        delete from ari_player_home where home_id = #{home_id} and player_uuid = #{playerUUID}
+        delete from ${table_prefix}player_home where home_id = #{home_id} and player_uuid = #{playerUUID}
     </delete>
     <update id="update">
-        update ari_player_home
+        update ${table_prefix}player_home
         set home_name = #{playerhome.homeName}, x = #{playerhome.x}, y = #{playerhome.y}, z = #{playerhome.z}, world = #{playerhome.world}, show_material = #{playerhome.showMaterial}
         where home_id = #{playerhome.homeId} and player_uuid = #{playerhome.playerUUID}
     </update>
 
     <select id="getHomeIdList" resultType="java.lang.String">
-        select home_id from ari_player_home where player_uuid = #{playerUUID}
+        select home_id from ${table_prefix}player_home where player_uuid = #{playerUUID}
     </select>
 </mapper>

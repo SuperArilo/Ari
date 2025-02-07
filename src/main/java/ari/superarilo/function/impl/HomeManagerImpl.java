@@ -42,6 +42,9 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                         mapper.getHomeList(
                                 this.player.getUniqueId().toString(),
                                 Page.create(pageNum, pageSize)));
+            } catch (Exception e) {
+                Log.error("query home error!", e);
+                future.complete(List.of());
             }
         });
         try {
@@ -117,10 +120,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 playerHome.setHomeId(homeId);
                 playerHome.setHomeName(homeId);
                 playerHome.setPlayerUUID(this.player.getUniqueId().toString());
-                playerHome.setX(Double.valueOf(Ari.instance.formatUtil.format_2(location.getX())));
-                playerHome.setY(Double.valueOf(Ari.instance.formatUtil.format_2(location.getY())));
-                playerHome.setZ(Double.valueOf(Ari.instance.formatUtil.format_2(location.getZ())));
-                playerHome.setWorld(player.getWorld().getName());
+                playerHome.setLocation(this.location.toString());
                 playerHome.setShowMaterial(material.name());
 
                 mapper.save(playerHome);

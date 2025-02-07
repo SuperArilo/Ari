@@ -2,15 +2,17 @@ package ari.superarilo.gui.home;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import ari.superarilo.entity.menu.FunctionItem;
+import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.entity.menu.home.HomeEditorGUI;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.enumType.LocationKeyType;
 import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -32,14 +34,26 @@ public class HomeEditor extends BaseGui {
     }
 
     @Override
-    protected Map<String, FunctionItem> getFunctionItems() {
-        Map<String, FunctionItem> functionItems = this.gui.getFunctionItems();
+    protected Map<String, FunctionItems> getFunctionItems() {
+        Map<String, FunctionItems> functionItems = this.gui.getFunctionItems();
         if (functionItems != null) {
-            for (FunctionItem item : functionItems.values()) {
+            for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {
                     case ICON -> item.setMaterial(this.currentHome.getShowMaterial());
                     case RENAME -> item.setName(this.currentHome.getHomeName());
-                    case LOCATION -> item.setName(TextTool.XYZText(this.currentHome.getX(), this.currentHome.getY(), this.currentHome.getZ()));
+                    case LOCATION -> {
+                        String name = item.getName();
+                        Location location = Ari.instance.objectConvert.parseLocation(this.currentHome.getLocation());
+                        for (LocationKeyType keyType : LocationKeyType.values()) {
+                            name = switch (keyType) {
+                                case X -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
+                                case Y -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
+                                case Z -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                                default -> name;
+                            };
+                        }
+                        item.setName(name);
+                    }
                 }
             }
         }
@@ -47,7 +61,5 @@ public class HomeEditor extends BaseGui {
     }
 
     @Override
-    public void renderDataItem() {
-
-    }
+    public void renderDataItem() {}
 }

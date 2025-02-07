@@ -12,7 +12,6 @@ import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.SQLInstance;
 import org.apache.ibatis.session.SqlSession;
-import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +46,7 @@ public class HomeListListener implements Listener {
                         ClickType click = event.getClick();
                         if (click.equals(ClickType.LEFT)) {
                             TeleportThread.playerToLocation(
-                                            player,
-                                            new Location(player.getWorld(), home.getX(), home.getY(), home.getZ()))
+                                            player, Ari.instance.objectConvert.parseLocation(home.getLocation()))
                                     .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
                         } else if (click.equals(ClickType.RIGHT)) {
                             new HomeEditor(home,(Player) event.getWhoClicked()).open();

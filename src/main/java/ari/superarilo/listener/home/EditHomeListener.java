@@ -88,10 +88,8 @@ public class EditHomeListener implements Listener {
                 case LOCATION -> {
                     //reset LOCATION
                     Location newLocation = player.getLocation();
-                    home.setX(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getX())));
-                    home.setY(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getY())));
-                    home.setZ(Double.valueOf(Ari.instance.formatUtil.format_2(newLocation.getZ())));
-                    clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(home.getX(), home.getY(), home.getZ())));
+                    home.setLocation(newLocation.toString());
+                    clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
                     clickItem.setItemMeta(clickMeta);
                 }
                 case ICON -> {
@@ -119,6 +117,7 @@ public class EditHomeListener implements Listener {
                             }, 1, TimeUnit.SECONDS);
                         } else {
                             //error
+                            clickMeta.lore(List.of(TextTool.setHEXColorText("&4保存失败，请联系管理员")));
                             Log.error("save home error");
                         }
                     });

@@ -1,21 +1,18 @@
 package ari.superarilo.entity.menu.home;
 
 import ari.superarilo.entity.menu.BaseMenu;
-
-import java.util.List;
+import ari.superarilo.entity.menu.DataItems;
 
 public class HomeListGUI extends BaseMenu {
-
-    private List<Integer> dataSlot;
+    private DataItems dataItems;
     public HomeListGUI(){}
 
-    public List<Integer> getDataSlot() {
-        return dataSlot;
+    public DataItems getDataItems() {
+        return dataItems;
     }
 
-    public void setDataSlot(List<Integer> dataSlot) {
-        this.dataSlot = dataSlot;
+    public void setDataItems(DataItems dataItems) {
+        this.dataItems = dataItems;
     }
-
 }
 

@@ -2,19 +2,21 @@ package ari.superarilo.gui.home;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import ari.superarilo.entity.menu.FunctionItem;
+import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.entity.menu.home.HomeListGUI;
 import ari.superarilo.entity.sql.PlayerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.enumType.LocationKeyType;
 import ari.superarilo.function.HomeManager;
 import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -29,7 +31,6 @@ import java.util.logging.Level;
 
 public class HomeList extends BaseGui {
     private final HomeListGUI gui;
-    private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
     private List<PlayerHome> playerHomes;
 
     public HomeList(Player player) {
@@ -39,14 +40,13 @@ public class HomeList extends BaseGui {
         this.playerHomes = this.requestPlayerHomes();
     }
 
-
     @Override
     protected Mask getMask() {
         return this.gui.getMask();
     }
 
     @Override
-    protected Map<String, FunctionItem> getFunctionItems() {
+    protected Map<String, FunctionItems> getFunctionItems() {
         return this.gui.getFunctionItems();
     }
 
@@ -54,23 +54,35 @@ public class HomeList extends BaseGui {
     public void renderDataItem() {
         Log.debug(Level.INFO, "---------- render home list ----------");
         long start = System.currentTimeMillis();
-        List<Integer> dataSlot = this.gui.getDataSlot();
+        List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<PlayerHome> playerHomes = this.getPlayerHomes();
+        List<String> rawLore = this.gui.getDataItems().getLore();
         for (int i = 0; i < playerHomes.size(); i++) {
             PlayerHome ph = playerHomes.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
-                Log.warning("There is a problem with the homeID: [" + ph.getHomeId() + "] of the player: [" + this.player.getName() + "]");
-                Log.error("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
+                Log.error("There is a problem with the homeID: [" + ph.getHomeId() + "] of the player: [" + this.player.getName() + "]");
+                Log.warning("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
                 continue;
             }
             itemMeta.displayName(TextTool.setHEXColorText(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            textComponents.add(TextTool.setHEXColorText("&2ID: " + "&6" + ph.getHomeId(), this.player));
-            textComponents.add(TextTool.setHEXColorText(TextTool.XYZText(ph.getX(), ph.getY(), ph.getZ())));
-            textComponents.add(TextTool.setHEXColorText("&2世界: " + "&6" + ph.getWorld(), this.player));
-            textComponents.addAll(this.addLore.stream().map(k -> TextTool.setHEXColorText(k, this.player)).toList());
+            Location location = Ari.instance.objectConvert.parseLocation(ph.getLocation());
+            rawLore.forEach(line -> {
+                String replacedLine = line;
+                for (LocationKeyType keyType : LocationKeyType.values()) {
+                    replacedLine = switch (keyType) {
+                        case ID -> replacedLine.replace(keyType.getKey(), ph.getHomeId());
+                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
+                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
+                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                        case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
+                        case PLAYERNAME -> replacedLine;
+                    };
+                }
+                textComponents.add(TextTool.setHEXColorText(replacedLine));
+            });
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
@@ -98,7 +110,7 @@ public class HomeList extends BaseGui {
             Log.debug("home list: 最后一页");
             this.pageNum--;
         } else {
-            this.cleanRenderDataItem(this.gui.getDataSlot());
+            this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
             this.renderDataItem();
         }
     }
@@ -108,6 +120,6 @@ public class HomeList extends BaseGui {
     }
 
     private List<PlayerHome> requestPlayerHomes() {
-        return HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.gui.getDataSlot().size());
+        return HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.gui.getDataItems().getSlot().size());
     }
 }

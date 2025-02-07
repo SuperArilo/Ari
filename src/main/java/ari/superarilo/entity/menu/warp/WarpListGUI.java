@@ -1,20 +1,21 @@
 package ari.superarilo.entity.menu.warp;
 
 import ari.superarilo.entity.menu.BaseMenu;
+import ari.superarilo.entity.menu.DataItems;
 
 import java.util.List;
 
 public class WarpListGUI extends BaseMenu {
-    private List<Integer> dataSlot;
+    private DataItems dataItems;
 
     public WarpListGUI() {
     }
 
-    public List<Integer> getDataSlot() {
-        return dataSlot;
+    public DataItems getDataItems() {
+        return dataItems;
     }
 
-    public void setDataSlot(List<Integer> dataSlot) {
-        this.dataSlot = dataSlot;
+    public void setDataItems(DataItems dataItems) {
+        this.dataItems = dataItems;
     }
 }

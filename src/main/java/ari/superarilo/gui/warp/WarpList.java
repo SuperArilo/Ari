@@ -2,19 +2,21 @@ package ari.superarilo.gui.warp;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import ari.superarilo.entity.menu.FunctionItem;
+import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.entity.menu.warp.WarpListGUI;
 import ari.superarilo.entity.sql.ServerWarp;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.enumType.LocationKeyType;
 import ari.superarilo.function.WarpManager;
 import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -25,12 +27,12 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 
 public class WarpList extends BaseGui {
 
     private final WarpListGUI gui;
-    private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
     private List<ServerWarp> warpList;
 
     public WarpList(Player player) {
@@ -49,7 +51,7 @@ public class WarpList extends BaseGui {
     }
 
     @Override
-    protected Map<String, FunctionItem> getFunctionItems() {
+    protected Map<String, FunctionItems> getFunctionItems() {
         return this.gui.getFunctionItems();
     }
 
@@ -57,8 +59,9 @@ public class WarpList extends BaseGui {
     public void renderDataItem() {
         Log.debug(Level.INFO, "---------- render warp list ----------");
         long start = System.currentTimeMillis();
-        List<Integer> dataSlot = this.gui.getDataSlot();
+        List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<ServerWarp> warpList = this.getWarpList();
+        List<String> rawLore = this.gui.getDataItems().getLore();
         for (int i = 0;i < warpList.size();i++) {
             ServerWarp serverWarp = warpList.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
@@ -70,19 +73,31 @@ public class WarpList extends BaseGui {
             }
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            textComponents.add(TextTool.setHEXColorText("&2ID: " + "&6" + serverWarp.getWarpId(), this.player));
-            textComponents.add(TextTool.setHEXColorText(TextTool.XYZText(serverWarp.getX(), serverWarp.getY(), serverWarp.getZ())));
-            textComponents.add(TextTool.setHEXColorText("&2世界: " + "&6" + serverWarp.getWorld(), this.player));
-            textComponents.addAll(this.addLore.stream().map(k -> TextTool.setHEXColorText(k, this.player)).toList());
+            Location location = Ari.instance.objectConvert.parseLocation(serverWarp.getLocation());
+            rawLore.forEach(line -> {
+                String replacedLine = line;
+                for (LocationKeyType keyType : LocationKeyType.values()) {
+                    replacedLine = switch (keyType) {
+                        case ID -> replacedLine.replace(keyType.getKey(), serverWarp.getWarpId());
+                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
+                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
+                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                        case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
+                        case PLAYERNAME -> replacedLine.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getServer().getPlayer(serverWarp.getCreateBy())).getName());
+                    };
+                }
+                textComponents.add(TextTool.setHEXColorText(replacedLine));
+            });
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
+        Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
     private List<ServerWarp> requestWarps() {
-        return WarpManager.create(this.player).asyncGetWarpList(this.pageNum, this.gui.getDataSlot().size());
+        return WarpManager.create(this.player).asyncGetWarpList(this.pageNum, this.gui.getDataItems().getSlot().size());
     }
 
     public List<ServerWarp> getWarpList() {

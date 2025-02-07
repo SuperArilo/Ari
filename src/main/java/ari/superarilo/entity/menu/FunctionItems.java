@@ -3,9 +3,9 @@ package ari.superarilo.entity.menu;
 import ari.superarilo.enumType.FunctionType;
 
 
-public class FunctionItem extends BaseItem {
+public class FunctionItems extends BaseItem {
     private FunctionType type;
-    public FunctionItem() {}
+    public FunctionItems() {}
 
     public FunctionType getType() {
         return type;

@@ -7,7 +7,7 @@ public class BaseMenu {
     private String title;
     private Integer row;
     private Mask mask;
-    private Map<String, FunctionItem> functionItems;
+    private Map<String, FunctionItems> functionItems;
     public BaseMenu() {}
     public String getTitle() {
         return title;
@@ -33,11 +33,11 @@ public class BaseMenu {
         this.mask = mask;
     }
 
-    public Map<String, FunctionItem> getFunctionItems() {
+    public Map<String, FunctionItems> getFunctionItems() {
         return functionItems;
     }
 
-    public void setFunctionItems(Map<String, FunctionItem> functionItems) {
+    public void setFunctionItems(Map<String, FunctionItems> functionItems) {
         this.functionItems = functionItems;
     }
 }

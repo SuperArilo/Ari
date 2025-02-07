@@ -6,10 +6,16 @@ public class PlayerHome {
     private String homeId;
     private String homeName;
     private String playerUUID;
-    private Double x;
-    private Double y;
-    private Double z;
-    private String world;
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    private String location;
     private String showMaterial;
 
     public String getHomeName() {
@@ -26,38 +32,6 @@ public class PlayerHome {
 
     public void setPlayerUUID(String playerUUID) {
         this.playerUUID = playerUUID;
-    }
-
-    public Double getX() {
-        return x;
-    }
-
-    public void setX(Double x) {
-        this.x = x;
-    }
-
-    public Double getY() {
-        return y;
-    }
-
-    public void setY(Double y) {
-        this.y = y;
-    }
-
-    public Double getZ() {
-        return z;
-    }
-
-    public void setZ(Double z) {
-        this.z = z;
-    }
-
-    public String getWorld() {
-        return world;
-    }
-
-    public void setWorld(String world) {
-        this.world = world;
     }
 
     public String getShowMaterial() {

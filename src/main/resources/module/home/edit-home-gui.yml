@@ -20,6 +20,7 @@ functionItems:
     lore:
       - '&6拖拽其他方块替换图标'
   location:
+    name: "&2x: &6[X] &2y: &6[Y] &2z: &6[Z]"
     type: LOCATION
     material: compass
     slot: [20]

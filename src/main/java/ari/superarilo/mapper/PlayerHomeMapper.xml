@@ -3,7 +3,7 @@
 <mapper namespace="ari.superarilo.mapper.PlayerHomeMapper">
     <select id="getHomeList" resultType="ari.superarilo.entity.sql.PlayerHome">
         select
-          ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
+          ph.home_id, ph.home_name, ph.player_uuid, ph.location, ph.show_material
         from ${table_prefix}player_home as ph
         where ph.player_uuid = #{playerUUID}
         <if test="page.limit != null">
@@ -13,9 +13,9 @@
 
     <insert id="save" useGeneratedKeys="true" keyProperty="id">
         insert into ${table_prefix}player_home
-        (home_id, home_name, player_uuid, x, y, z, world, show_material)
+        (home_id, home_name, player_uuid, location, show_material)
         values
-        (#{playerhome.homeId}, #{playerhome.homeName},#{playerhome.playerUUID}, #{playerhome.x}, #{playerhome.y}, #{playerhome.z}, #{playerhome.world}, #{playerhome.showMaterial})
+        (#{playerhome.homeId}, #{playerhome.homeName},#{playerhome.playerUUID}, #{playerhome.location}, #{playerhome.showMaterial})
     </insert>
 
     <select id="exist" resultType="boolean">
@@ -23,7 +23,7 @@
     </select>
 
     <select id="getHome" resultType="ari.superarilo.entity.sql.PlayerHome">
-        select ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
+        select ph.home_id, ph.home_name, ph.player_uuid, ph.location, ph.show_material
         from ${table_prefix}player_home as ph
         where ph.home_id = #{home_id} and player_uuid = #{playerUUID}
     </select>
@@ -33,7 +33,7 @@
     </delete>
     <update id="update">
         update ${table_prefix}player_home
-        set home_name = #{playerhome.homeName}, x = #{playerhome.x}, y = #{playerhome.y}, z = #{playerhome.z}, world = #{playerhome.world}, show_material = #{playerhome.showMaterial}
+        set home_name = #{playerhome.homeName}, location = #{playerhome.location}, show_material = #{playerhome.showMaterial}
         where home_id = #{playerhome.homeId} and player_uuid = #{playerhome.playerUUID}
     </update>
 

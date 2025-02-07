@@ -1,7 +1,7 @@
 package ari.superarilo.gui;
 
 import ari.superarilo.Ari;
-import ari.superarilo.entity.menu.FunctionItem;
+import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.tool.TextTool;
@@ -81,7 +81,7 @@ public abstract class BaseGui {
             this.inventory.setItem(i, itemStack);
         }
     }
-    protected void renderFunctionItems(Map<String, FunctionItem> functionItemMap) {
+    protected void renderFunctionItems(Map<String, FunctionItems> functionItemMap) {
         functionItemMap.forEach((k, v) -> {
             ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
@@ -95,7 +95,7 @@ public abstract class BaseGui {
         });
     }
     protected abstract Mask getMask();
-    protected abstract Map<String, FunctionItem> getFunctionItems();
+    protected abstract Map<String, FunctionItems> getFunctionItems();
     public abstract void renderDataItem();
 
     /**

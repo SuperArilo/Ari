@@ -5,10 +5,7 @@ public class ServerWarp {
     private String warpId;
     private String warpName;
     private String createBy;
-    private Double x;
-    private Double y;
-    private Double z;
-    private String world;
+    private String location;
     private String showMaterial;
     private String permission;
     private Integer cost;
@@ -41,38 +38,6 @@ public class ServerWarp {
         this.createBy = createBy;
     }
 
-    public Double getX() {
-        return x;
-    }
-
-    public void setX(Double x) {
-        this.x = x;
-    }
-
-    public Double getY() {
-        return y;
-    }
-
-    public void setY(Double y) {
-        this.y = y;
-    }
-
-    public Double getZ() {
-        return z;
-    }
-
-    public void setZ(Double z) {
-        this.z = z;
-    }
-
-    public String getWorld() {
-        return world;
-    }
-
-    public void setWorld(String world) {
-        this.world = world;
-    }
-
     public String getShowMaterial() {
         return showMaterial;
     }
@@ -95,5 +60,13 @@ public class ServerWarp {
 
     public void setCost(Integer cost) {
         this.cost = cost;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

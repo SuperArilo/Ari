@@ -55,17 +55,15 @@ public class Ari extends JavaPlugin {
     public void onDisable() {
     }
 
-    protected void registerCommands() {
-        for (AriCommand command : AriCommand.values()) {
-            String showName = command.getShow();
-            PluginCommand pluginCommand = this.getCommand(showName);
-            if(pluginCommand == null) continue;
-            TabExecutor commandClass = command.getCommandClass();
+    private void registerCommands() {
+        PluginCommand pluginCommand = this.getCommand(AriCommand.ARI.getShow());
+        TabExecutor commandClass = AriCommand.ARI.getCommandClass();
+        if (pluginCommand != null) {
             pluginCommand.setExecutor(commandClass);
             pluginCommand.setTabCompleter(commandClass);
         }
     }
-    protected void registerListener() {
+    private void registerListener() {
         Bukkit.getPluginManager().registerEvents(new HomeListListener(), this);
         Bukkit.getPluginManager().registerEvents(new EditHomeListener(), this);
         Bukkit.getPluginManager().registerEvents(new RecordLastLocationListener(), this);

@@ -1,17 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="ari.superarilo.mapper.PlayerHomeMapper">
-    <resultMap id="playerHome" type="ari.superarilo.entity.sql.PlayerHome">
-        <result property="homeId" column="home_id" />
-        <result property="homeName" column="home_name" />
-        <result property="playerUUID" column="player_uuid" />
-        <result property="x" column="x" />
-        <result property="y" column="y" />
-        <result property="z" column="z" />
-        <result property="world" column="world" />
-        <result property="showMaterial" column="show_material" />
-    </resultMap>
-    <select id="getHomeList" resultMap="playerHome">
+    <select id="getHomeList" resultType="ari.superarilo.entity.sql.PlayerHome">
         select
           ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from ${table_prefix}player_home as ph
@@ -32,7 +22,7 @@
         select count(*) from ari_player_home as ph where ph.home_id = #{home_id} and player_uuid = #{playerUUID}
     </select>
 
-    <select id="getHome" resultMap="playerHome">
+    <select id="getHome" resultType="ari.superarilo.entity.sql.PlayerHome">
         select ph.home_id, ph.home_name, ph.player_uuid, ph.x, ph.y, ph.z, ph.world, ph.show_material
         from ${table_prefix}player_home as ph
         where ph.home_id = #{home_id} and player_uuid = #{playerUUID}

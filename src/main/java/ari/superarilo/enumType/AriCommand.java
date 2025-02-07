@@ -32,6 +32,9 @@ public enum AriCommand {
     BACK("back",
             "ari.command.back",
             new back()),
+    WARP("warp",
+            "ari.command.warp",
+            new warp()),
     RELOAD("reload",
             "ari.command.reload",
             null);

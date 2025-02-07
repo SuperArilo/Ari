@@ -6,4 +6,5 @@ import org.apache.ibatis.annotations.Mapper;
 public interface CreateTable {
     void createPlayers();
     void createHomeList();
+    void createWarpList();
 }

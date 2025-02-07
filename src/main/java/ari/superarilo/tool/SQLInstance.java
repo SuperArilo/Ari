@@ -7,10 +7,7 @@ import ari.superarilo.enumType.SQLType;
 import ari.superarilo.mapper.CreateTable;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+import org.apache.ibatis.session.*;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 
@@ -46,6 +43,7 @@ public class SQLInstance {
             CreateTable mapper = sqlSession.getMapper(CreateTable.class);
             mapper.createPlayers();
             mapper.createHomeList();
+            mapper.createWarpList();
         } catch (Exception e) {
             Log.error( "executing sql error", e);
         }
@@ -85,8 +83,11 @@ public class SQLInstance {
     protected void setSessionFactory(HikariDataSource dataSource) {
         Configuration configuration = new Configuration(new Environment("development", new JdbcTransactionFactory(), dataSource));
         configuration.getVariables().put("table_prefix", this.config.getString("data.table-prefix", "ari_"));
-        this.getMapperClasses().forEach(configuration::addMapper);
         configuration.addMappers("ari.superarilo.mapper");
+        configuration.setAutoMappingBehavior(AutoMappingBehavior.FULL);
+        configuration.setMapUnderscoreToCamelCase(true);
+        this.getMapperClasses().forEach(configuration::addMapper);
+        configuration.setLogImpl(org.apache.ibatis.logging.slf4j.Slf4jImpl.class);
         sessionFactory = new SqlSessionFactoryBuilder().build(configuration);
     }
 }

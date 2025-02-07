@@ -30,7 +30,8 @@ import java.util.logging.Level;
 public class HomeList extends BaseGui {
     private final HomeListGUI gui;
     private final List<String> addLore = List.of("&7左击: &6传送", "&7右击: &6编辑");
-    List<PlayerHome> playerHomes;
+    private List<PlayerHome> playerHomes;
+
     public HomeList(Player player) {
         super(player);
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
@@ -102,11 +103,11 @@ public class HomeList extends BaseGui {
         }
     }
 
-    public List<PlayerHome> getPlayerHomes() {
+    private List<PlayerHome> getPlayerHomes() {
         return playerHomes;
     }
 
-    public List<PlayerHome> requestPlayerHomes() {
+    private List<PlayerHome> requestPlayerHomes() {
         return HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.gui.getDataSlot().size());
     }
 }

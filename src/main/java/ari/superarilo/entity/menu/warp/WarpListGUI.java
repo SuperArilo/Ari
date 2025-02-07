@@ -1,13 +1,14 @@
-package ari.superarilo.entity.menu.home;
+package ari.superarilo.entity.menu.warp;
 
 import ari.superarilo.entity.menu.BaseMenu;
 
 import java.util.List;
 
-public class HomeListGUI extends BaseMenu {
-
+public class WarpListGUI extends BaseMenu {
     private List<Integer> dataSlot;
-    public HomeListGUI(){}
+
+    public WarpListGUI() {
+    }
 
     public List<Integer> getDataSlot() {
         return dataSlot;
@@ -16,6 +17,4 @@ public class HomeListGUI extends BaseMenu {
     public void setDataSlot(List<Integer> dataSlot) {
         this.dataSlot = dataSlot;
     }
-
 }
-

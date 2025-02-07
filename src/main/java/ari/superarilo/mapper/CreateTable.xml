@@ -22,7 +22,7 @@
         )
     </select>
     <select id="createHomeList">
-        CREATE TABLE IF NOT EXISTS ari_player_home
+        CREATE TABLE IF NOT EXISTS ${table_prefix}player_home
         (
             id INTEGER PRIMARY KEY
             <if test="sqlType == 'mysql'">
@@ -39,6 +39,28 @@
             z DECIMAL(10, 3) NOT NULL,
             world VARCHAR(128) NOT NULL,
             show_material VARCHAR(128) NOT NULL
+        )
+    </select>
+    <select id="createWarpList">
+        CREATE TABLE IF NOT EXISTS ${table_prefix}warps
+        (
+        id INTEGER PRIMARY KEY
+        <if test="sqlType == 'mysql'">
+            AUTO_INCREMENT
+        </if>
+        <if test="sqlType == 'sqlite'">
+            AUTOINCREMENT
+        </if>
+        , warp_id VARCHAR(128) NOT NULL,
+        warp_name VARCHAR(128) NOT NULL,
+        create_by VARCHAR(128) NOT NULL,
+        x DECIMAL(10, 3) NOT NULL,
+        y DECIMAL(10, 3) NOT NULL,
+        z DECIMAL(10, 3) NOT NULL,
+        world VARCHAR(128) NOT NULL,
+        show_material VARCHAR(128) NOT NULL,
+        permission VARCHAR(128) default NULL,
+        cost INTEGER default 0
         )
     </select>
 </mapper>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ari.superarilo.mapper.ServerWrapMapper">
+    <insert id="createWarp" useGeneratedKeys="true" keyProperty="id">
+        insert into ${table_prefix}warps
+        (warp_id, warp_name, create_by, x, y, z, world, show_material, permission, cost)
+        values
+        (#{warp.warpId}, #{warp.warpName}, #{warp.createBy}, #{warp.x}, #{warp.y}, #{warp.z}, #{warp.world}, #{warp.showMaterial}, #{warp.permission}, #{warp.cost})
+    </insert>
+    <select id="getServerWarps" resultType="ari.superarilo.entity.sql.ServerWarp">
+        select * from ${table_prefix}warps
+        <if test="page.limit != null">
+            limit #{page.limit} offset #{page.offset}
+        </if>
+    </select>
+</mapper>

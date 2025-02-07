@@ -4,7 +4,7 @@ package ari.superarilo.tool;
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.MapperList;
 import ari.superarilo.enumType.SQLType;
-import ari.superarilo.enumType.sql.CreateTableSql;
+import ari.superarilo.mapper.CreateTable;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
@@ -14,9 +14,6 @@ import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -41,25 +38,16 @@ public class SQLInstance {
         }
         Log.debug(Level.INFO, "The database type is " + sqlType.getType());
         switch (sqlType) {
-            case MYSQL:
-                this.createMysql();
-                break;
-            case SQLITE:
-                this.createSQLite();
-                break;
+            case MYSQL -> this.createMysql();
+            case SQLITE -> this.createSQLite();
         }
 
         try(SqlSession sqlSession = sessionFactory.openSession()) {
-            Connection connection = sqlSession.getConnection();
-            try(Statement statement = connection.createStatement()) {
-                for (CreateTableSql tableSql : CreateTableSql.values()) {
-                    Log.debug(Level.INFO, "creating table " + tableSql.getTableName());
-                    statement.execute(tableSql.getSql());
-                    Log.debug(Level.INFO, "created table " + tableSql.getTableName());
-                }
-            } catch (SQLException e) {
-                Log.debug(Level.SEVERE, "create table error", e);
-            }
+            CreateTable mapper = sqlSession.getMapper(CreateTable.class);
+            mapper.createPlayers(sqlType.getType());
+            mapper.createHomeList(sqlType.getType());
+        } catch (Exception e) {
+            Log.error( "executing sql error", e);
         }
 
     }

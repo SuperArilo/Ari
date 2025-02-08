@@ -11,6 +11,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.Map;
 
 public class CommandAlias {
@@ -40,8 +41,7 @@ public class CommandAlias {
         long start = System.currentTimeMillis();
         CommandMap commandMap = Ari.instance.getServer().getCommandMap();
         this.alias.forEach((k, v) -> {
-            if(!v.isEnable()) return;
-            PluginCommand pluginCommand = this.build(k);
+            PluginCommand pluginCommand = this.build(k, v);
             if(pluginCommand == null) {
                 Log.debug("register command [" + k + "] error");
                 return;
@@ -71,7 +71,8 @@ public class CommandAlias {
         Log.debug("---------- unregister command end ----------");
         this.init();
     }
-    private PluginCommand build(String commandName) {
+    private PluginCommand build(String commandName, AliasItem item) {
+        if(!item.isEnable()) return null;
         PluginCommand pluginCommand;
         try {
             pluginCommand = this.constructor.newInstance(commandName, Ari.instance);
@@ -104,7 +105,12 @@ public class CommandAlias {
         }
 
         if (executorInstance instanceof TabCompleter) {
-            pluginCommand.setTabCompleter((TabCompleter) executorInstance);
+            if(item.isTabComplete()) {
+                pluginCommand.setTabCompleter((TabCompleter) executorInstance);
+            } else {
+                pluginCommand.setTabCompleter((sender, command, alias, args) -> Collections.emptyList());
+                Log.debug("command: [" + commandName + "] is not setTabCompleter");
+            }
         } else {
             Log.error("Executor class " + commandName + " does not implement TabCompleter.");
             return null;

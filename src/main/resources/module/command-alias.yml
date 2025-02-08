@@ -1,18 +1,27 @@
 tpa:
   enable: true
+  tab-complete: true
 tpahere:
   enable: true
+  tab-complete: true
 tpaaccept:
   enable: true
+  tab-complete: true
 tparefuse:
   enable: true
+  tab-complete: true
 home:
   enable: true
+  tab-complete: false
 deletehome:
   enable: true
+  tab-complete: true
 sethome:
   enable: true
+  tab-complete: false
 back:
   enable: true
+  tab-complete: false
 warp:
   enable: true
+  tab-complete: false

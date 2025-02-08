@@ -1,25 +1,17 @@
 package ari.superarilo.command;
 
 import ari.superarilo.Ari;
-import ari.superarilo.enumType.TeleportObjectType;
+import ari.superarilo.command.function.CommandBack;
+import ari.superarilo.command.function.CommandHome;
+import ari.superarilo.command.function.CommandTeleport;
 import ari.superarilo.function.CommandCheck;
-import ari.superarilo.function.HomeManager;
 import ari.superarilo.function.impl.CommandCheckImpl;
-import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.TeleportType;
-import ari.superarilo.function.TeleportPrecondition;
-import ari.superarilo.function.impl.TeleportThreadImpl;
-import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.TextTool;
-import ari.superarilo.function.TeleportThread;
-import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,8 +19,6 @@ import java.util.*;
 
 public class MainCommand implements TabExecutor {
 
-    private final TextComponent commandPublicFail = TextTool.setHEXColorText("command.public.fail", FilePath.Lang);
-    private final TextComponent teleportUnablePlayer = TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang);
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
@@ -57,109 +47,35 @@ public class MainCommand implements TabExecutor {
                 commandSender.sendMessage(TextTool.setHEXColorText("command.reload.success", FilePath.Lang));
             }
             case TPA -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA)) {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA) || strings.length != 2) {
                     return true;
                 }
-                if(!commandCheck.isPlayer()) break;
-                if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(this.commandPublicFail);
-                    return true;
-                }
-                Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
-                if(player == null) {
-                    commandSender.sendMessage(this.teleportUnablePlayer);
-                    return true;
-                }
-                TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPA);
+                CommandTeleport.build(commandSender, strings[1]).tpa();
             }
             case TPAACCEPT -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT)) {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT) || strings.length != 2) {
                     return true;
                 }
-                if(!commandCheck.isPlayer()) break;
-                if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(this.commandPublicFail);
-                    return true;
-                }
-                //判断玩家是否存在
-                Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
-                if (player == null) {
-                    commandSender.sendMessage(this.teleportUnablePlayer);
-                    return true;
-                }
-
-                //判断请求是否还存在
-                TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) commandSender);
-                if(status == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.been-done", FilePath.Lang));
-                    return true;
-                }
-                //请求成功，移除该请求
-                commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.agree", FilePath.Lang));
-                Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
-                TeleportThread teleportThread = switch (status.getCommandType()) {
-                    case TPA -> TeleportThread.playerToPlayer(player, ((Player) commandSender));
-                    case TPAHERE -> TeleportThread.playerToPlayer((Player) commandSender, player);
-                    default -> null;
-                };
-                if (teleportThread != null) {
-                    teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
-                } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
-                }
+                CommandTeleport.build(commandSender, strings[1]).tpaaccept();
             }
             case TPAHERE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE)) {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE) || strings.length != 2) {
                     return true;
                 }
-                if(!commandCheck.isPlayer()) break;
-                if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(this.commandPublicFail);
-                    return true;
-                }
-                Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
-                if (player == null) {
-                    commandSender.sendMessage(this.teleportUnablePlayer);
-                    return true;
-                }
-
-                TeleportPrecondition.create().preCheckStatus((Player) commandSender, player, AriCommand.TPAHERE);
+                CommandTeleport.build(commandSender, strings[1]).tpahere();
             }
             case TPAREFUSE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE)) {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE) | strings.length != 2) {
                     return true;
                 }
-                if(!commandCheck.isPlayer()) break;
-                if (strings.length != 2 || strings[1].equals(commandSender.getName())) {
-                    commandSender.sendMessage(this.commandPublicFail);
-                    return true;
-                }
-                //判断玩家是否存在
-                Player player = Ari.instance.getServer().getPlayerExact(strings[1]);
-                if (player == null) {
-                    commandSender.sendMessage(this.teleportUnablePlayer);
-                    return true;
-                }
-                if (TeleportPrecondition.create().checkStatusV(player, (Player) commandSender) == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.been-done", FilePath.Lang));
-                    return true;
-                } else {
-                    if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))) {
-                        commandSender.sendMessage(TextTool.setHEXColorText("command.tparefuse.success", FilePath.Lang));
-                        if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
-                            player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), commandSender.getName())));
-                        }
-                    } else {
-                        commandSender.sendMessage(TextTool.setHEXColorText("command.public.break", FilePath.Lang));
-                    }
-                }
+                CommandTeleport.build(commandSender,strings[1]).tparefuse();
             }
             case HOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.HOME)) {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
-                new HomeList((Player) commandSender).open();
+                CommandHome.build(commandSender).home();
             }
             case SETHOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
@@ -167,14 +83,10 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(this.commandPublicFail);
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                     return true;
                 }
-                if(Ari.instance.formatUtil.checkIdName(strings[1])) {
-                    HomeManager.create((Player) commandSender).createNewHome(strings[1]);
-                } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.sethome.id-error", FilePath.Lang));
-                }
+                CommandHome.build(commandSender).setHome(strings[1]);
             }
             case DELETEHOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
@@ -182,36 +94,17 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(this.commandPublicFail);
+                    commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
                     return true;
                 }
-                if(Ari.instance.formatUtil.checkIdName(strings[1])) {
-                    HomeManager.create((Player) commandSender).deleteHome(strings[1]);
-                } else {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.deletehome.id-error", FilePath.Lang));
-                }
+                CommandHome.build(commandSender).deleteHome(strings[1]);
             }
             case BACK -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.BACK)) {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
-                Player player = (Player) commandSender;
-                Location beforeLocation = TeleportThreadImpl.lastLocation.get(player.getUniqueId());
-                if(beforeLocation == null) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
-                    return true;
-                }
-                if(TeleportPrecondition.create().preCheckStatus(player, beforeLocation, AriCommand.BACK)) {
-                    TeleportThread
-                            .playerToLocation(
-                                    player,
-                                    beforeLocation)
-                            .teleport(Ari.instance.configManager.getValue(
-                                    "main.teleport.delay",
-                                    FilePath.TPA,
-                                    Integer.class));
-                }
+                CommandBack.build(commandSender).startDo();
             }
         }
         return true;
@@ -257,30 +150,20 @@ public class MainCommand implements TabExecutor {
                 return List.of();
             }
             switch (c) {
-                case TPA, TPAHERE -> {
-                    List<String> list = new ArrayList<>();
-                    Ari.instance.getServer().getOnlinePlayers().forEach(p -> {
-                        if(!p.getName().equals(commandSender.getName())) {
-                            list.add(p.getName());
-                        }
-                    });
-                    return list;
+                case TPA -> {
+                    return CommandTeleport.build(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPA);
                 }
-                case TPAACCEPT, TPAREFUSE -> {
-                    List<String> list = new ArrayList<>();
-                    Ari.instance.tpStatusValue.getStatusList().stream().filter(obj -> obj.getBePlayerUUID().equals(((Player) commandSender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER)).toList()
-                            .forEach(e -> {
-                                Player player = Ari.instance.getServer().getPlayer(e.getPlayUUID());
-                                if (player != null) {
-                                    list.add(player.getName());
-                                }
-                            });
-                    return list;
+                case TPAHERE -> {
+                    return CommandTeleport.build(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPAHERE);
+                }
+                case TPAACCEPT -> {
+                    return CommandTeleport.build(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAACCEPT);
+                }
+                case TPAREFUSE -> {
+                    return CommandTeleport.build(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAREFUSE);
                 }
                 case DELETEHOME -> {
-                    List<String> list = HomeManager.create((Player) commandSender).asyncGetHomeIdList();
-                    Collections.sort(list);
-                    return list;
+                    return CommandHome.build(commandSender).getHomeList();
                 }
 
             }

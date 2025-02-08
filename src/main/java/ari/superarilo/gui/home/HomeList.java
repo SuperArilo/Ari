@@ -78,7 +78,7 @@ public class HomeList extends BaseGui {
                         case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
                         case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
                         case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
-                        case PLAYERNAME -> replacedLine;
+                        default -> replacedLine;
                     };
                 }
                 textComponents.add(TextTool.setHEXColorText(replacedLine));

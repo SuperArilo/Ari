@@ -51,5 +51,5 @@ command:
   deletehome:
     success: '删除成功'
     id-error: 'home的id错误或者找不到'
-    error: '删除失败，尝试联系管理员'
+    none: '删除失败，尝试联系管理员'
   unknown: '&4未知指令，请重新输入'

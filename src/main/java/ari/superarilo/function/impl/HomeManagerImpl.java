@@ -140,7 +140,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 if(delete == 1){
                     this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.success", FilePath.Lang));
                 } else {
-                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.error", FilePath.Lang));
+                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.none", FilePath.Lang));
                 }
                 Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
             } catch (Exception e) {

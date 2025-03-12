@@ -9,6 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface ServerWrapMapper {
-    void createWarp(@Param("warp") ServerWarp warp);
+    void save(@Param("warp") ServerWarp warp);
     List<ServerWarp> getServerWarps(@Param("page") Page page);
+    List<String> getWarpIdList(@Param("playerUUID") String playerUUID);
+    Integer delete(@Param("warpId") String warpId, @Param("playerUUID") String playerUUID);
+    Integer update(@Param("serverWarp") ServerWarp serverWarp);
 }

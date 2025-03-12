@@ -7,7 +7,8 @@ public enum FilePath {
     CommandAlias("commandAlias", "module/command-alias.yml"),
     HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
     HomeConfig("homeConfig", "module/home/setting.yml"),
-    WarpList("warpList", "module/warp/warp-gui.yml");
+    WarpList("warpList", "module/warp/warp-gui.yml"),
+    WarpConfig("homeConfig", "module/warp/setting.yml");
 
     private final String name;
     private final String path;

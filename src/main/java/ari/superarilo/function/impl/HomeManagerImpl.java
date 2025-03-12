@@ -72,14 +72,15 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
-                int size = mapper.getHomeList(String.valueOf(this.player.getUniqueId()), Page.create(1, Integer.MAX_VALUE)).size();
+                List<String> homeIdList = mapper.getHomeIdList(this.player.getUniqueId().toString());
                 Integer value = Ari.instance.configManager.getValue("main.set-home.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
-                if(size >= value && value != -1) {
+                if(homeIdList.size() >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
                     this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exceeds", FilePath.Lang));
+                    i.cancel();
                     return;
                 }
-                if (mapper.exist(homeId, this.player.getUniqueId().toString())) {
+                if (homeIdList.contains(homeId)) {
                     this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exist", FilePath.Lang, this.player));
                     i.cancel();
                     return;
@@ -95,6 +96,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 this.player.sendMessage(TextTool.setHEXColorText("command.sethome.success", FilePath.Lang, this.player));
             } catch (Exception e) {
                 Log.error(e.getMessage());
+                i.cancel();
             } finally {
                 Log.debug(Level.INFO, "save home done. time: " + (System.currentTimeMillis() - start));
             }

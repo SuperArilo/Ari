@@ -30,34 +30,6 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         this.location = player.getLocation();
     }
 
-
-    @Override
-    public boolean modifyHome(PlayerHome modify) {
-        long start = System.currentTimeMillis();
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                Integer update = sqlSession.getMapper(PlayerHomeMapper.class).update(modify);
-                if(update == 1) {
-                    Log.debug("save time: " + (System.currentTimeMillis() - start) + "ms");
-                    future.complete(true);
-                } else {
-                    future.complete(false);
-                    Log.error("save homeId: [" + modify.getHomeId() + "] error");
-                }
-            } catch (Exception e) {
-                Log.error("save home error", e);
-                future.complete(false);
-            }
-        });
-        try {
-            return future.get();
-        } catch (Exception e) {
-            Log.error("get completableFuture error", e);
-            return false;
-        }
-    }
-
     @Override
     public CompletableFuture<List<PlayerHome>> asyncGetList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
@@ -147,4 +119,28 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
             }
         });
     }
+
+    @Override
+    public CompletableFuture<Boolean> modify(PlayerHome instance) {
+        long start = System.currentTimeMillis();
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                Integer update = sqlSession.getMapper(PlayerHomeMapper.class).update(instance);
+                if(update == 1) {
+                    future.complete(true);
+                } else {
+                    future.complete(false);
+                    Log.error("save homeId: [" + instance.getHomeId() + "] error");
+                }
+            } catch (Exception e) {
+                Log.error("save home error", e);
+                future.complete(false);
+            } finally {
+                Log.debug("save time: " + (System.currentTimeMillis() - start) + "ms");
+            }
+        });
+        return future;
+    }
+
 }

@@ -30,8 +30,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class EditHomeListener implements Listener {
 
@@ -108,7 +107,14 @@ public class EditHomeListener implements Listener {
                     clickMeta.lore(List.of(TextTool.setHEXColorText("&7保存中...")));
                     finalClickItem.setItemMeta(clickMeta);
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, o -> {
-                        if(homeManager.modifyHome(home)) {
+                        CompletableFuture<Boolean> future = homeManager.modify(home);
+                        Boolean status;
+                        try {
+                            status = future.get();
+                        } catch (InterruptedException | ExecutionException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("&a保存成功")));
                             finalClickItem.setItemMeta(clickMeta);
                             Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{

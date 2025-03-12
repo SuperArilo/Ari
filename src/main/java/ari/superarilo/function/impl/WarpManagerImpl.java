@@ -55,4 +55,9 @@ public class WarpManagerImpl implements WarpManager {
     public void deleteInstance(String id) {
 
     }
+
+    @Override
+    public CompletableFuture<Boolean> modify(ServerWarp instance) {
+        return null;
+    }
 }

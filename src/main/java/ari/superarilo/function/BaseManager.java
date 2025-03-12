@@ -20,5 +20,10 @@ public interface BaseManager<T> {
     void createInstance(String id);
 
     void deleteInstance(String id);
-
+    /**
+     * 修改信息
+     * @param instance 被修改的对象
+     * @return 修改成功状态。true：成功，false：失败
+     */
+    CompletableFuture<Boolean> modify(T instance);
 }

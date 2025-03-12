@@ -69,7 +69,7 @@ public class EditHomeListener implements Listener {
                 }
                 case DELETE -> {
                     //delete home
-                    homeManager.deleteHome(home.getHomeId());
+                    homeManager.deleteInstance(home.getHomeId());
                     inventory.close();
                     new HomeList(player).open();
                 }

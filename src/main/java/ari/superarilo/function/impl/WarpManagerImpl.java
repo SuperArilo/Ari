@@ -11,7 +11,6 @@ import org.apache.ibatis.session.SqlSession;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
@@ -25,23 +24,35 @@ public class WarpManagerImpl implements WarpManager {
     }
 
     @Override
-    public List<ServerWarp> asyncGetWarpList(int pageNum, int pageSize) {
+    public CompletableFuture<List<ServerWarp>> asyncGetList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
         CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-           try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)){
-               ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
-               future.complete(mapper.getServerWarps(Page.create(pageNum, pageSize)));
-           } catch (Exception e) {
-               Log.error("query warps error!", e);
-           }
+            try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)){
+                List<ServerWarp> serverWarps = sqlSession.getMapper(ServerWrapMapper.class).getServerWarps(Page.create(pageNum, pageSize));
+                future.complete(serverWarps);
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+                Log.error("query warps error!", e);
+            } finally {
+                Log.debug(Level.INFO, "get home warp time: " + (System.currentTimeMillis() - start) + "ms");
+            }
         });
-        try {
-            Log.debug(Level.INFO, "get home warp time: " + (System.currentTimeMillis() - start) + "ms");
-            return future.get();
-        } catch (Exception e) {
-            Log.debug(Level.INFO, "get warp list error", e);
-            return new ArrayList<>();
-        }
+        return future;
+    }
+
+    @Override
+    public CompletableFuture<List<String>> asyncGetIdList() {
+        return null;
+    }
+
+    @Override
+    public void createInstance(String id) {
+
+    }
+
+    @Override
+    public void deleteInstance(String id) {
+
     }
 }

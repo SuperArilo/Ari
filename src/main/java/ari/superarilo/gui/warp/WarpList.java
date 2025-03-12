@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 public class WarpList extends BaseGui {
@@ -97,7 +99,12 @@ public class WarpList extends BaseGui {
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
     private List<ServerWarp> requestWarps() {
-        return WarpManager.create(this.player).asyncGetWarpList(this.pageNum, this.gui.getDataItems().getSlot().size());
+        CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<ServerWarp> getWarpList() {

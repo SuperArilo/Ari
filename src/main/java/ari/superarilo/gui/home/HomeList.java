@@ -26,6 +26,8 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 
@@ -120,6 +122,12 @@ public class HomeList extends BaseGui {
     }
 
     private List<PlayerHome> requestPlayerHomes() {
-        return HomeManager.create(this.player).asyncGetHomeList(this.pageNum, this.gui.getDataItems().getSlot().size());
+        Future<List<PlayerHome>> future = HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

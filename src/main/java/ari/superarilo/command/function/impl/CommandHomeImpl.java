@@ -12,6 +12,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class CommandHomeImpl implements CommandHome {
 
@@ -24,7 +26,7 @@ public class CommandHomeImpl implements CommandHome {
     @Override
     public void setHome(String homeId) {
         if(Ari.instance.formatUtil.checkIdName(homeId)) {
-            HomeManager.create((Player) this.sender).createNewHome(homeId);
+            HomeManager.create((Player) this.sender).createInstance(homeId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("command.sethome.id-error", FilePath.Lang));
         }
@@ -38,7 +40,7 @@ public class CommandHomeImpl implements CommandHome {
     @Override
     public void deleteHome(String homeId) {
         if(Ari.instance.formatUtil.checkIdName(homeId)) {
-            HomeManager.create((Player) this.sender).deleteHome(homeId);
+            HomeManager.create((Player) this.sender).deleteInstance(homeId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("command.deletehome.id-error", FilePath.Lang));
         }
@@ -48,9 +50,15 @@ public class CommandHomeImpl implements CommandHome {
     public List<String> getHomeList() {
         Player player = (Player) this.sender;
         if(Ari.instance.permissionUtils.hasPermission(player, AriCommand.DELETEHOME.getPermission())) {
-            List<String> list = HomeManager.create(player).asyncGetHomeIdList();
-            Collections.sort(list);
-            return list;
+            CompletableFuture<List<String>> future = HomeManager.create(player).asyncGetIdList();
+            try {
+                List<String> list = future.get();
+                Collections.sort(list);
+                return list;
+            } catch (InterruptedException | ExecutionException e) {
+                throw new RuntimeException(e);
+            }
+
         }
         return List.of();
     }

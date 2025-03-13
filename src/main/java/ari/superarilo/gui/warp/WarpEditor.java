@@ -1,11 +1,11 @@
-package ari.superarilo.gui.home;
+package ari.superarilo.gui.warp;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
-import ari.superarilo.entity.menu.home.HomeEditorGUI;
-import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.entity.menu.warp.WarpEditorGUI;
+import ari.superarilo.entity.sql.ServerWarp;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.LocationKeyType;
@@ -17,15 +17,16 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class HomeEditor extends BaseGui {
-    private final HomeEditorGUI gui;
-    private final PlayerHome currentHome;
+public class WarpEditor extends BaseGui {
 
-    public HomeEditor(PlayerHome playerHome, Player player) {
+    private final WarpEditorGUI gui;
+    private final ServerWarp currentWarp;
+
+    public WarpEditor(ServerWarp serverWarp, Player player) {
         super(player);
-        this.currentHome = playerHome;
-        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this.currentHome), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.currentWarp = serverWarp;
+        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this.currentWarp), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle()));
     }
 
     @Override
@@ -36,14 +37,14 @@ public class HomeEditor extends BaseGui {
     @Override
     protected Map<String, FunctionItems> getFunctionItems() {
         Map<String, FunctionItems> functionItems = this.gui.getFunctionItems();
-        if (functionItems != null) {
+        if(functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {
-                    case ICON -> item.setMaterial(this.currentHome.getShowMaterial());
-                    case RENAME -> item.setName(this.currentHome.getHomeName());
+                    case ICON -> item.setMaterial(this.currentWarp.getShowMaterial());
+                    case RENAME -> item.setName(this.currentWarp.getWarpName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = Ari.instance.objectConvert.parseLocation(this.currentHome.getLocation());
+                        Location location = Ari.instance.objectConvert.parseLocation(this.currentWarp.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
                                 case X -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
@@ -53,6 +54,14 @@ public class HomeEditor extends BaseGui {
                             };
                         }
                         item.setName(name);
+                    }
+                    case PERMISSION -> {
+                        String permission = this.currentWarp.getPermission();
+                        item.setName(permission == null ? "":permission);
+                    }
+                    case COST -> {
+                        Integer cost = this.currentWarp.getCost();
+                        item.setName(cost == null ? "0":cost.toString());
                     }
                 }
             }

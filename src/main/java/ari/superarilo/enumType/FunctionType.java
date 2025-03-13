@@ -13,7 +13,9 @@ public enum FunctionType {
     CANCEL("取消"),
     CONFIRM("确认"),
     PREV("上一页"),
-    NEXT("下一页");
+    NEXT("下一页"),
+    PERMISSION("权限"),
+    COST("花费");
     private final String name;
 
     FunctionType(String name) {

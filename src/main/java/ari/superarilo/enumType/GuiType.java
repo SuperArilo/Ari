@@ -2,7 +2,7 @@ package ari.superarilo.enumType;
 
 public enum GuiType {
     HOMELIST,
-    EDITHOME,
+    HOMEEDIT,
     WARPLIST,
-    WARPEDIT;
+    WARPEDIT
 }

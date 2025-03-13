@@ -9,9 +9,7 @@ import ari.superarilo.enumType.GuiType;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.home.HomeEditor;
 import ari.superarilo.gui.home.HomeList;
-import ari.superarilo.mapper.PlayerHomeMapper;
-import ari.superarilo.tool.SQLInstance;
-import org.apache.ibatis.session.SqlSession;
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -21,6 +19,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Optional;
 
 
 public class HomeListListener implements Listener {
@@ -41,18 +41,21 @@ public class HomeListListener implements Listener {
                 case DATA -> {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
-                    try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                        PlayerHome home = sqlSession.getMapper(PlayerHomeMapper.class).getHome(homeId, player.getUniqueId().toString());
-                        ClickType click = event.getClick();
-                        if (click.equals(ClickType.LEFT)) {
-                            TeleportThread.playerToLocation(
-                                            player, Ari.instance.objectConvert.parseLocation(home.getLocation()))
-                                    .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
-                        } else if (click.equals(ClickType.RIGHT)) {
-                            new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                    Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+                        Optional<PlayerHome> first = homeList.getPlayerHomes().stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
+                        if(first.isPresent()) {
+                            PlayerHome home = first.get();
+                            ClickType click = event.getClick();
+                            if (click.equals(ClickType.LEFT)) {
+                                TeleportThread.playerToLocation(
+                                                player, Ari.instance.objectConvert.parseLocation(home.getLocation()))
+                                        .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
+                            } else if (click.equals(ClickType.RIGHT)) {
+                                new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                            }
                         }
-                        inventory.close();
-                    }
+                        Bukkit.getRegionScheduler().run(Ari.instance, player.getLocation(), o -> inventory.close());
+                    });
                 }
                 case PREV -> homeList.prev();
                 case NEXT -> homeList.next();

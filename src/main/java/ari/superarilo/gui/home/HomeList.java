@@ -117,7 +117,7 @@ public class HomeList extends BaseGui {
         }
     }
 
-    private List<PlayerHome> getPlayerHomes() {
+    public List<PlayerHome> getPlayerHomes() {
         return playerHomes;
     }
 

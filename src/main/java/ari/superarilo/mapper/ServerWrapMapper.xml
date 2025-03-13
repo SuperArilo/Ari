@@ -29,4 +29,8 @@
         cost = #{serverWarp.cost}
         where warp_id = #{serverWarp.warpId} and create_by = #{serverWarp.createBy}
     </update>
+
+    <select id="getWarp" resultType="ari.superarilo.entity.sql.ServerWarp">
+        select id, warp_id, warp_name, create_by, location, show_material, permission, cost from ${table_prefix}warps where warp_id = #{warpId} and create_by = #{playerUUID}
+    </select>
 </mapper>

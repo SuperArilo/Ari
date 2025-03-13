@@ -32,7 +32,7 @@ import java.util.logging.Level;
 public class WarpList extends BaseGui {
 
     private final WarpListGUI gui;
-    private List<ServerWarp> warpList;
+    private List<ServerWarp> serverWarpList;
 
     public WarpList(Player player) {
         super(player);
@@ -41,7 +41,7 @@ public class WarpList extends BaseGui {
                 WarpListGUI.class
         );
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.warpList = this.requestWarps();
+        this.serverWarpList = this.requestWarps();
     }
 
     @Override
@@ -116,6 +116,6 @@ public class WarpList extends BaseGui {
     }
 
     public List<ServerWarp> getWarpList() {
-        return warpList;
+        return serverWarpList;
     }
 }

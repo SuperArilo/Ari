@@ -8,7 +8,3 @@ main:
     quantity:
       owner: -1
       default: 5
-  edit-home:
-    name-length: 6
-    bad-words:
-      - 'fuck'

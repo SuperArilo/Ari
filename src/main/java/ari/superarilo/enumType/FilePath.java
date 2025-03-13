@@ -3,12 +3,12 @@ package ari.superarilo.enumType;
 public enum FilePath {
     Lang("lang","lang/cn.yml"),
     TPA("tpa", "module/tpa/setting.yml"),
-    HomeList("homeList", "module/home/home-gui.yml"),
     CommandAlias("commandAlias", "module/command-alias.yml"),
-    HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
+    HomeList("homeList", "module/home/home-gui.yml"),
     HomeConfig("homeConfig", "module/home/setting.yml"),
+    HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
     WarpList("warpList", "module/warp/warp-gui.yml"),
-    WarpConfig("homeConfig", "module/warp/setting.yml");
+    WarpConfig("warpConfig", "module/warp/setting.yml");
 
     private final String name;
     private final String path;

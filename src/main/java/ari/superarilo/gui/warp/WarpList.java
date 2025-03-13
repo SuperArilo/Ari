@@ -66,8 +66,8 @@ public class WarpList extends BaseGui {
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
-                Log.warning("There is a problem with the homeID: [" + serverWarp.getWarpId() + "] of the player: [" + this.player.getName() + "]");
-                Log.error("Skip the rendering homeId [" + serverWarp.getWarpId() + "] process...");
+                Log.warning("There is a problem with the warpID: [" + serverWarp.getWarpId() + "] of the player: [" + this.player.getName() + "]");
+                Log.error("Skip the rendering warpId [" + serverWarp.getWarpId() + "] process...");
                 continue;
             }
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));

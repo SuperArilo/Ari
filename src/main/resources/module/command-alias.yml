@@ -25,3 +25,9 @@ back:
 warp:
   enable: true
   tab-complete: false
+setwarp:
+  enable: true
+  tab-complete: false
+deletewarp:
+  enable: true
+  tab-complete: true

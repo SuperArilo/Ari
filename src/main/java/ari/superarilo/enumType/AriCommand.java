@@ -35,6 +35,12 @@ public enum AriCommand {
     WARP("warp",
             "ari.command.warp",
             new warp()),
+    SETWARP("setwarp",
+            "ari.command.setwarp",
+            new setwarp()),
+    DELETEWARP("deletewarp",
+            "ari.command.deletewarp",
+            new deletewarp()),
     RELOAD("reload",
             "ari.command.reload",
             null);

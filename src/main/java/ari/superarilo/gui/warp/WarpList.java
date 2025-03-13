@@ -24,10 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -85,7 +82,7 @@ public class WarpList extends BaseGui {
                         case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
                         case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
                         case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
-                        case PLAYERNAME -> replacedLine.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getServer().getPlayer(serverWarp.getCreateBy())).getName());
+                        case PLAYERNAME -> replacedLine.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
                     };
                 }
                 textComponents.add(TextTool.setHEXColorText(replacedLine));

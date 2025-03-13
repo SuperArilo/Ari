@@ -96,7 +96,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
                 warp.setShowMaterial(material.name());
 
                 mapper.save(warp);
-
+                this.player.sendMessage(TextTool.setHEXColorText("command.setwarp.success", FilePath.Lang, this.player));
             } catch (Exception e) {
                 Log.error(e.getMessage());
                 i.cancel();

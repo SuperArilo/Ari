@@ -1,3 +1,6 @@
+base:
+  yes_re: '&a是'
+  no_re: '&2否'
 teleport:
   ing: '传送过程中！请不要移动...'
   success: '传送成功！'

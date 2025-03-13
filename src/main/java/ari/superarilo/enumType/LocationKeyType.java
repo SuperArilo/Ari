@@ -6,7 +6,9 @@ public enum LocationKeyType {
     Y("[Y]"),
     Z("[Z]"),
     WORLDNAME("[worldName]"),
-    PLAYERNAME("[playerName]");
+    PLAYERNAME("[playerName]"),
+    COST("[cost]"),
+    PERMISSION("[permission]");
 
     private final String key;
 

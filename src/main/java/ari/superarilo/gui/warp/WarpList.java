@@ -74,18 +74,29 @@ public class WarpList extends BaseGui {
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = Ari.instance.objectConvert.parseLocation(serverWarp.getLocation());
             rawLore.forEach(line -> {
-                String replacedLine = line;
                 for (LocationKeyType keyType : LocationKeyType.values()) {
-                    replacedLine = switch (keyType) {
-                        case ID -> replacedLine.replace(keyType.getKey(), serverWarp.getWarpId());
-                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
-                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
-                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
-                        case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
-                        case PLAYERNAME -> replacedLine.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
+                    line = switch (keyType) {
+                        case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
+                        case X -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
+                        case Y -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
+                        case Z -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                        case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
+                        case PLAYERNAME -> line.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
+                        case COST -> {
+                            Integer cost = serverWarp.getCost();
+                            if(cost == null || cost == 0) {
+                                yield line.replace(keyType.getKey(), "&afree");
+                            } else {
+                                yield line.replace(keyType.getKey(), cost.toString());
+                            }
+                        }
+                        case PERMISSION -> {
+                            boolean hasPermission = serverWarp.getPermission() == null || Ari.instance.permissionUtils.hasPermission(this.player, serverWarp.getPermission());
+                            yield line.replace(keyType.getKey(), Ari.instance.configManager.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang, String.class));
+                        }
                     };
                 }
-                textComponents.add(TextTool.setHEXColorText(replacedLine));
+                textComponents.add(TextTool.setHEXColorText(line));
             });
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());

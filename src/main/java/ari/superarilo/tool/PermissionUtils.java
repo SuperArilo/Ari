@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class PermissionUtils {
 
@@ -39,7 +40,7 @@ public class PermissionUtils {
      * @param permission 权限字符串
      * @return 布尔值
      */
-    public boolean hasPermission(Player player, String permission) {
+    public boolean hasPermission(Player player, @NonNull String permission) {
         return this.isNull() ? player.hasPermission(permission):this.permission.has(player, permission);
     }
 

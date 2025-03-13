@@ -4,7 +4,6 @@ import ari.superarilo.Ari;
 import ari.superarilo.command.function.CommandWarp;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.HomeManager;
 import ari.superarilo.function.WarpManager;
 import ari.superarilo.gui.warp.WarpList;
 import ari.superarilo.tool.TextTool;

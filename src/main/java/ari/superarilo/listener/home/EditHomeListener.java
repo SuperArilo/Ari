@@ -44,7 +44,7 @@ public class EditHomeListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.EDITHOME)) {
+        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
 
             Player player = holder.getPlayer();
             this.removeIfPlayInEditList(player);

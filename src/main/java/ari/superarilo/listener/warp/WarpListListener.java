@@ -10,6 +10,7 @@ import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.warp.WarpEditor;
 import ari.superarilo.gui.warp.WarpList;
 import ari.superarilo.tool.Log;
+import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 public class WarpListListener implements Listener {
@@ -52,6 +54,12 @@ public class WarpListListener implements Listener {
                         Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId) && j.getCreateBy().equals(player.getUniqueId().toString())).findFirst();
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
+                            String permission = warp.getPermission();
+                            if((permission != null && !permission.isEmpty() && !Ari.instance.permissionUtils.hasPermission(player, permission)) || UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId())) {
+                                player.sendMessage(TextTool.setHEXColorText("command.warp.no-permission", FilePath.Lang));
+                                i.cancel();
+                                return;
+                            }
                             ClickType eventClick = event.getClick();
                             if(eventClick.equals(ClickType.LEFT)) {
                                 TeleportThread.playerToLocation(

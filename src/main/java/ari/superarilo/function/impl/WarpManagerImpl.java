@@ -76,7 +76,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
 
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
                 List<String> warpIdList = mapper.getWarpIdList(this.player.getUniqueId().toString());
-                Integer value = Ari.instance.configManager.getValue("main.set-warp.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.WarpConfig, Integer.class);
+                Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.WarpConfig, Integer.class);
                 if(warpIdList.size() >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
                     this.player.sendMessage(TextTool.setHEXColorText("command.setwarp.exceeds", FilePath.Lang));

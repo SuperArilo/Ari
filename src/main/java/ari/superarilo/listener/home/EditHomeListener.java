@@ -75,8 +75,8 @@ public class EditHomeListener implements Listener {
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    Ari.instance.configManager.getValue("on-edit-home.rename.title", FilePath.Lang, String.class),
-                                    Ari.instance.configManager.getValue("on-edit-home.rename.sub-title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("base.on-edit.rename.title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("base.on-edit.rename.sub-title", FilePath.Lang, String.class),
                                     1000,
                                     10000 ,
                                     1000));
@@ -104,29 +104,26 @@ public class EditHomeListener implements Listener {
                     //save
                     ItemStack finalClickItem = clickItem;
                     Log.debug("start saving home");
-                    clickMeta.lore(List.of(TextTool.setHEXColorText("&7保存中...")));
+                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                     finalClickItem.setItemMeta(clickMeta);
-                    Bukkit.getAsyncScheduler().runNow(Ari.instance, o -> {
-                        CompletableFuture<Boolean> future = homeManager.modify(home);
-                        Boolean status;
-                        try {
-                            status = future.get();
-                        } catch (InterruptedException | ExecutionException e) {
-                            throw new RuntimeException(e);
-                        }
-                        if(status) {
-                            clickMeta.lore(List.of(TextTool.setHEXColorText("&a保存成功")));
+                    CompletableFuture<Boolean> future = homeManager.modify(home);
+                    Boolean status;
+                    try {
+                        status = future.get();
+                    } catch (InterruptedException | ExecutionException e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(status) {
+                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
+                        finalClickItem.setItemMeta(clickMeta);
+                        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
+                            clickMeta.lore(List.of());
                             finalClickItem.setItemMeta(clickMeta);
-                            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
-                                clickMeta.lore(List.of());
-                                finalClickItem.setItemMeta(clickMeta);
-                            }, 1, TimeUnit.SECONDS);
-                        } else {
-                            //error
-                            clickMeta.lore(List.of(TextTool.setHEXColorText("&4保存失败，请联系管理员")));
-                            Log.error("save home error");
-                        }
-                    });
+                        }, 1, TimeUnit.SECONDS);
+                    } else {
+                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                        Log.error("save home error");
+                    }
                 }
             }
         }
@@ -137,13 +134,18 @@ public class EditHomeListener implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
         String message = TextTool.componentToString(event.message());
-        List<String> value = Ari.instance.configManager.getValue("main.edit-home.bad-words", FilePath.HomeConfig, new TypeToken<List<String>>(){}.getType());
-        if(!Ari.instance.formatUtil.checkName(message) || value.contains(message)) {
-            player.sendMessage(TextTool.setHEXColorText("command.sethome.name-error", FilePath.Lang));
+        List<String> value = Ari.instance.configManager.getValue("main.name-check", FilePath.HomeConfig, new TypeToken<List<String>>(){}.getType());
+        if(value == null) {
+            Log.error("name-check list is null, check config");
+            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
             return;
         }
-        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.edit-home.name-length", FilePath.HomeConfig, Integer.class)) {
-            player.sendMessage(TextTool.setHEXColorText("command.sethome.name-too-long", FilePath.Lang));
+        if(!Ari.instance.formatUtil.checkName(message) || value.contains(message)) {
+            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
+            return;
+        }
+        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.name-length", FilePath.HomeConfig, Integer.class)) {
+            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
             return;
         }
 
@@ -151,7 +153,7 @@ public class EditHomeListener implements Listener {
 
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
             this.removeIfPlayInEditList(player);
-            player.sendMessage(TextTool.setHEXColorText("on-edit-home.rename.cancel", FilePath.Lang));
+            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.cancel", FilePath.Lang));
             return;
         }
         // 使用 removeIf 删除满足条件的元素

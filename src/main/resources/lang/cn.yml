@@ -1,6 +1,22 @@
 base:
+  on-error: '&2服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&2否'
+  on-edit:
+    cancel: '已取消操作！'
+    title: '&7请输入新内容'
+    sub-title: '&6cancel &7取消'
+    rename:
+      name-error: '名称不满足'
+      name-too-long: '名称过长'
+    permission:
+
+    cost:
+      format-error: '不是有效的数字'
+  save:
+    done: '&a保存成功'
+    ing: '&7保存中...'
+    error: '&4保存失败，请联系管理员'
 teleport:
   ing: '传送过程中！请不要移动...'
   success: '传送成功！'
@@ -47,14 +63,14 @@ command:
   sethome:
     success: '<#90EE90>创建家成功！</#90EE90>'
     id-error: 'home的id不满足'
-    name-error: 'home的名称不满足'
-    name-too-long: 'home的名称过长'
     exist: '已存在相同ID的家'
     exceeds: '超出数量！'
   deletehome:
     success: '删除成功'
     id-error: 'home的id错误或者找不到'
     none: '删除失败，尝试联系管理员'
+  warp:
+    no-permission: '你没有权限传送到该地标'
   setwarp:
     success: '<#90EE90>创建地标成功！</#90EE90>'
     id-error: 'warp的id不满足'

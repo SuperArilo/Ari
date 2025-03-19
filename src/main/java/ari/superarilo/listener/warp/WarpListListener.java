@@ -55,10 +55,14 @@ public class WarpListListener implements Listener {
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
                             String permission = warp.getPermission();
-                            if((permission != null && !permission.isEmpty() && !Ari.instance.permissionUtils.hasPermission(player, permission)) || UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId())) {
-                                player.sendMessage(TextTool.setHEXColorText("command.warp.no-permission", FilePath.Lang));
-                                i.cancel();
-                                return;
+                            if(permission != null) {
+                                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, permission);
+                                boolean isOwner = UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId());
+                                if (!hasPermission && !isOwner) {
+                                    player.sendMessage(TextTool.setHEXColorText("command.warp.no-permission", FilePath.Lang));
+                                    i.cancel();
+                                    return;
+                                }
                             }
                             ClickType eventClick = event.getClick();
                             if(eventClick.equals(ClickType.LEFT)) {

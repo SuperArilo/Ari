@@ -91,7 +91,9 @@ public class WarpList extends BaseGui {
                             }
                         }
                         case PERMISSION -> {
-                            boolean hasPermission = serverWarp.getPermission() == null || Ari.instance.permissionUtils.hasPermission(this.player, serverWarp.getPermission());
+                            boolean hasPermission = serverWarp.getPermission() == null ||
+                                    Ari.instance.permissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
+                                    UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
                             yield line.replace(keyType.getKey(), Ari.instance.configManager.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang, String.class));
                         }
                     };

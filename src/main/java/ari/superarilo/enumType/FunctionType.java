@@ -1,5 +1,8 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum FunctionType {
     BACK("返回"),
     REBACK("返回"),
@@ -22,7 +25,4 @@ public enum FunctionType {
         this.name = name;
     }
 
-    public String getName() {
-        return name;
-    }
 }

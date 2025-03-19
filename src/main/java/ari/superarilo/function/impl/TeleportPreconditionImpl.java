@@ -10,7 +10,6 @@ import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
@@ -33,35 +32,8 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                                             FilePath.Lang,
                                             String.class)));
             this.sendMessageToBePlayer(sender, targetPlayer, ariCommand);
-            this.startAddTask(sender, targetPlayer, null, ariCommand);
+            this.startAddTask(sender, targetPlayer, ariCommand);
         }
-    }
-
-    @Override
-    public boolean preCheckStatus(Player player, Location targetLocation, AriCommand ariCommand) {
-        if (this.checkStatusV(player, targetLocation) != null) {
-            player.sendMessage(TextTool.setHEXColorText(
-                    Ari.instance.configManager.getValue(
-                            "teleport.cooling",
-                            FilePath.Lang,
-                            String.class
-                    )
-            ));
-            return false;
-        } else {
-            this.startAddTask(player, null, targetLocation, ariCommand);
-            return true;
-        }
-    }
-
-    @Override
-    public TeleportStatus checkStatusV(Player sender, Location targetLocation) {
-        return Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
-                obj.getPlayUUID().equals(sender.getUniqueId()) &&
-                        obj.getLocation().equals(targetLocation) &&
-                        obj.getType().equals(TeleportType.BACK))
-                .findFirst()
-                .orElse(null);
     }
 
     @Override
@@ -93,16 +65,16 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
 
     /**
      * 添加玩家传送到玩家的状态
-     * @param player 被传送玩家
+     *
+     * @param player       被传送玩家
      * @param targetPlayer 接收玩家
-     * @param ariCommand 传送类型
+     * @param ariCommand   传送类型
      */
-    protected void startAddTask(Player player, Player targetPlayer, Location targetLocation, AriCommand ariCommand) {
+    protected void startAddTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, t -> {
             TeleportStatus status = new TeleportStatus();
             status.setType(TeleportType.PLAYER);
             status.setCommandType(ariCommand);
-            status.setLocation(targetLocation);
             status.setPlayUUID(player.getUniqueId());
             if(targetPlayer != null) {
                 status.setBePlayerUUID(targetPlayer.getUniqueId());

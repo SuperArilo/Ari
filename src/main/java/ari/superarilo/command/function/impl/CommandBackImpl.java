@@ -2,9 +2,7 @@ package ari.superarilo.command.function.impl;
 
 import ari.superarilo.Ari;
 import ari.superarilo.command.function.CommandBack;
-import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.function.impl.TeleportThreadImpl;
 import ari.superarilo.tool.TextTool;
@@ -28,15 +26,13 @@ public class CommandBackImpl implements CommandBack {
             player.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
             return;
         }
-        if(TeleportPrecondition.create().preCheckStatus(player, beforeLocation, AriCommand.BACK)) {
-            TeleportThread
-                    .playerToLocation(
-                            player,
-                            beforeLocation)
-                    .teleport(Ari.instance.configManager.getValue(
-                            "main.teleport.delay",
-                            FilePath.TPA,
-                            Integer.class));
-        }
+        TeleportThread
+                .playerToLocation(
+                        player,
+                        beforeLocation)
+                .teleport(Ari.instance.configManager.getValue(
+                        "main.teleport.delay",
+                        FilePath.TPA,
+                        Integer.class));
     }
 }

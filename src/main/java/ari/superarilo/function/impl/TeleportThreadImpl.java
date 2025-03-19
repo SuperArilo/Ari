@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 public class TeleportThreadImpl implements TeleportThread {
@@ -61,11 +62,11 @@ public class TeleportThreadImpl implements TeleportThread {
     @Override
     public void teleport(int delay) {
         //设置传送冷却时间
-        final int[] timerIndex;
+        AtomicInteger timerIndex = new AtomicInteger();
         if (this.player.isOp()) {
-            timerIndex = new int[]{1};
+            timerIndex.set(1);
         } else {
-            timerIndex = new int[]{delay};
+            timerIndex.set(delay);
             this.player.sendMessage(TextTool.setHEXColorText("teleport.ing", FilePath.Lang));
         }
         Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
@@ -81,10 +82,10 @@ public class TeleportThreadImpl implements TeleportThread {
                 threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.break", FilePath.Lang));
                 return;
             }
-            timerIndex[0]--;
-            Log.debug(Level.INFO, "start time: " + timerIndex[0] + "s");
+            timerIndex.decrementAndGet();
+            Log.debug(Level.INFO, "start time: " + timerIndex.get() + "s");
             //传送时间到达
-            if (timerIndex[0] == 0) {
+            if (timerIndex.get() == 0) {
                 t.cancel();
                 switch (this.type) {
                     case POINT -> {

@@ -1,5 +1,8 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum FilePath {
     Lang("lang","lang/cn.yml"),
     TPA("tpa", "module/tpa/setting.yml"),
@@ -19,11 +22,4 @@ public enum FilePath {
         this.path = path;
     }
 
-    public String getPath() {
-        return path;
-    }
-
-    public String getName() {
-        return name;
-    }
 }

@@ -1,8 +1,9 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum SQLType {
-
-
     MYSQL("mysql", "com.mysql.cj.jdbc.Driver"),
     SQLITE("sqlite", "org.sqlite.JDBC");
     private final String type;
@@ -10,13 +11,5 @@ public enum SQLType {
     SQLType(String type, String driver) {
         this.type = type;
         this.driver = driver;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public String getDriver() {
-        return driver;
     }
 }

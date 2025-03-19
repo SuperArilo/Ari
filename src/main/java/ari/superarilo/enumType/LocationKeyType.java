@@ -1,5 +1,8 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum LocationKeyType {
     ID("[ID]"),
     X("[X]"),
@@ -16,7 +19,4 @@ public enum LocationKeyType {
         this.key = key;
     }
 
-    public String getKey() {
-        return key;
-    }
 }

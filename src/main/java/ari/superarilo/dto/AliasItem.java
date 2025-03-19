@@ -1,21 +1,9 @@
 package ari.superarilo.dto;
 
+import lombok.Data;
 
+@Data
 public class AliasItem {
     private boolean enable;
     private boolean tabComplete;
-    public boolean isEnable() {
-        return this.enable;
-    }
-    public boolean isTabComplete() {
-        return this.tabComplete;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
-
-    public void setTabComplete(boolean tabComplete) {
-        this.tabComplete = tabComplete;
-    }
 }

@@ -1,5 +1,8 @@
 package ari.superarilo.dto;
 
+import lombok.Data;
+
+@Data
 public class Page {
     private final int pageNum;
     private final int pageSize;
@@ -19,19 +22,4 @@ public class Page {
         return new Page(pageNum, pageSize);
     }
 
-    public int getPageNum() {
-        return pageNum;
-    }
-
-    public int getPageSize() {
-        return pageSize;
-    }
-
-    public int getLimit() {
-        return limit;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
 }

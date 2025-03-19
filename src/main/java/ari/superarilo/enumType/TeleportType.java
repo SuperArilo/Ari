@@ -1,5 +1,8 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum TeleportType {
     POINT("定点传送"),
     PLAYER("玩家传送"),
@@ -12,7 +15,4 @@ public enum TeleportType {
         this.dis = dis;
     }
 
-    public String getDis() {
-        return dis;
-    }
 }

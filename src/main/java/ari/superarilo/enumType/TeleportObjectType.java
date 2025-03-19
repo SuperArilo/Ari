@@ -1,5 +1,8 @@
 package ari.superarilo.enumType;
 
+import lombok.Getter;
+
+@Getter
 public enum TeleportObjectType {
     TPASENDER("[TpaSender]"),
     TPAHERESENDER("[TpaHereSender]"),
@@ -10,7 +13,4 @@ public enum TeleportObjectType {
         this.type = type;
     }
 
-    public String getType() {
-        return type;
-    }
 }

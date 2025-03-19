@@ -3,7 +3,6 @@ package ari.superarilo.entity;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.TeleportType;
 import lombok.Data;
-import org.bukkit.Location;
 
 import java.util.UUID;
 

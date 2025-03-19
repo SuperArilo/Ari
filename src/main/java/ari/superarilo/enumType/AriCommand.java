@@ -2,8 +2,10 @@ package ari.superarilo.enumType;
 
 import ari.superarilo.command.MainCommand;
 import ari.superarilo.command.lists.*;
+import lombok.Getter;
 import org.bukkit.command.TabExecutor;
 
+@Getter
 public enum AriCommand {
     ARI("ari",
             null,
@@ -56,19 +58,5 @@ public enum AriCommand {
         this.permission = permission;
         this.commandClass = commandClass;
     }
-
-
-    public String getShow() {
-        return show;
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public TabExecutor getCommandClass() {
-        return commandClass;
-    }
-
 }
 

@@ -1,17 +1,15 @@
 package ari.superarilo.entity;
 
 import ari.superarilo.enumType.TeleportType;
+import lombok.Getter;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public class TpStatusValue {
     private final List<TeleportStatus> statusList = new ArrayList<>();
-
-    public List<TeleportStatus> getStatusList() {
-        return this.statusList;
-    }
 
     /**
      * 添加指定玩家的传送状态

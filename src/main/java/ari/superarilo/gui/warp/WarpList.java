@@ -32,7 +32,7 @@ import java.util.logging.Level;
 public class WarpList extends BaseGui {
 
     private final WarpListGUI gui;
-    private List<ServerWarp> serverWarpList;
+    public List<ServerWarp> serverWarpList;
 
     public WarpList(Player player) {
         super(player);
@@ -73,6 +73,20 @@ public class WarpList extends BaseGui {
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = Ari.instance.objectConvert.parseLocation(serverWarp.getLocation());
+            //过滤需要移除的行
+            rawLore.removeIf(line -> {
+                for (LocationKeyType keyType : LocationKeyType.values()) {
+                    if (keyType == LocationKeyType.PERMISSION || keyType == LocationKeyType.COST) {
+                        boolean shouldRemove =
+                                (keyType == LocationKeyType.PERMISSION && !((Boolean) Ari.instance.configManager.getValue("main.permission.enable", FilePath.WarpConfig, Boolean.class))) ||
+                                        (keyType == LocationKeyType.COST && !((Boolean) Ari.instance.configManager.getValue("main.cost.enable", FilePath.WarpConfig, Boolean.class)) && !Ari.instance.economyUtils.isNull());
+                        if (shouldRemove && line.contains(keyType.getKey())) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            });
             rawLore.forEach(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     line = switch (keyType) {

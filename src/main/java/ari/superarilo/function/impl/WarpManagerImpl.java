@@ -113,9 +113,9 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                Integer delete = sqlSession.getMapper(ServerWrapMapper.class).delete(warpId, this.player.getUniqueId().toString());
                if(delete == 1){
-                   this.player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
+                   this.player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
                } else {
-                   this.player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
+                   this.player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
                }
            } catch (Exception e) {
                Log.error("remove warp fail, id: " + warpId, e);

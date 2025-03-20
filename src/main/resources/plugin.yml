@@ -2,6 +2,8 @@ name: Ari
 version: '${project.version}'
 author: Arilo007
 folia-supported: true
+loadbefore:
+  - 'Vault'
 main: ari.superarilo.Ari
 depend: ['Vault']
 softdepend: ['PlaceholderAPI']

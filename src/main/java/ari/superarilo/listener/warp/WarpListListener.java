@@ -6,6 +6,8 @@ import ari.superarilo.entity.sql.ServerWarp;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
+import ari.superarilo.enumType.LangType;
+import ari.superarilo.function.TeleportCallback;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.warp.WarpEditor;
 import ari.superarilo.gui.warp.WarpList;
@@ -50,7 +52,7 @@ public class WarpListListener implements Listener {
                     String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING);
                     if(warpId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                        List<ServerWarp> serverWarpList = warpList.getWarpList();
+                        List<ServerWarp> serverWarpList = warpList.serverWarpList;
                         Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId) && j.getCreateBy().equals(player.getUniqueId().toString())).findFirst();
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
@@ -69,7 +71,23 @@ public class WarpListListener implements Listener {
                                 TeleportThread.playerToLocation(
                                                 player,
                                                 Ari.instance.objectConvert.parseLocation(warp.getLocation()))
-                                        .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class));
+                                        .teleport(
+                                                Ari.instance.configManager.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class),
+                                                new TeleportCallback() {
+                                                    @Override
+                                                    public void after() {
+                                                        Ari.instance.economyUtils.withdrawPlayer(player, warp.getCost());
+                                                        String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
+                                                        player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), warp.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
+                                                    }
+                                                    @Override
+                                                    public void before(TeleportThread teleportThread) {
+                                                        if(!Ari.instance.economyUtils.hasEnoughBalance(player, warp.getCost())) {
+                                                            player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
+                                                            teleportThread.cancel();
+                                                        }
+                                                    }
+                                                });
                             } else if(eventClick.equals(ClickType.RIGHT)) {
                                 new WarpEditor(warp, player).open();
                             }

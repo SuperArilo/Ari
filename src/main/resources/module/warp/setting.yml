@@ -2,7 +2,7 @@ main:
   permission:
     enable: true
   cost:
-    enable: false
+    enable: true
   quantity:
     owner: -1
     default: 5

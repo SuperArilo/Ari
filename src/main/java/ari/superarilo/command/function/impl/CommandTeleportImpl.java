@@ -5,7 +5,7 @@ import ari.superarilo.command.function.CommandTeleport;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.TeleportObjectType;
+import ari.superarilo.enumType.LangType;
 import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.function.TeleportThread;
@@ -71,7 +71,7 @@ public class CommandTeleportImpl implements CommandTeleport {
             })) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
                 if(Ari.instance.configManager.getValue("function.tpa.refused", FilePath.Lang, String.class) instanceof String message) {
-                    player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), this.sender.getName())));
+                    player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), this.sender.getName())));
                 }
             } else {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.public.break", FilePath.Lang));

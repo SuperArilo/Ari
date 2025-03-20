@@ -182,7 +182,7 @@ public class EditWarpListener implements Listener {
                 }
                 case COST -> {
                     try {
-                        int i = Integer.parseInt(message);
+                        Double i = Double.parseDouble(message);
                         serverWarp.setCost(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.cost.format-error", FilePath.Lang));

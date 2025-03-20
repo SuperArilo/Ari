@@ -3,13 +3,14 @@ package ari.superarilo.enumType;
 import lombok.Getter;
 
 @Getter
-public enum TeleportObjectType {
+public enum LangType {
     TPASENDER("[TpaSender]"),
     TPAHERESENDER("[TpaHereSender]"),
-    TPABESENDER("[TpaBeSender]");
+    TPABESENDER("[TpaBeSender]"),
+    COSTED("[costed]");
     private final String type;
 
-    TeleportObjectType(String type) {
+    LangType(String type) {
         this.type = type;
     }
 

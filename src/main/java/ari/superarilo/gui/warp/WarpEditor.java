@@ -60,8 +60,8 @@ public class WarpEditor extends BaseGui {
                         item.setName(permission == null ? "":permission);
                     }
                     case COST -> {
-                        Integer cost = this.currentWarp.getCost();
-                        item.setName(cost == null ? "0":cost.toString());
+                        Double cost = this.currentWarp.getCost();
+                        item.setName(cost == null ? "":cost.toString());
                     }
                 }
             }

@@ -59,10 +59,9 @@ public class WarpList extends BaseGui {
         Log.debug(Level.INFO, "---------- render warp list ----------");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
-        List<ServerWarp> warpList = this.getWarpList();
         List<String> rawLore = this.gui.getDataItems().getLore();
-        for (int i = 0;i < warpList.size();i++) {
-            ServerWarp serverWarp = warpList.get(i);
+        for (int i = 0;i < this.serverWarpList.size();i++) {
+            ServerWarp serverWarp = this.serverWarpList.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
@@ -97,7 +96,7 @@ public class WarpList extends BaseGui {
                         case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
                         case PLAYERNAME -> line.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
                         case COST -> {
-                            Integer cost = serverWarp.getCost();
+                            Double cost = serverWarp.getCost();
                             if(cost == null || cost == 0) {
                                 yield line.replace(keyType.getKey(), "&afree");
                             } else {
@@ -129,9 +128,5 @@ public class WarpList extends BaseGui {
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public List<ServerWarp> getWarpList() {
-        return serverWarpList;
     }
 }

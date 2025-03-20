@@ -10,7 +10,7 @@ public class ServerWarp {
     private String createBy;
     private String location;
     private String showMaterial;
-    private String permission;
-    private Integer cost;
+    private String permission = "";
+    private Double cost = 0.0;
 
 }

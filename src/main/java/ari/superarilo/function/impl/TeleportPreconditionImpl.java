@@ -4,7 +4,7 @@ import ari.superarilo.Ari;
 import ari.superarilo.entity.TeleportStatus;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.TeleportObjectType;
+import ari.superarilo.enumType.LangType;
 import ari.superarilo.enumType.TeleportType;
 import ari.superarilo.function.TeleportPrecondition;
 import ari.superarilo.tool.TextTool;
@@ -22,7 +22,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     public void preCheckStatus(Player sender, Player targetPlayer, AriCommand ariCommand) {
         if (this.checkStatusV(sender, targetPlayer) != null) {
             if(Ari.instance.configManager.getValue("function.tpa.again", FilePath.Lang, String.class) instanceof String message) {
-                sender.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), targetPlayer.getName())));
+                sender.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
             }
         } else {
             sender.sendMessage(
@@ -53,7 +53,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                             TextTool.setHEXColorText(
                                     message
                                     .replace(
-                                            ariCommand.equals(AriCommand.TPA) ? TeleportObjectType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? TeleportObjectType.TPAHERESENDER.getType():"",
+                                            ariCommand.equals(AriCommand.TPA) ? LangType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? LangType.TPAHERESENDER.getType():"",
                                             player.getName()))
                     .appendNewline()
                     .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("function.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))

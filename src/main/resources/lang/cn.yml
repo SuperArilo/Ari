@@ -29,11 +29,6 @@ teleport:
   unable-player: '<#FFE4B5>该玩家离线或者不存在！</#FFE4B5>'
   cooling: '传送冷却中...'
   none-location: '没有上一个保存的位置'
-on-edit-home:
-  rename:
-    title: '&7请输入新名称'
-    sub-title: '&6cancel &7取消'
-    cancel: '已取消操作！'
 function:
   public:
     agree: '&a[同意]'

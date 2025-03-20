@@ -5,7 +5,13 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public interface TeleportThread {
+    /**
+     * 在延迟多少秒后开始开始传送
+     * @param delay 延迟，单位秒
+     */
     void teleport(int delay);
+    void teleport(int delay, TeleportCallback callback);
+    void cancel();
     /**
      * 玩家定点传送
      * @param player 被传送的玩家

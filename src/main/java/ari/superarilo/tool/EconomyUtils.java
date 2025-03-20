@@ -1,6 +1,5 @@
 package ari.superarilo.tool;
 
-import ari.superarilo.exception.NoEconomy;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;
@@ -25,22 +24,65 @@ public class EconomyUtils {
         }
     }
 
-    public EconomyResponse depositPlayer(Player player, double cost) throws NoEconomy {
-        if (this.isNull()) throw new NoEconomy("no vault, no Economy");
-        return this.economy.depositPlayer(player, cost);
+    /**
+     * 为指定玩家增长指定的金钱
+     * @param player 玩家
+     * @param cost 增加金钱数量
+     * @return 返沪 EconomyResponse
+     */
+    public EconomyResponse depositPlayer(Player player, double cost) {
+        if (!this.isNull()) return this.economy.depositPlayer(player, cost);
+        return null;
     }
 
-    public EconomyResponse withdrawPlayer(Player player, double cost) throws NoEconomy {
-        if (this.isNull()) throw new NoEconomy("no vault, no Economy");
-        return this.economy.withdrawPlayer(player, cost);
+    /**
+     * 为指定玩家扣除相应的金钱
+     * @param player 指定玩家
+     * @param cost 扣除的金钱数量
+     * @return 返沪 EconomyResponse
+     */
+    public EconomyResponse withdrawPlayer(Player player, double cost) {
+        if(!this.isNull()) return this.economy.withdrawPlayer(player, cost);
+        return null;
     }
 
-    public double getBalance(Player player) throws NoEconomy {
-        if (this.isNull()) throw new NoEconomy("no vault, no Economy");
-        return this.economy.getBalance(player);
+    /**
+     * 获取指定玩家的存款数量
+     * @param player 指定玩家
+     * @return 返回该玩家的存款
+     */
+    public Double getBalance(Player player) {
+        if (!this.isNull()) return this.economy.getBalance(player);
+        return null;
+    }
+
+    /**
+     * 检查指定玩家是否有足够的金钱
+     * @param player 玩家
+     * @param cost 花费的金额
+     * @return true 足够，false 不足够
+     */
+    public boolean hasEnoughBalance(Player player, double cost) {
+        return this.getBalance(player) >= cost;
     }
 
     public boolean isNull() {
         return this.economy == null;
+    }
+
+    /**
+     * 获取复数形式的货币名称
+     * @return 复数形式
+     */
+    public String getNamePlural() {
+        return this.economy.currencyNamePlural();
+    }
+
+    /**
+     * 获取单数形式的货币名称
+     * @return 单数形式
+     */
+    public String getNameSingular() {
+        return this.economy.currencyNameSingular();
     }
 }

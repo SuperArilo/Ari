@@ -79,12 +79,12 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
                 Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.WarpConfig, Integer.class);
                 if(warpIdList.size() >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
-                    this.player.sendMessage(TextTool.setHEXColorText("command.setwarp.exceeds", FilePath.Lang));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
                     i.cancel();
                     return;
                 }
                 if(warpIdList.contains(warpId)) {
-                    this.player.sendMessage(TextTool.setHEXColorText("command.setwarp.exist", FilePath.Lang, this.player));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.warp.exist", FilePath.Lang, this.player));
                     i.cancel();
                     return;
                 }
@@ -96,7 +96,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
                 warp.setShowMaterial(material.name());
 
                 mapper.save(warp);
-                this.player.sendMessage(TextTool.setHEXColorText("command.setwarp.success", FilePath.Lang, this.player));
+                this.player.sendMessage(TextTool.setHEXColorText("function.warp.success", FilePath.Lang, this.player));
             } catch (Exception e) {
                 Log.error(e.getMessage());
                 i.cancel();
@@ -113,9 +113,9 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                Integer delete = sqlSession.getMapper(ServerWrapMapper.class).delete(warpId, this.player.getUniqueId().toString());
                if(delete == 1){
-                   this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.success", FilePath.Lang));
+                   this.player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
                } else {
-                   this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.none", FilePath.Lang));
+                   this.player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
                }
            } catch (Exception e) {
                Log.error("remove warp fail, id: " + warpId, e);

@@ -75,8 +75,8 @@ public class EditHomeListener implements Listener {
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    Ari.instance.configManager.getValue("base.on-edit.rename.title", FilePath.Lang, String.class),
-                                    Ari.instance.configManager.getValue("base.on-edit.rename.sub-title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("base.on-edit.sub-title", FilePath.Lang, String.class),
                                     1000,
                                     10000 ,
                                     1000));
@@ -140,7 +140,7 @@ public class EditHomeListener implements Listener {
             player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
             return;
         }
-        if(!Ari.instance.formatUtil.checkName(message) || value.contains(message)) {
+        if(!Ari.instance.formatUtils.checkName(message) || value.contains(message)) {
             player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
             return;
         }

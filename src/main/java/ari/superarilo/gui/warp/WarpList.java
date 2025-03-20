@@ -77,9 +77,9 @@ public class WarpList extends BaseGui {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
-                        case X -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
-                        case Y -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
-                        case Z -> line.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                        case X -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
+                        case Y -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
+                        case Z -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
                         case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
                         case PLAYERNAME -> line.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
                         case COST -> {

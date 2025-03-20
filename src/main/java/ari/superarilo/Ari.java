@@ -24,7 +24,7 @@ public class Ari extends JavaPlugin {
     public ConfigManager configManager;
     public ObjectConvert objectConvert;
     public SQLInstance SQLInstance;
-    public FormatUtil formatUtil;
+    public FormatUtils formatUtils;
     public PermissionUtils permissionUtils;
     public CommandAlias commandAlias;
     @Override
@@ -32,7 +32,7 @@ public class Ari extends JavaPlugin {
         instance = this;
         Log.setLogger(this.getLogger());
         this.configManager = new ConfigManager();
-        this.formatUtil = new FormatUtil();
+        this.formatUtils = new FormatUtils();
         this.objectConvert = new ObjectConvert();
     }
 

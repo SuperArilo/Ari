@@ -42,7 +42,7 @@ public class HomeListListener implements Listener {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                        Optional<PlayerHome> first = homeList.getPlayerHomes().stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
+                        Optional<PlayerHome> first = homeList.playerHomes.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
                         if(first.isPresent()) {
                             PlayerHome home = first.get();
                             ClickType click = event.getClick();

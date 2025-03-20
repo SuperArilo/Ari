@@ -33,7 +33,7 @@ import java.util.logging.Level;
 
 public class HomeList extends BaseGui {
     private final HomeListGUI gui;
-    private List<PlayerHome> playerHomes;
+    public List<PlayerHome> playerHomes;
 
     public HomeList(Player player) {
         super(player);
@@ -57,10 +57,9 @@ public class HomeList extends BaseGui {
         Log.debug(Level.INFO, "---------- render home list ----------");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
-        List<PlayerHome> playerHomes = this.getPlayerHomes();
         List<String> rawLore = this.gui.getDataItems().getLore();
-        for (int i = 0; i < playerHomes.size(); i++) {
-            PlayerHome ph = playerHomes.get(i);
+        for (int i = 0; i < this.playerHomes.size(); i++) {
+            PlayerHome ph = this.playerHomes.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
@@ -76,9 +75,9 @@ public class HomeList extends BaseGui {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     replacedLine = switch (keyType) {
                         case ID -> replacedLine.replace(keyType.getKey(), ph.getHomeId());
-                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
-                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
-                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
+                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
+                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
                         case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
                         default -> replacedLine;
                     };
@@ -96,7 +95,7 @@ public class HomeList extends BaseGui {
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
-            this.player.sendMessage(TextTool.setHEXColorText("command.home.none-prev", FilePath.Lang));
+            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-prev", FilePath.Lang));
             Log.debug("home list: 第一页");
             this.pageNum = 1;
             return;
@@ -108,7 +107,7 @@ public class HomeList extends BaseGui {
         this.pageNum++;
         this.playerHomes = this.requestPlayerHomes();
         if(this.playerHomes.isEmpty()) {
-            this.player.sendMessage(TextTool.setHEXColorText("command.home.none-next", FilePath.Lang));
+            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
             Log.debug("home list: 最后一页");
             this.pageNum--;
         } else {
@@ -117,13 +116,8 @@ public class HomeList extends BaseGui {
         }
     }
 
-    public List<PlayerHome> getPlayerHomes() {
-        return playerHomes;
-    }
-
     private List<PlayerHome> requestPlayerHomes() {
         Future<List<PlayerHome>> future = HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
-
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {

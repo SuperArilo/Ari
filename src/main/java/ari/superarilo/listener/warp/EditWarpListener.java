@@ -160,17 +160,26 @@ public class EditWarpListener implements Listener {
         try {
             switch (onEdit.getType()) {
                 case RENAME -> {
-                    if(!Ari.instance.formatUtil.checkName(message) || value.contains(message) && onEdit.getType().equals(TitleInputType.RENAME)) {
+                    if(!Ari.instance.formatUtils.checkName(message) ||
+                            value.contains(message) && onEdit.getType().equals(TitleInputType.RENAME) ||
+                            !Ari.instance.formatUtils.checkName(message)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
                         return;
                     }
-                    if(message.length() > (Integer) Ari.instance.configManager.getValue("main.name-length", FilePath.WarpConfig, Integer.class) && onEdit.getType().equals(TitleInputType.RENAME)) {
+                    if(message.length() >  (Integer) Ari.instance.configManager.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType()) &&
+                            onEdit.getType().equals(TitleInputType.RENAME)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                         return;
                     }
                     serverWarp.setWarpName(message);
                 }
-                case PERMISSION -> serverWarp.setPermission(message);
+                case PERMISSION -> {
+                     if(!Ari.instance.formatUtils.isValidPermissionNode(message)) {
+                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.permission.permission-error", FilePath.Lang));
+                         return;
+                     }
+                     serverWarp.setPermission(message);
+                }
                 case COST -> {
                     try {
                         int i = Integer.parseInt(message);

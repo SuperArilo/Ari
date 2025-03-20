@@ -46,9 +46,9 @@ public class HomeEditor extends BaseGui {
                         Location location = Ari.instance.objectConvert.parseLocation(this.currentHome.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
-                                case X -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getX()));
-                                case Y -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getY()));
-                                case Z -> name.replace(keyType.getKey(), Ari.instance.formatUtil.format_2(location.getZ()));
+                                case X -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
+                                case Y -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
+                                case Z -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
                                 default -> name;
                             };
                         }

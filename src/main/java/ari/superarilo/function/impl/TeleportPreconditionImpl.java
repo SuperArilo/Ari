@@ -21,14 +21,14 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     @Override
     public void preCheckStatus(Player sender, Player targetPlayer, AriCommand ariCommand) {
         if (this.checkStatusV(sender, targetPlayer) != null) {
-            if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".again", FilePath.Lang, String.class) instanceof String message) {
+            if(Ari.instance.configManager.getValue("function.tpa.again", FilePath.Lang, String.class) instanceof String message) {
                 sender.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), targetPlayer.getName())));
             }
         } else {
             sender.sendMessage(
                     TextTool.setHEXColorText(
                             Ari.instance.configManager.getValue(
-                                            "command." + ariCommand.getShow() + ".send-message",
+                                            "function.tpa.send-message",
                                             FilePath.Lang,
                                             String.class)));
             this.sendMessageToBePlayer(sender, targetPlayer, ariCommand);
@@ -48,7 +48,7 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
     }
     //向接收玩家发送接受传送邀请信息
     protected void sendMessageToBePlayer(Player player, Player targetPlayer, AriCommand ariCommand) {
-        if(Ari.instance.configManager.getValue("command." + ariCommand.getShow() + ".get-message", FilePath.Lang, String.class) instanceof String message) {
+        if(Ari.instance.configManager.getValue("function.tpa.get-message", FilePath.Lang, String.class) instanceof String message) {
             targetPlayer.sendMessage(
                             TextTool.setHEXColorText(
                                     message
@@ -56,9 +56,9 @@ public class TeleportPreconditionImpl implements TeleportPrecondition {
                                             ariCommand.equals(AriCommand.TPA) ? TeleportObjectType.TPASENDER.getType():ariCommand.equals(AriCommand.TPAHERE) ? TeleportObjectType.TPAHERESENDER.getType():"",
                                             player.getName()))
                     .appendNewline()
-                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                    .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("command.public.center", FilePath.Lang, String.class)))
-                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("command.public.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("function.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                    .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("function.public.center", FilePath.Lang, String.class)))
+                    .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("function.public.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
         }
 
     }

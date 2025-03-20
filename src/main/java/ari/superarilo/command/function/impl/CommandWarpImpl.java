@@ -30,19 +30,19 @@ public class CommandWarpImpl implements CommandWarp {
 
     @Override
     public void setWarp(String warpId) {
-        if(Ari.instance.formatUtil.checkIdName(warpId)) {
+        if(Ari.instance.formatUtils.checkIdName(warpId)) {
             WarpManager.create((Player) this.sender).createInstance(warpId);
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.setwarp.id-error", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.warp.id-error", FilePath.Lang));
         }
     }
 
     @Override
     public void deleteWarp(String warpId) {
-        if(Ari.instance.formatUtil.checkIdName(warpId)) {
+        if(Ari.instance.formatUtils.checkIdName(warpId)) {
             WarpManager.create((Player) this.sender).deleteInstance(warpId);
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.deletewarp.id-error", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
         }
     }
 

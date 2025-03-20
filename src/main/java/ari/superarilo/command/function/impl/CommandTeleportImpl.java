@@ -40,11 +40,11 @@ public class CommandTeleportImpl implements CommandTeleport {
         Player player = Bukkit.getPlayerExact(this.playerName);
         TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) this.sender);
         if(status == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.been-done", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
             return;
         }
         //请求成功，移除该请求
-        this.sender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.agree", FilePath.Lang));
+        this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
         Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
         TeleportThread teleportThread = switch (status.getCommandType()) {
             case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
@@ -54,7 +54,7 @@ public class CommandTeleportImpl implements CommandTeleport {
         if (teleportThread != null) {
             teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.tpaaccept.error"));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error"));
         }
     }
 
@@ -63,18 +63,18 @@ public class CommandTeleportImpl implements CommandTeleport {
         if(!this.preCheck()) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if (TeleportPrecondition.create().checkStatusV(player, (Player) this.sender) == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.tparefuse.been-done", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
             if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> {
                 assert player != null;
                 return obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER);
             })) {
-                this.sender.sendMessage(TextTool.setHEXColorText("command.tparefuse.success", FilePath.Lang));
-                if(Ari.instance.configManager.getValue("command.tparefuse.get-message", FilePath.Lang, String.class) instanceof String message) {
+                this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
+                if(Ari.instance.configManager.getValue("function.tpa.refused", FilePath.Lang, String.class) instanceof String message) {
                     player.sendMessage(TextTool.setHEXColorText(message.replace(TeleportObjectType.TPABESENDER.getType(), this.sender.getName())));
                 }
             } else {
-                this.sender.sendMessage(TextTool.setHEXColorText("command.public.break", FilePath.Lang));
+                this.sender.sendMessage(TextTool.setHEXColorText("function.public.break", FilePath.Lang));
             }
         }
     }
@@ -118,11 +118,11 @@ public class CommandTeleportImpl implements CommandTeleport {
 
     private boolean preCheck() {
         if(!(this.sender instanceof Player)) {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.public.not-player", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
             return false;
         }
         if (this.playerName.equals(this.sender.getName())) {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
             return false;
         }
         Player player = Ari.instance.getServer().getPlayerExact(this.playerName);

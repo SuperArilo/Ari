@@ -30,7 +30,7 @@ public class CommandCheckImpl implements CommandCheck {
     @Override
     public boolean isPlayer() {
         if (!(this.commandSender instanceof Player)) {
-            this.commandSender.sendMessage(TextTool.setHEXColorText("command.public.not-player", FilePath.Lang));
+            this.commandSender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
             return false;
         }
         return true;
@@ -39,7 +39,7 @@ public class CommandCheckImpl implements CommandCheck {
     @Override
     public boolean commandSenderHavePermission(AriCommand ariCommand) {
         if(!Ari.instance.permissionUtils.hasPermission(this.commandSender, ariCommand.getPermission())) {
-            this.commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
+            this.commandSender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
             return false;
         }
         return true;
@@ -48,7 +48,7 @@ public class CommandCheckImpl implements CommandCheck {
     @Override
     public boolean commandSenderHavePermission() {
         if (!Ari.instance.permissionUtils.hasPermission(this.commandSender, this.ariCommand.getPermission())) {
-            this.commandSender.sendMessage(TextTool.setHEXColorText("command.public.permission-message", FilePath.Lang));
+            this.commandSender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
             return false;
         }
         return true;
@@ -58,7 +58,7 @@ public class CommandCheckImpl implements CommandCheck {
     public boolean allCheck() {
         //判断是否是玩家
         if (!(this.commandSender instanceof Player)) {
-            this.commandSender.sendMessage(TextTool.setHEXColorText("command.public.not-player", FilePath.Lang));
+            this.commandSender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
             return false;
         }
         //判断是否有相应的权限

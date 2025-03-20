@@ -30,7 +30,7 @@ public class MainCommand implements TabExecutor {
         try {
             type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
         } catch (Exception e) {
-            commandSender.sendMessage(TextTool.setHEXColorText("command.unknown", FilePath.Lang));
+            commandSender.sendMessage(TextTool.setHEXColorText("function.unknown", FilePath.Lang));
             return true;
         }
         switch (type) {
@@ -38,13 +38,13 @@ public class MainCommand implements TabExecutor {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) {
                     return true;
                 }
-                commandSender.sendMessage(TextTool.setHEXColorText("command.reload.doing", FilePath.Lang));
+                commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));
                 Ari.instance.configManager.reloadAllConfig();
                 if (Ari.debug) {
                     Ari.instance.SQLInstance.reconnect();
                 }
                 Ari.instance.commandAlias.reloadAllAlias();
-                commandSender.sendMessage(TextTool.setHEXColorText("command.reload.success", FilePath.Lang));
+                commandSender.sendMessage(TextTool.setHEXColorText("function.reload.success", FilePath.Lang));
             }
             case TPA -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPA) || strings.length != 2) {
@@ -83,7 +83,7 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
                 CommandHome.build(commandSender).setHome(strings[1]);
@@ -94,7 +94,7 @@ public class MainCommand implements TabExecutor {
                 }
                 if(!commandCheck.isPlayer()) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("command.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
                 CommandHome.build(commandSender).deleteHome(strings[1]);

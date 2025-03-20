@@ -59,7 +59,7 @@ public class WarpListListener implements Listener {
                                 boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, permission);
                                 boolean isOwner = UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId());
                                 if (!hasPermission && !isOwner) {
-                                    player.sendMessage(TextTool.setHEXColorText("command.warp.no-permission", FilePath.Lang));
+                                    player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
                                     i.cancel();
                                     return;
                                 }

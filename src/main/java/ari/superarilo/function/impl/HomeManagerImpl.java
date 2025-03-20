@@ -76,12 +76,12 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.HomeConfig, Integer.class);
                 if(homeIdList.size() >= value && value != -1) {
                     Log.debug("Exceeds the specified quantity");
-                    this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exceeds", FilePath.Lang));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
                     i.cancel();
                     return;
                 }
                 if (homeIdList.contains(homeId)) {
-                    this.player.sendMessage(TextTool.setHEXColorText("command.sethome.exist", FilePath.Lang, this.player));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.home.exist", FilePath.Lang, this.player));
                     i.cancel();
                     return;
                 }
@@ -93,7 +93,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 playerHome.setShowMaterial(material.name());
 
                 mapper.save(playerHome);
-                this.player.sendMessage(TextTool.setHEXColorText("command.sethome.success", FilePath.Lang, this.player));
+                this.player.sendMessage(TextTool.setHEXColorText("function.home.create-success", FilePath.Lang, this.player));
             } catch (Exception e) {
                 Log.error(e.getMessage());
                 i.cancel();
@@ -110,9 +110,9 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, this.player.getUniqueId().toString());
                 if(delete == 1){
-                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.success", FilePath.Lang));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
                 } else {
-                    this.player.sendMessage(TextTool.setHEXColorText("command.deletehome.none", FilePath.Lang));
+                    this.player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
                 }
             } catch (Exception e) {
                 Log.error("remove home fail, id: " + homeId, e);

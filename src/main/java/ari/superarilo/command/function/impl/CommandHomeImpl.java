@@ -25,10 +25,10 @@ public class CommandHomeImpl implements CommandHome {
 
     @Override
     public void setHome(String homeId) {
-        if(Ari.instance.formatUtil.checkIdName(homeId)) {
+        if(Ari.instance.formatUtils.checkIdName(homeId)) {
             HomeManager.create((Player) this.sender).createInstance(homeId);
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.sethome.id-error", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.home.id-error", FilePath.Lang));
         }
     }
 
@@ -39,10 +39,10 @@ public class CommandHomeImpl implements CommandHome {
 
     @Override
     public void deleteHome(String homeId) {
-        if(Ari.instance.formatUtil.checkIdName(homeId)) {
+        if(Ari.instance.formatUtils.checkIdName(homeId)) {
             HomeManager.create((Player) this.sender).deleteInstance(homeId);
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("command.deletehome.id-error", FilePath.Lang));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
         }
     }
 

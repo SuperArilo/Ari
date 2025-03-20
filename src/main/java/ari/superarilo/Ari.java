@@ -26,6 +26,7 @@ public class Ari extends JavaPlugin {
     public SQLInstance SQLInstance;
     public FormatUtils formatUtils;
     public PermissionUtils permissionUtils;
+    public EconomyUtils economyUtils;
     public CommandAlias commandAlias;
     @Override
     public void onLoad() {
@@ -50,6 +51,8 @@ public class Ari extends JavaPlugin {
         }
         //sql
         this.SQLInstance = new SQLInstance();
+        //em
+        this.economyUtils = new EconomyUtils();
         this.tpStatusValue = new TpStatusValue();
     }
     @Override

@@ -11,7 +11,7 @@ public class EconomyUtils {
 
     public Economy economy;
 
-    public EconomyUtils(Economy economy) {
+    public EconomyUtils() {
         if(Bukkit.getPluginManager().isPluginEnabled("Vault")) {
             RegisteredServiceProvider<Economy> provider = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
             if (provider != null) {
@@ -40,7 +40,7 @@ public class EconomyUtils {
         return this.economy.getBalance(player);
     }
 
-    private boolean isNull() {
+    public boolean isNull() {
         return this.economy == null;
     }
 }

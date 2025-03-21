@@ -11,6 +11,7 @@ import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.LocationKeyType;
 import ari.superarilo.function.HomeManager;
+import ari.superarilo.function.PageChange;
 import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
@@ -31,7 +32,7 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 
-public class HomeList extends BaseGui {
+public class HomeList extends BaseGui implements PageChange {
     private final HomeListGUI gui;
     public List<PlayerHome> playerHomes;
 
@@ -92,6 +93,7 @@ public class HomeList extends BaseGui {
         }
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
+    @Override
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
@@ -103,6 +105,7 @@ public class HomeList extends BaseGui {
         this.playerHomes = this.requestPlayerHomes();
         this.renderDataItem();
     }
+    @Override
     public void next() {
         this.pageNum++;
         this.playerHomes = this.requestPlayerHomes();

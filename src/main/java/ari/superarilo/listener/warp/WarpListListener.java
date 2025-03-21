@@ -51,7 +51,7 @@ public class WarpListListener implements Listener {
                     String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING);
                     if(warpId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                        List<ServerWarp> serverWarpList = warpList.serverWarpList;
+                        List<ServerWarp> serverWarpList = warpList.getServerWarpList();
                         Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
@@ -109,6 +109,8 @@ public class WarpListListener implements Listener {
                         Bukkit.getRegionScheduler().run(Ari.instance, player.getLocation(), j -> inventory.close());
                     });
                 }
+                case PREV -> warpList.prev();
+                case NEXT -> warpList.next();
             }
         }
     }

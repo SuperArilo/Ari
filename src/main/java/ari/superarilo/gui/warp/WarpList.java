@@ -10,10 +10,12 @@ import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.LocationKeyType;
+import ari.superarilo.function.PageChange;
 import ari.superarilo.function.WarpManager;
 import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
+import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -26,10 +28,11 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-public class WarpList extends BaseGui {
+public class WarpList extends BaseGui implements PageChange {
 
     private final WarpListGUI gui;
-    public List<ServerWarp> serverWarpList;
+    @Getter
+    private List<ServerWarp> serverWarpList;
 
     public WarpList(Player player) {
         super(player);
@@ -38,7 +41,7 @@ public class WarpList extends BaseGui {
                 WarpListGUI.class
         );
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.requestWarps();
+        this.serverWarpList = this.requestWarps();
     }
 
     @Override
@@ -127,12 +130,40 @@ public class WarpList extends BaseGui {
         }
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
-    private void requestWarps() {
+    private List<ServerWarp> requestWarps() {
         CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
         try {
-            this.serverWarpList = future.get();
+            return future.get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void prev() {
+        this.pageNum--;
+        if(this.pageNum <= 0) {
+            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-prev", FilePath.Lang));
+            Log.debug("warp list: 第一页");
+            this.pageNum = 1;
+            return;
+        }
+        this.serverWarpList = this.requestWarps();
+        this.renderDataItem();
+    }
+
+    @Override
+    public void next() {
+        this.pageNum++;
+        List<ServerWarp> serverWarps = this.requestWarps();
+        if (serverWarps.isEmpty()) {
+            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
+            Log.debug("warp list: 最后一页");
+            this.pageNum--;
+        } else {
+            this.serverWarpList = this.requestWarps();
+            this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
+            this.renderDataItem();
         }
     }
 }

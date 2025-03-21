@@ -37,11 +37,7 @@ public class WarpListListener implements Listener {
             if(event.getSlot() >= inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(
-                    currentItem
-                            .getItemMeta()
-                            .getPersistentDataContainer()
-                            .get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             if(type == null) return;
             Player player = holder.getPlayer();
             WarpList warpList = (WarpList) holder.getMeta();
@@ -80,8 +76,8 @@ public class WarpListListener implements Listener {
                                                     }
                                                     @Override
                                                     public void after() {
-                                                        //判断地标拥有者，如果是则不扣
-                                                        if(!isOwner) {
+                                                        //判断是否是地标拥有者或者是不是op，如果是则不扣
+                                                        if(!isOwner && !player.isOp()) {
                                                             Ari.instance.economyUtils.withdrawPlayer(player, warp.getCost());
                                                             String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
                                                             player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), warp.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
@@ -101,7 +97,11 @@ public class WarpListListener implements Listener {
                                                     }
                                                 });
                             } else if(eventClick.equals(ClickType.RIGHT)) {
-                                new WarpEditor(warp, player).open();
+                                if(isOwner || player.isOp()) {
+                                    new WarpEditor(warp, player).open();
+                                } else {
+                                    player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));
+                                }
                             }
                         } else {
                             Log.error("can't find warpId: " + warpId);

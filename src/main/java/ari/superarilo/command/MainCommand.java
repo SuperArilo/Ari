@@ -4,6 +4,7 @@ import ari.superarilo.Ari;
 import ari.superarilo.command.function.CommandBack;
 import ari.superarilo.command.function.CommandHome;
 import ari.superarilo.command.function.CommandTeleport;
+import ari.superarilo.command.function.CommandWarp;
 import ari.superarilo.function.CommandCheck;
 import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
@@ -18,7 +19,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 public class MainCommand implements TabExecutor {
-
 
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
@@ -106,6 +106,35 @@ public class MainCommand implements TabExecutor {
                 if(!commandCheck.isPlayer()) break;
                 CommandBack.build(commandSender).startDo();
             }
+            case WARP -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.WARP)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                CommandWarp.build(commandSender).warp();
+            }
+            case SETWARP -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
+                CommandWarp.build(commandSender).setWarp(strings[1]);
+            }
+            case DELETEWARP -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.DELETEWARP)) {
+                    return true;
+                }
+                if(!commandCheck.isPlayer()) break;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
+                CommandWarp.build(commandSender).deleteWarp(strings[1]);
+            }
         }
         return true;
     }
@@ -165,7 +194,9 @@ public class MainCommand implements TabExecutor {
                 case DELETEHOME -> {
                     return CommandHome.build(commandSender).getHomeList();
                 }
-
+                case DELETEWARP -> {
+                    return CommandWarp.build(commandSender).getWarpList();
+                }
             }
         }
         return List.of();

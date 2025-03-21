@@ -59,6 +59,7 @@ function:
     not-found: 'home的id不存在'
   warp:
     no-permission-teleport: '你没有权限传送到该地标'
+    no-permission-edit: '你没有权限编辑该地标'
     create-success: '<#90EE90>创建地标成功！</#90EE90>'
     delete-success: '删除成功'
     id-error: 'warp的id不满足'

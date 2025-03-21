@@ -30,6 +30,7 @@ teleport:
   cooling: '传送冷却中...'
   none-location: '没有上一个保存的位置'
   costed: '本次传送花费了 [costed]'
+  again: '你已经发起过传送请求了'
 function:
   public:
     agree: '&a[同意]'

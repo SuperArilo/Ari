@@ -24,7 +24,7 @@ public class TpStatusValue {
      * @param player 玩家
      * @param type 传送类型
      */
-    public synchronized void remove(Player player, TeleportType type) {
-        this.statusList.removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(type));
+    public synchronized boolean remove(Player player, TeleportType type) {
+        return this.statusList.removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(type));
     }
 }

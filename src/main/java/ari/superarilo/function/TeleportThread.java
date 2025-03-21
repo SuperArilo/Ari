@@ -10,7 +10,17 @@ public interface TeleportThread {
      * @param delay 延迟，单位秒
      */
     void teleport(int delay);
+
+    /**
+     * 在延迟多少秒后开始开始传送
+     * @param delay 延迟，单位秒
+     * @param callback 回调类
+     */
     void teleport(int delay, TeleportCallback callback);
+
+    /**
+     * 取消传送，必须在callback类before内调用
+     */
     void cancel();
     /**
      * 玩家定点传送

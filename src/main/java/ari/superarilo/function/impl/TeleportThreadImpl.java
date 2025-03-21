@@ -7,7 +7,6 @@ import ari.superarilo.function.TeleportCallback;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import net.kyori.adventure.sound.Sound;
@@ -24,10 +23,10 @@ import java.util.logging.Level;
 
 public class TeleportThreadImpl implements TeleportThread {
 
-    private final TextComponent teleportSuccess = TextTool.setHEXColorText("teleport.success", FilePath.Lang);
-    private boolean status = true;
     //保存的玩家上一个传送位置
     public static final Map<UUID, Location> lastLocation = new HashMap<>();
+    //是否终止当前传送
+    private boolean status = true;
     //被传送玩家
     private final Player player;
     //目标玩家
@@ -80,11 +79,13 @@ public class TeleportThreadImpl implements TeleportThread {
             Player threadPlayer = Ari.instance.getServer().getPlayer(this.player.getUniqueId());
             if (threadPlayer == null) {
                 t.cancel();
+                callback.onCancel();
                 return;
             }
             //判断玩家是否在传送过程中移动或者受伤
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
+                callback.onCancel();
                 threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.break", FilePath.Lang));
                 return;
             }
@@ -94,19 +95,16 @@ public class TeleportThreadImpl implements TeleportThread {
             if (timerIndex.get() == 0) {
                 t.cancel();
                 switch (this.type) {
-                    case POINT -> {
-                        if(this.targetLocation == null) return;
-                        threadPlayer.getScheduler().run(Ari.instance, i -> {
-                            threadPlayer.teleportAsync(this.targetLocation);
-                            threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
-                            threadPlayer.sendMessage(this.teleportSuccess);
-                            callback.after();
-                        }, () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
-                    }
+                    case POINT -> threadPlayer.getScheduler().run(Ari.instance, i -> {
+                        threadPlayer.teleportAsync(this.targetLocation);
+                        threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
+                        threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
+                        callback.after();
+                    }, () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
                     case PLAYER -> threadPlayer.getScheduler().run(Ari.instance, i -> {
                         threadPlayer.teleportAsync(this.targetPlayer.getLocation());
                         threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
-                        threadPlayer.sendMessage(this.teleportSuccess);
+                        threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
                 }
@@ -125,6 +123,11 @@ public class TeleportThreadImpl implements TeleportThread {
     @Override
     public void teleport(int delay) {
         this.teleport(delay, new TeleportCallback() {});
+    }
+
+    @Override
+    public void cancel() {
+        this.status = false;
     }
 
     /**
@@ -150,8 +153,4 @@ public class TeleportThreadImpl implements TeleportThread {
         return d;
     }
 
-    @Override
-    public void cancel() {
-        this.status = false;
-    }
 }

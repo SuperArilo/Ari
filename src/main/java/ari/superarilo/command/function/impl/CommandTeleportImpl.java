@@ -7,7 +7,7 @@ import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.LangType;
 import ari.superarilo.enumType.TeleportType;
-import ari.superarilo.function.TeleportPrecondition;
+import ari.superarilo.function.TeleportCheck;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
@@ -31,14 +31,14 @@ public class CommandTeleportImpl implements CommandTeleport {
     @Override
     public void tpa() {
         if(!this.preCheck()) return;
-        TeleportPrecondition.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
+        TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     @Override
     public void tpaaccept() {
         if(!this.preCheck()) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
-        TeleportStatus status = TeleportPrecondition.create().checkStatusV(player, (Player) this.sender);
+        TeleportStatus status = TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
             return;
@@ -46,7 +46,7 @@ public class CommandTeleportImpl implements CommandTeleport {
         //请求成功，移除该请求
         this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
         Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
-        TeleportThread teleportThread = switch (status.getCommandType()) {
+        TeleportThread teleportThread = switch (status.getAriCommand()) {
             case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
             case TPAHERE -> TeleportThread.playerToPlayer((Player) this.sender, player);
             default -> null;
@@ -54,7 +54,7 @@ public class CommandTeleportImpl implements CommandTeleport {
         if (teleportThread != null) {
             teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error"));
+            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error", FilePath.Lang));
         }
     }
 
@@ -62,13 +62,14 @@ public class CommandTeleportImpl implements CommandTeleport {
     public void tparefuse() {
         if(!this.preCheck()) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
-        if (TeleportPrecondition.create().checkStatusV(player, (Player) this.sender) == null) {
+        if(player == null) {
+            this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
+            return;
+        }
+        if (TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
-            if (Ari.instance.tpStatusValue.getStatusList().removeIf(obj -> {
-                assert player != null;
-                return obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER);
-            })) {
+            if(Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
                 if(Ari.instance.configManager.getValue("function.tpa.refused", FilePath.Lang, String.class) instanceof String message) {
                     player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), this.sender.getName())));
@@ -82,12 +83,12 @@ public class CommandTeleportImpl implements CommandTeleport {
     @Override
     public void tpahere() {
         if(!preCheck()) return;
-        TeleportPrecondition.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
+        TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
     @Override
     public List<String> getOnlinePlayers(AriCommand ariCommand) {
-        if (this.sender instanceof Player && Ari.instance.permissionUtils.hasPermission(this.sender, AriCommand.TPA.getPermission())) {
+        if (this.sender instanceof Player && Ari.instance.permissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
                 if(this.sender.getName().equals(e.getName())) return;

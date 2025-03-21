@@ -28,6 +28,6 @@ public class tpaaccept implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TPAACCEPT.getShow())) return List.of();
-        return CommandTeleport.build(commandSender, strings[0]).getHasRequestPlayers(AriCommand.TPAACCEPT);
+        return CommandTeleport.build(commandSender, strings[0]).getHasRequestPlayers(AriCommand.TPA);
     }
 }

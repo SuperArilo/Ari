@@ -3,17 +3,16 @@ package ari.superarilo.listener.warp;
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.sql.ServerWarp;
-import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.FunctionType;
-import ari.superarilo.enumType.GuiType;
-import ari.superarilo.enumType.LangType;
+import ari.superarilo.enumType.*;
 import ari.superarilo.function.TeleportCallback;
+import ari.superarilo.function.TeleportCheck;
 import ari.superarilo.function.TeleportThread;
 import ari.superarilo.gui.warp.WarpEditor;
 import ari.superarilo.gui.warp.WarpList;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -53,13 +52,13 @@ public class WarpListListener implements Listener {
                     if(warpId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
                         List<ServerWarp> serverWarpList = warpList.serverWarpList;
-                        Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId) && j.getCreateBy().equals(player.getUniqueId().toString())).findFirst();
+                        Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
                             String permission = warp.getPermission();
+                            boolean isOwner = UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId());
                             if(permission != null) {
                                 boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, permission);
-                                boolean isOwner = UUID.fromString(warp.getCreateBy()).equals(player.getUniqueId());
                                 if (!hasPermission && !isOwner) {
                                     player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
                                     i.cancel();
@@ -68,22 +67,35 @@ public class WarpListListener implements Listener {
                             }
                             ClickType eventClick = event.getClick();
                             if(eventClick.equals(ClickType.LEFT)) {
+                                Location targetLocation = Ari.instance.objectConvert.parseLocation(warp.getLocation());
                                 TeleportThread.playerToLocation(
                                                 player,
-                                                Ari.instance.objectConvert.parseLocation(warp.getLocation()))
+                                                targetLocation)
                                         .teleport(
                                                 Ari.instance.configManager.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class),
                                                 new TeleportCallback() {
                                                     @Override
+                                                    public void onCancel() {
+                                                        Ari.instance.tpStatusValue.remove(player, TeleportType.POINT);
+                                                    }
+                                                    @Override
                                                     public void after() {
-                                                        Ari.instance.economyUtils.withdrawPlayer(player, warp.getCost());
-                                                        String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
-                                                        player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), warp.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
+                                                        //判断地标拥有者，如果是则不扣
+                                                        if(!isOwner) {
+                                                            Ari.instance.economyUtils.withdrawPlayer(player, warp.getCost());
+                                                            String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
+                                                            player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), warp.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
+                                                        }
+                                                        Ari.instance.tpStatusValue.remove(player, TeleportType.POINT);
                                                     }
                                                     @Override
                                                     public void before(TeleportThread teleportThread) {
-                                                        if(!Ari.instance.economyUtils.hasEnoughBalance(player, warp.getCost())) {
+                                                        if(!Ari.instance.economyUtils.hasEnoughBalance(player, warp.getCost()) && !isOwner) {
                                                             player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
+                                                            teleportThread.cancel();
+                                                            return;
+                                                        }
+                                                        if(!TeleportCheck.create().preCheckStatus(player, targetLocation)) {
                                                             teleportThread.cancel();
                                                         }
                                                     }

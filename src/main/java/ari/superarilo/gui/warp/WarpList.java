@@ -15,10 +15,7 @@ import ari.superarilo.gui.BaseGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -41,7 +38,7 @@ public class WarpList extends BaseGui {
                 WarpListGUI.class
         );
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.serverWarpList = this.requestWarps();
+        this.requestWarps();
     }
 
     @Override
@@ -72,21 +69,19 @@ public class WarpList extends BaseGui {
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = Ari.instance.objectConvert.parseLocation(serverWarp.getLocation());
-            //过滤需要移除的行
-            rawLore.removeIf(line -> {
+            rawLore.stream().filter(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if (keyType == LocationKeyType.PERMISSION || keyType == LocationKeyType.COST) {
                         boolean shouldRemove =
                                 (keyType == LocationKeyType.PERMISSION && !((Boolean) Ari.instance.configManager.getValue("main.permission.enable", FilePath.WarpConfig, Boolean.class))) ||
                                         (keyType == LocationKeyType.COST && !((Boolean) Ari.instance.configManager.getValue("main.cost.enable", FilePath.WarpConfig, Boolean.class)) && !Ari.instance.economyUtils.isNull());
                         if (shouldRemove && line.contains(keyType.getKey())) {
-                            return true;
+                            return false;
                         }
                     }
                 }
-                return false;
-            });
-            rawLore.forEach(line -> {
+                return true;
+            }).map(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
@@ -94,7 +89,18 @@ public class WarpList extends BaseGui {
                         case Y -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
                         case Z -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
                         case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
-                        case PLAYERNAME -> line.replace(keyType.getKey(), Objects.requireNonNull(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy()))).getName());
+                        case PLAYERNAME -> {
+                            UUID uuid = UUID.fromString(serverWarp.getCreateBy());
+                            String name;
+                            Player onlinePlayer = Bukkit.getPlayer(uuid);
+                            if (onlinePlayer != null) {
+                                name = onlinePlayer.getName();
+                            } else {
+                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                                name = offlinePlayer.getName() != null ? offlinePlayer.getName() : "null";
+                            }
+                            yield line.replace(keyType.getKey(), name);
+                        }
                         case COST -> {
                             Double cost = serverWarp.getCost();
                             if(cost == null || cost == 0) {
@@ -111,8 +117,8 @@ public class WarpList extends BaseGui {
                         }
                     };
                 }
-                textComponents.add(TextTool.setHEXColorText(line));
-            });
+                return TextTool.setHEXColorText(line, player);
+            }).forEach(textComponents::add);
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
@@ -121,10 +127,10 @@ public class WarpList extends BaseGui {
         }
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
-    private List<ServerWarp> requestWarps() {
+    private void requestWarps() {
         CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
         try {
-            return future.get();
+            this.serverWarpList = future.get();
         } catch (InterruptedException | ExecutionException e) {
             throw new RuntimeException(e);
         }

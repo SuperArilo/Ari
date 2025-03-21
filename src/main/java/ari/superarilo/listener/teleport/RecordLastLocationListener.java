@@ -1,9 +1,7 @@
 package ari.superarilo.listener.teleport;
 
-import ari.superarilo.Ari;
 import ari.superarilo.dto.event.CustomPlayerRespawnEvent;
 import ari.superarilo.function.impl.TeleportThreadImpl;
-import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,7 +15,6 @@ public class RecordLastLocationListener implements Listener {
     @EventHandler
     public void lastLocation(PlayerTeleportEvent event) {
         TeleportThreadImpl.lastLocation.put(event.getPlayer().getUniqueId(), event.getFrom());
-        Log.debug("TeleportStatusList: " + Ari.instance.tpStatusValue.getStatusList().size());
     }
     @EventHandler
     public void lastDeathLocation(PlayerDeathEvent event) {

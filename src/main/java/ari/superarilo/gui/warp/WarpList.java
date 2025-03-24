@@ -74,8 +74,8 @@ public class WarpList extends BasePageGui<List<ServerWarp>> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if (keyType == LocationKeyType.PERMISSION || keyType == LocationKeyType.COST) {
                         boolean shouldRemove =
-                                (keyType == LocationKeyType.PERMISSION && !((Boolean) Ari.instance.configManager.getValue("main.permission.enable", FilePath.WarpConfig, Boolean.class))) ||
-                                        (keyType == LocationKeyType.COST && !((Boolean) Ari.instance.configManager.getValue("main.cost.enable", FilePath.WarpConfig, Boolean.class)) && !Ari.instance.economyUtils.isNull());
+                                (keyType == LocationKeyType.PERMISSION && !((Boolean) Ari.instance.configManager.getValue("main.permission", FilePath.WarpConfig, Boolean.class))) ||
+                                        (keyType == LocationKeyType.COST && !((Boolean) Ari.instance.configManager.getValue("main.cost", FilePath.WarpConfig, Boolean.class)) && !Ari.instance.economyUtils.isNull());
                         if (shouldRemove && line.contains(keyType.getKey())) {
                             return false;
                         }

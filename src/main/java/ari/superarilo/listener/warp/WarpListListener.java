@@ -75,7 +75,7 @@ public class WarpListListener implements Listener {
                                                     @Override
                                                     public void after() {
                                                         //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                                        if(!isOwner && !player.isOp()) {
+                                                        if(!isOwner && !player.isOp() && (Boolean) Ari.instance.configManager.getValue("main.cost", FilePath.WarpConfig, Boolean.class)) {
                                                             Ari.instance.economyUtils.withdrawPlayer(player, warp.getCost());
                                                             String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
                                                             player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), warp.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
@@ -84,7 +84,7 @@ public class WarpListListener implements Listener {
                                                     }
                                                     @Override
                                                     public void before(TeleportThread teleportThread) {
-                                                        if(!Ari.instance.economyUtils.hasEnoughBalance(player, warp.getCost()) && !isOwner) {
+                                                        if(!Ari.instance.economyUtils.hasEnoughBalance(player, warp.getCost()) && !isOwner && (Boolean) Ari.instance.configManager.getValue("main.permission", FilePath.WarpConfig, Boolean.class)) {
                                                             player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
                                                             teleportThread.cancel();
                                                             return;

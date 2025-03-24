@@ -38,14 +38,13 @@ public class EditHomeListener implements Listener {
 
     @EventHandler
     public void editGuiClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        if(inventory == null || event.getSlot() > inventory.getSize()) return;
-        if(!(inventory.getHolder() instanceof CustomInventoryHolder) && (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT))) {
-            event.setCancelled(true);
-            return;
-        }
+        Inventory inventory = event.getInventory();
+        if(event.getSlot() > inventory.getSize()) return;
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
-
+            if (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+                event.setCancelled(true);
+                return;
+            }
             Player player = holder.getPlayer();
             this.removeIfPlayInEditList(player);
             ItemStack clickItem = event.getCurrentItem();

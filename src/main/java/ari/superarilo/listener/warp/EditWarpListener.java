@@ -44,94 +44,94 @@ public class EditWarpListener implements Listener {
 
     @EventHandler
     public void editClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        if(inventory == null || event.getSlot() > inventory.getSize()) return;
-        if(!(inventory.getHolder() instanceof CustomInventoryHolder) && (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT))) {
+        Inventory inventory = event.getInventory();
+        if(event.getSlot() > inventory.getSize()) return;
+
+        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT)) {
+            if(event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+                event.setCancelled(true);
+                return;
+            }
+            Player player = holder.getPlayer();
+            this.removeIfPlayerInMap(player);
+            ItemStack clickItem = event.getCurrentItem();
+
+            //当托起物品点击的地方是null的时候取消操作
+            if(clickItem == null) {
+                event.setCancelled(true);
+                return;
+            }
+
+            ItemMeta clickMeta = clickItem.getItemMeta();
+
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             event.setCancelled(true);
-            return;
-        }
-        if(!(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT))) return;
 
-        Player player = holder.getPlayer();
-        this.removeIfPlayerInMap(player);
-        ItemStack clickItem = event.getCurrentItem();
-
-        //当托起物品点击的地方是null的时候取消操作
-        if(clickItem == null) {
-            event.setCancelled(true);
-            return;
-        }
-
-        ItemMeta clickMeta = clickItem.getItemMeta();
-
-        FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
-        event.setCancelled(true);
-
-        ServerWarp serverWarp = (ServerWarp) holder.getMeta();
-        WarpManager warpManager = WarpManager.create(player);
-        switch (type) {
-            case REBACK -> {
-                inventory.close();
-                new WarpList(player).open();
-            }
-            case DELETE -> {
-                warpManager.deleteInstance(serverWarp.getWarpId());
-                inventory.close();
-                new WarpList(player).open();
-            }
-            case RENAME, COST, PERMISSION -> {
-                Audience.audience(player).showTitle(
-                        TextTool.setPlayerTitle(
-                                Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),
-                                Ari.instance.configManager.getValue("base.on-edit.sub-title", FilePath.Lang, String.class),
-                                1000,
-                                10000 ,
-                                1000));
-                inventory.close();
-                this.editMap.put(player.getUniqueId(), OnEdit.build(holder, TitleInputType.valueOf(type.name())));
-            }
-            case LOCATION -> {
-                Location newLocation = player.getLocation();
-                serverWarp.setLocation(newLocation.toString());
-                clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
-                clickItem.setItemMeta(clickMeta);
-            }
-            case ICON -> {
-                ItemStack cursor = event.getCursor();
-                if(cursor == null) return;
-                Material current = cursor.getType();
-                if(current.equals(Material.AIR)) return;
-                clickItem = new ItemStack(current);
-                clickItem.setItemMeta(clickMeta);
-                inventory.setItem(event.getSlot(), clickItem);
-                serverWarp.setShowMaterial(current.name());
-            }
-            case SAVE -> {
-                ItemStack finalClickItem = clickItem;
-                Log.debug("start saving warp id:" + serverWarp.getWarpId());
-                clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
-                finalClickItem.setItemMeta(clickMeta);
-                CompletableFuture<Boolean> future = warpManager.modify(serverWarp);
-                Boolean status;
-                try {
-                    status = future.get();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+            ServerWarp serverWarp = (ServerWarp) holder.getMeta();
+            WarpManager warpManager = WarpManager.create(player);
+            switch (type) {
+                case REBACK -> {
+                    inventory.close();
+                    new WarpList(player).open();
                 }
-                if(status) {
-                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
+                case DELETE -> {
+                    warpManager.deleteInstance(serverWarp.getWarpId());
+                    inventory.close();
+                    new WarpList(player).open();
+                }
+                case RENAME, COST, PERMISSION -> {
+                    Audience.audience(player).showTitle(
+                            TextTool.setPlayerTitle(
+                                    Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),
+                                    Ari.instance.configManager.getValue("base.on-edit.sub-title", FilePath.Lang, String.class),
+                                    1000,
+                                    10000 ,
+                                    1000));
+                    inventory.close();
+                    this.editMap.put(player.getUniqueId(), OnEdit.build(holder, TitleInputType.valueOf(type.name())));
+                }
+                case LOCATION -> {
+                    Location newLocation = player.getLocation();
+                    serverWarp.setLocation(newLocation.toString());
+                    clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
+                    clickItem.setItemMeta(clickMeta);
+                }
+                case ICON -> {
+                    ItemStack cursor = event.getCursor();
+                    if(cursor == null) return;
+                    Material current = cursor.getType();
+                    if(current.equals(Material.AIR)) return;
+                    clickItem = new ItemStack(current);
+                    clickItem.setItemMeta(clickMeta);
+                    inventory.setItem(event.getSlot(), clickItem);
+                    serverWarp.setShowMaterial(current.name());
+                }
+                case SAVE -> {
+                    ItemStack finalClickItem = clickItem;
+                    Log.debug("start saving warp id:" + serverWarp.getWarpId());
+                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                     finalClickItem.setItemMeta(clickMeta);
-                    Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
-                        clickMeta.lore(List.of());
+                    CompletableFuture<Boolean> future = warpManager.modify(serverWarp);
+                    Boolean status;
+                    try {
+                        status = future.get();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    if(status) {
+                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
                         finalClickItem.setItemMeta(clickMeta);
-                    }, 1, TimeUnit.SECONDS);
-                } else {
-                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
-                    Log.error("save warp error id:" + serverWarp.getWarpId());
+                        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
+                            clickMeta.lore(List.of());
+                            finalClickItem.setItemMeta(clickMeta);
+                        }, 1, TimeUnit.SECONDS);
+                    } else {
+                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                        Log.error("save warp error id:" + serverWarp.getWarpId());
+                    }
                 }
             }
         }
-
     }
 
     @EventHandler

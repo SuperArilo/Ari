@@ -44,8 +44,8 @@ public class EditWarpListener implements Listener {
 
     @EventHandler
     public void editClick(InventoryClickEvent event) {
-        Inventory inventory = event.getInventory();
-        if(event.getSlot() > inventory.getSize()) return;
+        Inventory inventory = event.getClickedInventory();
+        if(inventory == null || event.getSlot() > inventory.getSize()) return;
 
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT)) {
             if(event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
@@ -65,6 +65,7 @@ public class EditWarpListener implements Listener {
             ItemMeta clickMeta = clickItem.getItemMeta();
 
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            if(type == null) return;
             event.setCancelled(true);
 
             ServerWarp serverWarp = (ServerWarp) holder.getMeta();
@@ -130,6 +131,10 @@ public class EditWarpListener implements Listener {
                         Log.error("save warp error id:" + serverWarp.getWarpId());
                     }
                 }
+            }
+        } else {
+            if(event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+                event.setCancelled(true);
             }
         }
     }

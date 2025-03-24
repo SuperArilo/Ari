@@ -38,8 +38,8 @@ public class EditHomeListener implements Listener {
 
     @EventHandler
     public void editGuiClick(InventoryClickEvent event) {
-        Inventory inventory = event.getInventory();
-        if(event.getSlot() > inventory.getSize()) return;
+        Inventory inventory = event.getClickedInventory();
+        if(inventory == null || event.getSlot() > inventory.getSize()) return;
         if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
             if (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
                 event.setCancelled(true);
@@ -124,6 +124,10 @@ public class EditHomeListener implements Listener {
                         Log.error("save home error");
                     }
                 }
+            }
+        } else {
+            if (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+                event.setCancelled(true);
             }
         }
     }

@@ -11,8 +11,7 @@ import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.LocationKeyType;
 import ari.superarilo.function.HomeManager;
-import ari.superarilo.function.PageChange;
-import ari.superarilo.gui.BaseGui;
+import ari.superarilo.gui.BasePageGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
@@ -32,24 +31,26 @@ import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 
-public class HomeList extends BaseGui implements PageChange {
+public class HomeList extends BasePageGui<List<PlayerHome>> {
+
     private final HomeListGUI gui;
-    public List<PlayerHome> playerHomes;
 
     public HomeList(Player player) {
         super(player);
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.playerHomes = this.requestPlayerHomes();
+        int size = this.gui.getRow() * 9;
+        this.setPageSize(size);
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), size, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.data = this.requestData();
     }
 
     @Override
-    protected Mask getMask() {
+    protected Mask renderMasks() {
         return this.gui.getMask();
     }
 
     @Override
-    protected Map<String, FunctionItems> getFunctionItems() {
+    protected Map<String, FunctionItems> renderFunctionItems() {
         return this.gui.getFunctionItems();
     }
 
@@ -59,8 +60,8 @@ public class HomeList extends BaseGui implements PageChange {
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<String> rawLore = this.gui.getDataItems().getLore();
-        for (int i = 0; i < this.playerHomes.size(); i++) {
-            PlayerHome ph = this.playerHomes.get(i);
+        for (int i = 0; i < this.data.size(); i++) {
+            PlayerHome ph = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
@@ -93,6 +94,16 @@ public class HomeList extends BaseGui implements PageChange {
         }
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
+
+    @Override
+    public List<PlayerHome> requestData() {
+        Future<List<PlayerHome>> future = HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+        try {
+            return future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public void prev() {
         this.pageNum--;
@@ -102,29 +113,22 @@ public class HomeList extends BaseGui implements PageChange {
             this.pageNum = 1;
             return;
         }
-        this.playerHomes = this.requestPlayerHomes();
+        this.data = this.requestData();
         this.renderDataItem();
     }
     @Override
     public void next() {
         this.pageNum++;
-        this.playerHomes = this.requestPlayerHomes();
-        if(this.playerHomes.isEmpty()) {
+        List<PlayerHome> homes = this.requestData();
+        if(homes.isEmpty()) {
             this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
             Log.debug("home list: 最后一页");
             this.pageNum--;
         } else {
+            this.data = homes;
             this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
             this.renderDataItem();
         }
     }
 
-    private List<PlayerHome> requestPlayerHomes() {
-        Future<List<PlayerHome>> future = HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

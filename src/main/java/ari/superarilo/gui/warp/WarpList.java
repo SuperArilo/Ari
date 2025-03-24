@@ -10,12 +10,10 @@ import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.LocationKeyType;
-import ari.superarilo.function.PageChange;
 import ari.superarilo.function.WarpManager;
-import ari.superarilo.gui.BaseGui;
+import ari.superarilo.gui.BasePageGui;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
-import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
@@ -28,11 +26,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-public class WarpList extends BaseGui implements PageChange {
+public class WarpList extends BasePageGui<List<ServerWarp>> {
 
     private final WarpListGUI gui;
-    @Getter
-    private List<ServerWarp> serverWarpList;
 
     public WarpList(Player player) {
         super(player);
@@ -40,17 +36,19 @@ public class WarpList extends BaseGui implements PageChange {
                 Ari.instance.configManager.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.serverWarpList = this.requestWarps();
+        int size = this.gui.getRow() * 9;
+        this.pageSize = size;
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), size, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.data = this.requestData();
     }
 
     @Override
-    protected Mask getMask() {
+    protected Mask renderMasks() {
         return this.gui.getMask();
     }
 
     @Override
-    protected Map<String, FunctionItems> getFunctionItems() {
+    protected Map<String, FunctionItems> renderFunctionItems() {
         return this.gui.getFunctionItems();
     }
 
@@ -60,8 +58,8 @@ public class WarpList extends BaseGui implements PageChange {
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<String> rawLore = this.gui.getDataItems().getLore();
-        for (int i = 0;i < this.serverWarpList.size();i++) {
-            ServerWarp serverWarp = this.serverWarpList.get(i);
+        for (int i = 0;i < this.data.size();i++) {
+            ServerWarp serverWarp = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {
@@ -130,8 +128,10 @@ public class WarpList extends BaseGui implements PageChange {
         }
         Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
-    private List<ServerWarp> requestWarps() {
-        CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+
+    @Override
+    public List<ServerWarp> requestData() {
+        CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.pageSize);
         try {
             return future.get();
         } catch (InterruptedException | ExecutionException e) {
@@ -148,20 +148,20 @@ public class WarpList extends BaseGui implements PageChange {
             this.pageNum = 1;
             return;
         }
-        this.serverWarpList = this.requestWarps();
+        this.data = this.requestData();
         this.renderDataItem();
     }
 
     @Override
     public void next() {
         this.pageNum++;
-        List<ServerWarp> serverWarps = this.requestWarps();
+        List<ServerWarp> serverWarps = this.requestData();
         if (serverWarps.isEmpty()) {
             this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
             Log.debug("warp list: 最后一页");
             this.pageNum--;
         } else {
-            this.serverWarpList = this.requestWarps();
+            this.data = this.requestData();
             this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
             this.renderDataItem();
         }

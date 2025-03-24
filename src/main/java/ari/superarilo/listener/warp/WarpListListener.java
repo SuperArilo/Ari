@@ -23,7 +23,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,8 +46,7 @@ public class WarpListListener implements Listener {
                     String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING);
                     if(warpId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                        List<ServerWarp> serverWarpList = warpList.getServerWarpList();
-                        Optional<ServerWarp> first = serverWarpList.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();
+                        Optional<ServerWarp> first = warpList.data.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();
                         if(first.isPresent()) {
                             ServerWarp warp = first.get();
                             String permission = warp.getPermission();

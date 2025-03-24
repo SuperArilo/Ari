@@ -30,12 +30,17 @@ public class WarpEditor extends BaseGui {
     }
 
     @Override
-    protected Mask getMask() {
+    public void init() {
+
+    }
+
+    @Override
+    protected Mask renderMasks() {
         return this.gui.getMask();
     }
 
     @Override
-    protected Map<String, FunctionItems> getFunctionItems() {
+    protected Map<String, FunctionItems> renderFunctionItems() {
         Map<String, FunctionItems> functionItems = this.gui.getFunctionItems();
         if(functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
@@ -68,7 +73,4 @@ public class WarpEditor extends BaseGui {
         }
         return functionItems;
     }
-
-    @Override
-    public void renderDataItem() {}
 }

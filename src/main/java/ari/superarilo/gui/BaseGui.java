@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class BaseGui {
-    protected int pageNum = 1;
 
     protected final Player player;
     protected Inventory inventory;
@@ -29,12 +28,12 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
+        this.init();
         Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> {
-            this.renderDataItem();
             this.player.openInventory(this.inventory);
             Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                this.renderMasks(this.getMask());
-                this.renderFunctionItems(this.getFunctionItems());
+                this.BaseRenderMasks(this.renderMasks());
+                this.BaseRenderFunctionItems(this.renderFunctionItems());
             });
         });
     }
@@ -69,7 +68,7 @@ public abstract class BaseGui {
         }
         return result;
     }
-    protected void renderMasks(Mask mask) {
+    protected void BaseRenderMasks(Mask mask) {
         List<TextComponent> collect = mask.getLore().stream().map(i -> TextTool.setHEXColorText(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
@@ -81,7 +80,7 @@ public abstract class BaseGui {
             this.inventory.setItem(i, itemStack);
         }
     }
-    protected void renderFunctionItems(Map<String, FunctionItems> functionItemMap) {
+    protected void BaseRenderFunctionItems(Map<String, FunctionItems> functionItemMap) {
         functionItemMap.forEach((k, v) -> {
             ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
@@ -94,16 +93,21 @@ public abstract class BaseGui {
             }
         });
     }
-    protected abstract Mask getMask();
-    protected abstract Map<String, FunctionItems> getFunctionItems();
-    public abstract void renderDataItem();
 
     /**
-     * 清除指定位置已经渲染的item
-     * @param list 指定位置列表
+     * 初始化方法
      */
-    protected void cleanRenderDataItem(List<Integer> list) {
-        if(this.inventory == null) return;
-        list.forEach(i -> this.inventory.clear(i));
-    }
+    public abstract void init();
+    /**
+     * 渲染gui的mask-item方法
+     * @return Mask类
+     */
+    protected abstract Mask renderMasks();
+
+    /**
+     * 渲染gui中带功能的item
+     * @return Map<String, FunctionItems>类
+     */
+    protected abstract Map<String, FunctionItems> renderFunctionItems();
+
 }

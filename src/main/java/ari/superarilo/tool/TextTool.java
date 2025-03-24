@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -22,7 +23,8 @@ import java.util.regex.Pattern;
 @SuppressWarnings("deprecation")
 public class TextTool {
 
-    private static final Pattern TAG_PATTERN = Pattern.compile("<#\\w+>.*?</#\\w+>");
+    private static final Pattern START_TAG_PATTERN = Pattern.compile("<#([A-Fa-f0-9]{6})>"); // 开始标签
+    private static final Pattern END_TAG_PATTERN = Pattern.compile("</#([A-Fa-f0-9]{6})>"); // 结束标签
 
     /**
      * 设置彩色文本格式
@@ -77,9 +79,6 @@ public class TextTool {
         if(content == null) return returnNoContentText();
         return renderComponent(content, null);
     }
-    public static TextComponent setNoColorText(String content) {
-        return Component.text(content);
-    }
 
     /**
      * 返回 基础格式化的文本坐标
@@ -127,54 +126,54 @@ public class TextTool {
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             content = PlaceholderAPI.setPlaceholders(player, content);
         }
-        if(content.contains("<#") && content.contains("</#")) {
+        if (content.contains("<#") && content.contains("</#")) {
             TextComponent.Builder builder = Component.text();
-            //处理后的字符串文字
-            hexadecimalStrings(content).forEach(e -> {
-                e = ChatColor.translateAlternateColorCodes('&', e);
-                //获取遍历的字符串前后的十六进制颜色字符串
-                List<String> li = separateHexString(e);
-                if (li.size() == 2) {
-                    String be = e.replace("<" + li.get(0) + ">", "").replace("</" + li.get(1) + ">", "");
-                    int length = be.length();
-                    for (double i = 0;i < length; i++) {
-                        double ratio = i / (length - 1);
-                        builder.append(Component.text(be.charAt((int) i), HexColorMake(li.get(0), li.get(1), ratio)));
+            hexadecimalStrings(content).forEach(part -> {
+                if (part.startsWith("<#")) {
+                    List<String> colors = separateHexString(part);
+                    String startColor = colors.get(0);
+                    String endColor = colors.get(1);
+                    String text = part
+                            .replaceFirst("<#" + startColor.substring(1) + ">", "")
+                            .replaceFirst("</#" + endColor.substring(1) + ">", "");
+                    int length = text.length();
+                    for (int i = 0; i < length; i++) {
+                        double ratio = i / (double) (length - 1);
+                        TextColor color = HexColorMake(startColor, endColor, ratio);
+                        builder.append(Component.text(text.charAt(i), color));
                     }
                 } else {
-                    builder.append(Component.text(e));
+                    builder.append(Component.text(ChatColor.translateAlternateColorCodes('&', part)));
                 }
             });
-            return builder.build();
+            return builder.decoration(TextDecoration.ITALIC, false).build();
         } else {
-            return Component.text(ChatColor.translateAlternateColorCodes('&', content));
+            return Component.text(ChatColor.translateAlternateColorCodes('&', content))
+                    .decoration(TextDecoration.ITALIC, false);
         }
-    }
-
-    public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
-        return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));
     }
 
     //分离具有16进制标签的文本
     protected static List<String> hexadecimalStrings(String content) {
         List<String> parts = new ArrayList<>();
-        Matcher matcher = TAG_PATTERN.matcher(content);
+        Matcher startMatcher = START_TAG_PATTERN.matcher(content);
+        Matcher endMatcher = END_TAG_PATTERN.matcher(content);
 
         int lastEnd = 0;
-        while (matcher.find()) {
-            int start = matcher.start();
-            int end = matcher.end();
 
-            if (lastEnd != start) {
-                // Add the text between tags
+        while (startMatcher.find() && endMatcher.find(startMatcher.end())) {
+            int start = startMatcher.start();
+            int endEnd = endMatcher.end();
+            if (lastEnd < start) {
                 parts.add(content.substring(lastEnd, start));
             }
-            // Add the matched tag with content
-            parts.add(content.substring(start, end));
-            lastEnd = end;
+            String segment = content.substring(start, endEnd);
+            parts.add(segment);
+            lastEnd = endEnd;
+            startMatcher.region(endEnd, content.length());
+            endMatcher.region(endEnd, content.length());
         }
-        // Add any trailing text after the last tag
-        if (lastEnd != content.length()) {
+        if (lastEnd < content.length()) {
             parts.add(content.substring(lastEnd));
         }
 
@@ -184,39 +183,43 @@ public class TextTool {
     //获取具有十六进制的字符串的开始颜色和结束颜色
     protected static List<String> separateHexString(String content) {
         List<String> colors = new ArrayList<>();
-        // 正则表达式匹配所有颜色代码
-        String regex = "<#([A-Fa-f0-9]{6})>|</#([A-Fa-f0-9]{6})>";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            if (matcher.group(1) != null) {
-                // 开始标签的颜色代码
-                colors.add("#" + matcher.group(1));
-            } else if (matcher.group(2) != null) {
-                // 结束标签的颜色代码
-                colors.add("#" + matcher.group(2));
-            }
+        Matcher startMatcher = START_TAG_PATTERN.matcher(content);
+        if (startMatcher.find()) {
+            colors.add("#" + startMatcher.group(1));
         }
-        return colors;
+        Matcher endMatcher = END_TAG_PATTERN.matcher(content);
+        if (endMatcher.find()) {
+            colors.add("#" + endMatcher.group(1));
+        }
+        if (colors.size() == 2) {
+            return colors;
+        } else {
+            return List.of("#FFFFFF", "#FFFFFF");
+        }
     }
 
-    protected static TextColor HexColorMake(String startColor, String endColor, Double ratio) {
+    protected static TextColor HexColorMake(String startColor, String endColor, double ratio) {
         TextColor start = TextColor.fromHexString(startColor);
         TextColor end = TextColor.fromHexString(endColor);
-        if(start == null || end == null){
-            return TextColor.color(0, 0, 0);
+        if (start == null || end == null) {
+            return TextColor.color(255, 255, 255);
         }
-        return TextColor.color(interpolate(start.value(), end.value(), ratio));
+        int startRgb = start.value();
+        int endRgb = end.value();
+        int rgb = interpolate(startRgb, endRgb, ratio);
+        return TextColor.color(rgb);
     }
 
-    protected static int interpolate(int start, int end, double ratio) {
-
-        int r = (int) ((start >> 16 & 0xFF) * (1 - ratio) + (end >> 16 & 0xFF) * ratio);
-        int g = (int) ((start >> 8 & 0xFF) * (1 - ratio) + (end >> 8 & 0xFF) * ratio);
-        int b = (int) ((start & 0xFF) * (1 - ratio) + (end & 0xFF) * ratio);
+    private static int interpolate(int start, int end, double ratio) {
+        int r = (int) (( (start >> 16) & 0xFF ) * (1 - ratio) + ( (end >> 16) & 0xFF ) * ratio);
+        int g = (int) (( (start >> 8) & 0xFF ) * (1 - ratio) + ( (end >> 8) & 0xFF ) * ratio);
+        int b = (int) ( (start & 0xFF ) * (1 - ratio) + (end & 0xFF ) * ratio );
         return (r << 16) | (g << 8) | b;
     }
 
+    public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
+        return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));
+    }
     /**
      * 当出错时候返回到客户端的文本
      */

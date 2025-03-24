@@ -101,7 +101,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
                 Log.error(e.getMessage());
                 i.cancel();
             } finally {
-                Log.debug(Level.INFO, "save warp done. time: " + (System.currentTimeMillis() - start));
+                Log.debug(Level.INFO, "save warp done. time: " + (System.currentTimeMillis() - start) + "ms");
             }
         });
     }

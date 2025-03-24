@@ -98,7 +98,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
                 Log.error(e.getMessage());
                 i.cancel();
             } finally {
-                Log.debug(Level.INFO, "save home done. time: " + (System.currentTimeMillis() - start));
+                Log.debug(Level.INFO, "save home done. time: " + (System.currentTimeMillis() - start) + "ms");
             }
         });
     }

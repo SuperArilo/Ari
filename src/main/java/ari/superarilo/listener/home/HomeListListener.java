@@ -2,7 +2,7 @@ package ari.superarilo.listener.home;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.entity.sql.ServerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
@@ -42,9 +42,9 @@ public class HomeListListener implements Listener {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-                        Optional<PlayerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
+                        Optional<ServerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
                         if(first.isPresent()) {
-                            PlayerHome home = first.get();
+                            ServerHome home = first.get();
                             ClickType click = event.getClick();
                             if (click.equals(ClickType.LEFT)) {
                                 TeleportThread.playerToLocation(

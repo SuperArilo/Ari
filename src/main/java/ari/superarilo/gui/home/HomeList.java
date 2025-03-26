@@ -5,7 +5,7 @@ import ari.superarilo.dto.CustomInventoryHolder;
 import ari.superarilo.entity.menu.FunctionItems;
 import ari.superarilo.entity.menu.Mask;
 import ari.superarilo.entity.menu.home.HomeListGUI;
-import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.entity.sql.ServerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 
-public class HomeList extends BasePageGui<PlayerHome> {
+public class HomeList extends BasePageGui<ServerHome> {
 
     private final HomeListGUI gui;
 
@@ -63,7 +63,7 @@ public class HomeList extends BasePageGui<PlayerHome> {
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<String> rawLore = this.gui.getDataItems().getLore();
         for (int i = 0; i < this.data.size(); i++) {
-            PlayerHome ph = this.data.get(i);
+            ServerHome ph = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             if(itemMeta == null) {

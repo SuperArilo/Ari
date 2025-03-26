@@ -2,7 +2,7 @@ package ari.superarilo.listener.home;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.CustomInventoryHolder;
-import ari.superarilo.entity.sql.PlayerHome;
+import ari.superarilo.entity.sql.ServerHome;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
@@ -58,7 +58,7 @@ public class EditHomeListener implements Listener {
             FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             event.setCancelled(true);
 
-            PlayerHome home = (PlayerHome) holder.getMeta();
+            ServerHome home = (ServerHome) holder.getMeta();
             HomeManager homeManager = HomeManager.create(home.getPlayerUUID());
             switch (type) {
                 case REBACK -> {
@@ -162,7 +162,7 @@ public class EditHomeListener implements Listener {
         // 使用 removeIf 删除满足条件的元素
         this.editStatus.removeIf(i -> {
             if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                PlayerHome home = (PlayerHome) i.getMeta();
+                ServerHome home = (ServerHome) i.getMeta();
                 home.setHomeName(message);
                 new HomeEditor(home, player).open();
                 Log.debug("player: [" + player.getName() + "] edit home-name status removed");

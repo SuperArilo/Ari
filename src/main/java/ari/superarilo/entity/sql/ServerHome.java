@@ -3,7 +3,7 @@ package ari.superarilo.entity.sql;
 import lombok.Data;
 
 @Data
-public class PlayerHome {
+public class ServerHome {
     private Long id;
     private String homeId;
     private String homeName;

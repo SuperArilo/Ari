@@ -119,23 +119,19 @@ public class EditWarpListener implements Listener {
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                     finalClickItem.setItemMeta(clickMeta);
                     CompletableFuture<Boolean> future = warpManager.modify(serverWarp);
-                    Boolean status;
-                    try {
-                        status = future.get();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    if(status) {
-                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
-                        finalClickItem.setItemMeta(clickMeta);
-                        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
-                            clickMeta.lore(List.of());
+                    future.thenAccept(status -> {
+                        if(status) {
+                            clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
                             finalClickItem.setItemMeta(clickMeta);
-                        }, 1, TimeUnit.SECONDS);
-                    } else {
-                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
-                        Log.error("save warp error id:" + serverWarp.getWarpId());
-                    }
+                            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
+                                clickMeta.lore(List.of());
+                                finalClickItem.setItemMeta(clickMeta);
+                            }, 1, TimeUnit.SECONDS);
+                        } else {
+                            clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                            Log.error("save warp error id:" + serverWarp.getWarpId());
+                        }
+                    });
                 }
             }
         } else {

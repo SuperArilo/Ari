@@ -21,9 +21,10 @@ public class ConfigManager {
     }
     public void reloadAllConfig() {
         //config.yml
-        Ari.instance.saveDefaultConfig();
-        Ari.instance.reloadConfig();
         Ari.debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
+        Ari.instance.saveResource("config.yml", Ari.debug);
+        Ari.instance.reloadConfig();
+
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   调试模式开启   ");
         Log.debug(Level.INFO, "----------------");

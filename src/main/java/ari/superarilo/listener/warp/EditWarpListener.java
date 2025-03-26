@@ -81,6 +81,12 @@ public class EditWarpListener implements Listener {
                     new WarpList(player).open();
                 }
                 case RENAME, COST, PERMISSION -> {
+                    if (type.equals(FunctionType.PERMISSION) && event.getClick().isRightClick()) {
+                        clickMeta.displayName(TextTool.setHEXColorText(""));
+                        clickItem.setItemMeta(clickMeta);
+                        serverWarp.setPermission(null);
+                        return;
+                    }
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
                                     Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),

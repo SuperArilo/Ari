@@ -38,6 +38,7 @@ functionItems:
     slot: [30]
     lore:
       - '&2左击: &6重新设置权限节点'
+      - '&2右击: &6清空当前权限节点'
   cost:
     type: COST
     material: GOLD_INGOT

@@ -61,9 +61,6 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
         newPlayer.setPlayerName(player.getName());
         newPlayer.setFirstLoginTime(time);
         newPlayer.setLastLoginOffTime(time);
-        newPlayer.setTotalOnlineTime(0L);
-        newPlayer.setNamePrefix("");
-        newPlayer.setNameSuffix("");
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                sqlSession.getMapper(PlayerMapper.class).save(newPlayer);
@@ -81,7 +78,14 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
 
     @Override
     public CompletableFuture<Boolean> modify(ServerPlayer instance) {
-        return null;
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
+        try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+            future.complete(sqlSession.getMapper(PlayerMapper.class).update(instance));
+        } catch (Exception e) {
+            future.complete(false);
+            Log.error("error", e);
+        }
+        return future;
     }
 
     public static PlayerManager build(Player player) {

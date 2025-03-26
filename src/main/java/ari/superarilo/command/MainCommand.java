@@ -50,32 +50,32 @@ public class MainCommand implements TabExecutor {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPA) || strings.length != 2) {
                     return true;
                 }
-                CommandTeleport.build(commandSender, strings[1]).tpa();
+                new CommandTeleport(commandSender, strings[1]).tpa();
             }
             case TPAACCEPT -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT) || strings.length != 2) {
                     return true;
                 }
-                CommandTeleport.build(commandSender, strings[1]).tpaaccept();
+                new CommandTeleport(commandSender, strings[1]).tpaaccept();
             }
             case TPAHERE -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE) || strings.length != 2) {
                     return true;
                 }
-                CommandTeleport.build(commandSender, strings[1]).tpahere();
+                new CommandTeleport(commandSender, strings[1]).tpahere();
             }
             case TPAREFUSE -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE) | strings.length != 2) {
                     return true;
                 }
-                CommandTeleport.build(commandSender,strings[1]).tparefuse();
+                new CommandTeleport(commandSender, strings[1]).tparefuse();
             }
             case HOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.HOME)) {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
-                CommandHome.build(commandSender).home();
+                new CommandHome(commandSender).home();
             }
             case SETHOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
@@ -86,7 +86,7 @@ public class MainCommand implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
-                CommandHome.build(commandSender).setHome(strings[1]);
+                new CommandHome(commandSender).setHome(strings[1]);
             }
             case DELETEHOME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
@@ -97,21 +97,21 @@ public class MainCommand implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
-                CommandHome.build(commandSender).deleteHome(strings[1]);
+                new CommandHome(commandSender).deleteHome(strings[1]);
             }
             case BACK -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.BACK)) {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
-                CommandBack.build(commandSender).startDo();
+                new CommandBack(commandSender).startDo();
             }
             case WARP -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.WARP)) {
                     return true;
                 }
                 if(!commandCheck.isPlayer()) break;
-                CommandWarp.build(commandSender).warp();
+                new CommandWarp(commandSender).warp();
             }
             case SETWARP -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) {
@@ -122,7 +122,7 @@ public class MainCommand implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
-                CommandWarp.build(commandSender).setWarp(strings[1]);
+                new CommandWarp(commandSender).setWarp(strings[1]);
             }
             case DELETEWARP -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.DELETEWARP)) {
@@ -133,7 +133,7 @@ public class MainCommand implements TabExecutor {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
                 }
-                CommandWarp.build(commandSender).deleteWarp(strings[1]);
+                new CommandWarp(commandSender).deleteWarp(strings[1]);
             }
         }
         return true;
@@ -180,22 +180,22 @@ public class MainCommand implements TabExecutor {
             }
             switch (c) {
                 case TPA -> {
-                    return CommandTeleport.build(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPA);
+                    return new CommandTeleport(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPA);
                 }
                 case TPAHERE -> {
-                    return CommandTeleport.build(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPAHERE);
+                    return new CommandTeleport(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPAHERE);
                 }
                 case TPAACCEPT -> {
-                    return CommandTeleport.build(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAACCEPT);
+                    return new CommandTeleport(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAACCEPT);
                 }
                 case TPAREFUSE -> {
-                    return CommandTeleport.build(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAREFUSE);
+                    return new CommandTeleport(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAREFUSE);
                 }
                 case DELETEHOME -> {
-                    return CommandHome.build(commandSender).getHomeList();
+                    return new CommandHome(commandSender).getHomeList();
                 }
                 case DELETEWARP -> {
-                    return CommandWarp.build(commandSender).getWarpList();
+                    return new CommandWarp(commandSender).getWarpList();
                 }
             }
         }

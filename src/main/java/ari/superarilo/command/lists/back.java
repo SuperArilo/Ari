@@ -17,7 +17,7 @@ public class back implements TabExecutor {
         CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.BACK);
         if(!check.isTheInstructionCorrect()) return false;
         if(check.allCheck()) {
-            CommandBack.build(commandSender).startDo();
+            new CommandBack(commandSender).startDo();
         }
         return true;
     }

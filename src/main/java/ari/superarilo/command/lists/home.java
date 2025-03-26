@@ -18,7 +18,7 @@ public class home implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.HOME);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck()) {
-            CommandHome.build(commandSender).home();
+            new CommandHome(commandSender).home();
         }
         return true;
     }

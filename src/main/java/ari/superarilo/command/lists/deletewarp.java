@@ -17,7 +17,7 @@ public class deletewarp implements TabExecutor {
         CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.DELETEWARP);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandWarp.build(commandSender).deleteWarp(strings[0]);
+            new CommandWarp(commandSender).deleteWarp(strings[0]);
         }
         return true;
     }
@@ -25,6 +25,6 @@ public class deletewarp implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.DELETEHOME.getShow())) return List.of();
-        return CommandWarp.build(commandSender).getWarpList();
+        return new CommandWarp(commandSender).getWarpList();
     }
 }

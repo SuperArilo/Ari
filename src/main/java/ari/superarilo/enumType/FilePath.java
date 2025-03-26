@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum FilePath {
-    Lang("lang","lang/cn.yml"),
+    Lang("lang","lang/[lang].yml"),
     TPA("tpa", "module/tpa/setting.yml"),
     CommandAlias("commandAlias", "module/command-alias.yml"),
     HomeList("homeList", "module/home/home-gui.yml"),

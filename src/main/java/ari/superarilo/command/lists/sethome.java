@@ -19,7 +19,7 @@ public class sethome implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.SETHOME);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandHome.build(commandSender).setHome(strings[0]);
+            new CommandHome(commandSender).setHome(strings[0]);
         }
         return true;
     }

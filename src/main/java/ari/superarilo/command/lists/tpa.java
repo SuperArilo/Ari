@@ -18,7 +18,7 @@ public class tpa implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.TPA);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandTeleport.build(commandSender, strings[0]).tpa();
+            new CommandTeleport(commandSender, strings[0]).tpa();
         }
         return true;
     }
@@ -26,6 +26,6 @@ public class tpa implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TPA.getShow())) return List.of();
-        return CommandTeleport.build(commandSender, strings[0]).getOnlinePlayers(AriCommand.TPA);
+        return new CommandTeleport(commandSender, strings[0]).getOnlinePlayers(AriCommand.TPA);
     }
 }

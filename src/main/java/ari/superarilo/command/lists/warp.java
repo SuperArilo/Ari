@@ -17,7 +17,7 @@ public class warp  implements TabExecutor {
         CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.WARP);
         if(!check.isTheInstructionCorrect()) return false;
         if(check.allCheck()) {
-            CommandWarp.build(commandSender).warp();
+            new CommandWarp(commandSender).warp();
         }
         return true;
     }

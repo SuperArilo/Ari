@@ -19,7 +19,7 @@ public class deletehome implements TabExecutor {
         CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.DELETEHOME);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandHome.build(commandSender).deleteHome(strings[0]);
+            new CommandHome(commandSender).deleteHome(strings[0]);
         }
         return true;
     }
@@ -27,6 +27,6 @@ public class deletehome implements TabExecutor {
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.DELETEHOME.getShow())) return List.of();
-        return CommandHome.build(commandSender).getHomeList();
+        return new CommandHome(commandSender).getHomeList();
     }
 }

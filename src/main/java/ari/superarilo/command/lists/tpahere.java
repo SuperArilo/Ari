@@ -19,14 +19,14 @@ public class tpahere implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.TPAHERE);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandTeleport.build(commandSender, strings[0]).tpahere();
+            new CommandTeleport(commandSender, strings[0]).tpahere();
         }
         return true;
     }
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TPAHERE.getShow())) return List.of();
-        return CommandTeleport.build(commandSender, strings[0]).getOnlinePlayers(AriCommand.TPAHERE);
+        return new CommandTeleport(commandSender, strings[0]).getOnlinePlayers(AriCommand.TPAHERE);
     }
 
 

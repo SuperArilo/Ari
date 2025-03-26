@@ -18,7 +18,7 @@ public class setwarp implements TabExecutor {
         CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.SETWARP);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            CommandWarp.build(commandSender).setWarp(strings[0]);
+            new CommandWarp(commandSender).setWarp(strings[0]);
         }
         return true;
     }

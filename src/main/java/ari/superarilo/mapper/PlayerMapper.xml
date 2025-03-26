@@ -10,12 +10,12 @@
     <update id="update">
         update ${table_prefix}players
         set
-        firstLoginTime = #{serverPlayer.firstLoginTime},
-        lastLoginTime = #{serverPlayer.lastLoginOffTime},
-        totalOnlineTime = #{serverPlayer.totalOnlineTime},
-        namePrefix = #{serverPlayer.namePrefix},
-        nameSuffix = #{serverPlayer.nameSuffix}
-        where playerUUID = #{serverPlayer.playerUUID}
+        first_login_time = #{serverPlayer.firstLoginTime},
+        last_login_off_time = #{serverPlayer.lastLoginOffTime},
+        total_online_time = #{serverPlayer.totalOnlineTime},
+        name_prefix = #{serverPlayer.namePrefix},
+        name_suffix = #{serverPlayer.nameSuffix}
+        where player_uuid = #{serverPlayer.playerUUID}
     </update>
     <select id="selectOne" resultType="ari.superarilo.entity.sql.ServerPlayer">
         select id, player_name, player_uuid, first_login_time, last_login_off_time, total_online_time, name_prefix, name_suffix from ari_players

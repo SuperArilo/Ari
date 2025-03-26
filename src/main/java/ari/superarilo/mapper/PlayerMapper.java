@@ -10,7 +10,7 @@ public interface PlayerMapper extends BaseMapper<ServerPlayer> {
     void save(@Param("serverPlayer") ServerPlayer entity);
 
     @Override
-    void update(@Param("serverPlayer") ServerPlayer entity);
+    boolean update(@Param("serverPlayer") ServerPlayer entity);
 
     @Override
     ServerPlayer selectOne(@Param("playerUUID") String id);

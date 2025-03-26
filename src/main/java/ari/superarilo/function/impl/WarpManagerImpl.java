@@ -17,17 +17,20 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
 
-    private final Player player;
+    private final String playerUUID;
     private final Location location;
 
-    public WarpManagerImpl(Player player) {
-        this.player = player;
-        this.location = player.getLocation();
+    public WarpManagerImpl(String playerUUID) {
+        this.playerUUID = playerUUID;
+        Player player = Bukkit.getPlayer(UUID.fromString(playerUUID));
+        this.location = Objects.requireNonNull(player).getLocation();
     }
 
     @Override
@@ -55,7 +58,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
-                List<String> warpIdList = mapper.getWarpIdList(this.player.getUniqueId().toString());
+                List<String> warpIdList = mapper.getWarpIdList(this.playerUUID);
                 future.complete(warpIdList);
             } catch (Exception e) {
                 future.completeExceptionally(e);
@@ -68,35 +71,54 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
     }
 
     @Override
+    public CompletableFuture<ServerWarp> asyncGetInstance(String id) {
+        CompletableFuture<ServerWarp> future = new CompletableFuture<>();
+        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
+                future.complete(mapper.getWarp(id, this.playerUUID));
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+                Log.error("SqlSession error", e);
+            }
+        });
+        return future;
+    }
+
+    @Override
     public void createInstance(String warpId) {
         Material material = this.checkIsItem(this.location.getBlock().getRelative(BlockFace.DOWN).getType());
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-
+                Player player = Bukkit.getPlayer(UUID.fromString(this.playerUUID));
+                if(player == null) {
+                    Log.error("player: " + this.playerUUID + "is not online");
+                    return;
+                }
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
-                List<String> warpIdList = mapper.getWarpIdList(this.player.getUniqueId().toString());
-                Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(this.player), FilePath.WarpConfig, Integer.class);
-                if(warpIdList.size() >= value && value != -1 && !this.player.isOp()) {
+                List<String> warpIdList = mapper.getWarpIdList(this.playerUUID);
+                Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(player), FilePath.WarpConfig, Integer.class);
+                if(warpIdList.size() >= value && value != -1 && !player.isOp()) {
                     Log.debug("Exceeds the specified quantity");
-                    this.player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
+                    player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
                     i.cancel();
                     return;
                 }
                 if(warpIdList.contains(warpId)) {
-                    this.player.sendMessage(TextTool.setHEXColorText("function.warp.exist", FilePath.Lang, this.player));
+                    player.sendMessage(TextTool.setHEXColorText("function.warp.exist", FilePath.Lang, player));
                     i.cancel();
                     return;
                 }
                 ServerWarp warp = new ServerWarp();
                 warp.setWarpId(warpId);
                 warp.setWarpName(warpId);
-                warp.setCreateBy(this.player.getUniqueId().toString());
+                warp.setCreateBy(this.playerUUID);
                 warp.setLocation(this.location.toString());
                 warp.setShowMaterial(material.name());
 
                 mapper.save(warp);
-                this.player.sendMessage(TextTool.setHEXColorText("function.warp.create-success", FilePath.Lang, this.player));
+                player.sendMessage(TextTool.setHEXColorText("function.warp.create-success", FilePath.Lang, player));
             } catch (Exception e) {
                 Log.error(e.getMessage());
                 i.cancel();
@@ -110,12 +132,17 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
     public void deleteInstance(String warpId) {
         long start = System.currentTimeMillis();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            Player player = Bukkit.getPlayer(UUID.fromString(this.playerUUID));
+            if(player == null) {
+                Log.error("player: " + this.playerUUID + "is not online");
+                return;
+            }
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-               Integer delete = sqlSession.getMapper(ServerWrapMapper.class).delete(warpId, this.player.getUniqueId().toString());
+               Integer delete = sqlSession.getMapper(ServerWrapMapper.class).delete(warpId, player.getUniqueId().toString());
                if(delete == 1){
-                   this.player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
+                   player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
                } else {
-                   this.player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
+                   player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
                }
            } catch (Exception e) {
                Log.error("remove warp fail, id: " + warpId, e);

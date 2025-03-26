@@ -36,7 +36,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        WarpManager.create(this.player)
+        WarpManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     this.data = list;
@@ -114,6 +114,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
                         }
                         case PERMISSION -> {
                             boolean hasPermission = serverWarp.getPermission() == null ||
+                                    serverWarp.getPermission().isEmpty() ||
                                     Ari.instance.permissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
                             yield line.replace(keyType.getKey(), Ari.instance.configManager.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang, String.class));
@@ -140,7 +141,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
             this.pageNum = 1;
             return;
         }
-        WarpManager.create(this.player)
+        WarpManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     this.data = list;
@@ -151,7 +152,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
     @Override
     public void next() {
         this.pageNum++;
-        WarpManager.create(this.player)
+        WarpManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     if (list.isEmpty()) {

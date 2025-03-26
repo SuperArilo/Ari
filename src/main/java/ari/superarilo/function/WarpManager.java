@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 
 public interface WarpManager extends BaseManager<ServerWarp> {
 
-    static WarpManager create(Player player) {
-        return new WarpManagerImpl(player);
+    static WarpManager create(String playerUUID) {
+        return new WarpManagerImpl(playerUUID);
     }
 }

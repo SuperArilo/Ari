@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 
 public interface HomeManager extends BaseManager<PlayerHome> {
 
-    static HomeManager create(Player player) {
-        return new HomeManagerImpl(player);
+    static HomeManager create(String playerUUID) {
+        return new HomeManagerImpl(playerUUID);
     }
 }

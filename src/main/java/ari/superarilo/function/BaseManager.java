@@ -16,6 +16,7 @@ public interface BaseManager<T> {
     CompletableFuture<List<T>> asyncGetList(int pageNum, int pageSize);
 
     CompletableFuture<List<String>> asyncGetIdList();
+    CompletableFuture<T> asyncGetInstance(String id);
 
     void createInstance(String id);
 

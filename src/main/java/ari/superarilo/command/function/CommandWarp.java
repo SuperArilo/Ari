@@ -28,7 +28,7 @@ public class CommandWarp {
 
     public void setWarp(String warpId) {
         if(Ari.instance.formatUtils.checkIdName(warpId)) {
-            WarpManager.create((Player) this.sender).createInstance(warpId);
+            WarpManager.create(((Player) this.sender).getUniqueId().toString()).createInstance(warpId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.warp.id-error", FilePath.Lang));
         }
@@ -36,7 +36,7 @@ public class CommandWarp {
 
     public void deleteWarp(String warpId) {
         if(Ari.instance.formatUtils.checkIdName(warpId)) {
-            WarpManager.create((Player) this.sender).deleteInstance(warpId);
+            WarpManager.create(((Player) this.sender).getUniqueId().toString()).deleteInstance(warpId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
         }
@@ -45,7 +45,7 @@ public class CommandWarp {
     public List<String> getWarpList() {
         Player player = (Player) this.sender;
         if(Ari.instance.permissionUtils.hasPermission(player, AriCommand.DELETEWARP.getPermission())) {
-            CompletableFuture<List<String>> future = WarpManager.create(player).asyncGetIdList();
+            CompletableFuture<List<String>> future = WarpManager.create(player.getUniqueId().toString()).asyncGetIdList();
             try {
                 List<String> list = future.get();
                 Collections.sort(list);

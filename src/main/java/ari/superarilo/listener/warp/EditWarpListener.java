@@ -69,7 +69,7 @@ public class EditWarpListener implements Listener {
             event.setCancelled(true);
 
             ServerWarp serverWarp = (ServerWarp) holder.getMeta();
-            WarpManager warpManager = WarpManager.create(player);
+            WarpManager warpManager = WarpManager.create(serverWarp.getCreateBy());
             switch (type) {
                 case REBACK -> {
                     inventory.close();

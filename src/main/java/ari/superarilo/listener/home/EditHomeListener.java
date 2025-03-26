@@ -59,7 +59,7 @@ public class EditHomeListener implements Listener {
             event.setCancelled(true);
 
             PlayerHome home = (PlayerHome) holder.getMeta();
-            HomeManager homeManager = HomeManager.create(player);
+            HomeManager homeManager = HomeManager.create(home.getPlayerUUID());
             switch (type) {
                 case REBACK -> {
                     inventory.close();

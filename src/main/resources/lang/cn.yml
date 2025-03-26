@@ -65,7 +65,7 @@ function:
     id-error: 'warp的id不满足'
     exist: '已存在相同ID的地标'
     exceeds: '超出数量！'
-    not-found: 'warp的id错误或者找不到'
+    not-found: 'warp的id错误、找不到或者已被删除'
     not-enough-money: '你没有足够的金钱传送到该地标'
   deletewarp:
     success: '删除成功'

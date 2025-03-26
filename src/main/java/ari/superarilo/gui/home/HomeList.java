@@ -38,7 +38,7 @@ public class HomeList extends BasePageGui<PlayerHome> {
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        HomeManager.create(this.player)
+        HomeManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     this.data = list;
@@ -106,7 +106,7 @@ public class HomeList extends BasePageGui<PlayerHome> {
             this.pageNum = 1;
             return;
         }
-        HomeManager.create(this.player)
+        HomeManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     this.data = list;
@@ -116,7 +116,7 @@ public class HomeList extends BasePageGui<PlayerHome> {
     @Override
     public void next() {
         this.pageNum++;
-        HomeManager.create(this.player)
+        HomeManager.create(this.player.getUniqueId().toString())
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     if(list.isEmpty()) {

@@ -1,0 +1,80 @@
+base:
+  page-change:
+    none-prev: 'This is already the first page'
+    none-next: 'This is already the last page'
+  on-error: '&2An error occurred during server execution. Please contact administrator'
+  yes_re: '&aYes'
+  no_re: '&2No'
+  on-edit:
+    cancel: 'Operation cancelled!'
+    title: '&7Please enter new content'
+    sub-title: '&6cancel &7to abort'
+    rename:
+      name-error: 'Invalid name format'
+      name-too-long: 'Name is too long'
+    permission:
+      permission-error: 'Permission node does not meet requirements'
+    cost:
+      format-error: 'Invalid number format'
+  save:
+    done: '&aSaved successfully'
+    ing: '&7Saving...'
+    error: '&4Save failed. Please contact administrator'
+  permission:
+    no-permission: '&4No permission'
+teleport:
+  ing: 'Teleporting! Please do not move...'
+  success: 'Teleportation successful!'
+  break: 'Teleportation failed!'
+  unable-player: 'Player is offline or does not exist'
+  cooling: 'Teleportation is cooling down...'
+  none-location: 'No previously saved location'
+  costed: 'This teleportation cost [costed]'
+  again: 'You have already sent a teleport request'
+function:
+  public:
+    agree: '&a[Agree]'
+    center: '&for'
+    refuse: '&c[Decline]'
+    not-player: 'This command can only be used in-game!'
+    fail: 'Command missing parameters or incorrect input!'
+  tpa:
+    again: 'You have already sent a request to [TpaBeSender]'
+    send-message: 'Teleport request sent to player...'
+    get-message: '&6Player &a[TpaSender] &6wants to teleport to you'
+    agree: '&aYou have accepted this teleport request'
+    been-done: 'This request has been processed or does not exist!'
+    refuse-success: 'Successfully declined!'
+    refused: '&6Player &a[TpaBeSender] &6declined your teleport request'
+    error: '&4Teleportation error'
+  reload:
+    doing: '&6Reloading plugin...'
+    success: '&2Plugin reloaded successfully!'
+  home:
+    create-success: 'Home created successfully!'
+    id-error: 'Invalid home ID format'
+    exceeds: 'Maximum limit exceeded!'
+    exist: 'Home with same ID already exists'
+    delete-success: 'Successfully deleted'
+    not-found: 'Home ID does not exist'
+  warp:
+    no-permission-teleport: 'You dont have permission to teleport to this warp'
+    no-permission-edit: 'You dont have permission to edit this warp'
+    create-success: 'Warp created successfully!'
+    delete-success: 'Successfully deleted'
+    id-error: 'Invalid warp ID format'
+    exist: 'Warp with same ID already exists'
+    exceeds: 'Maximum limit exceeded!'
+    not-found: 'Invalid warp ID or warp does not exist'
+    not-enough-money: 'You dont have enough money to teleport to this warp'
+  deletewarp:
+    success: 'Successfully deleted'
+    none: 'Deletion failed. Please contact administrator'
+  unknown: '&4Unknown command. Please try again'
+server:
+  message:
+    on-first-login: '&aWelcome &6%player_name% &ato our server!'
+    on-login: '&7Player &6%player_name% &7has joined the server!'
+    on-leave: '&7Player &6%player_name% &7has left the server!'
+debug:
+  on-open: 'Debug mode is enabled'

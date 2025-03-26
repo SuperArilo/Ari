@@ -155,8 +155,8 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                Integer update = sqlSession.getMapper(PlayerHomeMapper.class).update(instance);
-                if(update == 1) {
+                boolean update = sqlSession.getMapper(PlayerHomeMapper.class).update(instance);
+                if(update) {
                     future.complete(true);
                 } else {
                     future.complete(false);

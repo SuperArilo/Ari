@@ -8,13 +8,15 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 @Mapper
-public interface PlayerHomeMapper  {
+public interface PlayerHomeMapper extends BaseMapper<ServerHome>  {
     List<ServerHome> getHomeList(@Param("playerUUID") String playerUUID,
                                  @Param("page") Page page);
     List<String> getHomeIdList(@Param("playerUUID") String playerUUID);
     ServerHome getHome(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
     boolean exist(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
+    @Override
     void save(@Param("serverHome") ServerHome serverHome);
     Integer delete(@Param("home_id") String homeId, @Param("playerUUID") String playerUUID);
-    Integer update(@Param("serverHome") ServerHome serverHome);
+    @Override
+    boolean update(@Param("serverHome") ServerHome serverHome);
 }

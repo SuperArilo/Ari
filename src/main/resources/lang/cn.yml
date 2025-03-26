@@ -71,3 +71,8 @@ function:
     success: '删除成功'
     none: '删除失败，尝试联系管理员'
   unknown: '&4未知指令，请重新输入'
+server:
+  message:
+    on-first-login: '&a欢迎玩家 &6%player_name% &a加入我们的服务器！'
+    on-login: '&7玩家 &6%player_name% &7加入了服务器！'
+    on-leave: '&7玩家 &6%player_name% &7离开了服务器！'

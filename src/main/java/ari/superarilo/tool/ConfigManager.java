@@ -34,6 +34,9 @@ public class ConfigManager {
         FileConfiguration pluginConfig = Ari.instance.getConfig();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
+            if(filePath.equals(FilePath.Lang)) {
+                path = path.replace("[lang]", Ari.instance.getConfig().getString("lang", "cn"));
+            }
             File file = new File(Ari.instance.getDataFolder(), path);
             if (!file.exists()) {
                 Ari.instance.saveResource(path, true);

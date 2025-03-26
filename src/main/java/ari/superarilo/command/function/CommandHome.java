@@ -3,7 +3,7 @@ package ari.superarilo.command.function;
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.HomeManager;
+import ari.superarilo.function.impl.HomeManager;
 import ari.superarilo.gui.home.HomeList;
 import ari.superarilo.tool.TextTool;
 import org.bukkit.command.CommandSender;

@@ -4,7 +4,7 @@ import ari.superarilo.Ari;
 import ari.superarilo.dto.Page;
 import ari.superarilo.entity.sql.ServerHome;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.HomeManager;
+import ari.superarilo.function.BaseManager;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;
@@ -22,12 +22,12 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
+public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerHome> {
 
     private final String playerUUID;
     private final Location location;
 
-    public HomeManagerImpl(String playerUUID) {
+    private HomeManager(String playerUUID) {
         this.playerUUID = playerUUID;
         Player player = Bukkit.getPlayer(UUID.fromString(playerUUID));
         this.location = Objects.requireNonNull(player).getLocation();
@@ -172,4 +172,7 @@ public class HomeManagerImpl extends BaseFunctionImpl implements HomeManager {
         return future;
     }
 
+    public static HomeManager create(String playerUUID) {
+        return new HomeManager(playerUUID);
+    }
 }

@@ -10,6 +10,6 @@ public class ServerPlayer {
     private Long firstLoginTime = 0L;
     private Long lastLoginOffTime = 0L;
     private Long totalOnlineTime = 0L;
-    private String namePrefix;
-    private String nameSuffix;
+    private String namePrefix = "";
+    private String nameSuffix = "";
 }

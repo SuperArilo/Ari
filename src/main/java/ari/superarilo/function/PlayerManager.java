@@ -9,15 +9,12 @@ import org.apache.ibatis.session.SqlSession;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerManager implements BaseManager<ServerPlayer> {
 
-    private static final Logger log = LoggerFactory.getLogger(PlayerManager.class);
     private final Player player;
     private final OfflinePlayer offlinePlayer;
 

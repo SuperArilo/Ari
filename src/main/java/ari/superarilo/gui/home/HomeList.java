@@ -26,22 +26,24 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 
-public class HomeList extends BasePageGui<List<PlayerHome>> {
+public class HomeList extends BasePageGui<PlayerHome> {
 
     private final HomeListGUI gui;
 
     public HomeList(Player player) {
         super(player);
         this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
-        int size = this.gui.getRow() * 9;
-        this.setPageSize(size);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), size, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.data = this.requestData();
+        this.setPageSize(this.gui.getDataItems().getSlot().size());
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        HomeManager.create(this.player)
+                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
+                .thenAccept(list -> {
+                    this.data = list;
+                    this.updateGui(this.gui.getDataItems().getSlot());
+                });
     }
 
     @Override
@@ -96,15 +98,6 @@ public class HomeList extends BasePageGui<List<PlayerHome>> {
     }
 
     @Override
-    public List<PlayerHome> requestData() {
-        Future<List<PlayerHome>> future = HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-    @Override
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
@@ -113,22 +106,27 @@ public class HomeList extends BasePageGui<List<PlayerHome>> {
             this.pageNum = 1;
             return;
         }
-        this.data = this.requestData();
-        this.renderDataItem();
+        HomeManager.create(this.player)
+                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
+                .thenAccept(list -> {
+                    this.data = list;
+                    this.updateGui(this.gui.getDataItems().getSlot());
+                });
     }
     @Override
     public void next() {
         this.pageNum++;
-        List<PlayerHome> homes = this.requestData();
-        if(homes.isEmpty()) {
-            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
-            Log.debug("home list: 最后一页");
-            this.pageNum--;
-        } else {
-            this.data = homes;
-            this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
-            this.renderDataItem();
-        }
+        HomeManager.create(this.player)
+                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
+                .thenAccept(list -> {
+                    if(list.isEmpty()) {
+                        this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
+                        Log.debug("home list: 最后一页");
+                        this.pageNum--;
+                    } else {
+                        this.data = list;
+                        this.updateGui(this.gui.getDataItems().getSlot());
+                    }
+                });
     }
-
 }

@@ -29,11 +29,6 @@ public class HomeEditor extends BaseGui {
     }
 
     @Override
-    public void init() {
-
-    }
-
-    @Override
     protected Mask renderMasks() {
         return this.gui.getMask();
     }

@@ -22,11 +22,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-public class WarpList extends BasePageGui<List<ServerWarp>> {
+public class WarpList extends BasePageGui<ServerWarp> {
 
     private final WarpListGUI gui;
 
@@ -36,10 +34,14 @@ public class WarpList extends BasePageGui<List<ServerWarp>> {
                 Ari.instance.configManager.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
-        int size = this.gui.getRow() * 9;
-        this.pageSize = size;
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), size, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        this.data = this.requestData();
+        this.pageSize = this.gui.getDataItems().getSlot().size();
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        WarpManager.create(this.player)
+                .asyncGetList(this.pageNum, this.pageSize)
+                .thenAccept(list -> {
+                    this.data = list;
+                    this.updateGui(this.gui.getDataItems().getSlot());
+                });
     }
 
     @Override
@@ -53,7 +55,7 @@ public class WarpList extends BasePageGui<List<ServerWarp>> {
     }
 
     @Override
-    public void renderDataItem() {
+    protected void renderDataItem() {
         Log.debug(Level.INFO, "---------- render warp list ----------");
         long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
@@ -130,16 +132,6 @@ public class WarpList extends BasePageGui<List<ServerWarp>> {
     }
 
     @Override
-    public List<ServerWarp> requestData() {
-        CompletableFuture<List<ServerWarp>> future = WarpManager.create(this.player).asyncGetList(this.pageNum, this.pageSize);
-        try {
-            return future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
@@ -148,22 +140,28 @@ public class WarpList extends BasePageGui<List<ServerWarp>> {
             this.pageNum = 1;
             return;
         }
-        this.data = this.requestData();
-        this.renderDataItem();
+        WarpManager.create(this.player)
+                .asyncGetList(this.pageNum, this.pageSize)
+                .thenAccept(list -> {
+                    this.data = list;
+                    this.updateGui(this.gui.getDataItems().getSlot());
+                });
     }
 
     @Override
     public void next() {
         this.pageNum++;
-        List<ServerWarp> serverWarps = this.requestData();
-        if (serverWarps.isEmpty()) {
-            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
-            Log.debug("warp list: 最后一页");
-            this.pageNum--;
-        } else {
-            this.data = this.requestData();
-            this.cleanRenderDataItem(this.gui.getDataItems().getSlot());
-            this.renderDataItem();
-        }
+        WarpManager.create(this.player)
+                .asyncGetList(this.pageNum, this.pageSize)
+                .thenAccept(list -> {
+                    if (list.isEmpty()) {
+                        this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
+                        Log.debug("warp list: 最后一页");
+                        this.pageNum--;
+                    } else {
+                        this.data = list;
+                        this.updateGui(this.gui.getDataItems().getSlot());
+                    }
+                });
     }
 }

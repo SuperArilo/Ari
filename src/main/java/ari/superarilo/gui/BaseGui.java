@@ -28,7 +28,6 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
-        this.init();
         Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> {
             this.player.openInventory(this.inventory);
             Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
@@ -94,10 +93,6 @@ public abstract class BaseGui {
         });
     }
 
-    /**
-     * 初始化方法
-     */
-    public abstract void init();
     /**
      * 渲染gui的mask-item方法
      * @return Mask类

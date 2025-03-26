@@ -72,6 +72,16 @@ function:
     none: '删除失败，尝试联系管理员'
   unknown: '&4未知指令，请重新输入'
 server:
+  time:
+    tips: '将时间调整为 &6[time]'
+    name:
+      sunrise: '黎明'
+      day: '白天'
+      noon: '正午'
+      sunset: '黄昏'
+      night: '夜晚'
+      midnight: '午夜'
+      daylight: '破晓时刻'
   message:
     on-first-login: '&a欢迎玩家 &6%player_name% &a加入我们的服务器！'
     on-login: '&7玩家 &6%player_name% &7加入了服务器！'

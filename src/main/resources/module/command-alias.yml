@@ -31,3 +31,6 @@ setwarp:
 deletewarp:
   enable: true
   tab-complete: true
+time:
+  enable: true
+  tab-complete: true

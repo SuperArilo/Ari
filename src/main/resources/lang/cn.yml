@@ -74,6 +74,7 @@ function:
 server:
   time:
     tips: '将时间调整为 &6[time]'
+    skin-to-night: '将加速跳过夜晚'
     name:
       sunrise: '黎明'
       day: '白天'

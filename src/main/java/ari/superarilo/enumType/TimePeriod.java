@@ -11,7 +11,8 @@ public enum TimePeriod {
     SUNSET(12000, 13000, "sunset"),
     NIGHT(13000, 23000, "night"),
     MIDNIGHT(18000, 18001, "midnight"),
-    DAYLIGHT(23000, 24000, "daylight");
+    DAYLIGHT(23000, 24000, "daylight"),
+    WAKEUP(23460,23460, "wakeUp");
     private final long start;
     private final long end;
     private final String description;

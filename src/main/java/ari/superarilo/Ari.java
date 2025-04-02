@@ -6,6 +6,7 @@ import ari.superarilo.listener.PlayerListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.listener.player.OnPlayerListener;
+import ari.superarilo.listener.skipSleep.PlayerSkipNight;
 import ari.superarilo.listener.teleport.RecordLastLocationListener;
 import ari.superarilo.listener.warp.EditWarpListener;
 import ari.superarilo.listener.warp.WarpListListener;
@@ -76,5 +77,6 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new WarpListListener(), this);
         Bukkit.getPluginManager().registerEvents(new EditWarpListener(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerSkipNight(), this);
     }
 }

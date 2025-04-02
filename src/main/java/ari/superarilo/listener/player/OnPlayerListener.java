@@ -3,12 +3,9 @@ package ari.superarilo.listener.player;
 import ari.superarilo.Ari;
 import ari.superarilo.entity.sql.ServerPlayer;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.TimePeriod;
 import ari.superarilo.function.PlayerManager;
-import ari.superarilo.function.TimeManager;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
-import io.papermc.paper.event.player.PlayerDeepSleepEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -69,30 +66,4 @@ public class OnPlayerListener implements Listener {
         });
     }
 
-    @EventHandler
-    public void skipNight(PlayerBedEnterEvent event) {
-        Player player = event.getPlayer();
-        TimeManager manager = TimeManager.build(player.getWorld());
-        if (event.getBedEnterResult().equals(PlayerBedEnterEvent.BedEnterResult.OK)) {
-            manager.timeSet(
-                    TimePeriod.WAKEUP.getEnd(),
-                    1L,
-                    50L,
-                    (s) -> {
-                        if(s != null) {
-                            player.sendActionBar(TextTool.setHEXColorText(manager.tickToTime(s)));
-                        }
-                    });
-        }
-    }
-
-    @EventHandler
-    public void deepSleep(PlayerDeepSleepEvent event) {
-        event.setCancelled(true);
-    }
-
-    @EventHandler
-    public void playerGetPup(PlayerBedLeaveEvent event) {
-        Log.debug("player get up tick: " + event.getPlayer().getWorld().getTime());
-    }
 }

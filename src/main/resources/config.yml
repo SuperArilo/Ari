@@ -15,6 +15,9 @@ data:
   connection-timeout: 5000
   keepalive-time: 0
 server:
+  skip-night:
+    enable: true
+    tick-increment: 10
   message:
     on-first-login: true
     on-login: true

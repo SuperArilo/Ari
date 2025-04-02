@@ -118,24 +118,22 @@ public class PlayerSkipNight implements Listener {
         this.timeManager.timeAutomaticallyPasses(s -> {
             if (this.titleTask != null) return;
             this.titleTask = Bukkit.getAsyncScheduler()
-                    .runDelayed(Ari.instance, i -> world.getPlayers().forEach(instance -> {
-                        Bukkit.getGlobalRegionScheduler().run(Ari.instance, task -> {
-                            if (world.getPlayers().stream().filter(LivingEntity::isSleeping).count() == world.getPlayerCount()) {
-                                this.cancelTimeManager();
-                                this.cancelTitleTask();
-                                return;
-                            }
-                            if (!instance.isSleeping() || this.timeManager == null) return;
-                            Title title = Title.title(
-                                    TextTool.setHEXColorText(this.timeManager.tickToTime(s)),
-                                    TextTool.setHEXColorText(""),
-                                    Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ofSeconds(1))
-                            );
-                            instance.showTitle(title);
-                            this.titleTask.cancel();
-                            this.titleTask = null;
-                        });
-                    }), 1, TimeUnit.SECONDS);
+                    .runDelayed(Ari.instance, i -> world.getPlayers().forEach(instance -> Bukkit.getGlobalRegionScheduler().run(Ari.instance, task -> {
+                        if (world.getPlayers().stream().filter(LivingEntity::isSleeping).count() == world.getPlayerCount()) {
+                            this.cancelTimeManager();
+                            this.cancelTitleTask();
+                            return;
+                        }
+                        if (!instance.isSleeping() || this.timeManager == null) return;
+                        Title title = Title.title(
+                                TextTool.setHEXColorText(this.timeManager.tickToTime(s)),
+                                TextTool.setHEXColorText(""),
+                                Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ofSeconds(1))
+                        );
+                        instance.showTitle(title);
+                        this.titleTask.cancel();
+                        this.titleTask = null;
+                    })), 1, TimeUnit.SECONDS);
             if (s >= TimePeriod.WAKEUP.getEnd()) {
                 world.setStorm(false);
                 world.setThundering(false);

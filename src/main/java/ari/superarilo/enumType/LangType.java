@@ -8,7 +8,8 @@ public enum LangType {
     TPAHERESENDER("[TpaHereSender]"),
     TPABESENDER("[TpaBeSender]"),
     COSTED("[costed]"),
-    TIME("[time]");
+    TIME("[time]"),
+    PERIOD("[period]");
     private final String type;
 
     LangType(String type) {

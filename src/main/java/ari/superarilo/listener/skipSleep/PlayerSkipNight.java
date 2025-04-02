@@ -13,8 +13,8 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerBedEnterEvent;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -23,18 +23,11 @@ import java.util.concurrent.TimeUnit;
 public class PlayerSkipNight implements Listener {
 
     private TimeManager timeManager;
-    private ScheduledTask titleTask = null;
-    private final long tickIncrement = Ari.instance.getConfig().getLong("server.skip-night.tick-increment", 5L);
-    private final boolean skipNightEnable = Ari.instance.getConfig().getBoolean("server.skip-night.enable", false);
-
-    @EventHandler
-    public void playerIntoBed(PlayerBedEnterEvent event) {
-
-    }
+    private ScheduledTask titleTask;
 
     @EventHandler
     public void deepSleep(PlayerDeepSleepEvent event) {
-        if (!this.skipNightEnable) return;
+        if (!this.getSkipNightEnable()) return;
         event.setCancelled(true);
         Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
@@ -51,7 +44,7 @@ public class PlayerSkipNight implements Listener {
                 if(this.timeManager == null) {
                     this.createTask(world);
                 } else {
-                    this.timeManager.setAddTick(this.timeManager.getAddTick() + this.tickIncrement);
+                    this.timeManager.setAddTick(this.timeManager.getAddTick() + this.getTickIncrement());
                 }
             }
         });
@@ -59,7 +52,7 @@ public class PlayerSkipNight implements Listener {
 
     @EventHandler
     public void playerGetup(PlayerBedLeaveEvent event) {
-        if (!this.skipNightEnable) return;
+        if (!this.getSkipNightEnable()) return;
         Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
             if(world.getTime() >= TimePeriod.WAKEUP.getEnd()) {
@@ -72,7 +65,7 @@ public class PlayerSkipNight implements Listener {
                     this.cancelTimeManager();
                     this.cancelTitleTask();
                 } else {
-                    this.timeManager.setAddTick(this.timeManager.getAddTick() - this.tickIncrement);
+                    this.timeManager.setAddTick(this.timeManager.getAddTick() - this.getTickIncrement());
                 }
             } else {
                 this.cancelTitleTask();
@@ -82,6 +75,14 @@ public class PlayerSkipNight implements Listener {
                 }
             }
         });
+    }
+
+    @EventHandler
+    public void whenServerShutDown(PluginDisableEvent event) {
+        Log.debug("server is shutdown now");
+        this.cancelTitleTask();
+        this.cancelTimeManager();
+        Log.debug("cancel all skip night tasks");
     }
 
     /**
@@ -114,7 +115,7 @@ public class PlayerSkipNight implements Listener {
     }
 
     private void createTask(@NotNull World world) {
-        this.timeManager = TimeManager.build(world, 1L,this.tickIncrement);
+        this.timeManager = TimeManager.build(world, 1L, this.getTickIncrement());
         this.timeManager.timeAutomaticallyPasses(s -> {
             if (this.titleTask != null) return;
             this.titleTask = Bukkit.getAsyncScheduler()
@@ -143,5 +144,13 @@ public class PlayerSkipNight implements Listener {
 
     private long getSleepPlayers(World world) {
         return world.getPlayers().stream().filter(LivingEntity::isSleeping).count();
+    }
+
+    private long getTickIncrement() {
+        return Ari.instance.getConfig().getLong("server.skip-night.tick-increment", 5L);
+    }
+
+    private boolean getSkipNightEnable() {
+        return Ari.instance.getConfig().getBoolean("server.skip-night.enable", false);
     }
 }

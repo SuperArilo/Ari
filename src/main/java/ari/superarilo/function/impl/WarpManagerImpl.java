@@ -101,7 +101,7 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
 
                 boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.warp." + warpIdList.size() + 1) || player.isOp();
 
-                if(hasPermission) {
+                if(!hasPermission) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
                     i.cancel();

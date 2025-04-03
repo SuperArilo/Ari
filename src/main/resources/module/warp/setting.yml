@@ -1,9 +1,6 @@
 main:
   permission: true
   cost: true
-  quantity:
-    owner: -1
-    default: 5
   name-length: 12
   name-check:
     - 'fuck'

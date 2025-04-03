@@ -95,8 +95,8 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
                 List<String> homeIdList = mapper.getHomeIdList(player.getUniqueId().toString());
-                Integer value = Ari.instance.configManager.getValue("main.quantity." + Ari.instance.permissionUtils.getPlayerGroup(player), FilePath.HomeConfig, Integer.class);
-                if(homeIdList.size() >= value && value != -1) {
+                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.home." + homeIdList.size() + 1) || player.isOp();
+                if(hasPermission) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
                     i.cancel();

@@ -1,10 +1,10 @@
-package ari.superarilo.function.impl;
+package ari.superarilo.function;
 
 import ari.superarilo.Ari;
 import ari.superarilo.dto.Page;
 import ari.superarilo.entity.sql.ServerHome;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.BaseManager;
+import ari.superarilo.function.impl.BaseFunctionImpl;
 import ari.superarilo.mapper.PlayerHomeMapper;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;

@@ -44,7 +44,7 @@ public class PlayerSkipNight implements Listener {
                 if(this.timeManager == null) {
                     this.createTask(world);
                 } else {
-                    this.timeManager.setAddTick(this.timeManager.getAddTick() + this.getTickIncrement());
+                    this.timeManager.setAddTick(Math.min(this.timeManager.getAddTick() + this.getTickIncrement(), this.getMaxTickIncrement()));
                 }
             }
         });
@@ -150,6 +150,10 @@ public class PlayerSkipNight implements Listener {
 
     private long getTickIncrement() {
         return Ari.instance.getConfig().getLong("server.skip-night.tick-increment", 5L);
+    }
+
+    private long getMaxTickIncrement() {
+        return Ari.instance.getConfig().getLong("server.skip-night.max-tick-increment", 100L);
     }
 
     private boolean getSkipNightEnable() {

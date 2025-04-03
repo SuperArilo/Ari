@@ -52,8 +52,7 @@ public class OnPlayerListener implements Listener {
                 ServerPlayer serverPlayer = manager.asyncGetInstance(player.getUniqueId().toString()).get();
                 long l = System.currentTimeMillis();
                 if(serverPlayer == null) {
-                    Log.warning("player: " + player.getUniqueId() + " data is null, rebuilding");
-                    manager.createInstance(player.getUniqueId().toString());
+                    Log.warning("player: " + player.getUniqueId() + " data is null, exiting");
                     return;
                 }
                 serverPlayer.setLastLoginOffTime(l);

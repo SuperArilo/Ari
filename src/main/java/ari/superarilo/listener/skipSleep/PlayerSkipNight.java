@@ -93,6 +93,7 @@ public class PlayerSkipNight implements Listener {
     }
 
     private void cancelTitleTask() {
+        if (this.titleScheduledTask == null) return;
         this.titleScheduledTask.cancel();
         this.titleScheduledTask = null;
     }

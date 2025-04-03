@@ -6,24 +6,26 @@ import ari.superarilo.function.TimeManager;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import io.papermc.paper.event.player.PlayerDeepSleepEvent;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
-import net.kyori.adventure.title.Title;
+import io.papermc.paper.threadedregions.scheduler.EntityScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.Duration;
-import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 
 public class PlayerSkipNight implements Listener {
 
     private TimeManager timeManager;
-    private ScheduledTask titleTask;
+    private final Map<Player, EntityScheduler> entitySchedulerMap = new ConcurrentHashMap<>();
 
     @EventHandler
     public void deepSleep(PlayerDeepSleepEvent event) {
@@ -32,11 +34,9 @@ public class PlayerSkipNight implements Listener {
         Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
             boolean pc = this.playerCondition(world);
-
             //当服务器人数为1人时候或者所有人睡觉
-            if(pc) {
+            if(pc && world.getTime() < TimePeriod.WAKEUP.getEnd()) {
                 this.cancelTimeManager();
-                this.cancelTitleTask();
                 world.setTime(TimePeriod.WAKEUP.getEnd());
                 world.setStorm(false);
                 world.setThundering(false);
@@ -53,22 +53,20 @@ public class PlayerSkipNight implements Listener {
     @EventHandler
     public void playerGetup(PlayerBedLeaveEvent event) {
         if (!this.getSkipNightEnable()) return;
+        Log.debug("title entityScheduler count: " + this.entitySchedulerMap.size());
         Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
             if(world.getTime() >= TimePeriod.WAKEUP.getEnd()) {
                 this.cancelTimeManager();
-                this.cancelTitleTask();
                 return;
             }
             if(this.timeManager != null) {
                 if(this.getSleepPlayers(world) == 0) {
                     this.cancelTimeManager();
-                    this.cancelTitleTask();
                 } else {
                     this.timeManager.setAddTick(this.timeManager.getAddTick() - this.getTickIncrement());
                 }
             } else {
-                this.cancelTitleTask();
                 if (this.getSleepPlayers(world) == 0) return;
                 if(!this.playerCondition(world)) {
                     this.createTask(world);
@@ -80,9 +78,10 @@ public class PlayerSkipNight implements Listener {
     @EventHandler
     public void whenServerShutDown(PluginDisableEvent event) {
         Log.debug("server is shutdown now");
-        this.cancelTitleTask();
         this.cancelTimeManager();
         Log.debug("cancel all skip night tasks");
+        this.entitySchedulerMap.clear();
+        Log.debug("cleaned all title task");
     }
 
     /**
@@ -94,12 +93,6 @@ public class PlayerSkipNight implements Listener {
         this.timeManager = null;
     }
 
-    private void cancelTitleTask() {
-        if(this.titleTask != null) {
-            this.titleTask.cancel();
-            this.titleTask = null;
-        }
-    }
 
     /**
      * 判断对应世界里玩家数量是否满足skip夜晚的条件
@@ -116,28 +109,37 @@ public class PlayerSkipNight implements Listener {
 
     private void createTask(@NotNull World world) {
         this.timeManager = TimeManager.build(world, 1L, this.getTickIncrement());
+        List<Player> players = world.getPlayers();
         this.timeManager.timeAutomaticallyPasses(s -> {
-            if (this.titleTask != null) return;
-            this.titleTask = Bukkit.getAsyncScheduler()
-                    .runDelayed(Ari.instance, i -> world.getPlayers().forEach(instance -> Bukkit.getGlobalRegionScheduler().run(Ari.instance, task -> {
-                        if (world.getPlayers().stream().filter(LivingEntity::isSleeping).count() == world.getPlayerCount()) {
-                            this.cancelTimeManager();
-                            this.cancelTitleTask();
-                            return;
+            players.forEach(instance -> {
+                long sleepPlayers = this.getSleepPlayers(world);
+                int playerCount = world.getPlayerCount();
+                if (sleepPlayers == playerCount) {
+                    this.cancelTimeManager();
+                    if (sleepPlayers == 1 && playerCount == 1) {
+                        //当服务器存在两名玩家，其中一个玩家已经深度睡眠，但另一个玩家突然退出游戏。重新call一个深度睡眠Event
+                        Bukkit.getPluginManager().callEvent(new PlayerDeepSleepEvent(instance));
+                    }
+                    return;
+                }
+                if (!instance.isSleeping()) return;
+                EntityScheduler entityScheduler = this.entitySchedulerMap.get(instance);
+                if (entityScheduler == null) {
+                    entityScheduler = instance.getScheduler();
+                    this.entitySchedulerMap.put(instance, entityScheduler);
+                    entityScheduler.runDelayed(Ari.instance, i -> {
+                        if(this.timeManager != null) {
+                            instance.showTitle(TextTool.setPlayerTitle(this.timeManager.tickToTime(s), "", 0L, 1000L, 1000L));
                         }
-                        if (!instance.isSleeping() || this.timeManager == null) return;
-                        Title title = Title.title(
-                                TextTool.setHEXColorText(this.timeManager.tickToTime(s)),
-                                TextTool.setHEXColorText(""),
-                                Title.Times.times(Duration.ZERO, Duration.ofSeconds(1), Duration.ofSeconds(1))
-                        );
-                        instance.showTitle(title);
-                        this.titleTask.cancel();
-                        this.titleTask = null;
-                    })), 1, TimeUnit.SECONDS);
+                        this.entitySchedulerMap.remove(instance);
+                    }, () -> this.entitySchedulerMap.remove(instance), 20L);
+                }
+            });
             if (s >= TimePeriod.WAKEUP.getEnd()) {
-                world.setStorm(false);
-                world.setThundering(false);
+                Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
+                    world.setStorm(false);
+                    world.setThundering(false);
+                });
             }
         });
     }

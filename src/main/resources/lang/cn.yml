@@ -75,7 +75,7 @@ server:
   time:
     tips: '将时间调整为 &6[time]'
     not-exist-period: '不存在的时间段: &3[period]'
-    skin-to-night: '将加速跳过夜晚'
+    skip-to-night: '将加速跳过夜晚'
     name:
       sunrise: '黎明'
       day: '白天'

@@ -3,6 +3,7 @@ package ari.superarilo;
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.function.PlayerTabManager;
+import ari.superarilo.listener.OnPluginReloadListener;
 import ari.superarilo.listener.PlayerListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
@@ -83,5 +84,6 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EditWarpListener(), this);
         Bukkit.getPluginManager().registerEvents(new OnPlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSkipNight(), this);
+        Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
     }
 }

@@ -5,11 +5,13 @@ import ari.superarilo.command.function.CommandBack;
 import ari.superarilo.command.function.CommandHome;
 import ari.superarilo.command.function.CommandTeleport;
 import ari.superarilo.command.function.CommandWarp;
+import ari.superarilo.dto.event.CustomPluginReloadEvent;
 import ari.superarilo.function.CommandCheck;
 import ari.superarilo.function.impl.CommandCheckImpl;
 import ari.superarilo.enumType.AriCommand;
 import ari.superarilo.enumType.FilePath;
 import ari.superarilo.tool.TextTool;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -44,6 +46,7 @@ public class MainCommand implements TabExecutor {
                     Ari.instance.SQLInstance.reconnect();
                 }
                 Ari.instance.commandAlias.reloadAllAlias();
+                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent());
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.success", FilePath.Lang));
             }
             case TPA -> {

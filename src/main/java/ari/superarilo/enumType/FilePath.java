@@ -12,7 +12,8 @@ public enum FilePath {
     HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
     WarpList("warpList", "module/warp/warp-gui.yml"),
     WarpConfig("warpConfig", "module/warp/setting.yml"),
-    WarpEditor("warpEditor", "module/warp/edit-warp-gui.yml");
+    WarpEditor("warpEditor", "module/warp/edit-warp-gui.yml"),
+    FunctionConfig("functionConfig", "module/function/setting.yml");
 
     private final String name;
     private final String path;

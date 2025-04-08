@@ -4,7 +4,6 @@ import ari.superarilo.Ari;
 import ari.superarilo.dto.Page;
 import ari.superarilo.entity.sql.ServerWarp;
 import ari.superarilo.enumType.FilePath;
-import ari.superarilo.function.WarpManager;
 import ari.superarilo.mapper.ServerWrapMapper;
 import ari.superarilo.tool.Log;
 import ari.superarilo.tool.SQLInstance;
@@ -22,18 +21,17 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
+public class WarpManager extends BaseFunctionImpl {
 
     private final String playerUUID;
     private final Location location;
 
-    public WarpManagerImpl(String playerUUID) {
+    private WarpManager(String playerUUID) {
         this.playerUUID = playerUUID;
         Player player = Bukkit.getPlayer(UUID.fromString(playerUUID));
         this.location = Objects.requireNonNull(player).getLocation();
     }
 
-    @Override
     public CompletableFuture<List<ServerWarp>> asyncGetList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
         CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
@@ -51,7 +49,6 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         return future;
     }
 
-    @Override
     public CompletableFuture<List<String>> asyncGetIdList() {
         long start = System.currentTimeMillis();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
@@ -70,7 +67,6 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         return future;
     }
 
-    @Override
     public CompletableFuture<ServerWarp> asyncGetInstance(String id) {
         CompletableFuture<ServerWarp> future = new CompletableFuture<>();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
@@ -85,7 +81,6 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         return future;
     }
 
-    @Override
     public void createInstance(String warpId) {
         Material material = this.checkIsItem(this.location.getBlock().getRelative(BlockFace.DOWN).getType());
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
@@ -130,7 +125,6 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         });
     }
 
-    @Override
     public void deleteInstance(String warpId) {
         long start = System.currentTimeMillis();
         Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
@@ -154,7 +148,6 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
         });
     }
 
-    @Override
     public CompletableFuture<Boolean> modify(ServerWarp instance) {
         long start = System.currentTimeMillis();
         CompletableFuture<Boolean> future = new CompletableFuture<>();
@@ -175,5 +168,9 @@ public class WarpManagerImpl extends BaseFunctionImpl implements WarpManager {
            }
         });
         return future;
+    }
+
+    public static WarpManager create(String playerUUID) {
+        return new WarpManager(playerUUID);
     }
 }

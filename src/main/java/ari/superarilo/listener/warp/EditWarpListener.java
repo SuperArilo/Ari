@@ -8,7 +8,7 @@ import ari.superarilo.enumType.FilePath;
 import ari.superarilo.enumType.FunctionType;
 import ari.superarilo.enumType.GuiType;
 import ari.superarilo.enumType.TitleInputType;
-import ari.superarilo.function.WarpManager;
+import ari.superarilo.function.impl.WarpManager;
 import ari.superarilo.gui.warp.WarpEditor;
 import ari.superarilo.gui.warp.WarpList;
 import ari.superarilo.tool.Log;

@@ -2,6 +2,7 @@ package ari.superarilo;
 
 import ari.superarilo.entity.TpStatusValue;
 import ari.superarilo.enumType.AriCommand;
+import ari.superarilo.function.PlayerTabManager;
 import ari.superarilo.listener.PlayerListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
@@ -30,6 +31,7 @@ public class Ari extends JavaPlugin {
     public PermissionUtils permissionUtils;
     public EconomyUtils economyUtils;
     public CommandAlias commandAlias;
+    public PlayerTabManager playerTabManager;
     @Override
     public void onLoad() {
         instance = this;
@@ -56,6 +58,9 @@ public class Ari extends JavaPlugin {
         //em
         this.economyUtils = new EconomyUtils();
         this.tpStatusValue = new TpStatusValue();
+
+        this.playerTabManager = new PlayerTabManager();
+
     }
     @Override
     public void onDisable() {

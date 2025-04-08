@@ -7,7 +7,7 @@ import ari.superarilo.enumType.*;
 import ari.superarilo.function.TeleportCallback;
 import ari.superarilo.function.TeleportCheck;
 import ari.superarilo.function.TeleportThread;
-import ari.superarilo.function.impl.WarpManager;
+import ari.superarilo.function.WarpManager;
 import ari.superarilo.gui.warp.WarpEditor;
 import ari.superarilo.gui.warp.WarpList;
 import ari.superarilo.tool.Log;

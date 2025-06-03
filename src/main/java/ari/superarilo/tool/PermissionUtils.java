@@ -7,6 +7,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
+
 public class PermissionUtils {
 
     public Permission permission;
@@ -32,6 +33,16 @@ public class PermissionUtils {
      */
     public String getPlayerGroup(Player player) {
         return this.isNull() ? "default":this.permission.getPrimaryGroup(player);
+    }
+
+    /**
+     *
+     * @param player 被检查玩家
+     * @param groupName 组名称
+     * @return 返回该玩家是否存在于这个组
+     */
+    public boolean getPlayerIsInGroup(Player player, String groupName) {
+        return this.isNull() || this.permission.playerInGroup(player, groupName);
     }
 
     /**

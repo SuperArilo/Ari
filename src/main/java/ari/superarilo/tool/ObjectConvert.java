@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.ConfigurationSection;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -115,5 +116,26 @@ public class ObjectConvert {
         return new Location(world, x, y, z, yaw, pitch);
     }
 
+    /**
+     * 将 MemorySection 转成 YamlConfiguration
+     * @param source MemorySection
+     * @param target YamlConfiguration
+     */
+    public static void copySectionToYamlConfiguration(ConfigurationSection source, ConfigurationSection target) {
+        Map<String, Object> values = source.getValues(false);
 
+        for (Map.Entry<String, Object> entry : values.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            if (value instanceof ConfigurationSection) {
+                // 创建新节点并递归复制
+                ConfigurationSection newSection = target.createSection(key);
+                copySectionToYamlConfiguration((ConfigurationSection) value, newSection);
+            } else {
+                // 直接设置值
+                target.set(key, value);
+            }
+        }
+    }
 }

@@ -6,3 +6,13 @@ tab:
       - '<#00EEEE>凡尔赛小镇</#FFF5EE>'
     footer:
       - 'TPS: %server_tps_1_colored% &fMem: &2%server_ram_used%/&2%server_ram_max%'
+  groups:
+    owner:
+      prefix: '&f[&2owner&f] '
+      suffix: ''
+    default:
+      prefix: '[player] '
+      suffix: ''
+    _default_:
+      prefix: '[player] '
+      suffix: ''

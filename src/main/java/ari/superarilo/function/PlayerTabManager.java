@@ -3,6 +3,7 @@ package ari.superarilo.function;
 import ari.superarilo.Ari;
 import ari.superarilo.dto.tab.TabGroupLine;
 import ari.superarilo.enumType.FilePath;
+import ari.superarilo.tool.Log;
 import ari.superarilo.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
@@ -12,10 +13,7 @@ import net.kyori.adventure.text.JoinConfiguration;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class PlayerTabManager  {
@@ -25,6 +23,10 @@ public class PlayerTabManager  {
     private List<String> rawFooters;
     private Integer updateInterval;
     private Map<String, TabGroupLine> groupLineMap;
+    private final Map<Player, String> cachePlayerLine = new HashMap<>();
+
+    //debug
+    private Integer debugCount = 0;
 
     public PlayerTabManager() {
         this.updateInterval = Ari.instance.configManager.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class);
@@ -36,8 +38,12 @@ public class PlayerTabManager  {
             this.cancel();
         }
         this.buildLayout();
-        this.playerTabTask = Bukkit.getAsyncScheduler()
+        this.playerTabTask = Bukkit.getGlobalRegionScheduler()
                 .runAtFixedRate(Ari.instance, i -> {
+                    if (this.debugCount < 5 && Ari.debug) {
+                        this.debugCount++;
+                    }
+                    long l = System.currentTimeMillis();
                     List<? extends Player> list = Bukkit.getOnlinePlayers().stream().toList();
                     if (list.isEmpty()) return;
                     Audience.audience(list).forEachAudience(audience -> {
@@ -46,9 +52,15 @@ public class PlayerTabManager  {
                             Component.join(JoinConfiguration.separator(Component.newline()), this.rawHeaders.stream().map(k -> TextTool.setHEXColorText(k, player)).collect(Collectors.toList())),
                             Component.join(JoinConfiguration.separator(Component.newline()), this.rawFooters.stream().map(k -> TextTool.setHEXColorText(k, player)).collect(Collectors.toList()))
                         );
-                        player.playerListName(TextTool.setHEXColorText(this.buildPlayerRealLine(player)));
+                        String tempString = this.cachePlayerLine.get(player);
+                        player.playerListName(TextTool.setHEXColorText(Objects.requireNonNullElseGet(tempString, () -> this.buildPlayerRealLine(player))));
+
                     });
-                }, 1L, this.updateInterval, TimeUnit.MILLISECONDS);
+                    if (this.debugCount >= 5 && Ari.debug) {
+                        Log.debug("update tab time: " + (System.currentTimeMillis() - l) + "ms");
+                        this.debugCount = 0;
+                    }
+                }, 1L, this.updateInterval);
     }
 
     private String buildPlayerRealLine(Player player) {
@@ -58,7 +70,9 @@ public class PlayerTabManager  {
                 .findFirst()
                 .map(Map.Entry::getValue);
         TabGroupLine targetLine = mainGroup.orElseGet(() -> groupLineMap.getOrDefault("_default_", new TabGroupLine("null", "null")));
-        return targetLine.getPrefix() + player.getName() + targetLine.getSuffix();
+        String string = targetLine.getPrefix() + player.getName() + targetLine.getSuffix();
+        this.cachePlayerLine.put(player, string);
+        return string;
     }
     /**
      * 取消 tab update 的任务
@@ -77,7 +91,8 @@ public class PlayerTabManager  {
         this.updateInterval = null;
         this.rawHeaders = null;
         this.rawFooters = null;
-        this.groupLineMap = null;
+        this.groupLineMap.clear();
+        this.cachePlayerLine.clear();
         this.start();
     }
 
@@ -89,8 +104,9 @@ public class PlayerTabManager  {
             this.updateInterval = Ari.instance.configManager.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class);
         }
         if(this.rawHeaders == null || this.rawFooters == null) {
-            this.rawHeaders = Ari.instance.configManager.getValue("tab.layout.header", FilePath.FunctionConfig, new TypeToken<List<String>>(){}.getType());
-            this.rawFooters  = Ari.instance.configManager.getValue("tab.layout.footer", FilePath.FunctionConfig, new TypeToken<List<String>>(){}.getType());
+            TypeToken<List<String>> typeToken = new TypeToken<>() {};
+            this.rawHeaders = Ari.instance.configManager.getValue("tab.layout.header", FilePath.FunctionConfig,typeToken.getType());
+            this.rawFooters  = Ari.instance.configManager.getValue("tab.layout.footer", FilePath.FunctionConfig, typeToken.getType());
         }
         if (this.groupLineMap == null) {
             this.groupLineMap = Ari.instance.configManager.getValue("tab.groups", FilePath.FunctionConfig, new TypeToken<Map<String, TabGroupLine>>(){}.getType());

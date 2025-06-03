@@ -1,6 +1,6 @@
 tab:
   enable: true
-  update-interval: 1000
+  update-interval: 20
   layout:
     header:
       - '<#00EEEE>凡尔赛小镇</#FFF5EE>'

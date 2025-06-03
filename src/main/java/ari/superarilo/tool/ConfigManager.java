@@ -2,7 +2,10 @@ package ari.superarilo.tool;
 
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.gson.Gson;
@@ -15,7 +18,9 @@ import java.util.logging.Level;
 
 public class ConfigManager {
     private Map<String, YamlConfiguration> configs = new ConcurrentHashMap<>();
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting()
+            .excludeFieldsWithoutExposeAnnotation()
+            .create();
     public ConfigManager() {
         this.reloadAllConfig();
     }
@@ -68,8 +73,13 @@ public class ConfigManager {
             Log.error("Value not found for path: " + valuePath + " in file: " + fileName);
             return null;
         }
+        if (value instanceof MemorySection) {
+            YamlConfiguration tempConfig = new YamlConfiguration();
+            ObjectConvert.copySectionToYamlConfiguration((ConfigurationSection) value, tempConfig);
+            return Ari.instance.objectConvert.yamlConvertToObj(tempConfig.saveToString(), type);
+        }
         try {
-            return this.gson.fromJson(this.gson.toJsonTree(value), type);
+            return this.gson.fromJson(this.gson.toJson(value), type);
         } catch (JsonSyntaxException e) {
             Log.error("Failed to convert value at path: " + valuePath + " in file: " + fileName + " to type: " + type.getTypeName(), e);
             return null;

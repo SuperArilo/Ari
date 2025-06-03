@@ -21,8 +21,8 @@ public class ConfigManager {
     }
     public void reloadAllConfig() {
         //config.yml
+        Ari.instance.saveResource("config.yml", false);
         Ari.debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
-        Ari.instance.saveResource("config.yml", Ari.debug);
         Ari.instance.reloadConfig();
         this.checkFiles();
         Log.debug(Level.INFO, "----------------");

@@ -26,9 +26,10 @@ public class ConfigManager {
     }
     public void reloadAllConfig() {
         //config.yml
-        Ari.instance.saveResource("config.yml", false);
-        Ari.debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
+        Ari.instance.saveDefaultConfig();
         Ari.instance.reloadConfig();
+//        Ari.instance.saveResource("config.yml", false);
+        Ari.debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
         this.checkFiles();
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   " + this.getValue("debug.on-open", FilePath.Lang, String.class) + "   ");

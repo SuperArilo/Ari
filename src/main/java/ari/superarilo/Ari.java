@@ -32,7 +32,6 @@ public class Ari extends JavaPlugin {
     public PermissionUtils permissionUtils;
     public EconomyUtils economyUtils;
     public CommandAlias commandAlias;
-    public PlayerTabManager playerTabManager;
     @Override
     public void onLoad() {
         instance = this;
@@ -60,8 +59,6 @@ public class Ari extends JavaPlugin {
         this.economyUtils = new EconomyUtils();
         this.tpStatusValue = new TpStatusValue();
 
-        this.playerTabManager = new PlayerTabManager();
-
     }
     @Override
     public void onDisable() {
@@ -85,5 +82,6 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerSkipNight(), this);
         Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerTabManager(), this);
     }
 }

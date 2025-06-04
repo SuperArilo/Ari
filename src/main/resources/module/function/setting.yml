@@ -1,18 +1,19 @@
 tab:
   enable: true
+  # tick
   update-interval: 20
   layout:
     header:
-      - '<#00EEEE>凡尔赛小镇</#FFF5EE>'
+      - '<#00EEEE>测试服务器</#FFF5EE>'
     footer:
       - 'TPS: %server_tps_1_colored% &fMem: &2%server_ram_used%/&2%server_ram_max%'
   groups:
     owner:
-      prefix: '&f[&2owner&f] '
+      prefix: '&f[&2腐竹&f] '
       suffix: ''
     default:
-      prefix: '[player] '
+      prefix: '&f[&a玩家&f] '
       suffix: ''
     _default_:
-      prefix: '[player] '
+      prefix: '&f[&a玩家&f] '
       suffix: ''

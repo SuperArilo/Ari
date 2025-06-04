@@ -26,6 +26,10 @@ public class CommandTime {
         }
         TimeManager.build(this.player.getWorld()).timeSet(period.getStart());
         String value = Ari.instance.configManager.getValue("server.time.tips", FilePath.Lang, String.class);
+        if (value == null) {
+            this.player.sendMessage("no content " + timePeriod + "in lang");
+            return;
+        }
         value = value.replace(LangType.TIME.getType(), Ari.instance.configManager.getValue("server.time.name." + period.getDescription(), FilePath.Lang, String.class));
         this.player.sendMessage(TextTool.setHEXColorText(value));
     }

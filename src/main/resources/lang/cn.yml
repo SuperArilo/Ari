@@ -84,6 +84,7 @@ server:
       night: '夜晚'
       midnight: '午夜'
       daylight: '破晓时刻'
+      wake_up: '起床时间'
   message:
     on-first-login: '&a欢迎玩家 &6%player_name% &a加入我们的服务器！'
     on-login: '&7玩家 &6%player_name% &7加入了服务器！'

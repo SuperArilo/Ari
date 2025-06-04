@@ -41,7 +41,10 @@ public class PlayerTabManager implements Listener {
     }
 
     public void start() {
-        if (!this.isEnable()) return;
+        if (!this.isEnable()) {
+            this.sendTab(Bukkit.getOnlinePlayers(), this.rawHeaders, this.rawFooters, this.groupLineMap);
+            return;
+        }
         if (this.playerTabTask != null) {
             this.cancel();
         }
@@ -50,17 +53,10 @@ public class PlayerTabManager implements Listener {
             if (this.debugCount < 5 && Ari.debug) {
                 this.debugCount++;
             }
-            final long l = System.currentTimeMillis();
-            final Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
+            Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
             if (onlinePlayers.isEmpty()) return;
-            Audience.audience(onlinePlayers).forEachAudience(audience -> {
-                Player player = (Player) audience;
-                audience.sendPlayerListHeaderAndFooter(
-                    Component.join(this.newlineSeparator, this.rawHeaders.stream().map(k -> TextTool.setHEXColorText(k, player)).toList()),
-                    Component.join(this.newlineSeparator, this.rawFooters.stream().map(k -> TextTool.setHEXColorText(k, player)).toList())
-                );
-                player.playerListName(Objects.requireNonNullElseGet(this.cachePlayerLine.get(player), () -> TextTool.setHEXColorText(this.buildPlayerRealLine(player))));
-            });
+            final long l = System.currentTimeMillis();
+            this.sendTab(onlinePlayers, this.rawHeaders, this.rawFooters, this.groupLineMap);
             if (this.debugCount >= 5 && Ari.debug) {
                 Log.debug("update tab time: " + (System.currentTimeMillis() - l) + "ms");
                 this.debugCount = 0;
@@ -68,13 +64,27 @@ public class PlayerTabManager implements Listener {
         }, 1L, this.updateInterval);
     }
 
-    private String buildPlayerRealLine(Player player) {
-        Optional<TabGroupLine> mainGroup = this.groupLineMap.entrySet().stream()
+    private void sendTab(final Collection<? extends Player> players, List<String> headers, List<String> footers, Map<String, TabGroupLine> lineMap) {
+        Audience.audience(players).forEachAudience(audience -> {
+            Player player = (Player) audience;
+            audience.sendPlayerListHeaderAndFooter(this.buildTabLine(headers, player), this.buildTabLine(footers, player));
+            player.playerListName(Objects.requireNonNullElse(this.cachePlayerLine.get(player), TextTool.setHEXColorText(this.buildPlayerRealLine(player, lineMap))));
+        });
+    }
+
+    private Component buildTabLine(List<String> s, final Player player) {
+        if (s == null || s.isEmpty()) return Component.empty();
+        return Component.join(this.newlineSeparator, s.stream().map(line -> TextTool.setHEXColorText(line, player)).toList());
+    }
+
+    private String buildPlayerRealLine(Player player, Map<String, TabGroupLine> lineMap) {
+        if (lineMap.isEmpty()) return player.getName();
+        Optional<TabGroupLine> mainGroup = lineMap.entrySet().stream()
                 .filter(entry -> Ari.instance.permissionUtils.getPlayerIsInGroup(player, entry.getKey()))
                 .filter(entry -> !"_default_".equals(entry.getKey()))
                 .findFirst()
                 .map(Map.Entry::getValue);
-        TabGroupLine targetLine = mainGroup.orElseGet(() -> this.groupLineMap.getOrDefault("_default_", new TabGroupLine("null", "null")));
+        TabGroupLine targetLine = mainGroup.orElseGet(() -> lineMap.getOrDefault("_default_", new TabGroupLine("", "")));
         return targetLine.getPrefix() + player.getName() + targetLine.getSuffix();
     }
     /**

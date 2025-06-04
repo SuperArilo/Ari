@@ -35,9 +35,9 @@ public class PlayerSkipNight implements Listener {
             World world = event.getPlayer().getWorld();
             boolean pc = this.playerCondition(world);
             //当服务器人数为1人时候或者所有人睡觉
-            if(pc && world.getTime() < TimePeriod.WAKEUP.getEnd()) {
+            if(pc && world.getTime() < TimePeriod.WAKE_UP.getEnd()) {
                 this.cancelTimeManager();
-                world.setTime(TimePeriod.WAKEUP.getEnd());
+                world.setTime(TimePeriod.WAKE_UP.getEnd());
                 world.setStorm(false);
                 world.setThundering(false);
             } else {
@@ -55,7 +55,7 @@ public class PlayerSkipNight implements Listener {
         if (!this.getSkipNightEnable()) return;
         Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
-            if(world.getTime() >= TimePeriod.WAKEUP.getEnd()) {
+            if(world.getTime() >= TimePeriod.WAKE_UP.getEnd()) {
                 this.cancelTimeManager();
                 return;
             }
@@ -141,7 +141,7 @@ public class PlayerSkipNight implements Listener {
                         }
                     }, () -> {});
                 });
-                if (s >= TimePeriod.WAKEUP.getEnd()) {
+                if (s >= TimePeriod.WAKE_UP.getEnd()) {
                     Bukkit.getGlobalRegionScheduler().run(Ari.instance, p -> {
                         world.setStorm(false);
                         world.setThundering(false);

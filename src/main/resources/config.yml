@@ -1,4 +1,4 @@
-lang: cn
+lang: en
 data:
   # mysql, sqlite
   storage-type: sqlite

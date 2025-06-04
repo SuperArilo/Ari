@@ -23,7 +23,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Ari extends JavaPlugin {
 
     public static Ari instance;
-    public static Boolean debug;
+    public static Boolean debug = false;
     public TpStatusValue tpStatusValue;
     public ConfigManager configManager;
     public ObjectConvert objectConvert;

@@ -1,16 +1,13 @@
 package ari.superarilo.command.lists;
 
-import ari.superarilo.Ari;
 import ari.superarilo.command.function.CommandTime;
 import ari.superarilo.enumType.AriCommand;
-import ari.superarilo.enumType.FilePath;
-import ari.superarilo.enumType.LangType;
 import ari.superarilo.enumType.TimePeriod;
 import ari.superarilo.function.CommandCheck;
-import ari.superarilo.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,18 +20,7 @@ public class time implements TabExecutor {
         CommandCheck check = CommandCheck.create(commandSender, command,AriCommand.TIME);
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
-            TimePeriod timePeriod;
-            String period = strings[0].toUpperCase();
-            try {
-                timePeriod = TimePeriod.valueOf(period);
-            } catch (Exception e) {
-                String replace = ((String) Ari.instance.configManager.getValue("server.time.not-exist-period", FilePath.Lang, String.class)).replace(LangType.PERIOD.getType(), period);
-                commandSender.sendMessage(TextTool.setHEXColorText(replace));
-                return true;
-            }
-            if (!timePeriod.isServerUse()) {
-                new CommandTime(commandSender).control(timePeriod);
-            }
+            new CommandTime((Player) commandSender).control(strings[0]);
         }
         return true;
     }
@@ -44,9 +30,7 @@ public class time implements TabExecutor {
         if(!command.getName().equalsIgnoreCase(AriCommand.TIME.getShow())) return List.of();
         List<String> list = new ArrayList<>();
         for (TimePeriod timePeriod : TimePeriod.values()) {
-            if (!timePeriod.isServerUse()) {
-                list.add(timePeriod.getDescription());
-            }
+            list.add(timePeriod.getDescription());
         }
         return list;
     }

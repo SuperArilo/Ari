@@ -8,7 +8,7 @@ import ari.superarilo.listener.PlayerListener;
 import ari.superarilo.listener.home.EditHomeListener;
 import ari.superarilo.listener.home.HomeListListener;
 import ari.superarilo.listener.player.OnPlayerListener;
-import ari.superarilo.listener.skipSleep.PlayerSkipNight;
+import ari.superarilo.listener.skip_sleep.PlayerSkipNight;
 import ari.superarilo.listener.teleport.RecordLastLocationListener;
 import ari.superarilo.listener.warp.EditWarpListener;
 import ari.superarilo.listener.warp.WarpListListener;

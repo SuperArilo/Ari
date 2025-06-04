@@ -88,5 +88,6 @@ server:
     on-first-login: '&a欢迎玩家 &6%player_name% &a加入我们的服务器！'
     on-login: '&7玩家 &6%player_name% &7加入了服务器！'
     on-leave: '&7玩家 &6%player_name% &7离开了服务器！'
+    no-economy: '&4服务器未使用经济插件'
 debug:
   on-open: '调试模式开启'

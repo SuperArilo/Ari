@@ -1,4 +1,4 @@
-package ari.superarilo.listener.skipSleep;
+package ari.superarilo.listener.skip_sleep;
 
 import ari.superarilo.Ari;
 import ari.superarilo.enumType.FilePath;
@@ -76,11 +76,13 @@ public class PlayerSkipNight implements Listener {
 
     @EventHandler
     public void whenServerShutDown(PluginDisableEvent event) {
-        Log.debug("server is shutdown now");
-        this.cancelTimeManager();
-        Log.debug("cancel all skip night tasks");
-        this.cancelTitleTask();
-        Log.debug("canceled title task");
+        if (event.getPlugin().equals(Ari.instance)) {
+            Log.debug("server is shutdown now");
+            this.cancelTimeManager();
+            Log.debug("cancel all skip night tasks");
+            this.cancelTitleTask();
+            Log.debug("canceled title task");
+        }
     }
 
     /**

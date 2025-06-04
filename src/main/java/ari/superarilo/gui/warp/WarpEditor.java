@@ -60,8 +60,13 @@ public class WarpEditor extends BaseGui {
                         item.setName(permission == null ? "":permission);
                     }
                     case COST -> {
-                        Double cost = this.currentWarp.getCost();
-                        item.setName(cost == null ? "":cost.toString());
+                        if (Ari.instance.economyUtils.isNull()) {
+                            item.setName(Ari.instance.configManager.getValue("server.message.no-economy", FilePath.Lang, String.class));
+                            item.setMaterial("barrier");
+                        } else {
+                            Double cost = this.currentWarp.getCost();
+                            item.setName(cost == null ? "":cost.toString());
+                        }
                     }
                 }
             }

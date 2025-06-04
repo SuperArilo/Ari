@@ -81,6 +81,8 @@ public class EditWarpListener implements Listener {
                     new WarpList(player).open();
                 }
                 case RENAME, COST, PERMISSION -> {
+                    //检查是否有经济插件，如果没有就return
+                    if (type.equals(FunctionType.COST) && Ari.instance.economyUtils.isNull()) return;
                     if (type.equals(FunctionType.PERMISSION) && event.getClick().isRightClick()) {
                         clickMeta.displayName(TextTool.setHEXColorText(""));
                         clickItem.setItemMeta(clickMeta);

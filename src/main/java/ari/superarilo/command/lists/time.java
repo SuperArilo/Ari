@@ -32,7 +32,9 @@ public class time implements TabExecutor {
                 commandSender.sendMessage(TextTool.setHEXColorText(replace));
                 return true;
             }
-            new CommandTime(commandSender).control(timePeriod);
+            if (!timePeriod.isServerUse()) {
+                new CommandTime(commandSender).control(timePeriod);
+            }
         }
         return true;
     }
@@ -42,7 +44,9 @@ public class time implements TabExecutor {
         if(!command.getName().equalsIgnoreCase(AriCommand.TIME.getShow())) return List.of();
         List<String> list = new ArrayList<>();
         for (TimePeriod timePeriod : TimePeriod.values()) {
-            list.add(timePeriod.getDescription());
+            if (!timePeriod.isServerUse()) {
+                list.add(timePeriod.getDescription());
+            }
         }
         return list;
     }

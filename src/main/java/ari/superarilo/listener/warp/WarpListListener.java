@@ -29,6 +29,10 @@ import java.util.UUID;
 
 
 public class WarpListListener implements Listener {
+
+    private final NamespacedKey TYPE_KEY = new NamespacedKey(Ari.instance, "type");
+    private final NamespacedKey WARP_ID_KEY = new NamespacedKey(Ari.instance, "warp_id");
+
     @EventHandler
     public void warpListClick(InventoryClickEvent event) {
         Inventory inventory = event.getInventory();
@@ -37,14 +41,14 @@ public class WarpListListener implements Listener {
             if(event.getSlot() >= inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
             if(type == null) return;
             Player player = holder.getPlayer();
             WarpList warpList = (WarpList) holder.getMeta();
             switch (type) {
                 case BACK -> inventory.close();
                 case DATA -> {
-                    String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING);
+                    String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(this.WARP_ID_KEY, PersistentDataType.STRING);
                     if(warpId == null) break;
                     Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
                         Optional<ServerWarp> first = warpList.data.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();

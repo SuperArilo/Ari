@@ -50,6 +50,9 @@
                                         <exclude>META-INF/LICENSE</exclude>
                                         <exclude>META-INF/NOTICE</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
+                                        <exclude>META-INF/maven/**</exclude>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
@@ -122,8 +125,12 @@
             <version>3.5.19</version>
             <exclusions>
                 <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
+                    <groupId>ognl</groupId>
+                    <artifactId>ognl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>

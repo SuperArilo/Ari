@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tty.mapper.CreateTable">
+    <select id="createPlayers">
+        CREATE TABLE IF NOT EXISTS ${table_prefix}players
+        (
+        id INTEGER PRIMARY KEY
+        <if test="'${_databaseId}' == 'mysql'">
+            AUTO_INCREMENT
+        </if>
+        <if test="'${_databaseId}' == 'sqlite'">
+            AUTOINCREMENT
+        </if>
+        , player_name varchar(64) NOT NULL,
+        player_uuid varchar(128) NOT NULL,
+        first_login_time INTEGER NULL DEFAULT 0,
+        last_login_off_time INTEGER NULL DEFAULT 0,
+        total_online_time INTEGER NULL DEFAULT 0,
+        name_prefix varchar(128) DEFAULT NULL,
+        name_suffix varchar(128) DEFAULT NULL
+        )
+    </select>
+    <select id="createHomeList">
+        CREATE TABLE IF NOT EXISTS ${table_prefix}player_home
+        (
+            id INTEGER PRIMARY KEY
+            <if test="sqlType == 'mysql'">
+                AUTO_INCREMENT
+            </if>
+            <if test="sqlType == 'sqlite'">
+                AUTOINCREMENT
+            </if>
+            , home_id VARCHAR(128) NOT NULL,
+            home_name VARCHAR(128) NOT NULL,
+            player_uuid VARCHAR(128) NOT NULL,
+            location VARCHAR(128) NOT NULL,
+            show_material VARCHAR(128) NOT NULL
+        )
+    </select>
+    <select id="createWarpList">
+        CREATE TABLE IF NOT EXISTS ${table_prefix}warps
+        (
+        id INTEGER PRIMARY KEY
+        <if test="sqlType == 'mysql'">
+            AUTO_INCREMENT
+        </if>
+        <if test="sqlType == 'sqlite'">
+            AUTOINCREMENT
+        </if>
+        , warp_id VARCHAR(128) NOT NULL,
+        warp_name VARCHAR(128) NOT NULL,
+        create_by VARCHAR(128) NOT NULL,
+        location VARCHAR(128) NOT NULL,
+        show_material VARCHAR(128) NOT NULL,
+        permission VARCHAR(128) default NULL,
+        cost INTEGER default 0
+        )
+    </select>
+</mapper>

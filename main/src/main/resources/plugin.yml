@@ -1,0 +1,19 @@
+name: Ari
+version: '${project.version}'
+author: Arilo007
+folia-supported: true
+loadbefore:
+  - 'Vault'
+main: com.tty.Ari
+depend: ['Vault']
+softdepend: ['PlaceholderAPI']
+api-version: 1.20
+commands:
+  ari:
+    usage: '插件主要指令'
+permissions:
+  ari.*:
+    description: "授予对基本命令的访问权限"
+    default: true
+    children:
+      ari.command: false

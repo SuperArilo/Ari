@@ -21,11 +21,13 @@ public class CommandTp extends TpCheck {
 
     public void tp() {
         if (!this.preCheck(this.sender, this.targetPlayerName)) return;
+        Player targetPlayer = Bukkit.getPlayer(this.targetPlayerName);
+        if (targetPlayer == null) return;
         Lib.Scheduler.runAtEntity(
                 Ari.instance,
                 (Player) this.sender,
                 i-> {
-                    EntityTeleport.teleport((Player) this.sender, Bukkit.getPlayer(this.targetPlayerName));
+                    EntityTeleport.teleport((Player) this.sender, targetPlayer.getLocation());
                     this.sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                 },
                 () -> this.sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class))));

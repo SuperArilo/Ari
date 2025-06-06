@@ -21,7 +21,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -29,7 +28,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 public class EditHomeListener implements Listener {
@@ -38,10 +36,10 @@ public class EditHomeListener implements Listener {
 
     @EventHandler
     public void editGuiClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        if(inventory == null || event.getSlot() > inventory.getSize()) return;
-        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
-            if (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null || event.getSlot() >= clickedInventory.getSize()) return;
+        if (clickedInventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
+            if (event.isShiftClick()) {
                 event.setCancelled(true);
                 return;
             }
@@ -62,16 +60,14 @@ public class EditHomeListener implements Listener {
             HomeManager homeManager = HomeManager.create(home.getPlayerUUID());
             switch (type) {
                 case REBACK -> {
-                    inventory.close();
+                    clickedInventory.close();
                     new HomeList(player).open();
                 }
                 case DELETE -> //delete home
-                    homeManager.deleteInstance(home.getHomeId()).thenAccept(i -> {
-                        Lib.Scheduler.run(Ari.instance, j -> {
-                            inventory.close();
+                        homeManager.deleteInstance(home.getHomeId()).thenAccept(i -> Lib.Scheduler.run(Ari.instance, j -> {
+                            clickedInventory.close();
                             new HomeList(player).open();
-                        });
-                    });
+                        }));
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
@@ -80,7 +76,7 @@ public class EditHomeListener implements Listener {
                                     1000,
                                     10000 ,
                                     1000));
-                    inventory.close();
+                    clickedInventory.close();
                     this.editStatus.add(holder);
                     //rename home
                 }
@@ -92,13 +88,14 @@ public class EditHomeListener implements Listener {
                     clickItem.setItemMeta(clickMeta);
                 }
                 case ICON -> {
-                    //修改显示ICON
-                    Material curM = Objects.requireNonNull(event.getCursor()).getType();
-                    if(curM.equals(Material.AIR)) return;
-                    clickItem = new ItemStack(curM);
+                    ItemStack cursor = event.getCursor();
+                    if(cursor == null) return;
+                    Material current = cursor.getType();
+                    if(current.equals(Material.AIR)) return;
+                    clickItem = new ItemStack(current);
                     clickItem.setItemMeta(clickMeta);
-                    inventory.setItem(event.getSlot(), clickItem);
-                    home.setShowMaterial(curM.name());
+                    clickedInventory.setItem(event.getSlot(), clickItem);
+                    home.setShowMaterial(current.name());
                 }
                 case SAVE -> {
                     //save
@@ -122,10 +119,10 @@ public class EditHomeListener implements Listener {
                     });
                 }
             }
-        } else {
-            if (event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
-                event.setCancelled(true);
-            }
+            return;
+        }
+        if (event.isShiftClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
+            event.setCancelled(true);
         }
     }
     @EventHandler

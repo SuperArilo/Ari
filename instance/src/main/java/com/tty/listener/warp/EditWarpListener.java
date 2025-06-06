@@ -136,7 +136,7 @@ public class EditWarpListener implements Listener {
                 }
             }
         } else {
-            if(event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+            if (event.isShiftClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
                 event.setCancelled(true);
             }
         }

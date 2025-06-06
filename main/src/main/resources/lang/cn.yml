@@ -31,6 +31,7 @@ teleport:
   none-location: '没有上一个保存的位置'
   costed: '本次传送花费了 [costed]'
   again: '你已经发起过传送请求了'
+  tips-back: '&b上次死亡的地点: [DeathLocation] &7输入/back返回'
 function:
   public:
     agree: '&a[同意]'

@@ -9,6 +9,7 @@ public enum LangType {
     TPABESENDER("[TpaBeSender]"),
     COSTED("[costed]"),
     TIME("[time]"),
+    DEATHLOCATION("[DeathLocation]"),
     PERIOD("[period]");
     private final String type;
 

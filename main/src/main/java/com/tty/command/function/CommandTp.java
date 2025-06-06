@@ -2,6 +2,7 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
+import com.tty.function.TeleportThread;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.tool.TextTool;
@@ -27,8 +28,9 @@ public class CommandTp extends TpCheck {
                 Ari.instance,
                 (Player) this.sender,
                 i-> {
-                    EntityTeleport.teleport((Player) this.sender, targetPlayer.getLocation());
-                    this.sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
+                    TeleportThread.playerToPlayer((Player) this.sender, targetPlayer).teleport(0);
+//                    EntityTeleport.teleport((Player) this.sender, targetPlayer.getLocation());
+//                    this.sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.success", FilePath.Lang, String.class)));
                 },
                 () -> this.sender.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class))));
     }

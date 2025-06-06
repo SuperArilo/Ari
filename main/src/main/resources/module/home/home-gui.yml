@@ -1,4 +1,4 @@
-title: '<#4682B4>%player_name%</#4682B4><#00EEEE>家列表</#FFF5EE>'
+title: '%player_name%的家列表'
 row: 3
 mask:
   name: ''

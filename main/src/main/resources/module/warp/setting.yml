@@ -5,5 +5,4 @@ main:
   name-check:
     - 'fuck'
   teleport:
-    # 检测延迟时间
     delay: 3

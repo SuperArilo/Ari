@@ -17,12 +17,12 @@ data:
 server:
   skip-night:
     enable: true
-    tick-increment: 10
+    tick-increment: 20
     max-tick-increment: 100
   message:
     on-first-login: true
     on-login: true
     on-leave: true
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false

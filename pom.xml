@@ -8,7 +8,7 @@
     <version>1.0</version>
     <packaging>pom</packaging>
     <modules>
-        <module>main</module>
+        <module>instance</module>
         <module>lib</module>
     </modules>
     <properties>

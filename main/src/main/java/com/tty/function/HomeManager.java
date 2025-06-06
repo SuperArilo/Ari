@@ -179,22 +179,31 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
         });
         return future;
     }
-    
+
     private int getMaxHomeCount(Player player) {
+        int maxHomes = 0;
+        String firstErrorPermission = null;
         for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
             String permission = permissionInfo.getPermission();
-            if (permission.startsWith("ari.count.home.")) {
-                String[] parts = permission.split("\\.");
-                if (parts.length < 4) continue;
-                try {
-                    return Integer.parseInt(parts[3]);
-                } catch (NumberFormatException e) {
-                    player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class)));
-                    Log.error("error", e);
-                }
+            if (!permission.startsWith("ari.count.home.")) continue;
+            String[] parts = permission.split("\\.");
+            if (parts.length < 4) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
+                continue;
+            }
+            try {
+                int homeCount = Integer.parseInt(parts[3]);
+                if (homeCount > maxHomes) maxHomes = homeCount;
+            } catch (NumberFormatException e) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
             }
         }
-        return 0;
+        if (maxHomes == 0 && firstErrorPermission != null) {
+            String errorMessage = Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class);
+            player.sendMessage(TextTool.setHEXColorText(errorMessage));
+            Log.error("玩家 " + player.getName() + " 的权限格式错误: " + firstErrorPermission);
+        }
+        return maxHomes;
     }
 
     public static HomeManager create(String playerUUID) {

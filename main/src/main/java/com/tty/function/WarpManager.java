@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.List;
 import java.util.Objects;
@@ -95,10 +96,7 @@ public class WarpManager extends BaseFunctionImpl {
                 }
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
                 List<String> warpIdList = mapper.getWarpIdList(this.playerUUID);
-
-                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.warp." + (warpIdList.size() + 1)) || player.isOp();
-
-                if(!hasPermission) {
+                if(warpIdList.size() + 1 > this.getMaxWarpCount(player) && !player.isOp()) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
                     i.cancel();
@@ -170,6 +168,32 @@ public class WarpManager extends BaseFunctionImpl {
            }
         });
         return future;
+    }
+
+    private int getMaxWarpCount(Player player) {
+        int maxHomes = 0;
+        String firstErrorPermission = null;
+        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
+            String permission = permissionInfo.getPermission();
+            if (!permission.startsWith("ari.count.warp.")) continue;
+            String[] parts = permission.split("\\.");
+            if (parts.length < 4) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
+                continue;
+            }
+            try {
+                int homeCount = Integer.parseInt(parts[3]);
+                if (homeCount > maxHomes) maxHomes = homeCount;
+            } catch (NumberFormatException e) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
+            }
+        }
+        if (maxHomes == 0 && firstErrorPermission != null) {
+            String errorMessage = Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class);
+            player.sendMessage(TextTool.setHEXColorText(errorMessage));
+            Log.error("玩家 " + player.getName() + " 的权限格式错误: " + firstErrorPermission);
+        }
+        return maxHomes;
     }
 
     public static WarpManager create(String playerUUID) {

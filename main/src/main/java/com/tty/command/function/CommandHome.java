@@ -5,6 +5,7 @@ import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeList;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -13,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class CommandHome {
 
@@ -47,13 +50,12 @@ public class CommandHome {
         if(Ari.instance.permissionUtils.hasPermission(player, AriCommand.DELETEHOME.getPermission())) {
             CompletableFuture<List<String>> future = HomeManager.create(player.getUniqueId().toString()).asyncGetIdList();
             try {
-                List<String> list = future.get();
-                Collections.sort(list);
-                return list;
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
+                List<String> strings = future.get(3, TimeUnit.SECONDS);
+                Collections.sort(strings);
+                return strings;
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Log.error("query error", e);
             }
-
         }
         return List.of();
     }

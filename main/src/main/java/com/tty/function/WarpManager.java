@@ -5,8 +5,9 @@ import com.tty.dto.Page;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.function.impl.BaseFunctionImpl;
+import com.tty.lib.Lib;
 import com.tty.mapper.ServerWrapMapper;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.apache.ibatis.session.SqlSession;
@@ -36,7 +37,7 @@ public class WarpManager extends BaseFunctionImpl {
     public CompletableFuture<List<ServerWarp>> asyncGetList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
         CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)){
                 List<ServerWarp> serverWarps = sqlSession.getMapper(ServerWrapMapper.class).getServerWarps(Page.create(pageNum, pageSize));
                 future.complete(serverWarps);
@@ -53,7 +54,7 @@ public class WarpManager extends BaseFunctionImpl {
     public CompletableFuture<List<String>> asyncGetIdList() {
         long start = System.currentTimeMillis();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
                 List<String> warpIdList = mapper.getWarpIdList(this.playerUUID);
@@ -70,7 +71,7 @@ public class WarpManager extends BaseFunctionImpl {
 
     public CompletableFuture<ServerWarp> asyncGetInstance(String id) {
         CompletableFuture<ServerWarp> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
                 future.complete(mapper.getWarp(id, this.playerUUID));
@@ -84,7 +85,7 @@ public class WarpManager extends BaseFunctionImpl {
 
     public void createInstance(String warpId) {
         Material material = this.checkIsItem(this.location.getBlock().getRelative(BlockFace.DOWN).getType());
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 Player player = Bukkit.getPlayer(UUID.fromString(this.playerUUID));
@@ -95,7 +96,7 @@ public class WarpManager extends BaseFunctionImpl {
                 ServerWrapMapper mapper = sqlSession.getMapper(ServerWrapMapper.class);
                 List<String> warpIdList = mapper.getWarpIdList(this.playerUUID);
 
-                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.warp." + warpIdList.size() + 1) || player.isOp();
+                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.warp." + (warpIdList.size() + 1)) || player.isOp();
 
                 if(!hasPermission) {
                     Log.debug("Exceeds the specified quantity");
@@ -128,7 +129,7 @@ public class WarpManager extends BaseFunctionImpl {
 
     public void deleteInstance(String warpId) {
         long start = System.currentTimeMillis();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             Player player = Bukkit.getPlayer(UUID.fromString(this.playerUUID));
             if(player == null) {
                 Log.error("player: " + this.playerUUID + "is not online");
@@ -152,7 +153,7 @@ public class WarpManager extends BaseFunctionImpl {
     public CompletableFuture<Boolean> modify(ServerWarp instance) {
         long start = System.currentTimeMillis();
         CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                Integer update = sqlSession.getMapper(ServerWrapMapper.class).update(instance);
                if(update == 1) {

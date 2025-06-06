@@ -9,7 +9,7 @@ import com.tty.enumType.GuiType;
 import com.tty.function.TeleportThread;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
-import org.bukkit.Bukkit;
+import com.tty.lib.Lib;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,7 +41,7 @@ public class HomeListListener implements Listener {
                 case DATA -> {
                     String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                     if (homeId == null) break;
-                    Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+                    Lib.Scheduler.runAsync(Ari.instance, i -> {
                         Optional<ServerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
                         if(first.isPresent()) {
                             ServerHome home = first.get();
@@ -51,10 +51,11 @@ public class HomeListListener implements Listener {
                                                 player, Ari.instance.objectConvert.parseLocation(home.getLocation()))
                                         .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
                             } else if (click.equals(ClickType.RIGHT)) {
+                                Lib.Scheduler.run(Ari.instance, l -> inventory.close());
                                 new HomeEditor(home,(Player) event.getWhoClicked()).open();
                             }
                         }
-                        Bukkit.getRegionScheduler().run(Ari.instance, player.getLocation(), o -> inventory.close());
+                        Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), o -> inventory.close());
                     });
                 }
                 case PREV -> homeList.prev();

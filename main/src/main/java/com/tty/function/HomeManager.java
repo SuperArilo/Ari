@@ -5,8 +5,9 @@ import com.tty.dto.Page;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.function.impl.BaseFunctionImpl;
+import com.tty.lib.Lib;
 import com.tty.mapper.PlayerHomeMapper;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.apache.ibatis.session.SqlSession;
@@ -15,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +39,7 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
     public CompletableFuture<List<ServerHome>> asyncGetList(int pageNum, int pageSize) {
         long start = System.currentTimeMillis();
         CompletableFuture<List<ServerHome>> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
                 future.complete(mapper.getHomeList(this.playerUUID, Page.create(pageNum, pageSize)));
@@ -55,9 +57,11 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
     public CompletableFuture<List<String>> asyncGetIdList() {
         long start = System.currentTimeMillis();
         CompletableFuture<List<String>> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-                future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHomeIdList(this.playerUUID));
+                List<String> homeIdList = sqlSession.getMapper(PlayerHomeMapper.class).getHomeIdList(this.playerUUID);
+                Log.debug(homeIdList.toString());
+                future.complete(homeIdList);
             } catch (Exception e) {
                 Log.error("SqlSession error", e);
             } finally {
@@ -70,13 +74,13 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
     @Override
     public CompletableFuture<ServerHome> asyncGetInstance(String id) {
         CompletableFuture<ServerHome> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-           try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-               future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHome(id, this.playerUUID));
-           } catch (Exception e) {
-               future.completeExceptionally(e);
-               Log.error("SqlSession error", e);
-           }
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
+            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                future.complete(sqlSession.getMapper(PlayerHomeMapper.class).getHome(id, this.playerUUID));
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+                Log.error("SqlSession error", e);
+            }
         });
         return future;
     }
@@ -90,13 +94,12 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
             return;
         }
         Material material = this.checkIsItem(location.getBlock().getRelative(BlockFace.DOWN).getType());
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             long start = System.currentTimeMillis();
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 PlayerHomeMapper mapper = sqlSession.getMapper(PlayerHomeMapper.class);
                 List<String> homeIdList = mapper.getHomeIdList(player.getUniqueId().toString());
-                boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, "ari.count.home." + homeIdList.size() + 1) || player.isOp();
-                if(!hasPermission) {
+                if (homeIdList.size() + 1 > this.getMaxHomeCount(player) && !player.isOp()) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
                     i.cancel();
@@ -126,14 +129,16 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
     }
 
     @Override
-    public void deleteInstance(String homeId) {
+    public CompletableFuture<Boolean> deleteInstance(String homeId) {
         Player player = Bukkit.getPlayer(UUID.fromString(this.playerUUID));
+        CompletableFuture<Boolean> future = new CompletableFuture<>();
         if(player == null) {
             Log.error("player: " + this.playerUUID + "is not online");
-            return;
+            future.complete(false);
+            return future;
         }
         long start = System.currentTimeMillis();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 Integer delete = sqlSession.getMapper(PlayerHomeMapper.class).delete(homeId, player.getUniqueId().toString());
                 if(delete == 1){
@@ -141,19 +146,22 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
                 } else {
                     player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
                 }
+                future.complete(true);
             } catch (Exception e) {
+                future.completeExceptionally(e);
                 Log.error("remove home fail, id: " + homeId, e);
             } finally {
                 Log.debug(Level.INFO, "remove home time: " + (System.currentTimeMillis() - start) + "ms");
             }
         });
+        return future;
     }
 
     @Override
     public CompletableFuture<Boolean> modify(ServerHome instance) {
         long start = System.currentTimeMillis();
         CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try(SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
                 boolean update = sqlSession.getMapper(PlayerHomeMapper.class).update(instance);
                 if(update) {
@@ -170,6 +178,23 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
             }
         });
         return future;
+    }
+    
+    private int getMaxHomeCount(Player player) {
+        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
+            String permission = permissionInfo.getPermission();
+            if (permission.startsWith("ari.count.home.")) {
+                String[] parts = permission.split("\\.");
+                if (parts.length < 4) continue;
+                try {
+                    return Integer.parseInt(parts[3]);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class)));
+                    Log.error("error", e);
+                }
+            }
+        }
+        return 0;
     }
 
     public static HomeManager create(String playerUUID) {

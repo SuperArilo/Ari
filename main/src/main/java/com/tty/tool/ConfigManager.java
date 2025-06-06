@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.tty.lib.tool.Log;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -14,7 +15,6 @@ import java.lang.reflect.Type;
 import java.io.File;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 public class ConfigManager {
     private Map<String, YamlConfiguration> configs = new ConcurrentHashMap<>();
@@ -25,6 +25,7 @@ public class ConfigManager {
         this.reloadAllConfig();
     }
     public void reloadAllConfig() {
+        Ari.instance.saveDefaultConfig();
         Ari.instance.reloadConfig();
         boolean newDebugState = Ari.instance.getConfig().getBoolean("debug.enable", false);
         if (!Ari.debug && newDebugState) {
@@ -35,9 +36,6 @@ public class ConfigManager {
             Ari.debug = newDebugState;
         }
         this.checkFiles();
-        Log.debug(Level.INFO, "----------------");
-        Log.debug(Level.INFO, "   " + this.getValue("debug.on-open", FilePath.Lang, String.class) + "   ");
-        Log.debug(Level.INFO, "----------------");
     }
     protected void checkFiles() {
         this.configs = new ConcurrentHashMap<>();

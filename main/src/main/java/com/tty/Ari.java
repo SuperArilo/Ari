@@ -2,7 +2,10 @@ package com.tty;
 
 import com.tty.entity.TpStatusValue;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
+import com.tty.lib.ServerPlatform;
+import com.tty.lib.tool.Log;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
@@ -18,6 +21,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Level;
 
 
 public class Ari extends JavaPlugin {
@@ -35,10 +40,13 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        Log.setLogger(this.getLogger());
         this.configManager = new ConfigManager();
         this.formatUtils = new FormatUtils();
         this.objectConvert = new ObjectConvert();
+        Log.initLogger(this.getLogger(), Ari.debug);
+        Log.debug(Level.INFO, "----------------");
+        Log.debug(Level.INFO, "   " + this.configManager.getValue("debug.on-open", FilePath.Lang, String.class) + "   ");
+        Log.debug(Level.INFO, "----------------");
     }
 
     @Override
@@ -59,6 +67,11 @@ public class Ari extends JavaPlugin {
         this.economyUtils = new EconomyUtils();
         this.tpStatusValue = new TpStatusValue();
 
+        if (ServerPlatform.isFolia()) {
+            Log.debug("running folia");
+        } else {
+            Log.debug("running bukkit");
+        }
     }
     @Override
     public void onDisable() {

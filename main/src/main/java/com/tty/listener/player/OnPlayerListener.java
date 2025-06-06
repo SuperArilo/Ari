@@ -4,9 +4,9 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,7 +47,7 @@ public class OnPlayerListener implements Listener {
         }
 
         PlayerManager manager = PlayerManager.build(player);
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try {
                 ServerPlayer serverPlayer = manager.asyncGetInstance(player.getUniqueId().toString()).get();
                 long l = System.currentTimeMillis();

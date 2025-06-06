@@ -4,10 +4,11 @@ import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.dto.tab.TabGroupLine;
 import com.tty.enumType.FilePath;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.task.CancellableTask;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -22,7 +23,7 @@ import java.util.*;
 
 public class PlayerTabManager implements Listener {
 
-    private ScheduledTask playerTabTask;
+    private CancellableTask playerTabTask;
     private final List<String> rawHeaders = new ArrayList<>();
     private final List<String> rawFooters = new ArrayList<>();
     private Integer updateInterval;
@@ -50,7 +51,7 @@ public class PlayerTabManager implements Listener {
             this.cancel();
         }
         this.buildLayout();
-        this.playerTabTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(Ari.instance, i -> {
+        this.playerTabTask = Lib.Scheduler.runAtFixedRate(Ari.instance, i -> {
             if (this.debugCount < 5 && Ari.debug) {
                 this.debugCount++;
             }

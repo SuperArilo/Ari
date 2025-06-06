@@ -15,7 +15,7 @@ home:
   tab-complete: false
 deletehome:
   enable: true
-  tab-complete: true
+  tab-complete: false
 sethome:
   enable: true
   tab-complete: false
@@ -30,7 +30,7 @@ setwarp:
   tab-complete: false
 deletewarp:
   enable: true
-  tab-complete: true
+  tab-complete: false
 time:
   enable: true
   tab-complete: true

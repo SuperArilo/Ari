@@ -11,12 +11,12 @@ import com.tty.enumType.TitleInputType;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 public class EditWarpListener implements Listener {
 
@@ -125,10 +124,10 @@ public class EditWarpListener implements Listener {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
                             finalClickItem.setItemMeta(clickMeta);
-                            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
+                            Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
                                 clickMeta.lore(List.of());
                                 finalClickItem.setItemMeta(clickMeta);
-                            }, 1, TimeUnit.SECONDS);
+                            }, 20L);
                         } else {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
                             Log.error("save warp error id:" + serverWarp.getWarpId());

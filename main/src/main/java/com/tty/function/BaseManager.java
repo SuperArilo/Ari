@@ -20,7 +20,7 @@ public interface BaseManager<T> {
 
     void createInstance(String id);
 
-    void deleteInstance(String id);
+    CompletableFuture<Boolean> deleteInstance(String id);
     /**
      * 修改信息
      * @param instance 被修改的对象

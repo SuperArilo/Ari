@@ -1,10 +1,10 @@
 package com.tty.function;
 
 import com.tty.Ari;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import com.tty.lib.Lib;
+import com.tty.lib.task.CancellableTask;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -19,7 +19,7 @@ public class TimeManager {
     @Setter
     @Getter
     private long addTick;
-    private final AtomicReference<ScheduledTask> scheduledTask = new AtomicReference<>();
+    private final AtomicReference<CancellableTask> scheduledTask = new AtomicReference<>();
 
     private TimeManager(World world) {
         this.world = world;
@@ -34,7 +34,7 @@ public class TimeManager {
     }
 
     public void timeSet(long tick, Consumer<Long> consumer) {
-        ScheduledTask sTask = Bukkit.getGlobalRegionScheduler().runAtFixedRate(
+        CancellableTask cancellableTask = Lib.Scheduler.runAtFixedRate(
                 Ari.instance,
                 i -> {
                     long currentTime = this.world.getTime();
@@ -55,7 +55,7 @@ public class TimeManager {
                 this.delay,
                 1L
         );
-        this.scheduledTask.set(sTask);
+        this.scheduledTask.set(cancellableTask);
     }
 
     public void timeSet(long targetTimeTick) {
@@ -63,19 +63,17 @@ public class TimeManager {
     }
 
     public void timeAutomaticallyPasses(Consumer<Long> consumer) {
-        ScheduledTask sT = Bukkit
-                .getGlobalRegionScheduler()
-                .runAtFixedRate(
-                        Ari.instance,
-                        t -> {
-                            long newTime = this.world.getTime() + this.addTick;
-                            this.world.setTime(newTime);
-                            consumer.accept(newTime);
-                        },
-                        1L,
-                        1L
-                );
-        this.scheduledTask.set(sT);
+        CancellableTask cancellableTask = Lib.Scheduler.runAtFixedRate(
+                Ari.instance,
+                t -> {
+                    long newTime = this.world.getTime() + this.addTick;
+                    this.world.setTime(newTime);
+                    consumer.accept(newTime);
+                },
+                1L,
+                1L
+        );
+        this.scheduledTask.set(cancellableTask);
     }
 
     public String tickToTime(long tick) {
@@ -86,7 +84,7 @@ public class TimeManager {
     }
 
     public void cancelTask() {
-        ScheduledTask s = this.scheduledTask.get();
+        CancellableTask s = this.scheduledTask.get();
         if(s != null) {
             s.cancel();
             this.scheduledTask.set(null);

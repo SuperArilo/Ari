@@ -10,9 +10,9 @@ import com.tty.function.TeleportThread;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class WarpListListener implements Listener {
                 case DATA -> {
                     String warpId = currentItem.getItemMeta().getPersistentDataContainer().get(this.WARP_ID_KEY, PersistentDataType.STRING);
                     if(warpId == null) break;
-                    Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+                    Lib.Scheduler.runAsync(Ari.instance, i -> {
                         Optional<ServerWarp> first = warpList.data.stream().filter(j -> j.getWarpId().equals(warpId)).findFirst();
                         if(first.isPresent()) {
                             WarpManager.create(first.get().getCreateBy()).asyncGetInstance(warpId).thenAccept(instance -> {
@@ -114,7 +114,7 @@ public class WarpListListener implements Listener {
                         } else {
                             Log.error("can't find warpId: " + warpId);
                         }
-                        Bukkit.getRegionScheduler().run(Ari.instance, player.getLocation(), j -> inventory.close());
+                        Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), j -> inventory.close());
                     });
                 }
                 case PREV -> warpList.prev();

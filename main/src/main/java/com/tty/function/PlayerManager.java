@@ -2,11 +2,11 @@ package com.tty.function;
 
 import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
+import com.tty.lib.Lib;
 import com.tty.mapper.PlayerMapper;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.SQLInstance;
 import org.apache.ibatis.session.SqlSession;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
@@ -41,7 +41,7 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
     @Override
     public CompletableFuture<ServerPlayer> asyncGetInstance(String id) {
         CompletableFuture<ServerPlayer> future = new CompletableFuture<>();
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
             try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession()) {
                 future.complete(sqlSession.getMapper(PlayerMapper.class).selectOne(id));
             } catch (Exception e) {
@@ -61,30 +61,32 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
         newPlayer.setPlayerName(player.getName());
         newPlayer.setFirstLoginTime(time);
         newPlayer.setLastLoginOffTime(time);
-        Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
-           try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-               sqlSession.getMapper(PlayerMapper.class).save(newPlayer);
-           } catch (Exception e) {
-               i.cancel();
-               Log.error("error", e);
-           }
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
+            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                sqlSession.getMapper(PlayerMapper.class).save(newPlayer);
+            } catch (Exception e) {
+                i.cancel();
+                Log.error("error", e);
+            }
         });
     }
 
     @Override
-    public void deleteInstance(String id) {
-
+    public CompletableFuture<Boolean> deleteInstance(String id) {
+        return null;
     }
 
     @Override
     public CompletableFuture<Boolean> modify(ServerPlayer instance) {
         CompletableFuture<Boolean> future = new CompletableFuture<>();
-        try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
-            future.complete(sqlSession.getMapper(PlayerMapper.class).update(instance));
-        } catch (Exception e) {
-            future.complete(false);
-            Log.error("error", e);
-        }
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
+            try (SqlSession sqlSession = SQLInstance.sessionFactory.openSession(true)) {
+                future.complete(sqlSession.getMapper(PlayerMapper.class).update(instance));
+            } catch (Exception e) {
+                future.complete(false);
+                Log.error("error", e);
+            }
+        });
         return future;
     }
 

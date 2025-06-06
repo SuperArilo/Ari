@@ -9,12 +9,12 @@ import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -65,12 +65,13 @@ public class EditHomeListener implements Listener {
                     inventory.close();
                     new HomeList(player).open();
                 }
-                case DELETE -> {
-                    //delete home
-                    homeManager.deleteInstance(home.getHomeId());
-                    inventory.close();
-                    new HomeList(player).open();
-                }
+                case DELETE -> //delete home
+                    homeManager.deleteInstance(home.getHomeId()).thenAccept(i -> {
+                        Lib.Scheduler.run(Ari.instance, j -> {
+                            inventory.close();
+                            new HomeList(player).open();
+                        });
+                    });
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
@@ -110,10 +111,10 @@ public class EditHomeListener implements Listener {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
                             finalClickItem.setItemMeta(clickMeta);
-                            Bukkit.getAsyncScheduler().runDelayed(Ari.instance, e ->{
+                            Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
                                 clickMeta.lore(List.of());
                                 finalClickItem.setItemMeta(clickMeta);
-                            }, 1, TimeUnit.SECONDS);
+                            }, 20);
                         } else {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
                             Log.error("save home error");

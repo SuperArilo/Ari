@@ -3,7 +3,9 @@ package com.tty.function;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.TeleportType;
-import com.tty.tool.Log;
+import com.tty.lib.EntityTeleport;
+import com.tty.lib.Lib;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,7 +17,6 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -85,7 +86,7 @@ public class TeleportThread {
             timerIndex.set(delay);
             this.player.sendMessage(TextTool.setHEXColorText("teleport.ing", FilePath.Lang));
         }
-        Bukkit.getAsyncScheduler().runAtFixedRate(Ari.instance, t -> {
+        Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, t -> {
             //在任务里获取现在玩家的状态
             Player threadPlayer = Ari.instance.getServer().getPlayer(this.player.getUniqueId());
             if (threadPlayer == null) {
@@ -106,20 +107,20 @@ public class TeleportThread {
             if (timerIndex.get() == 0) {
                 t.cancel();
                 switch (this.type) {
-                    case POINT -> threadPlayer.getScheduler().run(Ari.instance, i -> {
-                        threadPlayer.teleportAsync(this.targetLocation);
+                    case POINT -> Lib.Scheduler.runAtEntity(Ari.instance, threadPlayer, i -> {
+                        EntityTeleport.teleport(threadPlayer, this.targetLocation);
                         threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                         threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
-                    case PLAYER -> threadPlayer.getScheduler().run(Ari.instance, i -> {
-                        threadPlayer.teleportAsync(this.targetPlayer.getLocation());
+                    case PLAYER -> Lib.Scheduler.runAtEntity(Ari.instance, threadPlayer, i -> {
+                        EntityTeleport.teleport(threadPlayer, this.targetPlayer.getLocation());
                         threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                         threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
                 }
-                Bukkit.getRegionScheduler().run(
+                Lib.Scheduler.runAtRegion(
                         Ari.instance, this.initLocation,
                         i -> Bukkit.getPluginManager().callEvent(
                                 new PlayerTeleportEvent(
@@ -128,7 +129,7 @@ public class TeleportThread {
                                         this.targetLocation,
                                         PlayerTeleportEvent.TeleportCause.PLUGIN)));
             }
-        }, 0, 1L, TimeUnit.SECONDS);
+        }, 0, 20);
     }
     /**
      * 在延迟多少秒后开始开始传送

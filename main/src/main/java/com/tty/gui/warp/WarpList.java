@@ -12,7 +12,7 @@ import com.tty.enumType.GuiType;
 import com.tty.enumType.LocationKeyType;
 import com.tty.function.WarpManager;
 import com.tty.gui.BasePageGui;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;

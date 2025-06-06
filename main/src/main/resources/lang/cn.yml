@@ -53,7 +53,7 @@ function:
   home:
     create-success: '创建家成功！'
     id-error: 'home的id不满足'
-    exceeds: '超出数量！'
+    exceeds: '超出当前权限组设置的数量！'
     exist: '已存在相同ID的家'
     delete-success: '删除成功'
     not-found: 'home的id不存在'

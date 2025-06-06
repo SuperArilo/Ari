@@ -4,10 +4,11 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.TimePeriod;
 import com.tty.function.TimeManager;
-import com.tty.tool.Log;
+import com.tty.lib.Lib;
+import com.tty.lib.task.CancellableTask;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import io.papermc.paper.event.player.PlayerDeepSleepEvent;
-import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -19,19 +20,18 @@ import org.bukkit.event.server.PluginDisableEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 
 public class PlayerSkipNight implements Listener {
 
     private TimeManager timeManager;
-    private ScheduledTask titleScheduledTask;
+    private CancellableTask titleScheduledTask;
 
     @EventHandler
     public void deepSleep(PlayerDeepSleepEvent event) {
         if (!this.getSkipNightEnable()) return;
         event.setCancelled(true);
-        Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
             boolean pc = this.playerCondition(world);
             //当服务器人数为1人时候或者所有人睡觉
@@ -53,7 +53,7 @@ public class PlayerSkipNight implements Listener {
     @EventHandler
     public void playerGetup(PlayerBedLeaveEvent event) {
         if (!this.getSkipNightEnable()) return;
-        Bukkit.getGlobalRegionScheduler().run(Ari.instance, i -> {
+        Lib.Scheduler.run(Ari.instance, i -> {
             World world = event.getPlayer().getWorld();
             if(world.getTime() >= TimePeriod.WAKE_UP.getEnd()) {
                 this.cancelTimeManager();
@@ -117,7 +117,7 @@ public class PlayerSkipNight implements Listener {
         List<Player> players = world.getPlayers();
         this.timeManager.timeAutomaticallyPasses(s -> {
             if (this.titleScheduledTask != null) return;
-            this.titleScheduledTask = Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> {
+            this.titleScheduledTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                 players.forEach(instance -> {
                     if (!instance.isSleeping()) return;
                     long sleepPlayers = this.getSleepPlayers(world);
@@ -142,13 +142,13 @@ public class PlayerSkipNight implements Listener {
                     }, () -> {});
                 });
                 if (s >= TimePeriod.WAKE_UP.getEnd()) {
-                    Bukkit.getGlobalRegionScheduler().run(Ari.instance, p -> {
+                    Lib.Scheduler.run(Ari.instance, p -> {
                         world.setStorm(false);
                         world.setThundering(false);
                     });
                 }
                 this.cancelTitleTask();
-            }, 1L, TimeUnit.SECONDS);
+            }, 20L);
         });
     }
 

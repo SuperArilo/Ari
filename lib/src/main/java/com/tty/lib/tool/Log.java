@@ -1,12 +1,14 @@
-package com.tty.tool;
+package com.tty.lib.tool;
 
-import com.tty.Ari;
 
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Log {
+
+    private static boolean DEBUG;
+
     private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();
     private static final String st = "[DEBUG] ";
     public static void info(String s) {
@@ -22,22 +24,23 @@ public class Log {
         getLogger().log(Level.SEVERE, s, throwable);
     }
     public static void debug(Level level, String s) {
-        if(Ari.debug) {
+        if(DEBUG) {
             getLogger().log(level, st + s);
         }
     }
     public static void debug(Level level, String s, Throwable throwable) {
-        if(Ari.debug) {
+        if(DEBUG) {
             getLogger().log(level,st + s, throwable);
         }
     }
     public static void debug(String s) {
-        if(Ari.debug) {
+        if(DEBUG) {
             getLogger().log(Level.INFO, st + s);
         }
     }
-    public static void setLogger(Logger logger) {
+    public static void initLogger(Logger logger, boolean d) {
         LOGGER.set(logger);
+        DEBUG = d;
     }
     private static Logger getLogger() {
         return LOGGER.get();

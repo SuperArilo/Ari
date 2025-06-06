@@ -1,5 +1,6 @@
 package com.tty.tool;
 
+import com.tty.lib.tool.Log;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;

@@ -9,6 +9,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>main</module>
+        <module>lib</module>
     </modules>
     <properties>
         <maven.plugin.validation>verbose</maven.plugin.validation>
@@ -48,20 +49,21 @@
                             <minimizeJar>true</minimizeJar>
                             <filters>
                                 <filter>
-                                    <artifact>*:*</artifact>
+                                    <artifact>com.tty:ari</artifact>
                                     <excludes>
-                                        <exclude>META-INF/LICENSE</exclude>
-                                        <exclude>META-INF/NOTICE</exclude>
                                         <exclude>META-INF/MANIFEST.MF</exclude>
-                                        <exclude>META-INF/maven/**</exclude>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
                                     </excludes>
                                 </filter>
                                 <filter>
-                                    <artifact>*:*</artifact>
+                                    <artifact>com.tty:arilib</artifact>
                                     <excludes>
-                                        <exclude>module-info.class</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                                <filter>
+                                    <artifact>org.mybatis:mybatis</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
                                     </excludes>
                                 </filter>
                             </filters>

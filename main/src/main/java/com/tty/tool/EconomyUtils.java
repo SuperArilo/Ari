@@ -1,5 +1,6 @@
 package com.tty.tool;
 
+import com.tty.lib.tool.Log;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Bukkit;

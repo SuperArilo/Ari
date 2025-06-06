@@ -194,12 +194,6 @@ public class MainCommand implements TabExecutor {
                 case TPAREFUSE -> {
                     return new CommandTeleport(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAREFUSE);
                 }
-                case DELETEHOME -> {
-                    return new CommandHome(commandSender).getHomeList();
-                }
-                case DELETEWARP -> {
-                    return new CommandWarp(commandSender).getWarpList();
-                }
             }
         }
         return List.of();

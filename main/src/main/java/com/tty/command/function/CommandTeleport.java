@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandTeleport {
+public class CommandTeleport extends TpCheck {
 
     private final CommandSender sender;
     private final String playerName;
@@ -28,12 +28,12 @@ public class CommandTeleport {
     }
 
     public void tpa() {
-        if(!this.preCheck()) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     public void tpaaccept() {
-        if(!this.preCheck()) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         TeleportStatus status = TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
@@ -56,7 +56,7 @@ public class CommandTeleport {
     }
 
     public void tparefuse() {
-        if(!this.preCheck()) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if(player == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
@@ -77,7 +77,7 @@ public class CommandTeleport {
     }
 
     public void tpahere() {
-        if(!preCheck()) return;
+        if(!preCheck(this.sender, this.playerName)) return;
         TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
@@ -110,20 +110,4 @@ public class CommandTeleport {
         return List.of();
     }
 
-    private boolean preCheck() {
-        if(!(this.sender instanceof Player)) {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
-            return false;
-        }
-        if (this.playerName.equals(this.sender.getName())) {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
-            return false;
-        }
-        Player player = Ari.instance.getServer().getPlayerExact(this.playerName);
-        if(player == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
-            return false;
-        }
-        return true;
-    }
 }

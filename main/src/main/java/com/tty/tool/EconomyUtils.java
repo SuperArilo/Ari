@@ -18,7 +18,7 @@ public class EconomyUtils {
                 this.economy = provider.getProvider();
                 Log.info("Loaded economy plugin: " + this.economy.getName());
             } else {
-                Log.error("No economy plugin is loaded");
+                Log.warning("No economy plugin is loaded");
             }
         } else {
             Log.warning("no vault, no Economy");

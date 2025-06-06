@@ -1,5 +1,5 @@
 tab:
-  enable: true
+  enable: false
   # tick
   update-interval: 20
   layout:

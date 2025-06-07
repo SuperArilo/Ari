@@ -22,7 +22,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -52,9 +54,12 @@ public class EditHomeListener implements Listener {
                 event.setCancelled(true);
                 return;
             }
+
             ItemMeta clickMeta = clickItem.getItemMeta();
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
             event.setCancelled(true);
+            if (type == null) return;
 
             ServerHome home = (ServerHome) holder.getMeta();
             HomeManager homeManager = HomeManager.create(home.getPlayerUUID());
@@ -92,25 +97,30 @@ public class EditHomeListener implements Listener {
                     if(cursor == null) return;
                     Material current = cursor.getType();
                     if(current.equals(Material.AIR)) return;
-                    clickItem = new ItemStack(current);
-                    clickItem.setItemMeta(clickMeta);
-                    clickedInventory.setItem(event.getSlot(), clickItem);
+                    ItemStack newItemStake = new ItemStack(current);
+                    ItemMeta newItemMeta = newItemStake.getItemMeta();
+                    newItemMeta.displayName(clickMeta.displayName());
+                    newItemMeta.lore(clickItem.lore());
+                    String string = clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING);
+                    if (string == null) return;
+                    newItemMeta.getPersistentDataContainer().set(icon_type, PersistentDataType.STRING, string);
+                    newItemStake.setItemMeta(newItemMeta);
+                    clickedInventory.setItem(event.getSlot(), newItemStake);
                     home.setShowMaterial(current.name());
                 }
                 case SAVE -> {
                     //save
-                    ItemStack finalClickItem = clickItem;
                     Log.debug("start saving home");
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
-                    finalClickItem.setItemMeta(clickMeta);
+                    clickItem.setItemMeta(clickMeta);
                     CompletableFuture<Boolean> future = homeManager.modify(home);
                     future.thenAccept(status -> {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
-                            finalClickItem.setItemMeta(clickMeta);
+                            clickItem.setItemMeta(clickMeta);
                             Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
                                 clickMeta.lore(List.of());
-                                finalClickItem.setItemMeta(clickMeta);
+                                clickItem.setItemMeta(clickMeta);
                             }, 20);
                         } else {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
@@ -121,10 +131,17 @@ public class EditHomeListener implements Listener {
             }
             return;
         }
-        if (event.isShiftClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
+        if (event.isShiftClick() && event.isRightClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
             event.setCancelled(true);
         }
     }
+    @EventHandler
+    public void dragEdit(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.HOMEEDIT)) {
+            event.setCancelled(true);
+        }
+    }
+
     @EventHandler
     public void getNeedEditHomeChat(AsyncChatEvent event) {
         if (this.editStatus.isEmpty()) return;
@@ -150,7 +167,7 @@ public class EditHomeListener implements Listener {
 
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
             this.removeIfPlayInEditList(player);
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.cancel", FilePath.Lang));
+            player.sendMessage(TextTool.setHEXColorText("base.on-edit.cancel", FilePath.Lang));
             return;
         }
         // 使用 removeIf 删除满足条件的元素

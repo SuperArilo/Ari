@@ -23,8 +23,8 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -43,11 +43,13 @@ public class EditWarpListener implements Listener {
 
     @EventHandler
     public void editClick(InventoryClickEvent event) {
-        Inventory inventory = event.getClickedInventory();
-        if(inventory == null || event.getSlot() > inventory.getSize()) return;
 
-        if(inventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT)) {
-            if(event.getClick().equals(ClickType.SHIFT_RIGHT) || event.getClick().equals(ClickType.SHIFT_LEFT)) {
+        Inventory clickedInventory = event.getClickedInventory();
+        if (clickedInventory == null || event.getSlot() >= clickedInventory.getSize()) {
+            return;
+        }
+        if (clickedInventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT)) {
+            if(event.isShiftClick()) {
                 event.setCancelled(true);
                 return;
             }
@@ -62,8 +64,8 @@ public class EditWarpListener implements Listener {
             }
 
             ItemMeta clickMeta = clickItem.getItemMeta();
-
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
+            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
             if(type == null) return;
             event.setCancelled(true);
 
@@ -71,12 +73,12 @@ public class EditWarpListener implements Listener {
             WarpManager warpManager = WarpManager.create(serverWarp.getCreateBy());
             switch (type) {
                 case REBACK -> {
-                    inventory.close();
+                    clickedInventory.close();
                     new WarpList(player).open();
                 }
                 case DELETE -> {
                     warpManager.deleteInstance(serverWarp.getWarpId());
-                    inventory.close();
+                    clickedInventory.close();
                     new WarpList(player).open();
                 }
                 case RENAME, COST, PERMISSION -> {
@@ -95,7 +97,7 @@ public class EditWarpListener implements Listener {
                                     1000,
                                     10000 ,
                                     1000));
-                    inventory.close();
+                    clickedInventory.close();
                     this.editMap.put(player.getUniqueId(), OnEdit.build(holder, TitleInputType.valueOf(type.name())));
                 }
                 case LOCATION -> {
@@ -109,24 +111,29 @@ public class EditWarpListener implements Listener {
                     if(cursor == null) return;
                     Material current = cursor.getType();
                     if(current.equals(Material.AIR)) return;
-                    clickItem = new ItemStack(current);
-                    clickItem.setItemMeta(clickMeta);
-                    inventory.setItem(event.getSlot(), clickItem);
+                    ItemStack newItemStake = new ItemStack(current);
+                    ItemMeta newItemMeta = newItemStake.getItemMeta();
+                    newItemMeta.displayName(clickMeta.displayName());
+                    newItemMeta.lore(clickItem.lore());
+                    String string = clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING);
+                    if (string == null) return;
+                    newItemMeta.getPersistentDataContainer().set(icon_type, PersistentDataType.STRING, string);
+                    newItemStake.setItemMeta(newItemMeta);
+                    clickedInventory.setItem(event.getSlot(), newItemStake);
                     serverWarp.setShowMaterial(current.name());
                 }
                 case SAVE -> {
-                    ItemStack finalClickItem = clickItem;
                     Log.debug("start saving warp id:" + serverWarp.getWarpId());
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
-                    finalClickItem.setItemMeta(clickMeta);
+                    clickItem.setItemMeta(clickMeta);
                     CompletableFuture<Boolean> future = warpManager.modify(serverWarp);
                     future.thenAccept(status -> {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
-                            finalClickItem.setItemMeta(clickMeta);
+                            clickItem.setItemMeta(clickMeta);
                             Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
                                 clickMeta.lore(List.of());
-                                finalClickItem.setItemMeta(clickMeta);
+                                clickItem.setItemMeta(clickMeta);
                             }, 20L);
                         } else {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
@@ -135,10 +142,17 @@ public class EditWarpListener implements Listener {
                     });
                 }
             }
-        } else {
-            if (event.isShiftClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
-                event.setCancelled(true);
-            }
+            return;
+        }
+        if (event.isShiftClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void dragWarpEdit(InventoryDragEvent event) {
+        if (event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(GuiType.WARPEDIT)) {
+            event.setCancelled(true);
         }
     }
 
@@ -205,6 +219,7 @@ public class EditWarpListener implements Listener {
         new WarpEditor(serverWarp, player).open();
         Log.debug("player: [" + player.getName() + "] edit warp-name status removed");
     }
+
 
     private synchronized void removeIfPlayerInMap(@NotNull Player player) {
         this.editMap.remove(player.getUniqueId());

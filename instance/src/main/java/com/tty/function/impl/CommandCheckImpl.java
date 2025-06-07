@@ -1,6 +1,5 @@
 package com.tty.function.impl;
 
-import com.tty.Ari;
 import com.tty.function.CommandCheck;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;

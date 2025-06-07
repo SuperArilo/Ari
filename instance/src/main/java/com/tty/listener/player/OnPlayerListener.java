@@ -5,6 +5,7 @@ import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,16 +24,20 @@ public class OnPlayerListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (!player.hasPlayedBefore()) {
-            if(Ari.instance.getConfig().getBoolean("server.message.on-first-login")) {
-                event.joinMessage(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
+        PlayerManager build = PlayerManager.build(player);
+        event.joinMessage(null);
+        build.asyncGetInstance(player.getUniqueId().toString()).thenAccept(i -> {
+            if (i == null || !player.hasPlayedBefore()) {
+                if(Ari.instance.getConfig().getBoolean("server.message.on-first-login")) {
+                    Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
+                }
+                build.createInstance(player.getUniqueId().toString());
+            } else {
+                if(Ari.instance.getConfig().getBoolean("server.message.on-login")) {
+                    Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
+                }
             }
-            PlayerManager.build(player).createInstance(player.getUniqueId().toString());
-        } else {
-            if(Ari.instance.getConfig().getBoolean("server.message.on-login")) {
-                event.joinMessage(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
-            }
-        }
+        });
         playerLoginTimes.put(player.getUniqueId(), System.currentTimeMillis());
     }
 

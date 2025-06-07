@@ -3,7 +3,7 @@ package com.tty.gui;
 import com.tty.Ari;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.Lib;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;

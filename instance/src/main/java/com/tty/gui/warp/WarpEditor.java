@@ -1,6 +1,5 @@
 package com.tty.gui.warp;
 
-import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
@@ -8,8 +7,11 @@ import com.tty.entity.menu.warp.WarpEditorGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.enumType.LocationKeyType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.gui.BaseGui;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.EconomyUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -25,7 +27,7 @@ public class WarpEditor extends BaseGui {
     public WarpEditor(ServerWarp serverWarp, Player player) {
         super(player);
         this.currentWarp = serverWarp;
-        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
+        this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this.currentWarp), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle()));
     }
 
@@ -44,12 +46,12 @@ public class WarpEditor extends BaseGui {
                     case RENAME -> item.setName(this.currentWarp.getWarpName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = Ari.instance.objectConvert.parseLocation(this.currentWarp.getLocation());
+                        Location location = ConfigObjectUtils.parseLocation(this.currentWarp.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
-                                case X -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
-                                case Y -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
-                                case Z -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
+                                case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
+                                case Y -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
+                                case Z -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
                                 default -> name;
                             };
                         }
@@ -60,8 +62,8 @@ public class WarpEditor extends BaseGui {
                         item.setName(permission == null ? "":permission);
                     }
                     case COST -> {
-                        if (Ari.instance.economyUtils.isNull()) {
-                            item.setName(Ari.instance.configManager.getValue("server.message.no-economy", FilePath.Lang, String.class));
+                        if (EconomyUtils.isNull()) {
+                            item.setName(ConfigObjectUtils.getValue("server.message.no-economy", FilePath.Lang.getName(), String.class));
                             item.setMaterial("barrier");
                         } else {
                             Double cost = this.currentWarp.getCost();

@@ -1,11 +1,12 @@
 package com.tty.command.function;
 
-import com.tty.Ari;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeList;
-import com.tty.lib.tool.Log;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.Log;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class CommandHome {
     }
 
     public void setHome(String homeId) {
-        if(Ari.instance.formatUtils.checkIdName(homeId)) {
+        if(FormatUtils.checkIdName(homeId)) {
             HomeManager.create(((Player) this.sender).getUniqueId().toString()).createInstance(homeId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.home.id-error", FilePath.Lang));
@@ -38,7 +39,7 @@ public class CommandHome {
     }
 
     public void deleteHome(String homeId) {
-        if(Ari.instance.formatUtils.checkIdName(homeId)) {
+        if(FormatUtils.checkIdName(homeId)) {
             HomeManager.create(((Player) this.sender).getUniqueId().toString()).deleteInstance(homeId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
@@ -47,7 +48,7 @@ public class CommandHome {
 
     public List<String> getHomeList() {
         Player player = (Player) this.sender;
-        if(Ari.instance.permissionUtils.hasPermission(player, AriCommand.DELETEHOME.getPermission())) {
+        if(PermissionUtils.hasPermission(player, AriCommand.DELETEHOME.getPermission())) {
             CompletableFuture<List<String>> future = HomeManager.create(player.getUniqueId().toString()).asyncGetIdList();
             try {
                 List<String> strings = future.get(3, TimeUnit.SECONDS);

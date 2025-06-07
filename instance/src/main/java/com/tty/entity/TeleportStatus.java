@@ -1,7 +1,7 @@
 package com.tty.entity;
 
 import com.tty.enumType.AriCommand;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.TeleportType;
 import lombok.Data;
 import org.bukkit.Location;
 

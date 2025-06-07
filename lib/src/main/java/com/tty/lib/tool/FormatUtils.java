@@ -1,4 +1,4 @@
-package com.tty.tool;
+package com.tty.lib.tool;
 import java.text.DecimalFormat;
 
 public class FormatUtils {
@@ -15,7 +15,7 @@ public class FormatUtils {
      * @param number 需要格式化的数字（支持所有Number子类）
      * @return 格式化后的字符串，输入为null时返回"0.00"
      */
-    public String formatTwoDecimalPlaces(Number number) {
+    public static String formatTwoDecimalPlaces(Number number) {
         if (number == null) return "0.00";
         return DECIMAL_FORMAT.get().format(number);
     }
@@ -25,7 +25,7 @@ public class FormatUtils {
      * @param content 待检查字符串
      * @return 空值或不符合格式返回false
      */
-    public boolean checkIdName(String content) {
+    public static boolean checkIdName(String content) {
         return content != null && content.matches(ID_NAME_REGEX);
     }
 
@@ -34,7 +34,7 @@ public class FormatUtils {
      * @param content 待检查字符串
      * @return 空值或不符合格式返回false
      */
-    public boolean checkName(String content) {
+    public static boolean checkName(String content) {
         return content != null && content.matches(NAME_REGEX);
     }
 
@@ -43,7 +43,7 @@ public class FormatUtils {
      * @param node 权限节点字符串
      * @return 空值或不符合格式返回false
      */
-    public boolean isValidPermissionNode(String node) {
+    public static boolean isValidPermissionNode(String node) {
         return node != null && node.matches(PERMISSION_NODE_REGEX);
     }
 }

@@ -1,9 +1,9 @@
 package com.tty.command.function;
 
-import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.TeleportCheck;
 import com.tty.function.TeleportThread;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -25,7 +25,8 @@ public class CommandBack {
             return;
         }
        if(TeleportCheck.create().preCheckStatus(player, beforeLocation)) {
-           com.tty.function.TeleportThread.playerToLocation(player, beforeLocation) .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
+           TeleportThread.playerToLocation(player, beforeLocation)
+                   .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
        }
     }
 

@@ -2,10 +2,10 @@ package com.tty.function;
 
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.Log;
+import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

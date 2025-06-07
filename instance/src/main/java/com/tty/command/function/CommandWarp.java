@@ -1,10 +1,11 @@
 package com.tty.command.function;
 
-import com.tty.Ari;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpList;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -27,7 +28,7 @@ public class CommandWarp {
     }
 
     public void setWarp(String warpId) {
-        if(Ari.instance.formatUtils.checkIdName(warpId)) {
+        if(FormatUtils.checkIdName(warpId)) {
             WarpManager.create(((Player) this.sender).getUniqueId().toString()).createInstance(warpId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.warp.id-error", FilePath.Lang));
@@ -35,7 +36,7 @@ public class CommandWarp {
     }
 
     public void deleteWarp(String warpId) {
-        if(Ari.instance.formatUtils.checkIdName(warpId)) {
+        if(FormatUtils.checkIdName(warpId)) {
             WarpManager.create(((Player) this.sender).getUniqueId().toString()).deleteInstance(warpId);
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
@@ -44,7 +45,7 @@ public class CommandWarp {
 
     public List<String> getWarpList() {
         Player player = (Player) this.sender;
-        if(Ari.instance.permissionUtils.hasPermission(player, AriCommand.DELETEWARP.getPermission())) {
+        if(PermissionUtils.hasPermission(player, AriCommand.DELETEWARP.getPermission())) {
             CompletableFuture<List<String>> future = WarpManager.create(player.getUniqueId().toString()).asyncGetIdList();
             try {
                 List<String> list = future.get();

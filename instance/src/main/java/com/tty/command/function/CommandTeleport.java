@@ -4,10 +4,12 @@ import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.LangType;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.function.TeleportCheck;
 import com.tty.function.TeleportThread;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -49,7 +51,7 @@ public class CommandTeleport extends TpCheck {
             default -> null;
         };
         if (teleportThread != null) {
-            teleportThread.teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.TPA, Integer.class));
+            teleportThread.teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error", FilePath.Lang));
         }
@@ -67,7 +69,7 @@ public class CommandTeleport extends TpCheck {
         } else {
             if(Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
-                if(Ari.instance.configManager.getValue("function.tpa.refused", FilePath.Lang, String.class) instanceof String message) {
+                if(ConfigObjectUtils.getValue("function.tpa.refused", FilePath.Lang.getName(), String.class) instanceof String message) {
                     player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), this.sender.getName())));
                 }
             } else {
@@ -82,7 +84,7 @@ public class CommandTeleport extends TpCheck {
     }
 
     public List<String> getOnlinePlayers(AriCommand ariCommand) {
-        if (this.sender instanceof Player && Ari.instance.permissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
+        if (this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
                 if(this.sender.getName().equals(e.getName())) return;
@@ -94,7 +96,7 @@ public class CommandTeleport extends TpCheck {
     }
 
     public List<String> getHasRequestPlayers(AriCommand ariCommand) {
-        if(this.sender instanceof Player && Ari.instance.permissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
+        if(this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
             Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->

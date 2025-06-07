@@ -1,6 +1,6 @@
 package com.tty.dto;
 
-import com.tty.enumType.TitleInputType;
+import com.tty.lib.enum_type.TitleInputType;
 import lombok.Data;
 
 @Data

@@ -4,7 +4,7 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
 import com.tty.lib.Lib;
 import com.tty.mapper.PlayerMapper;
-import com.tty.lib.tool.Log;
+import com.tty.tool.Log;
 import com.tty.tool.SQLInstance;
 import org.apache.ibatis.session.SqlSession;
 import org.bukkit.OfflinePlayer;

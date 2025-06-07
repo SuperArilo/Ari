@@ -5,7 +5,7 @@ import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
-import com.tty.lib.tool.Log;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
@@ -20,8 +20,11 @@ import com.tty.tool.*;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.util.logging.Level;
 
 
@@ -30,22 +33,16 @@ public class Ari extends JavaPlugin {
     public static Ari instance;
     public static Boolean debug = false;
     public TpStatusValue tpStatusValue;
-    public ConfigManager configManager;
-    public ObjectConvert objectConvert;
+
     public SQLInstance SQLInstance;
-    public FormatUtils formatUtils;
-    public PermissionUtils permissionUtils;
-    public EconomyUtils economyUtils;
     public CommandAlias commandAlias;
     @Override
     public void onLoad() {
         instance = this;
-        this.configManager = new ConfigManager();
-        this.formatUtils = new FormatUtils();
-        this.objectConvert = new ObjectConvert();
+        reloadAllConfig();
         Log.initLogger(this.getLogger(), Ari.debug);
         Log.debug(Level.INFO, "----------------");
-        Log.debug(Level.INFO, "   " + this.configManager.getValue("debug.on-open", FilePath.Lang, String.class) + "   ");
+        Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class) + "   ");
         Log.debug(Level.INFO, "----------------");
     }
 
@@ -55,16 +52,14 @@ public class Ari extends JavaPlugin {
         this.registerListener();
 
         this.commandAlias = new CommandAlias();
-        //group
-        this.permissionUtils = new PermissionUtils();
+
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new HomePAPI().register();
         }
         //sql
         this.SQLInstance = new SQLInstance();
-        //em
-        this.economyUtils = new EconomyUtils();
+
         this.tpStatusValue = new TpStatusValue();
 
         if (ServerPlatform.isFolia()) {
@@ -97,4 +92,36 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerTabManager(), this);
     }
+
+    public static void reloadAllConfig() {
+        Ari.instance.saveDefaultConfig();
+        Ari.instance.reloadConfig();
+        boolean newDebugState = Ari.instance.getConfig().getBoolean("debug.enable", false);
+        if (!Ari.debug && newDebugState) {
+            Ari.instance.saveResource("config.yml", true);
+            Ari.instance.reloadConfig();
+            Ari.debug = true;
+        } else {
+            Ari.debug = newDebugState;
+        }
+        loadConfigInMemory();
+    }
+    private static void loadConfigInMemory() {
+        ConfigObjectUtils.clearConfigs();
+        FileConfiguration pluginConfig = Ari.instance.getConfig();
+        for (FilePath filePath : FilePath.values()) {
+            String path = filePath.getPath();
+            if(filePath.equals(FilePath.Lang)) {
+                path = path.replace("[lang]", Ari.instance.getConfig().getString("lang", "cn"));
+            }
+            File file = new File(Ari.instance.getDataFolder(), path);
+            if (!file.exists()) {
+                Ari.instance.saveResource(path, true);
+            } else if (pluginConfig.getBoolean("debug.overwrite-file", false)) {
+                Ari.instance.saveResource(path, true);
+            }
+            ConfigObjectUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
+        }
+    }
+
 }

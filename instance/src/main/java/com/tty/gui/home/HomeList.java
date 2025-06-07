@@ -7,12 +7,14 @@ import com.tty.entity.menu.Mask;
 import com.tty.entity.menu.home.HomeListGUI;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.enumType.LocationKeyType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.function.HomeManager;
 import com.tty.gui.BasePageGui;
-import com.tty.lib.tool.Log;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -35,7 +37,7 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     public HomeList(Player player) {
         super(player);
-        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
+        this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
         HomeManager.create(this.player.getUniqueId().toString())
@@ -73,15 +75,15 @@ public class HomeList extends BasePageGui<ServerHome> {
             }
             itemMeta.displayName(TextTool.setHEXColorText(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = Ari.instance.objectConvert.parseLocation(ph.getLocation());
+            Location location = ConfigObjectUtils.parseLocation(ph.getLocation());
             rawLore.forEach(line -> {
                 String replacedLine = line;
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     replacedLine = switch (keyType) {
                         case ID -> replacedLine.replace(keyType.getKey(), ph.getHomeId());
-                        case X -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
-                        case Y -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
-                        case Z -> replacedLine.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
+                        case X -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
+                        case Y -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
+                        case Z -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
                         case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
                         default -> replacedLine;
                     };

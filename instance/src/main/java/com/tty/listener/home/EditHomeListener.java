@@ -4,13 +4,15 @@ import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.Log;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -56,7 +58,7 @@ public class EditHomeListener implements Listener {
 
             ItemMeta clickMeta = clickItem.getItemMeta();
             NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
+            FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
             event.setCancelled(true);
             if (type == null) return;
 
@@ -75,8 +77,8 @@ public class EditHomeListener implements Listener {
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),
-                                    Ari.instance.configManager.getValue("base.on-edit.sub-title", FilePath.Lang, String.class),
+                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class),
+                                   ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class),
                                     1000,
                                     10000 ,
                                     1000));
@@ -147,17 +149,17 @@ public class EditHomeListener implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
         String message = TextTool.componentToString(event.message());
-        List<String> value = Ari.instance.configManager.getValue("main.name-check", FilePath.HomeConfig, new TypeToken<List<String>>(){}.getType());
+        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.HomeConfig.getName(), new TypeToken<List<String>>(){}.getType());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
             return;
         }
-        if(!Ari.instance.formatUtils.checkName(message) || value.contains(message)) {
+        if(!FormatUtils.checkName(message) || value.contains(message)) {
             player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
             return;
         }
-        if(message.length() > (Integer) Ari.instance.configManager.getValue("main.name-length", FilePath.HomeConfig, Integer.class)) {
+        if(message.length() > (Integer) ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class)) {
             player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
             return;
         }

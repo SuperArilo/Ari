@@ -3,11 +3,12 @@ package com.tty.command;
 import com.tty.Ari;
 import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
-import com.tty.enumType.TimePeriod;
+import com.tty.lib.enum_type.TimePeriod;
 import com.tty.function.CommandCheck;
 import com.tty.function.impl.CommandCheckImpl;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -38,7 +39,7 @@ public class MainCommand implements TabExecutor {
             case RELOAD -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));
-                Ari.instance.configManager.reloadAllConfig();
+                Ari.reloadAllConfig();
                 if (Ari.debug) {
                     Ari.instance.SQLInstance.reconnect();
                 }
@@ -137,7 +138,7 @@ public class MainCommand implements TabExecutor {
                     commandList.add(type.getShow());
                     continue;
                 }
-                if(Ari.instance.permissionUtils.hasPermission(commandSender, type.getPermission())) {
+                if(PermissionUtils.hasPermission(commandSender, type.getPermission())) {
                     commandList.add(type.getShow());
                 }
             }
@@ -151,7 +152,7 @@ public class MainCommand implements TabExecutor {
                     st.add(type.getShow());
                     continue;
                 }
-                if (Ari.instance.permissionUtils.hasPermission(commandSender, type.getPermission()) && type.getShow().contains(strings[0])) {
+                if (PermissionUtils.hasPermission(commandSender, type.getPermission()) && type.getShow().contains(strings[0])) {
                     st.add(type.getShow());
                 }
             }

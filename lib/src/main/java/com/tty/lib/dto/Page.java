@@ -1,4 +1,4 @@
-package com.tty.dto;
+package com.tty.lib.dto;
 
 import lombok.Data;
 

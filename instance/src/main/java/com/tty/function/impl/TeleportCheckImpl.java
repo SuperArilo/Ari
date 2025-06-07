@@ -4,10 +4,11 @@ import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.LangType;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.function.TeleportCheck;
 import com.tty.lib.Lib;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
@@ -18,19 +19,19 @@ public class TeleportCheckImpl implements TeleportCheck {
     @Override
     public void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
         if(this.checkHaveTeleportStatus(player, targetPlayer) == null) {
-            player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("function.tpa.send-message", FilePath.Lang, String.class)));
+            player.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.tpa.send-message", FilePath.Lang.getName(), String.class)));
             this.addTeleportStatusTask(player, targetPlayer, ariCommand);
-            if(Ari.instance.configManager.getValue("function.tpa.get-message", FilePath.Lang, String.class) instanceof String message) {
+            if(ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class) instanceof String message) {
                 boolean isTpa = message.contains(LangType.TPASENDER.getType());
                 targetPlayer.sendMessage(
                         TextTool.setHEXColorText(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
                                 .appendNewline()
-                                .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("function.public.agree", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                                .append(TextTool.setHEXColorText(Ari.instance.configManager.getValue("function.public.center", FilePath.Lang, String.class)))
-                                .append(TextTool.setClickEventText(Ari.instance.configManager.getValue("function.public.refuse", FilePath.Lang, String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                                .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.agree", FilePath.Lang.getName(), String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                                .append(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.public.center", FilePath.Lang.getName(), String.class)))
+                                .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.refuse", FilePath.Lang.getName(), String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
             }
         } else {
-            if(Ari.instance.configManager.getValue("function.tpa.again", FilePath.Lang, String.class) instanceof String message) {
+            if(ConfigObjectUtils.getValue("function.tpa.again", FilePath.Lang.getName(), String.class) instanceof String message) {
                 player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
             }
         }
@@ -42,7 +43,7 @@ public class TeleportCheckImpl implements TeleportCheck {
             this.addTeleportStatusTask(player, location);
             return true;
         } else {
-            player.sendMessage(TextTool.setHEXColorText(Ari.instance.configManager.getValue("teleport.again", FilePath.Lang, String.class)));
+            player.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("teleport.again", FilePath.Lang.getName(), String.class)));
             return false;
         }
     }

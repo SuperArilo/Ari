@@ -4,12 +4,13 @@ import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
 import com.tty.function.TeleportThread;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
+import com.tty.tool.ConfigObjectUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,7 +33,7 @@ public class HomeListListener implements Listener {
             if(event.getSlot() > inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+            FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
             if(type == null) return;
             Player player = holder.getPlayer();
             HomeList homeList = (HomeList) holder.getMeta();
@@ -48,8 +49,8 @@ public class HomeListListener implements Listener {
                             ClickType click = event.getClick();
                             if (click.equals(ClickType.LEFT)) {
                                 TeleportThread.playerToLocation(
-                                                player, Ari.instance.objectConvert.parseLocation(home.getLocation()))
-                                        .teleport(Ari.instance.configManager.getValue("main.teleport.delay", FilePath.HomeConfig, Integer.class));
+                                                player, ConfigObjectUtils.parseLocation(home.getLocation()))
+                                        .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.Lang.getName(), Integer.class));
                             } else if (click.equals(ClickType.RIGHT)) {
                                 Lib.Scheduler.run(Ari.instance, l -> inventory.close());
                                 new HomeEditor(home,(Player) event.getWhoClicked()).open();

@@ -1,6 +1,6 @@
 package com.tty.mapper;
 
-import com.tty.dto.Page;
+import com.tty.lib.dto.Page;
 import com.tty.entity.sql.ServerHome;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

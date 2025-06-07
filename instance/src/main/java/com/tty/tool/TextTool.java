@@ -1,8 +1,8 @@
 package com.tty.tool;
 
-import com.tty.Ari;
 import com.tty.enumType.FilePath;
-import com.tty.lib.tool.Log;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.Log;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -35,7 +35,7 @@ public class TextTool {
      * @return 返回彩色文本
      */
     public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
-        String content = Ari.instance.configManager.getValue(path, filePath, String.class);
+        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class);
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
@@ -51,7 +51,7 @@ public class TextTool {
      * @return 返回彩色文本
      */
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
-        String content = Ari.instance.configManager.getValue(path, filePath, String.class);
+        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class);
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
@@ -89,9 +89,9 @@ public class TextTool {
      * @return 返回基础格式化的文本坐标
      */
     public static String XYZText(Double x, Double y, Double z) {
-        return "&2x: &6" + Ari.instance.formatUtils.formatTwoDecimalPlaces(x) +
-                " &2y: &6" + Ari.instance.formatUtils.formatTwoDecimalPlaces(y) +
-                " &2z: &6" + Ari.instance.formatUtils.formatTwoDecimalPlaces(z);
+        return "&2x: &6" + FormatUtils.formatTwoDecimalPlaces(x) +
+                " &2y: &6" + FormatUtils.formatTwoDecimalPlaces(y) +
+                " &2z: &6" + FormatUtils.formatTwoDecimalPlaces(z);
     }
 
     /**

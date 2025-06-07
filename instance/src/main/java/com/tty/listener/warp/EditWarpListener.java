@@ -5,14 +5,17 @@ import com.tty.dto.CustomInventoryHolder;
 import com.tty.dto.OnEdit;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.enumType.TitleInputType;
+import com.tty.lib.enum_type.TitleInputType;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.Log;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.EconomyUtils;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -65,7 +68,7 @@ public class EditWarpListener implements Listener {
 
             ItemMeta clickMeta = clickItem.getItemMeta();
             NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
+            FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
             if(type == null) return;
             event.setCancelled(true);
 
@@ -83,7 +86,7 @@ public class EditWarpListener implements Listener {
                 }
                 case RENAME, COST, PERMISSION -> {
                     //检查是否有经济插件，如果没有就return
-                    if (type.equals(FunctionType.COST) && Ari.instance.economyUtils.isNull()) return;
+                    if (type.equals(FunctionType.COST) && EconomyUtils.isNull()) return;
                     if (type.equals(FunctionType.PERMISSION) && event.getClick().isRightClick()) {
                         clickMeta.displayName(TextTool.setHEXColorText(""));
                         clickItem.setItemMeta(clickMeta);
@@ -92,8 +95,8 @@ public class EditWarpListener implements Listener {
                     }
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    Ari.instance.configManager.getValue("base.on-edit.title", FilePath.Lang, String.class),
-                                    Ari.instance.configManager.getValue("base.on-edit.sub-title", FilePath.Lang, String.class),
+                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class),
+                                    ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class),
                                     1000,
                                     10000 ,
                                     1000));
@@ -165,7 +168,7 @@ public class EditWarpListener implements Listener {
         OnEdit onEdit = this.editMap.get(player.getUniqueId());
         if(onEdit == null) return;
         String message = TextTool.componentToString(event.message());
-        List<String> value = Ari.instance.configManager.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType());
+        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.WarpConfig.getName(), new TypeToken<List<String>>(){}.getType());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
@@ -182,13 +185,11 @@ public class EditWarpListener implements Listener {
         try {
             switch (onEdit.getType()) {
                 case RENAME -> {
-                    if(!Ari.instance.formatUtils.checkName(message) ||
-                            value.contains(message) && onEdit.getType().equals(TitleInputType.RENAME) ||
-                            !Ari.instance.formatUtils.checkName(message)) {
+                    if(!FormatUtils.checkName(message) || value.contains(message) || !FormatUtils.checkName(message)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
                         return;
                     }
-                    if(message.length() >  (Integer) Ari.instance.configManager.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType()) &&
+                    if(message.length() >  (Integer) ConfigObjectUtils.getValue("main.name-length", FilePath.WarpConfig.getName(), new TypeToken<Integer>(){}.getType()) &&
                             onEdit.getType().equals(TitleInputType.RENAME)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                         return;
@@ -196,7 +197,7 @@ public class EditWarpListener implements Listener {
                     serverWarp.setWarpName(message);
                 }
                 case PERMISSION -> {
-                     if(!Ari.instance.formatUtils.isValidPermissionNode(message)) {
+                     if(!FormatUtils.isValidPermissionNode(message)) {
                          player.sendMessage(TextTool.setHEXColorText("base.on-edit.permission.permission-error", FilePath.Lang));
                          return;
                      }

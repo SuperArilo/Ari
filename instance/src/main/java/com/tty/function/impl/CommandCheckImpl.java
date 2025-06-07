@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.function.CommandCheck;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -38,7 +39,7 @@ public class CommandCheckImpl implements CommandCheck {
 
     @Override
     public boolean commandSenderHavePermission(AriCommand ariCommand) {
-        if(!Ari.instance.permissionUtils.hasPermission(this.commandSender, ariCommand.getPermission())) {
+        if(!PermissionUtils.hasPermission(this.commandSender, ariCommand.getPermission())) {
             this.commandSender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
             return false;
         }
@@ -47,7 +48,7 @@ public class CommandCheckImpl implements CommandCheck {
 
     @Override
     public boolean commandSenderHavePermission() {
-        if (!Ari.instance.permissionUtils.hasPermission(this.commandSender, this.ariCommand.getPermission())) {
+        if (!PermissionUtils.hasPermission(this.commandSender, this.ariCommand.getPermission())) {
             this.commandSender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
             return false;
         }

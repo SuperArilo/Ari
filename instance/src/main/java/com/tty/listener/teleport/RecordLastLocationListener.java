@@ -1,11 +1,11 @@
 package com.tty.listener.teleport;
 
-import com.tty.Ari;
 import com.tty.dto.event.CustomPlayerRespawnEvent;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.LangType;
+import com.tty.lib.enum_type.LangType;
 import com.tty.function.TeleportThread;
 import com.tty.lib.ServerPlatform;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -46,7 +46,7 @@ public class RecordLastLocationListener implements Listener {
         Location deathLocation = TeleportThread.lastLocation.get(player.getUniqueId());
         if (deathLocation == null) return;
         String location = TextTool.XYZText(deathLocation.getX(), deathLocation.getY(), deathLocation.getZ());
-        String value = Ari.instance.configManager.getValue("teleport.tips-back", FilePath.Lang, String.class);
+        String value = ConfigObjectUtils.getValue("teleport.tips-back", FilePath.Lang.getName(), String.class);
         event.getPlayer().sendMessage(TextTool.setHEXColorText(value.replace(LangType.DEATHLOCATION.getType(), location)));
     }
 }

@@ -3,8 +3,8 @@ package com.tty.tool;
 
 import com.tty.Ari;
 import com.tty.enumType.MapperList;
-import com.tty.enumType.SQLType;
-import com.tty.lib.tool.Log;
+import com.tty.lib.enum_type.SQLType;
+import com.tty.tool.Log;
 import com.tty.mapper.CreateTable;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.mapping.Environment;
@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 public class SQLInstance {
+
     private final FileConfiguration config;
     private SQLType sqlType;
     public static SqlSessionFactory sessionFactory;

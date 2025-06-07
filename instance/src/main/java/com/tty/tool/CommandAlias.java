@@ -5,7 +5,7 @@ import com.tty.dto.AliasItem;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.google.gson.reflect.TypeToken;
-import com.tty.lib.tool.Log;
+import com.tty.tool.Log;
 import org.bukkit.command.*;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -33,8 +33,8 @@ public class CommandAlias {
     }
 
     public void init() {
-        YamlConfiguration aliasFile = Ari.instance.configManager.getObject(FilePath.CommandAlias.getName());
-        this.alias = Ari.instance.objectConvert.yamlConvertToObj(aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
+        YamlConfiguration aliasFile = ConfigObjectUtils.getObject(FilePath.CommandAlias.getName());
+        this.alias = ConfigObjectUtils.yamlConvertToObj(aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
         this.registerAlias();
     }
     private void registerAlias() {

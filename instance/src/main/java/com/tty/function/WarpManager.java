@@ -1,13 +1,14 @@
 package com.tty.function;
 
 import com.tty.Ari;
-import com.tty.dto.Page;
+import com.tty.lib.dto.Page;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.function.impl.BaseFunctionImpl;
 import com.tty.lib.Lib;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.mapper.ServerWrapMapper;
-import com.tty.lib.tool.Log;
+import com.tty.tool.Log;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.apache.ibatis.session.SqlSession;
@@ -189,7 +190,7 @@ public class WarpManager extends BaseFunctionImpl {
             }
         }
         if (maxHomes == 0 && firstErrorPermission != null) {
-            String errorMessage = Ari.instance.configManager.getValue("base.on-error", FilePath.Lang, String.class);
+            String errorMessage = ConfigObjectUtils.getValue("base.on-error", FilePath.Lang.getName(), String.class);
             player.sendMessage(TextTool.setHEXColorText(errorMessage));
             Log.error("玩家 " + player.getName() + " 的权限格式错误: " + firstErrorPermission);
         }

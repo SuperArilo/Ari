@@ -7,12 +7,13 @@ import com.tty.entity.menu.Mask;
 import com.tty.entity.menu.warp.WarpListGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.enumType.LocationKeyType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.function.WarpManager;
 import com.tty.gui.BasePageGui;
-import com.tty.lib.tool.Log;
+import com.tty.lib.tool.*;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
@@ -30,8 +31,8 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     public WarpList(Player player) {
         super(player);
-        this.gui = Ari.instance.objectConvert.yamlConvertToObj(
-                Ari.instance.configManager.getObject(FilePath.WarpList.getName()).saveToString(),
+        this.gui = com.tty.tool.ConfigObjectUtils.yamlConvertToObj(
+                com.tty.tool.ConfigObjectUtils.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
@@ -71,14 +72,14 @@ public class WarpList extends BasePageGui<ServerWarp> {
             }
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = Ari.instance.objectConvert.parseLocation(serverWarp.getLocation());
+            Location location = com.tty.tool.ConfigObjectUtils.parseLocation(serverWarp.getLocation());
             rawLore.stream().filter(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if(keyType == LocationKeyType.PERMISSION && line.contains(keyType.getKey())) {
-                        return Ari.instance.configManager.getValue("main.permission", FilePath.WarpConfig, Boolean.class);
+                        return com.tty.tool.ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class);
                     }
                     if(keyType == LocationKeyType.COST && line.contains(keyType.getKey())) {
-                        return (Boolean) Ari.instance.configManager.getValue("main.cost", FilePath.WarpConfig, Boolean.class) && !Ari.instance.economyUtils.isNull();
+                        return (Boolean) com.tty.tool.ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class) && !EconomyUtils.isNull();
                     }
                 }
                 return true;
@@ -86,9 +87,9 @@ public class WarpList extends BasePageGui<ServerWarp> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
-                        case X -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
-                        case Y -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
-                        case Z -> line.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
+                        case X -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
+                        case Y -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
+                        case Z -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
                         case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
                         case PLAYERNAME -> {
                             UUID uuid = UUID.fromString(serverWarp.getCreateBy());
@@ -113,9 +114,9 @@ public class WarpList extends BasePageGui<ServerWarp> {
                         case PERMISSION -> {
                             boolean hasPermission = serverWarp.getPermission() == null ||
                                     serverWarp.getPermission().isEmpty() ||
-                                    Ari.instance.permissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
+                                    PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), Ari.instance.configManager.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang, String.class));
+                            yield line.replace(keyType.getKey(), ConfigObjectUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang.getName(), String.class));
                         }
                     };
                 }

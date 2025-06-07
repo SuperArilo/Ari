@@ -1,6 +1,5 @@
 package com.tty.gui.home;
 
-import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
@@ -8,8 +7,10 @@ import com.tty.entity.menu.home.HomeEditorGUI;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.enumType.LocationKeyType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.gui.BaseGui;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -24,7 +25,7 @@ public class HomeEditor extends BaseGui {
     public HomeEditor(ServerHome serverHome, Player player) {
         super(player);
         this.currentHome = serverHome;
-        this.gui = Ari.instance.objectConvert.yamlConvertToObj(Ari.instance.configManager.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
+        this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this.currentHome), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 
@@ -43,12 +44,12 @@ public class HomeEditor extends BaseGui {
                     case RENAME -> item.setName(this.currentHome.getHomeName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = Ari.instance.objectConvert.parseLocation(this.currentHome.getLocation());
+                        Location location = ConfigObjectUtils.parseLocation(this.currentHome.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
-                                case X -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getX()));
-                                case Y -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getY()));
-                                case Z -> name.replace(keyType.getKey(), Ari.instance.formatUtils.formatTwoDecimalPlaces(location.getZ()));
+                                case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
+                                case Y -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
+                                case Z -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
                                 default -> name;
                             };
                         }

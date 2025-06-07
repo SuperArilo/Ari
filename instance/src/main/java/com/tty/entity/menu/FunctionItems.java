@@ -1,6 +1,6 @@
 package com.tty.entity.menu;
 
-import com.tty.enumType.FunctionType;
+import com.tty.lib.enum_type.FunctionType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

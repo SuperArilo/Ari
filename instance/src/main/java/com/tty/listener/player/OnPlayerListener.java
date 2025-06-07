@@ -3,7 +3,7 @@ package com.tty.listener.player;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.lib.tool.Log;
+import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

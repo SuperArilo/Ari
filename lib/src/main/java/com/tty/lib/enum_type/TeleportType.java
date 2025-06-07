@@ -1,4 +1,4 @@
-package com.tty.enumType;
+package com.tty.lib.enum_type;
 
 import lombok.Getter;
 

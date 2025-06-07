@@ -11,7 +11,13 @@ import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.Log;
+import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.TeleportType;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.EconomyUtils;
+import com.tty.tool.Log;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -41,7 +47,7 @@ public class WarpListListener implements Listener {
             if(event.getSlot() >= inventory.getSize()) return;
             ItemStack currentItem = event.getCurrentItem();
             if (currentItem == null) return;
-            FunctionType type = Ari.instance.objectConvert.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
+            FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
             if(type == null) return;
             Player player = holder.getPlayer();
             WarpList warpList = (WarpList) holder.getMeta();
@@ -63,19 +69,19 @@ public class WarpListListener implements Listener {
                                 if(eventClick.equals(ClickType.LEFT)) {
                                     String permission = instance.getPermission();
                                     if(permission != null && !permission.isEmpty()) {
-                                        boolean hasPermission = Ari.instance.permissionUtils.hasPermission(player, permission);
+                                        boolean hasPermission = PermissionUtils.hasPermission(player, permission);
                                         if (!hasPermission && !isOwner) {
                                             player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
                                             i.cancel();
                                             return;
                                         }
                                     }
-                                    Location targetLocation = Ari.instance.objectConvert.parseLocation(instance.getLocation());
+                                    Location targetLocation = ConfigObjectUtils.parseLocation(instance.getLocation());
                                     TeleportThread.playerToLocation(
                                                     player,
                                                     targetLocation)
                                             .teleport(
-                                                    Ari.instance.configManager.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class),
+                                                    ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class),
                                                     new TeleportCallback() {
                                                         @Override
                                                         public void onCancel() {
@@ -84,16 +90,16 @@ public class WarpListListener implements Listener {
                                                         @Override
                                                         public void after() {
                                                             //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                                            if(!isOwner && !player.isOp() && (Boolean) Ari.instance.configManager.getValue("main.cost", FilePath.WarpConfig, Boolean.class)) {
-                                                                Ari.instance.economyUtils.withdrawPlayer(player, instance.getCost());
-                                                                String value = Ari.instance.configManager.getValue("teleport.costed", FilePath.Lang, String.class);
-                                                                player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + Ari.instance.economyUtils.getNamePlural())));
+                                                            if(!isOwner && !player.isOp() && (Boolean) ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class)) {
+                                                                EconomyUtils.withdrawPlayer(player, instance.getCost());
+                                                                String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class);
+                                                                player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
                                                             }
                                                             Ari.instance.tpStatusValue.remove(player, TeleportType.POINT);
                                                         }
                                                         @Override
                                                         public void before(TeleportThread teleportThread) {
-                                                            if(!Ari.instance.economyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && (Boolean) Ari.instance.configManager.getValue("main.permission", FilePath.WarpConfig, Boolean.class)) {
+                                                            if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && (Boolean) ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class)) {
                                                                 player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
                                                                 teleportThread.cancel();
                                                                 return;

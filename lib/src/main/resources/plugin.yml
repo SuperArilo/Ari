@@ -2,6 +2,8 @@ name: arilib
 version: '${project.version}'
 author: Arilo007
 depend: ['Vault']
+loadbefore:
+  - 'Vault'
 folia-supported: true
 main: com.tty.lib.Lib
 api-version: 1.20

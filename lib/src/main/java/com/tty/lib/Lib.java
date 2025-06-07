@@ -18,12 +18,12 @@ public class Lib extends JavaPlugin {
     @Override
     public void onLoad() {
         Log.initLogger(this.getLogger(), false);
-        this.loadVault();
-        this.loadPermission();
     }
 
     @Override
     public void onEnable() {
+        this.loadVault();
+        this.loadPermission();
     }
 
     @Override

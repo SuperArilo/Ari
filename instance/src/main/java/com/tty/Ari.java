@@ -17,11 +17,14 @@ import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
 import com.tty.tool.*;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.Bukkit;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -61,12 +64,7 @@ public class Ari extends JavaPlugin {
         this.SQLInstance = new SQLInstance();
 
         this.tpStatusValue = new TpStatusValue();
-
-        if (ServerPlatform.isFolia()) {
-            Log.debug("running folia");
-        } else {
-            Log.debug("running bukkit");
-        }
+        this.printLogo();
     }
     @Override
     public void onDisable() {
@@ -123,5 +121,23 @@ public class Ari extends JavaPlugin {
             ConfigObjectUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
-
+    private void printLogo() {
+        String d;
+        if (ServerPlatform.isFolia()) {
+            PluginMeta pluginMeta = Ari.instance.getPluginMeta();
+            d = pluginMeta.getName() + " " + pluginMeta.getVersion();
+        } else {
+            PluginDescriptionFile description = Ari.instance.getDescription();
+            d = description.getName() + " " + description.getVersion();
+        }
+        String ariArt =
+                "        _   \n" +
+                "  |    /_\\  " + d + "\n" +
+                "  |___/   \\ Running on " + Bukkit.getName() + " " + Bukkit.getServer().getVersion();
+        ConsoleCommandSender console = Bukkit.getConsoleSender();
+        for (String string : ariArt.split("\n")) {
+            console.sendMessage(string);
+        }
+        console.sendMessage("");
+    }
 }

@@ -1,10 +1,8 @@
 package com.tty.listener.player;
 
 import com.tty.Ari;
-import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.lib.Lib;
 import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.entity.Player;
@@ -15,7 +13,6 @@ import org.bukkit.event.player.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
 
 
 public class OnPlayerListener implements Listener {
@@ -47,22 +44,18 @@ public class OnPlayerListener implements Listener {
         }
 
         PlayerManager manager = PlayerManager.build(player);
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
-            try {
-                ServerPlayer serverPlayer = manager.asyncGetInstance(player.getUniqueId().toString()).get();
-                long l = System.currentTimeMillis();
-                if(serverPlayer == null) {
-                    Log.warning("player: " + player.getUniqueId() + " data is null, exiting");
-                    return;
-                }
-                serverPlayer.setLastLoginOffTime(l);
-                serverPlayer.setTotalOnlineTime(serverPlayer.getTotalOnlineTime() + l - playerLoginTimes.get(player.getUniqueId()));
-                manager.modify(serverPlayer);
-                playerLoginTimes.remove(player.getUniqueId());
-            } catch (InterruptedException | ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        });
+        manager.asyncGetInstance(player.getUniqueId().toString())
+                .thenAccept(p -> {
+                    long l = System.currentTimeMillis();
+                    if(p == null) {
+                        Log.warning("player: " + player.getUniqueId() + " data is null, exiting");
+                        return;
+                    }
+                    p.setLastLoginOffTime(l);
+                    p.setTotalOnlineTime(p.getTotalOnlineTime() + l - playerLoginTimes.get(player.getUniqueId()));
+                    manager.modify(p);
+                    playerLoginTimes.remove(player.getUniqueId());
+                });
     }
 
 }

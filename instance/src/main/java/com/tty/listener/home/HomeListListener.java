@@ -50,7 +50,7 @@ public class HomeListListener implements Listener {
                             if (click.equals(ClickType.LEFT)) {
                                 TeleportThread.playerToLocation(
                                                 player, ConfigObjectUtils.parseLocation(home.getLocation()))
-                                        .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.Lang.getName(), Integer.class));
+                                        .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
                             } else if (click.equals(ClickType.RIGHT)) {
                                 Lib.Scheduler.run(Ari.instance, l -> inventory.close());
                                 new HomeEditor(home,(Player) event.getWhoClicked()).open();

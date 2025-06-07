@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
 import com.tty.enumType.FunctionType;
+import com.tty.lib.Lib;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
@@ -28,9 +29,9 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
-        Bukkit.getRegionScheduler().run(Ari.instance, this.player.getLocation(), e -> {
+        Lib.Scheduler.runAtRegion(Ari.instance, this.player.getLocation(), e -> {
             this.player.openInventory(this.inventory);
-            Bukkit.getAsyncScheduler().runNow(Ari.instance, i -> {
+            Lib.Scheduler.runAsync(Ari.instance, i -> {
                 this.BaseRenderMasks(this.renderMasks());
                 this.BaseRenderFunctionItems(this.renderFunctionItems());
             });

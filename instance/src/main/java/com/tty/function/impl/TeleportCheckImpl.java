@@ -7,13 +7,12 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.LangType;
 import com.tty.enumType.TeleportType;
 import com.tty.function.TeleportCheck;
+import com.tty.lib.Lib;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.event.ClickEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.concurrent.TimeUnit;
 
 public class TeleportCheckImpl implements TeleportCheck {
     @Override
@@ -78,7 +77,7 @@ public class TeleportCheckImpl implements TeleportCheck {
     private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, ariCommand);
         Ari.instance.tpStatusValue.addStatus(build);
-        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER), 10L, TimeUnit.SECONDS);
+        Lib.Scheduler.runLater(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER), 200L);
     }
     /**
      * 添加玩家传送到玩家的状态
@@ -88,6 +87,6 @@ public class TeleportCheckImpl implements TeleportCheck {
     private void addTeleportStatusTask(Player player, Location location) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), location, TeleportType.POINT, null);
         Ari.instance.tpStatusValue.addStatus(build);
-        Bukkit.getAsyncScheduler().runDelayed(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.POINT), 10L, TimeUnit.SECONDS);
+        Lib.Scheduler.runLater(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.POINT), 200L);
     }
 }

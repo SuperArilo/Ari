@@ -133,7 +133,7 @@ public class EditHomeListener implements Listener {
             }
             return;
         }
-        if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) || event.isShiftClick() && event.isRightClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
+        if (event.getAction().equals(InventoryAction.COLLECT_TO_CURSOR) && event.isShiftClick() && event.isRightClick() && event.getView().getTopInventory().getHolder() instanceof CustomInventoryHolder) {
             event.setCancelled(true);
         }
     }

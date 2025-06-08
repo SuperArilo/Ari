@@ -13,7 +13,7 @@ import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.lib.tool.EconomyUtils;
+import com.tty.tool.EconomyUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;

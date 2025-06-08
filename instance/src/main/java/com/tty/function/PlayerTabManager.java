@@ -8,7 +8,7 @@ import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.Log;
-import com.tty.lib.tool.PermissionUtils;
+import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.audience.Audience;

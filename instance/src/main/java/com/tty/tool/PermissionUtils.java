@@ -1,4 +1,4 @@
-package com.tty.lib.tool;
+package com.tty.tool;
 
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;

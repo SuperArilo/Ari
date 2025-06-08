@@ -5,6 +5,7 @@ import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
@@ -18,6 +19,8 @@ import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
@@ -51,6 +54,10 @@ public class Ari extends JavaPlugin {
 
     @Override
     public void onEnable() {
+
+        PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault"));
+        PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault"));
+
         this.registerCommands();
         this.registerListener();
 
@@ -121,6 +128,8 @@ public class Ari extends JavaPlugin {
             ConfigObjectUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
+
+
     private void printLogo() {
         String d;
         if (ServerPlatform.isFolia()) {

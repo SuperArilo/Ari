@@ -6,7 +6,7 @@ import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.Log;
-import com.tty.lib.tool.PermissionUtils;
+import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

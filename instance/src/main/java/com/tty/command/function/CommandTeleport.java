@@ -9,7 +9,7 @@ import com.tty.lib.enum_type.TeleportType;
 import com.tty.function.TeleportCheck;
 import com.tty.function.TeleportThread;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.lib.tool.PermissionUtils;
+import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;

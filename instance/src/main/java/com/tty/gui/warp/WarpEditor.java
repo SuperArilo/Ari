@@ -10,7 +10,7 @@ import com.tty.enumType.GuiType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.gui.BaseGui;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.lib.tool.EconomyUtils;
+import com.tty.tool.EconomyUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;

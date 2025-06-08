@@ -1,5 +1,5 @@
 tab:
-  enable: false
+  enable: true
   # tick
   update-interval: 20
   layout:
@@ -20,7 +20,6 @@ tab:
     _default_:
       prefix: '&f[&a玩家&f] '
       suffix: ''
-  #broken api
   slot:
     - 'owner'
     - 'admin'

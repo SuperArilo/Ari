@@ -15,16 +15,13 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
 public class TextTool {
 
-    private static final Pattern START_TAG_PATTERN = Pattern.compile("<#([A-Fa-f0-9]{6})>"); // 开始标签
-    private static final Pattern END_TAG_PATTERN = Pattern.compile("</#([A-Fa-f0-9]{6})>"); // 结束标签
+    private static final Pattern GRADIENT_PATTERN = Pattern.compile("<#([A-Fa-f0-9]{6})>(.*?)</#([A-Fa-f0-9]{6})>");
 
     /**
      * 设置彩色文本格式
@@ -127,95 +124,73 @@ public class TextTool {
             content = PlaceholderAPI.setPlaceholders(player, content);
         }
         if (content.contains("<#") && content.contains("</#")) {
+            Matcher matcher = GRADIENT_PATTERN.matcher(content);
+            int lastEnd = 0;
             TextComponent.Builder builder = Component.text();
-            hexadecimalStrings(content).forEach(part -> {
-                if (part.startsWith("<#")) {
-                    List<String> colors = separateHexString(part);
-                    String startColor = colors.get(0);
-                    String endColor = colors.get(1);
-                    String text = part
-                            .replaceFirst("<#" + startColor.substring(1) + ">", "")
-                            .replaceFirst("</#" + endColor.substring(1) + ">", "");
-                    int length = text.length();
-                    for (int i = 0; i < length; i++) {
-                        double ratio = i / (double) (length - 1);
-                        TextColor color = HexColorMake(startColor, endColor, ratio);
-                        builder.append(Component.text(text.charAt(i), color));
-                    }
-                } else {
-                    builder.append(Component.text(ChatColor.translateAlternateColorCodes('&', part)));
+
+            while (matcher.find()) {
+                int start = matcher.start();
+                if (start > lastEnd) {
+                    builder.append(Component.text(content.substring(lastEnd, start)));
                 }
-            });
-            return builder.decoration(TextDecoration.ITALIC, false).build();
+
+                String startColorHex = matcher.group(1);
+                String text = matcher.group(2);
+                String endColorHex = matcher.group(3);
+
+                builder.append(generateGradientText(text, startColorHex, endColorHex));
+
+                lastEnd = matcher.end();
+            }
+
+            if (lastEnd < content.length()) {
+                builder.append(Component.text(content.substring(lastEnd)));
+            }
+
+            return builder.build();
+
         } else {
             return Component.text(ChatColor.translateAlternateColorCodes('&', content))
                     .decoration(TextDecoration.ITALIC, false);
         }
     }
+    /**
+     * 生成渐变文本的 Component
+     */
+    private static Component generateGradientText(String text, String startColorHex, String endColorHex) {
+        int[] startColor = hexToRgb(startColorHex);
+        int[] endColor = hexToRgb(endColorHex);
 
-    //分离具有16进制标签的文本
-    protected static List<String> hexadecimalStrings(String content) {
-        List<String> parts = new ArrayList<>();
-        Matcher startMatcher = START_TAG_PATTERN.matcher(content);
-        Matcher endMatcher = END_TAG_PATTERN.matcher(content);
+        TextComponent.Builder gradientBuilder = Component.text();
 
-        int lastEnd = 0;
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
 
-        while (startMatcher.find() && endMatcher.find(startMatcher.end())) {
-            int start = startMatcher.start();
-            int endEnd = endMatcher.end();
-            if (lastEnd < start) {
-                parts.add(content.substring(lastEnd, start));
-            }
-            String segment = content.substring(start, endEnd);
-            parts.add(segment);
-            lastEnd = endEnd;
-            startMatcher.region(endEnd, content.length());
-            endMatcher.region(endEnd, content.length());
+            // 避免除以 0 的情况
+            double ratio = (text.length() > 1)
+                    ? (double) i / (text.length() - 1)
+                    : 0.0;
+
+            int r = (int) (startColor[0] + (endColor[0] - startColor[0]) * ratio);
+            int g = (int) (startColor[1] + (endColor[1] - startColor[1]) * ratio);
+            int b = (int) (startColor[2] + (endColor[2] - startColor[2]) * ratio);
+
+            gradientBuilder.append(Component.text(c).color(TextColor.color(r, g, b)));
         }
-        if (lastEnd < content.length()) {
-            parts.add(content.substring(lastEnd));
-        }
 
-        return parts;
+        return gradientBuilder.build();
     }
 
-    //获取具有十六进制的字符串的开始颜色和结束颜色
-    protected static List<String> separateHexString(String content) {
-        List<String> colors = new ArrayList<>();
-        Matcher startMatcher = START_TAG_PATTERN.matcher(content);
-        if (startMatcher.find()) {
-            colors.add("#" + startMatcher.group(1));
-        }
-        Matcher endMatcher = END_TAG_PATTERN.matcher(content);
-        if (endMatcher.find()) {
-            colors.add("#" + endMatcher.group(1));
-        }
-        if (colors.size() == 2) {
-            return colors;
-        } else {
-            return List.of("#FFFFFF", "#FFFFFF");
-        }
+    /**
+     * 将十六进制颜色字符串转换为 RGB 数组
+     */
+    private static int[] hexToRgb(String hex) {
+        int r = Integer.parseInt(hex.substring(0, 2), 16);
+        int g = Integer.parseInt(hex.substring(2, 4), 16);
+        int b = Integer.parseInt(hex.substring(4, 6), 16);
+        return new int[]{r, g, b};
     }
 
-    protected static TextColor HexColorMake(String startColor, String endColor, double ratio) {
-        TextColor start = TextColor.fromHexString(startColor);
-        TextColor end = TextColor.fromHexString(endColor);
-        if (start == null || end == null) {
-            return TextColor.color(255, 255, 255);
-        }
-        int startRgb = start.value();
-        int endRgb = end.value();
-        int rgb = interpolate(startRgb, endRgb, ratio);
-        return TextColor.color(rgb);
-    }
-
-    private static int interpolate(int start, int end, double ratio) {
-        int r = (int) (( (start >> 16) & 0xFF ) * (1 - ratio) + ( (end >> 16) & 0xFF ) * ratio);
-        int g = (int) (( (start >> 8) & 0xFF ) * (1 - ratio) + ( (end >> 8) & 0xFF ) * ratio);
-        int b = (int) ( (start & 0xFF ) * (1 - ratio) + (end & 0xFF ) * ratio );
-        return (r << 16) | (g << 8) | b;
-    }
 
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
         return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));

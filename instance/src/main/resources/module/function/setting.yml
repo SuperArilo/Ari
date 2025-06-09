@@ -9,7 +9,7 @@ tab:
       - 'TPS: %server_tps_1_colored% &fMem: &2%server_ram_used%/&2%server_ram_max%'
   groups:
     owner:
-      prefix: '&f[&2腐竹&f] '
+      prefix: '<#ffffff>[</#ffffff><#B22222>腐竹腐竹腐竹腐竹腐竹腐竹</#B22222><#ffffff>]</#ffffff> '
       suffix: ''
     admin:
       prefix: '&f[&e管理员&f] '

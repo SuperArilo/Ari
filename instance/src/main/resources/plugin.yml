@@ -8,7 +8,7 @@ loadbefore:
 main: com.tty.Ari
 depend: ['arilib', 'Vault']
 softdepend: ['PlaceholderAPI']
-api-version: 1.20
+api-version: 1.21
 commands:
   ari:
     usage: '插件主要指令'

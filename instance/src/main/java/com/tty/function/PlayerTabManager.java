@@ -2,6 +2,7 @@ package com.tty.function;
 
 import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
+import com.tty.dto.tab.TabGroup;
 import com.tty.dto.tab.TabGroupLine;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
@@ -14,14 +15,13 @@ import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
-import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerTabManager implements Listener {
 
@@ -30,9 +30,7 @@ public class PlayerTabManager implements Listener {
     private final List<String> rawFooters = new ArrayList<>();
     private Integer updateInterval;
     private final Map<String, TabGroupLine> groupLineMap = new HashMap<>();
-    private final Map<Player, TextComponent> cachePlayerLine = new HashMap<>();
     private final List<String> groupSequence = new ArrayList<>();
-
     //换行
     private final JoinConfiguration newlineSeparator = JoinConfiguration.separator(Component.newline());
 
@@ -46,7 +44,7 @@ public class PlayerTabManager implements Listener {
 
     public void start() {
         if (!this.isEnable()) {
-            this.sendTab(Bukkit.getOnlinePlayers(), this.rawHeaders, this.rawFooters, this.groupLineMap);
+            this.sendTab(Bukkit.getOnlinePlayers());
             return;
         }
         if (this.playerTabTask != null) {
@@ -60,7 +58,7 @@ public class PlayerTabManager implements Listener {
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
             if (onlinePlayers.isEmpty()) return;
             final long l = System.currentTimeMillis();
-            this.sendTab(onlinePlayers, this.rawHeaders, this.rawFooters, this.groupLineMap);
+            this.sendTab(onlinePlayers);
             if (this.debugCount >= 5 && Ari.debug) {
                 Log.debug("update tab time: " + (System.currentTimeMillis() - l) + "ms");
                 this.debugCount = 0;
@@ -68,12 +66,43 @@ public class PlayerTabManager implements Listener {
         }, 1L, this.updateInterval);
     }
 
-    private void sendTab(final Collection<? extends Player> players, List<String> headers, List<String> footers, Map<String, TabGroupLine> lineMap) {
-        Audience.audience(players).forEachAudience(audience -> {
+    private void sendTab(final Collection<? extends Player> players) {
+
+        final Map<String, TabGroup> groupMap = new LinkedHashMap<>(this.groupSequence.size());
+        final TabGroupLine defaultTabGroupLine = new TabGroupLine("", "");
+
+        final Map<String, List<Player>> groupedPlayers = new HashMap<>();
+        for (String group : this.groupSequence) {
+            groupedPlayers.put(group, new ArrayList<>());
+        }
+        for (Player player : players) {
+            String highestGroup = null;
+            for (String group : this.groupSequence) {
+                if (PermissionUtils.getPlayerIsInGroup(player, group)) {
+                    highestGroup = group;
+                    break;
+                }
+            }
+            if (highestGroup != null) {
+                groupedPlayers.get(highestGroup).add(player);
+            }
+        }
+        for (String group : this.groupSequence) {
+            List<Player> groupPlayers = groupedPlayers.get(group);
+            if (!groupPlayers.isEmpty()) {
+                groupPlayers.sort(Comparator.comparing(Player::getName));
+            }
+            TabGroup tabGroup = TabGroup.build(groupPlayers, this.groupLineMap.getOrDefault(group, defaultTabGroupLine));
+            groupMap.put(group, tabGroup);
+        }
+
+        final AtomicInteger displayIndex = new AtomicInteger(Bukkit.getMaxPlayers());
+        groupMap.forEach((k, v) -> Audience.audience(v.getPlayers()).forEachAudience(audience -> {
             Player player = (Player) audience;
-            audience.sendPlayerListHeaderAndFooter(this.buildTabLine(headers, player), this.buildTabLine(footers, player));
-            player.playerListName(Objects.requireNonNullElse(this.cachePlayerLine.get(player), TextTool.setHEXColorText(this.buildPlayerRealLine(player, lineMap))));
-        });
+            player.sendPlayerListHeaderAndFooter(this.buildTabLine(this.rawHeaders, player), this.buildTabLine(this.rawFooters, player));
+            player.playerListName(TextTool.setHEXColorText(this.buildPlayerRealLine(player, v)));
+            player.setPlayerListOrder(displayIndex.getAndDecrement());
+        }));
     }
 
     private Component buildTabLine(List<String> s, final Player player) {
@@ -81,15 +110,8 @@ public class PlayerTabManager implements Listener {
         return Component.join(this.newlineSeparator, s.stream().map(line -> TextTool.setHEXColorText(line, player)).toList());
     }
 
-    private String buildPlayerRealLine(Player player, Map<String, TabGroupLine> lineMap) {
-        if (lineMap.isEmpty()) return player.getName();
-        Optional<TabGroupLine> mainGroup = lineMap.entrySet().stream()
-                .filter(entry -> PermissionUtils.getPlayerIsInGroup(player, entry.getKey()))
-                .filter(entry -> !"_default_".equals(entry.getKey()))
-                .findFirst()
-                .map(Map.Entry::getValue);
-        TabGroupLine targetLine = mainGroup.orElseGet(() -> lineMap.getOrDefault("_default_", new TabGroupLine("", "")));
-        return targetLine.getPrefix() + player.getName() + targetLine.getSuffix();
+    private String buildPlayerRealLine(Player player, TabGroupLine line) {
+        return line.getPrefix() + player.getName() + line.getSuffix();
     }
     /**
      * 取消 tab update 的任务
@@ -109,7 +131,6 @@ public class PlayerTabManager implements Listener {
         this.rawHeaders.clear();
         this.rawFooters.clear();
         this.groupLineMap.clear();
-        this.cachePlayerLine.clear();
         this.start();
     }
 
@@ -122,19 +143,27 @@ public class PlayerTabManager implements Listener {
         }
         if(this.rawHeaders.isEmpty() || this.rawFooters.isEmpty()) {
             TypeToken<List<String>> typeToken = new TypeToken<>() {};
-            this.rawHeaders.addAll(ConfigObjectUtils.getValue("tab.layout.header", FilePath.FunctionConfig.getName(),typeToken.getType()));
-            this.rawFooters.addAll(ConfigObjectUtils.getValue("tab.layout.footer", FilePath.FunctionConfig.getName(), typeToken.getType()));
+            List<String> headerValue = ConfigObjectUtils.getValue("tab.layout.header", FilePath.FunctionConfig.getName(), typeToken.getType());
+            if (headerValue != null) {
+                this.rawHeaders.addAll(headerValue);
+            }
+            List<String> footerValue = ConfigObjectUtils.getValue("tab.layout.footer", FilePath.FunctionConfig.getName(), typeToken.getType());
+            if (footerValue != null) {
+                this.rawFooters.addAll(footerValue);
+            }
         }
-        if (this.groupLineMap.isEmpty()) {
-            this.groupLineMap.putAll(ConfigObjectUtils.getValue("tab.groups", FilePath.FunctionConfig.getName(), new TypeToken<Map<String, TabGroupLine>>(){}.getType()));
+        Map<String, TabGroupLine> lineMap = ConfigObjectUtils.getValue("tab.groups", FilePath.FunctionConfig.getName(), new TypeToken<Map<String, TabGroupLine>>() {}.getType());
+        if (this.groupLineMap.isEmpty() && lineMap != null) {
+            this.groupLineMap.putAll(lineMap);
         }
-        if (this.groupSequence.isEmpty()) {
-            this.groupSequence.addAll(ConfigObjectUtils.getValue("tab.slot", FilePath.FunctionConfig.getName(), new TypeToken<List<String>>(){}.getType()));
+        List<String> value = ConfigObjectUtils.getValue("tab.slot", FilePath.FunctionConfig.getName(), new TypeToken<List<String>>() {}.getType());
+        if (this.groupSequence.isEmpty() && value != null) {
+            this.groupSequence.addAll(value);
         }
     }
 
     private boolean isEnable() {
-        return ConfigObjectUtils.getValue("tab.enable", FilePath.FunctionConfig.getName(), Boolean.class);
+        return Boolean.TRUE.equals(ConfigObjectUtils.getValue("tab.enable", FilePath.FunctionConfig.getName(), Boolean.class));
     }
 
     @EventHandler
@@ -142,8 +171,4 @@ public class PlayerTabManager implements Listener {
         this.reload();
     }
 
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        this.cachePlayerLine.remove(event.getPlayer());
-    }
 }

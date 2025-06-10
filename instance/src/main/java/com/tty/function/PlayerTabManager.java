@@ -1,5 +1,6 @@
 package com.tty.function;
 
+import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.dto.tab.TabGroup;
@@ -11,7 +12,6 @@ import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.Log;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
-import com.google.gson.reflect.TypeToken;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -38,7 +38,7 @@ public class PlayerTabManager implements Listener {
     private Integer debugCount = 0;
 
     public PlayerTabManager() {
-        this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class);
+        this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class, 1);
         this.start();
     }
 
@@ -139,31 +139,31 @@ public class PlayerTabManager implements Listener {
      */
     private void buildLayout() {
         if (this.updateInterval == null) {
-            this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class);
+            this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class, 1);
         }
         if(this.rawHeaders.isEmpty() || this.rawFooters.isEmpty()) {
             TypeToken<List<String>> typeToken = new TypeToken<>() {};
-            List<String> headerValue = ConfigObjectUtils.getValue("tab.layout.header", FilePath.FunctionConfig.getName(), typeToken.getType());
+            List<String> headerValue = ConfigObjectUtils.getValue("tab.layout.header", FilePath.FunctionConfig.getName(), typeToken.getType(), List.of());
             if (headerValue != null) {
                 this.rawHeaders.addAll(headerValue);
             }
-            List<String> footerValue = ConfigObjectUtils.getValue("tab.layout.footer", FilePath.FunctionConfig.getName(), typeToken.getType());
+            List<String> footerValue = ConfigObjectUtils.getValue("tab.layout.footer", FilePath.FunctionConfig.getName(), typeToken.getType(), List.of());
             if (footerValue != null) {
                 this.rawFooters.addAll(footerValue);
             }
         }
-        Map<String, TabGroupLine> lineMap = ConfigObjectUtils.getValue("tab.groups", FilePath.FunctionConfig.getName(), new TypeToken<Map<String, TabGroupLine>>() {}.getType());
+        Map<String, TabGroupLine> lineMap = ConfigObjectUtils.getValue("tab.groups", FilePath.FunctionConfig.getName(), new TypeToken<Map<String, TabGroupLine>>() {}.getType(), new HashMap<>());
         if (this.groupLineMap.isEmpty() && lineMap != null) {
             this.groupLineMap.putAll(lineMap);
         }
-        List<String> value = ConfigObjectUtils.getValue("tab.slot", FilePath.FunctionConfig.getName(), new TypeToken<List<String>>() {}.getType());
+        List<String> value = ConfigObjectUtils.getValue("tab.slot", FilePath.FunctionConfig.getName(), new TypeToken<List<String>>() {}.getType(), List.of());
         if (this.groupSequence.isEmpty() && value != null) {
             this.groupSequence.addAll(value);
         }
     }
 
     private boolean isEnable() {
-        return Boolean.TRUE.equals(ConfigObjectUtils.getValue("tab.enable", FilePath.FunctionConfig.getName(), Boolean.class));
+        return Boolean.TRUE.equals(ConfigObjectUtils.getValue("tab.enable", FilePath.FunctionConfig.getName(), Boolean.class, false));
     }
 
     @EventHandler

@@ -40,16 +40,16 @@ public class ConfigObjectUtils {
      * @param type 值的类型
      * @return 返回指定类型
      */
-    public static  <T> T getValue(String keyPath, String fileName, Type type) {
+    public static  <T> T getValue(String keyPath, String fileName, Type type, T defaultValue) {
         YamlConfiguration fileConfiguration = getObject(fileName);
         if (fileConfiguration == null) {
             Log.error("Config file not found: " + fileName);
-            return null;
+            return defaultValue;
         }
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
             Log.error("Value not found for path: " + keyPath + " in file: " + fileName);
-            return null;
+            return defaultValue;
         }
         if (value instanceof MemorySection) {
             YamlConfiguration tempConfig = new YamlConfiguration();
@@ -63,7 +63,7 @@ public class ConfigObjectUtils {
             return gson.fromJson(gson.toJson(value), type);
         } catch (JsonSyntaxException e) {
             Log.error("Failed to convert value at path: " + keyPath + " in file: " + fileName + " to type: " + type.getTypeName(), e);
-            return null;
+            return defaultValue;
         }
     }
 

@@ -1,9 +1,9 @@
 package com.tty.command.lists;
 
 import com.tty.command.function.CommandTeleport;
+import com.tty.enumType.AriCommand;
 import com.tty.function.CommandCheck;
 import com.tty.function.impl.CommandCheckImpl;
-import com.tty.enumType.AriCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

@@ -4,7 +4,6 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.TeleportThread;
 import com.tty.lib.Lib;
-import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -28,6 +27,6 @@ public class CommandTp extends TpCheck {
                 Ari.instance,
                 (Player) this.sender,
                 i-> TeleportThread.playerToPlayer((Player) this.sender, targetPlayer).teleport(0),
-                () -> this.sender.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("base.on-error", FilePath.Lang.getName(), String.class))));
+                () -> this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang)));
     }
 }

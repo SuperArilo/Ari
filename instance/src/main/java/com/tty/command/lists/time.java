@@ -2,8 +2,8 @@ package com.tty.command.lists;
 
 import com.tty.command.function.CommandTime;
 import com.tty.enumType.AriCommand;
-import com.tty.lib.enum_type.TimePeriod;
 import com.tty.function.CommandCheck;
+import com.tty.lib.enum_type.TimePeriod;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;

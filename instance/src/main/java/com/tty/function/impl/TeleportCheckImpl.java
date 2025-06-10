@@ -4,10 +4,10 @@ import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.LangType;
-import com.tty.lib.enum_type.TeleportType;
 import com.tty.function.TeleportCheck;
 import com.tty.lib.Lib;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -19,21 +19,18 @@ public class TeleportCheckImpl implements TeleportCheck {
     @Override
     public void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
         if(this.checkHaveTeleportStatus(player, targetPlayer) == null) {
-            player.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.tpa.send-message", FilePath.Lang.getName(), String.class)));
+            player.sendMessage(TextTool.setHEXColorText("function.tpa.send-message", FilePath.Lang));
             this.addTeleportStatusTask(player, targetPlayer, ariCommand);
-            if(ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class) instanceof String message) {
-                boolean isTpa = message.contains(LangType.TPASENDER.getType());
-                targetPlayer.sendMessage(
-                        TextTool.setHEXColorText(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
-                                .appendNewline()
-                                .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.agree", FilePath.Lang.getName(), String.class), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                                .append(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.public.center", FilePath.Lang.getName(), String.class)))
-                                .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.refuse", FilePath.Lang.getName(), String.class), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
-            }
+            String message = ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class, "null");
+            boolean isTpa = message.contains(LangType.TPASENDER.getType());
+            targetPlayer.sendMessage(
+                    TextTool.setHEXColorText(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
+                            .appendNewline()
+                            .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.agree", FilePath.Lang.getName(), String.class, "null"), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                            .append(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.public.center", FilePath.Lang.getName(), String.class, "null")))
+                            .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.refuse", FilePath.Lang.getName(), String.class, "null"), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
         } else {
-            if(ConfigObjectUtils.getValue("function.tpa.again", FilePath.Lang.getName(), String.class) instanceof String message) {
-                player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
-            }
+            player.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.tpa.again", FilePath.Lang.getName(), String.class, "null").replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
         }
     }
 
@@ -43,7 +40,7 @@ public class TeleportCheckImpl implements TeleportCheck {
             this.addTeleportStatusTask(player, location);
             return true;
         } else {
-            player.sendMessage(TextTool.setHEXColorText(ConfigObjectUtils.getValue("teleport.again", FilePath.Lang.getName(), String.class)));
+            player.sendMessage(TextTool.setHEXColorText("teleport.again", FilePath.Lang));
             return false;
         }
     }

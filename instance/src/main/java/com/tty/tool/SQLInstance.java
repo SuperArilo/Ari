@@ -2,24 +2,22 @@ package com.tty.tool;
 
 
 import com.tty.Ari;
-import com.tty.enumType.MapperList;
 import com.tty.lib.enum_type.SQLType;
-import com.tty.mapper.CreateTable;
+import com.tty.sql.Table;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.ibatis.mapping.Environment;
-import org.apache.ibatis.session.*;
-import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.sql2o.Connection;
+import org.sql2o.Sql2o;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 public class SQLInstance {
 
     private final FileConfiguration config;
-    private SQLType sqlType;
-    public static SqlSessionFactory sessionFactory;
+    public static SQLType sqlType;
+    public static Sql2o SESSION_FACTORY;
 
     public SQLInstance()  {
         this.config = Ari.instance.getConfig();
@@ -40,19 +38,16 @@ public class SQLInstance {
             case SQLITE -> this.createSQLite();
         }
 
-        try(SqlSession sqlSession = sessionFactory.openSession()) {
-            CreateTable mapper = sqlSession.getMapper(CreateTable.class);
-            mapper.createPlayers();
-            mapper.createHomeList();
-            mapper.createWarpList();
-        } catch (Exception e) {
-            Log.error( "executing sql error", e);
+        try (Connection connection = SESSION_FACTORY.open()) {
+            connection.createQuery(Table.players).executeUpdate();
+            connection.createQuery(Table.playerHomes).executeUpdate();
+            connection.createQuery(Table.warps).executeUpdate();
         }
 
     }
     public void reconnect() {
         Log.debug(Level.INFO, "Connection is closing...");
-        sessionFactory = null;
+        SQLInstance.SESSION_FACTORY = null;
         Log.debug(Level.INFO, "Connection closed successfully");
         this.start();
     }
@@ -66,29 +61,36 @@ public class SQLInstance {
         hikariDataSource.setMinimumIdle(config.getInt("data.minimum-idle"));
         hikariDataSource.setMaxLifetime(config.getInt("data.connection-timeout"));
         hikariDataSource.setKeepaliveTime(config.getLong("data.keepalive-time"));
-        setSessionFactory(hikariDataSource);
+        setLiteFactory(hikariDataSource);
     }
     protected void createSQLite() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
         hikariDataSource.setJdbcUrl("jdbc:sqlite:" + Ari.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
-        setSessionFactory(hikariDataSource);
+        setLiteFactory(hikariDataSource);
     }
-    protected List<Class<?>> getMapperClasses() {
-        List<Class<?>> classList = new ArrayList<>();
-        for (MapperList mapperList:MapperList.values()) {
-            classList.add(mapperList.getClazz());
-        }
-        return classList;
+
+    protected void setLiteFactory(HikariDataSource dataSource) {
+        SESSION_FACTORY = new Sql2o(dataSource);
+        Map<String, String> colMaps = new HashMap<>();
+        colMaps.put("player_name", "playerName");
+        colMaps.put("player_uuid", "playerUUID");
+        colMaps.put("first_login_time", "firstLoginTime");
+        colMaps.put("last_login_off_time", "lastLoginOffTime");
+        colMaps.put("total_online_time", "totalOnlineTime");
+        colMaps.put("name_prefix", "namePrefix");
+        colMaps.put("name_suffix", "nameSuffix");
+        colMaps.put("home_id", "homeId");
+        colMaps.put("home_name", "homeName");
+        colMaps.put("show_material", "showMaterial");
+        colMaps.put("warp_id", "warpId");
+        colMaps.put("warp_name", "warpName");
+        colMaps.put("create_by", "createBy");
+        SESSION_FACTORY.setDefaultColumnMappings(colMaps);
     }
-    protected void setSessionFactory(HikariDataSource dataSource) {
-        Configuration configuration = new Configuration(new Environment("development", new JdbcTransactionFactory(), dataSource));
-        configuration.getVariables().put("table_prefix", this.config.getString("data.table-prefix", "ari_"));
-        configuration.addMappers("com.tty.mapper");
-        configuration.setAutoMappingBehavior(AutoMappingBehavior.FULL);
-        configuration.setMapUnderscoreToCamelCase(true);
-        this.getMapperClasses().forEach(configuration::addMapper);
-        configuration.setLogImpl(org.apache.ibatis.logging.slf4j.Slf4jImpl.class);
-        sessionFactory = new SqlSessionFactoryBuilder().build(configuration);
+
+    public static String getTablePrefix() {
+        return Ari.instance.getConfig().getString("data.table-prefix", "ari");
     }
+
 }

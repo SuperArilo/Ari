@@ -1,7 +1,7 @@
 package com.tty.function;
 
-import com.tty.function.impl.CommandCheckImpl;
 import com.tty.enumType.AriCommand;
+import com.tty.function.impl.CommandCheckImpl;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

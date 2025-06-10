@@ -1,6 +1,7 @@
 package com.tty.entity.menu;
 
 import lombok.Data;
+
 import java.util.Map;
 
 @Data

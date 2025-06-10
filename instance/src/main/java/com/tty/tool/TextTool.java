@@ -31,7 +31,7 @@ public class TextTool {
      * @return 返回彩色文本
      */
     public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
-        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class);
+        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class, "null");
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
@@ -47,7 +47,7 @@ public class TextTool {
      * @return 返回彩色文本
      */
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
-        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class);
+        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class, "null");
         if (content == null) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());

@@ -26,7 +26,7 @@ public class CommandBack {
         }
        if(TeleportCheck.create().preCheckStatus(player, beforeLocation)) {
            TeleportThread.playerToLocation(player, beforeLocation)
-                   .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
+                   .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
        }
     }
 

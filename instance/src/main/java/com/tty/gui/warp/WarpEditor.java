@@ -7,11 +7,11 @@ import com.tty.entity.menu.warp.WarpEditorGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.gui.BaseGui;
+import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.EconomyUtils;
-import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -63,7 +63,7 @@ public class WarpEditor extends BaseGui {
                     }
                     case COST -> {
                         if (EconomyUtils.isNull()) {
-                            item.setName(ConfigObjectUtils.getValue("server.message.no-economy", FilePath.Lang.getName(), String.class));
+                            item.setName(ConfigObjectUtils.getValue("server.message.no-economy", FilePath.Lang.getName(), String.class, "null"));
                             item.setMaterial("barrier");
                         } else {
                             Double cost = this.currentWarp.getCost();

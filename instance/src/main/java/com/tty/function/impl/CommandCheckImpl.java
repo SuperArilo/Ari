@@ -1,8 +1,8 @@
 package com.tty.function.impl;
 
-import com.tty.function.CommandCheck;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.function.CommandCheck;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;

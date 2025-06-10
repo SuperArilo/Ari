@@ -1,22 +1,23 @@
 package com.tty.listener.home;
 
+import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;
-import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -32,7 +33,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EditHomeListener implements Listener {
 
@@ -64,7 +67,7 @@ public class EditHomeListener implements Listener {
             if (type == null) return;
 
             ServerHome home = (ServerHome) holder.getMeta();
-            HomeManager homeManager = HomeManager.create(home.getPlayerUUID());
+            HomeManager homeManager = HomeManager.create(Bukkit.getPlayer(UUID.fromString(home.getPlayerUUID())));
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
@@ -78,8 +81,8 @@ public class EditHomeListener implements Listener {
                 case RENAME -> {
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class),
-                                   ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class),
+                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class, ""),
+                                   ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class, ""),
                                     1000,
                                     10000 ,
                                     1000));
@@ -96,7 +99,6 @@ public class EditHomeListener implements Listener {
                 }
                 case ICON -> {
                     ItemStack cursor = event.getCursor();
-                    if(cursor == null) return;
                     Material current = cursor.getType();
                     if(current.equals(Material.AIR)) return;
                     ItemStack newItemStake = new ItemStack(current);
@@ -150,7 +152,7 @@ public class EditHomeListener implements Listener {
         event.setCancelled(true);
         Player player = event.getPlayer();
         String message = TextTool.componentToString(event.message());
-        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.HomeConfig.getName(), new TypeToken<List<String>>(){}.getType());
+        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.HomeConfig.getName(), new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
@@ -160,7 +162,7 @@ public class EditHomeListener implements Listener {
             player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
             return;
         }
-        if(message.length() > (Integer) ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class)) {
+        if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class, 15)) {
             player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
             return;
         }

@@ -7,13 +7,13 @@ import com.tty.entity.menu.Mask;
 import com.tty.entity.menu.home.HomeListGUI;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.function.HomeManager;
 import com.tty.gui.BasePageGui;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
@@ -25,6 +25,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class HomeList extends BasePageGui<ServerHome> {
         this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        HomeManager.create(this.player.getUniqueId().toString())
+        HomeManager.create(this.player)
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     this.data = list;
@@ -108,7 +109,7 @@ public class HomeList extends BasePageGui<ServerHome> {
             this.pageNum = 1;
             return;
         }
-        HomeManager.create(this.player.getUniqueId().toString())
+        HomeManager.create(this.player)
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     this.data = list;
@@ -118,7 +119,7 @@ public class HomeList extends BasePageGui<ServerHome> {
     @Override
     public void next() {
         this.pageNum++;
-        HomeManager.create(this.player.getUniqueId().toString())
+        HomeManager.create(this.player)
                 .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
                 .thenAccept(list -> {
                     if(list.isEmpty()) {

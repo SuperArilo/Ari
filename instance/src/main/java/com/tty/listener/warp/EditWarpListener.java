@@ -1,25 +1,26 @@
 package com.tty.listener.warp;
 
+import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.dto.OnEdit;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.lib.enum_type.TitleInputType;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
+import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.enum_type.TitleInputType;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.EconomyUtils;
-import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;
-import com.google.gson.reflect.TypeToken;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -73,14 +74,23 @@ public class EditWarpListener implements Listener {
             event.setCancelled(true);
 
             ServerWarp serverWarp = (ServerWarp) holder.getMeta();
-            WarpManager warpManager = WarpManager.create(serverWarp.getCreateBy());
+            WarpManager warpManager = WarpManager.create(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy())));
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
                     new WarpList(player).open();
                 }
                 case DELETE -> {
-                    warpManager.deleteInstance(serverWarp.getWarpId());
+                    warpManager.deleteInstance(serverWarp.getWarpId()).thenAccept(i -> {
+                        if (i) {
+                            player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
+                        } else {
+                            player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
+                        }
+                    }).exceptionally(i -> {
+                        Log.error("deleting warp error", i);
+                       return null;
+                    });
                     clickedInventory.close();
                     new WarpList(player).open();
                 }
@@ -95,8 +105,8 @@ public class EditWarpListener implements Listener {
                     }
                     Audience.audience(player).showTitle(
                             TextTool.setPlayerTitle(
-                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class),
-                                    ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class),
+                                    ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class, "null"),
+                                    ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class, "null"),
                                     1000,
                                     10000 ,
                                     1000));
@@ -111,7 +121,6 @@ public class EditWarpListener implements Listener {
                 }
                 case ICON -> {
                     ItemStack cursor = event.getCursor();
-                    if(cursor == null) return;
                     Material current = cursor.getType();
                     if(current.equals(Material.AIR)) return;
                     ItemStack newItemStake = new ItemStack(current);
@@ -138,10 +147,16 @@ public class EditWarpListener implements Listener {
                                 clickMeta.lore(List.of());
                                 clickItem.setItemMeta(clickMeta);
                             }, 20L);
-                        } else {
-                            clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
-                            Log.error("save warp error id:" + serverWarp.getWarpId());
                         }
+                    }).exceptionally(i -> {
+                        Log.error("saving warp error", i);
+                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                        clickItem.setItemMeta(clickMeta);
+                        Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
+                            clickMeta.lore(List.of());
+                            clickItem.setItemMeta(clickMeta);
+                        }, 20L);
+                        return null;
                     });
                 }
             }
@@ -168,7 +183,7 @@ public class EditWarpListener implements Listener {
         OnEdit onEdit = this.editMap.get(player.getUniqueId());
         if(onEdit == null) return;
         String message = TextTool.componentToString(event.message());
-        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.WarpConfig.getName(), new TypeToken<List<String>>(){}.getType());
+        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.WarpConfig.getName(), new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
@@ -189,7 +204,7 @@ public class EditWarpListener implements Listener {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
                         return;
                     }
-                    if(message.length() >  (Integer) ConfigObjectUtils.getValue("main.name-length", FilePath.WarpConfig.getName(), new TypeToken<Integer>(){}.getType()) &&
+                    if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.WarpConfig.getName(), new TypeToken<Integer>(){}.getType(), 15) &&
                             onEdit.getType().equals(TitleInputType.RENAME)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                         return;

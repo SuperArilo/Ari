@@ -24,7 +24,6 @@ public class deletewarp implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(!command.getName().equalsIgnoreCase(AriCommand.DELETEHOME.getShow())) return List.of();
-        return new CommandWarp(commandSender).getWarpList();
+        return List.of();
     }
 }

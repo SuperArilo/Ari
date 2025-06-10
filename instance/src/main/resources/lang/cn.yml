@@ -4,7 +4,7 @@ base:
     none-next: '这已经是最后一页了哦'
   on-error: '&2服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
-  no_re: '&2否'
+  no_re: '&4否'
   on-edit:
     cancel: '已取消操作！'
     title: '&7请输入新内容'

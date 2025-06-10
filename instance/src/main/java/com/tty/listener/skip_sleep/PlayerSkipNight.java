@@ -2,9 +2,9 @@ package com.tty.listener.skip_sleep;
 
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.TimePeriod;
 import com.tty.function.TimeManager;
 import com.tty.lib.Lib;
+import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.Log;
@@ -135,7 +135,7 @@ public class PlayerSkipNight implements Listener {
                         if (this.timeManager != null) {
                             instance.showTitle(
                                     TextTool.setPlayerTitle(this.timeManager.tickToTime(s),
-                                            ConfigObjectUtils.getValue("server.time.skip-to-night", FilePath.Lang.getName(), String.class),
+                                            ConfigObjectUtils.getValue("server.time.skip-to-night", FilePath.Lang.getName(), String.class, "null"),
                                             0L,
                                             1000L,
                                             1000L));

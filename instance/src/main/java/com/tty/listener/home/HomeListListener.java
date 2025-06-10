@@ -4,12 +4,12 @@ import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
 import com.tty.function.TeleportThread;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
+import com.tty.lib.enum_type.FunctionType;
 import com.tty.tool.ConfigObjectUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class HomeListListener implements Listener {
                             if (click.equals(ClickType.LEFT)) {
                                 TeleportThread.playerToLocation(
                                                 player, ConfigObjectUtils.parseLocation(home.getLocation()))
-                                        .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
+                                        .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
                             } else if (click.equals(ClickType.RIGHT)) {
                                 Lib.Scheduler.run(Ari.instance, l -> inventory.close());
                                 new HomeEditor(home,(Player) event.getWhoClicked()).open();

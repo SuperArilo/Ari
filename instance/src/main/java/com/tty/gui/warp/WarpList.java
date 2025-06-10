@@ -7,12 +7,13 @@ import com.tty.entity.menu.Mask;
 import com.tty.entity.menu.warp.WarpListGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.GuiType;
-import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.function.WarpManager;
 import com.tty.gui.BasePageGui;
-import com.tty.lib.tool.*;
+import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.EconomyUtils;
 import com.tty.tool.PermissionUtils;
@@ -24,7 +25,10 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 
 public class WarpList extends BasePageGui<ServerWarp> {
@@ -39,7 +43,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        WarpManager.create(this.player.getUniqueId().toString())
+        WarpManager.create(this.player)
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     this.data = list;
@@ -74,14 +78,14 @@ public class WarpList extends BasePageGui<ServerWarp> {
             }
             itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = com.tty.tool.ConfigObjectUtils.parseLocation(serverWarp.getLocation());
+            Location location = ConfigObjectUtils.parseLocation(serverWarp.getLocation());
             rawLore.stream().filter(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if(keyType == LocationKeyType.PERMISSION && line.contains(keyType.getKey())) {
-                        return com.tty.tool.ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class);
+                        return ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, false);
                     }
                     if(keyType == LocationKeyType.COST && line.contains(keyType.getKey())) {
-                        return (Boolean) com.tty.tool.ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class) && !EconomyUtils.isNull();
+                        return ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) && !EconomyUtils.isNull();
                     }
                 }
                 return true;
@@ -118,7 +122,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
                                     serverWarp.getPermission().isEmpty() ||
                                     PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), ConfigObjectUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang.getName(), String.class));
+                            yield line.replace(keyType.getKey(), ConfigObjectUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang.getName(), String.class, "null"));
                         }
                     };
                 }
@@ -142,7 +146,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
             this.pageNum = 1;
             return;
         }
-        WarpManager.create(this.player.getUniqueId().toString())
+        WarpManager.create(this.player)
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     this.data = list;
@@ -153,7 +157,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
     @Override
     public void next() {
         this.pageNum++;
-        WarpManager.create(this.player.getUniqueId().toString())
+        WarpManager.create(this.player)
                 .asyncGetList(this.pageNum, this.pageSize)
                 .thenAccept(list -> {
                     if (list.isEmpty()) {

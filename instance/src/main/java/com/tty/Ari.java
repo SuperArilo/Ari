@@ -6,7 +6,6 @@ import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.tool.ConfigObjectUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
@@ -48,7 +47,7 @@ public class Ari extends JavaPlugin {
         reloadAllConfig();
         Log.initLogger(this.getLogger(), Ari.debug);
         Log.debug(Level.INFO, "----------------");
-        Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class) + "   ");
+        Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
         Log.debug(Level.INFO, "----------------");
     }
 
@@ -75,6 +74,7 @@ public class Ari extends JavaPlugin {
     }
     @Override
     public void onDisable() {
+        super.onDisable();
     }
 
     private void registerCommands() {

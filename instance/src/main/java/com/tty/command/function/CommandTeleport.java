@@ -4,10 +4,10 @@ import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.LangType;
-import com.tty.lib.enum_type.TeleportType;
 import com.tty.function.TeleportCheck;
 import com.tty.function.TeleportThread;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
@@ -51,7 +51,7 @@ public class CommandTeleport extends TpCheck {
             default -> null;
         };
         if (teleportThread != null) {
-            teleportThread.teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class));
+            teleportThread.teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error", FilePath.Lang));
         }
@@ -69,9 +69,13 @@ public class CommandTeleport extends TpCheck {
         } else {
             if(Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
-                if(ConfigObjectUtils.getValue("function.tpa.refused", FilePath.Lang.getName(), String.class) instanceof String message) {
-                    player.sendMessage(TextTool.setHEXColorText(message.replace(LangType.TPABESENDER.getType(), this.sender.getName())));
-                }
+                player.sendMessage(
+                        TextTool.setHEXColorText(
+                                ConfigObjectUtils.getValue(
+                                        "function.tpa.refused",
+                                        FilePath.Lang.getName(),
+                                        String.class,
+                                        "null").replace(LangType.TPABESENDER.getType(), this.sender.getName())));
             } else {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.public.break", FilePath.Lang));
             }

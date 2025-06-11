@@ -26,7 +26,7 @@ public class CommandTp extends TpCheck {
         Lib.Scheduler.runAtEntity(
                 Ari.instance,
                 (Player) this.sender,
-                i-> TeleportThread.playerToPlayer((Player) this.sender, targetPlayer).teleport(0),
+                i-> TeleportThread.playerToPlayer((Player) this.sender, targetPlayer).teleport(1),
                 () -> this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang)));
     }
 }

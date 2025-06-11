@@ -10,7 +10,9 @@ public enum LangType {
     COSTED("[costed]"),
     TIME("[time]"),
     DEATHLOCATION("[DeathLocation]"),
-    PERIOD("[period]");
+    PERIOD("[period]"),
+    SLEEPPLAYERS("[SleepPlayers]"),
+    SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]");
     private final String type;
 
     LangType(String type) {

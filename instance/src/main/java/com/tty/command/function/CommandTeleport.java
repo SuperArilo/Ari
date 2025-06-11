@@ -2,6 +2,7 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
+import com.tty.entity.TpStatusValue;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.TeleportCheck;
@@ -44,7 +45,7 @@ public class CommandTeleport extends TpCheck {
         }
         //请求成功，移除该请求
         this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
-        Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER);
+        TpStatusValue.remove(player, TeleportType.PLAYER);
         TeleportThread teleportThread = switch (status.getAriCommand()) {
             case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
             case TPAHERE -> TeleportThread.playerToPlayer((Player) this.sender, player);
@@ -67,7 +68,7 @@ public class CommandTeleport extends TpCheck {
         if (TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
-            if(Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER)) {
+            if(TpStatusValue.remove(player, TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
                 player.sendMessage(
                         TextTool.setHEXColorText(
@@ -103,7 +104,7 @@ public class CommandTeleport extends TpCheck {
         if(this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
-            Ari.instance.tpStatusValue.getStatusList().stream().filter(obj ->
+            TpStatusValue.statusList.stream().filter(obj ->
                             obj.getBePlayerUUID().equals(((Player) this.sender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
                     .forEach(e -> {
                         Player p = server.getPlayer(e.getPlayUUID());

@@ -1,6 +1,5 @@
 package com.tty;
 
-import com.tty.entity.TpStatusValue;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
@@ -37,7 +36,6 @@ public class Ari extends JavaPlugin {
 
     public static Ari instance;
     public static Boolean debug = false;
-    public TpStatusValue tpStatusValue;
 
     public SQLInstance SQLInstance;
     public CommandAlias commandAlias;
@@ -69,7 +67,6 @@ public class Ari extends JavaPlugin {
         //sql
         this.SQLInstance = new SQLInstance();
 
-        this.tpStatusValue = new TpStatusValue();
         this.printLogo();
     }
     @Override

@@ -2,6 +2,7 @@ package com.tty.function.impl;
 
 import com.tty.Ari;
 import com.tty.entity.TeleportStatus;
+import com.tty.entity.TpStatusValue;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.TeleportCheck;
@@ -47,7 +48,7 @@ public class TeleportCheckImpl implements TeleportCheck {
 
     @Override
     public TeleportStatus checkHaveTeleportStatus(Player player, Player targetPlayer) {
-        return Ari.instance.tpStatusValue.getStatusList().stream()
+        return TpStatusValue.statusList.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
                                 obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
@@ -59,7 +60,7 @@ public class TeleportCheckImpl implements TeleportCheck {
 
     @Override
     public TeleportStatus checkHaveTeleportStatus(Player player, Location location) {
-        return Ari.instance.tpStatusValue.getStatusList().stream()
+        return TpStatusValue.statusList.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
                                 obj.getLocation().equals(location) &&
@@ -74,8 +75,8 @@ public class TeleportCheckImpl implements TeleportCheck {
      */
     private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, ariCommand);
-        Ari.instance.tpStatusValue.addStatus(build);
-        Lib.Scheduler.runLater(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.PLAYER), 200L);
+        TpStatusValue.addStatus(build);
+        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, TeleportType.PLAYER), 200L);
     }
     /**
      * 添加玩家传送到玩家的状态
@@ -84,7 +85,7 @@ public class TeleportCheckImpl implements TeleportCheck {
      */
     private void addTeleportStatusTask(Player player, Location location) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), location, TeleportType.POINT, null);
-        Ari.instance.tpStatusValue.addStatus(build);
-        Lib.Scheduler.runLater(Ari.instance, i -> Ari.instance.tpStatusValue.remove(player, TeleportType.POINT), 200L);
+        TpStatusValue.addStatus(build);
+        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, TeleportType.POINT), 200L);
     }
 }

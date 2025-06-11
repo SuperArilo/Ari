@@ -105,6 +105,8 @@ public class WarpManager extends BaseFunctionImpl {
                         .addParameter("create_by", player.getUniqueId())
                         .addParameter("location", this.location.toString())
                         .addParameter("show_material", material.name())
+                        .addParameter("permission", "")
+                        .addParameter("cost", 0)
                         .executeUpdate().getResult();
                 future.complete(result == 1);
             } catch (Exception e) {

@@ -63,6 +63,13 @@ public class BukkitScheduler implements Scheduler {
     }
 
     @Override
+    public CancellableTask runDelayed(Plugin plugin, Consumer<CancellableTask> task, long delay) {
+        AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
+        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTaskLater(plugin, () -> task.accept(atomicReference.get()), delay)));
+        return atomicReference.get();
+    }
+
+    @Override
     public CancellableTask runAsyncDelayed(Plugin plugin, Consumer<CancellableTask> task, long delay) {
         AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
         atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, () -> task.accept(atomicReference.get()), delay)));

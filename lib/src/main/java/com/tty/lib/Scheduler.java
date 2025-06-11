@@ -13,6 +13,7 @@ public interface Scheduler {
     CancellableTask runAsync(Plugin plugin, Consumer<CancellableTask> task);
     CancellableTask runAsyncAtFixedRate(Plugin plugin, Consumer<CancellableTask> task, long c, long rate);
     CancellableTask runAtRegion(Plugin plugin, Location loc, Consumer<CancellableTask> task);
+    CancellableTask runDelayed(Plugin plugin, Consumer<CancellableTask> taskConsumer, long delay);
     CancellableTask runAsyncDelayed(Plugin plugin, Consumer<CancellableTask> task, long delay);
     CancellableTask runLater(Plugin plugin, Consumer<CancellableTask> task, long delayTicks);
 }

@@ -44,6 +44,11 @@ public class FoliaScheduler implements Scheduler {
     }
 
     @Override
+    public CancellableTask runDelayed(Plugin plugin, Consumer<CancellableTask> taskConsumer, long delay) {
+        return new WrapperScheduledTask<>(Bukkit.getGlobalRegionScheduler().runDelayed(plugin, i -> taskConsumer.accept(new WrapperScheduledTask<>(i)), delay));
+    }
+
+    @Override
     public CancellableTask runAsyncDelayed(Plugin plugin, Consumer<CancellableTask> task, long delay) {
         return new WrapperScheduledTask<>(Bukkit.getAsyncScheduler().runDelayed(plugin, i -> task.accept(new WrapperScheduledTask<>(i)), delay * 50, TimeUnit.MILLISECONDS));
     }

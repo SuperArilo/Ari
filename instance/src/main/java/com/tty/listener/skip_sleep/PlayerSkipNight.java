@@ -33,12 +33,18 @@ public class PlayerSkipNight implements Listener {
 
     @EventHandler
     public void deepSleep(PlayerDeepSleepEvent event) {
+        if (!this.isEnable()) return;
         this.update(event.getPlayer().getWorld());
     }
 
     @EventHandler
     public void leave(PlayerBedLeaveEvent event) {
+        if (!this.isEnable()) return;
         this.update(event.getPlayer().getWorld());
+    }
+
+    private boolean isEnable() {
+        return Ari.instance.getConfig().getBoolean("server.skip-night.enable", false);
     }
 
 }

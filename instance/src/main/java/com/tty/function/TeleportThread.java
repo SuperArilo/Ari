@@ -102,6 +102,9 @@ public class TeleportThread {
                 return;
             }
             timerIndex.decrementAndGet();
+            if (timerIndex.get() < 0) {
+                timerIndex.set(0);
+            }
             Log.debug(Level.INFO, "start time: " + timerIndex.get() + "s");
             //传送时间到达
             if (timerIndex.get() == 0) {

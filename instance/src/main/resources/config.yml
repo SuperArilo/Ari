@@ -16,6 +16,7 @@ data:
   keepalive-time: 0
 server:
   spawn:
+    first-join: true
     teleport-delay: 3
   skip-night:
     enable: true
@@ -26,5 +27,5 @@ server:
     on-login: true
     on-leave: true
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false

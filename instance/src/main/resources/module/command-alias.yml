@@ -31,6 +31,12 @@ warp:
 setwarp:
   enable: true
   tab-complete: false
+spawn:
+  enable: true
+  tab-complete: false
+setspawn:
+  enable: true
+  tab-complete: false
 deletewarp:
   enable: true
   tab-complete: false

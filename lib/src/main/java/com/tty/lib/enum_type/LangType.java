@@ -12,7 +12,8 @@ public enum LangType {
     DEATHLOCATION("[DeathLocation]"),
     PERIOD("[period]"),
     SLEEPPLAYERS("[SleepPlayers]"),
-    SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]");
+    SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]"),
+    SPAWNLOCATION("[SpawnLocation]");
     private final String type;
 
     LangType(String type) {

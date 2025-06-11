@@ -19,6 +19,7 @@ public class TimeManager {
     @Setter
     @Getter
     private long addTick;
+    @Getter
     private final AtomicReference<CancellableTask> scheduledTask = new AtomicReference<>();
 
     private TimeManager(World world) {

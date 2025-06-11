@@ -19,8 +19,8 @@ server:
     teleport-delay: 3
   skip-night:
     enable: true
-    tick-increment: 20
-    max-tick-increment: 100
+    tick-increment: 5
+    max-tick-increment: 50
   message:
     on-first-login: true
     on-login: true

@@ -37,6 +37,7 @@ public class MainCommand implements TabExecutor {
             return true;
         }
         switch (type) {
+            case CIALLO -> new CommandCiallo(commandSender).ciallo();
             case RELOAD -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));

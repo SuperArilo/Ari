@@ -90,7 +90,7 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
 
                 List<String> homeIdList = connection.createQuery("""
-                                    select count(*) from %splayer_home as ph
+                                    select ph.home_id from %splayer_home as ph
                                     where ph.player_uuid = :player_uuid
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("player_uuid", this.player.getUniqueId())

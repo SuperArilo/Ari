@@ -7,7 +7,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -123,36 +122,31 @@ public class TextTool {
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             content = PlaceholderAPI.setPlaceholders(player, content);
         }
-        if (content.contains("<#") && content.contains("</#")) {
-            Matcher matcher = GRADIENT_PATTERN.matcher(content);
-            int lastEnd = 0;
-            TextComponent.Builder builder = Component.text();
+        content = ChatColor.translateAlternateColorCodes('&', content);
+        Matcher matcher = GRADIENT_PATTERN.matcher(content);
+        int lastEnd = 0;
+        TextComponent.Builder builder = Component.text();
 
-            while (matcher.find()) {
-                int start = matcher.start();
-                if (start > lastEnd) {
-                    builder.append(Component.text(content.substring(lastEnd, start)));
-                }
-
-                String startColorHex = matcher.group(1);
-                String text = matcher.group(2);
-                String endColorHex = matcher.group(3);
-
-                builder.append(generateGradientText(text, startColorHex, endColorHex));
-
-                lastEnd = matcher.end();
+        while (matcher.find()) {
+            int start = matcher.start();
+            if (start > lastEnd) {
+                builder.append(Component.text(content.substring(lastEnd, start)));
             }
 
-            if (lastEnd < content.length()) {
-                builder.append(Component.text(content.substring(lastEnd)));
-            }
+            String startColorHex = matcher.group(1);
+            String text = matcher.group(2);
+            String endColorHex = matcher.group(3);
 
-            return builder.build();
+            builder.append(generateGradientText(text, startColorHex, endColorHex));
 
-        } else {
-            return Component.text(ChatColor.translateAlternateColorCodes('&', content))
-                    .decoration(TextDecoration.ITALIC, false);
+            lastEnd = matcher.end();
         }
+
+        if (lastEnd < content.length()) {
+            builder.append(Component.text(content.substring(lastEnd)));
+        }
+
+        return builder.build();
     }
     /**
      * 生成渐变文本的 Component

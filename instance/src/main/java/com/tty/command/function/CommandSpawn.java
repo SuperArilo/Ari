@@ -1,7 +1,11 @@
 package com.tty.command.function;
 
 import com.tty.Ari;
+import com.tty.enumType.FilePath;
 import com.tty.function.TeleportThread;
+import com.tty.lib.enum_type.LangType;
+import com.tty.tool.ConfigObjectUtils;
+import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -14,11 +18,17 @@ public class CommandSpawn {
         this.sender = sender;
     }
 
-    public boolean set(Location location) {
+    public void set(Location location) {
         if (this.sender instanceof Player) {
-            return ((Player) this.sender).getWorld().setSpawnLocation(location);
+            boolean b = ((Player) this.sender).getWorld().setSpawnLocation(location);
+            if (b) {
+                String st = ConfigObjectUtils.getValue("function.spawn.set-success", FilePath.Lang.getName(), String.class, "null");
+                st = st.replace(LangType.SPAWNLOCATION.getType(), TextTool.XYZText(location.getX(), location.y(), location.z()));
+                sender.sendMessage(TextTool.setHEXColorText(st));
+            } else {
+                sender.sendMessage(TextTool.setHEXColorText("function.spawn.set-failure", FilePath.Lang));
+            }
         }
-        return false;
     }
 
     public void convey() {

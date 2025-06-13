@@ -11,6 +11,7 @@ import com.tty.lib.enum_type.TimePeriod;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -121,6 +122,17 @@ public class MainCommand implements TabExecutor {
             case TIME -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.TIME) || strings.length != 2) return true;
                 new CommandTime((Player) commandSender).control(strings[1]);
+            }
+            case SPAWN -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.SPAWN)) return true;
+                new CommandSpawn(commandSender).convey();
+            }
+            case SETSPAWN -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.SETSPAWN)) return true;
+                if (commandCheck.isPlayer()) {
+                    Location location = ((Player) commandSender).getLocation();
+                    new CommandSpawn(commandSender).set(location);
+                }
             }
         }
         return true;

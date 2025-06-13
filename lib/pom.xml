@@ -41,11 +41,5 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>-9520d8847e-1</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
 </project>

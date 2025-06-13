@@ -24,3 +24,10 @@ tab:
     - 'owner'
     - 'admin'
     - 'default'
+chat:
+  enable: true
+  groups-pattern:
+    owner: '<<#CD5555>腐竹</#CD5555>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    admin: '<<#EEEE00>管理员</#EEEE00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    default: '<<#00AA00>玩家</#00AA00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'

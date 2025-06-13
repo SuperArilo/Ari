@@ -13,7 +13,9 @@ public enum LangType {
     PERIOD("[period]"),
     SLEEPPLAYERS("[SleepPlayers]"),
     SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]"),
-    SPAWNLOCATION("[SpawnLocation]");
+    SPAWNLOCATION("[SpawnLocation]"),
+    SOURCEDISPLAYNAME("[SourceDisplayNane]"),
+    CHATMESSAGE("[Message]");
     private final String type;
 
     LangType(String type) {

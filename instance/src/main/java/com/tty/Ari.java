@@ -9,6 +9,7 @@ import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
 import com.tty.listener.home.HomeListListener;
+import com.tty.listener.player.CustomChatFormantListener;
 import com.tty.listener.player.OnPlayerListener;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
 import com.tty.listener.teleport.RecordLastLocationListener;
@@ -93,6 +94,7 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerSkipNight(), this);
         Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerTabManager(), this);
+        Bukkit.getPluginManager().registerEvents(new CustomChatFormantListener(), this);
     }
 
     public static void reloadAllConfig() {

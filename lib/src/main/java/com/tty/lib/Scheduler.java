@@ -5,7 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Consumer;
+import java.util.function.Consumer;
 
 public interface Scheduler {
     CancellableTask run(Plugin plugin, Consumer<CancellableTask> task);

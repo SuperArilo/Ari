@@ -20,7 +20,7 @@
         <dependency>
             <groupId>dev.folia</groupId>
             <artifactId>folia-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

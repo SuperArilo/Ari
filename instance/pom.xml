@@ -14,7 +14,6 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <folia-api.version>1.21.4-R0.1-SNAPSHOT</folia-api.version>
     </properties>
     <dependencies>
         <dependency>
@@ -25,7 +24,7 @@
         <dependency>
             <groupId>dev.folia</groupId>
             <artifactId>folia-api</artifactId>
-            <version>${folia-api.version}</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -37,7 +36,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>${folia-api.version}</version>
+            <version>${api.version}</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>

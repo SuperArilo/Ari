@@ -8,7 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Consumer;
+import java.util.function.Consumer;
 
 import java.util.concurrent.TimeUnit;
 

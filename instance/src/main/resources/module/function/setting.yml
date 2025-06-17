@@ -34,3 +34,4 @@ chat:
 rtp:
   enable: true
   delay: 3
+  worlds:

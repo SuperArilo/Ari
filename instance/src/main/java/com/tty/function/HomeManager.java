@@ -7,13 +7,13 @@ import com.tty.function.impl.BaseFunctionImpl;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
 import com.tty.tool.Log;
+import com.tty.tool.PermissionUtils;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.sql2o.Connection;
 
 import java.util.List;
@@ -96,7 +96,7 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
                         .addParameter("player_uuid", this.player.getUniqueId())
                         .executeAndFetch(String.class);
 
-                if (homeIdList.size() + 1 > this.getMaxHomeCount(player) && !player.isOp()) {
+                if (homeIdList.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home") && !player.isOp()) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
                     i.cancel();
@@ -195,31 +195,6 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
             }
         });
         return future;
-    }
-
-    private int getMaxHomeCount(Player player) {
-        int maxHomes = 0;
-        String firstErrorPermission = null;
-        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
-            String permission = permissionInfo.getPermission();
-            if (!permission.startsWith("ari.count.home.")) continue;
-            String[] parts = permission.split("\\.");
-            if (parts.length < 4) {
-                if (firstErrorPermission == null) firstErrorPermission = permission;
-                continue;
-            }
-            try {
-                int homeCount = Integer.parseInt(parts[3]);
-                if (homeCount > maxHomes) maxHomes = homeCount;
-            } catch (NumberFormatException e) {
-                if (firstErrorPermission == null) firstErrorPermission = permission;
-            }
-        }
-        if (maxHomes == 0 && firstErrorPermission != null) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-            Log.error("player " + player.getName() + " permission format error: " + firstErrorPermission);
-        }
-        return maxHomes;
     }
 
     public static HomeManager create(Player player) {

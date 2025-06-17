@@ -1,8 +1,10 @@
 package com.tty.tool;
 
+import com.tty.enumType.FilePath;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 
@@ -56,6 +58,32 @@ public class PermissionUtils {
     public static boolean hasPermission(CommandSender sender, String permission) {
         return isNull() ? sender.hasPermission(permission):PERMISSION.has(sender, permission);
     }
+
+    public static int getMaxCountInPermission(Player player, String typeString) {
+        int initValue = 0;
+        String firstErrorPermission = null;
+        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
+            String permission = permissionInfo.getPermission();
+            if (!permission.startsWith("ari.count." + typeString + ".")) continue;
+            String[] parts = permission.split("\\.");
+            if (parts.length < 4) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
+                continue;
+            }
+            try {
+                int count = Integer.parseInt(parts[3]);
+                if (count > initValue) initValue = count;
+            } catch (NumberFormatException e) {
+                if (firstErrorPermission == null) firstErrorPermission = permission;
+            }
+        }
+        if (initValue == 0 && firstErrorPermission != null) {
+            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+            Log.error("player " + player.getName() + " permission format error: " + firstErrorPermission);
+        }
+        return initValue;
+    }
+
     protected static boolean isNull() {
         return PERMISSION == null;
     }

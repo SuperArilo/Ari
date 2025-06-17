@@ -7,13 +7,13 @@ import com.tty.function.impl.BaseFunctionImpl;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
 import com.tty.tool.Log;
+import com.tty.tool.PermissionUtils;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.sql2o.Connection;
 
 import java.util.List;
@@ -82,7 +82,7 @@ public class WarpManager extends BaseFunctionImpl {
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("create_by", player.getUniqueId())
                         .executeAndFetch(String.class);
-                if(warpIdList.size() + 1 > this.getMaxWarpCount(player) && !player.isOp()) {
+                if(warpIdList.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "warp") && !player.isOp()) {
                     Log.debug("Exceeds the specified quantity");
                     player.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));
                     i.cancel();
@@ -167,31 +167,6 @@ public class WarpManager extends BaseFunctionImpl {
             }
         });
         return future;
-    }
-
-    private int getMaxWarpCount(Player player) {
-        int maxHomes = 0;
-        String firstErrorPermission = null;
-        for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {
-            String permission = permissionInfo.getPermission();
-            if (!permission.startsWith("ari.count.warp.")) continue;
-            String[] parts = permission.split("\\.");
-            if (parts.length < 4) {
-                if (firstErrorPermission == null) firstErrorPermission = permission;
-                continue;
-            }
-            try {
-                int homeCount = Integer.parseInt(parts[3]);
-                if (homeCount > maxHomes) maxHomes = homeCount;
-            } catch (NumberFormatException e) {
-                if (firstErrorPermission == null) firstErrorPermission = permission;
-            }
-        }
-        if (maxHomes == 0 && firstErrorPermission != null) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-            Log.error("player " + player.getName() + " permission format error: " + firstErrorPermission);
-        }
-        return maxHomes;
     }
 
     public static WarpManager create(Player player) {

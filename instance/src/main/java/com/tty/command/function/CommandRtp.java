@@ -16,7 +16,6 @@ import com.tty.tool.TextTool;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -163,23 +162,7 @@ public class CommandRtp {
 
         if (isDangerous(feetMaterial)) return false;
 
-        if (world.getBlockAt(x, y - 1, z).getType().isAir()) {
-            return false;
-        }
-
-        BlockFace[] directions = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-        for (BlockFace face : directions) {
-            Block adjacent = feetBlock.getRelative(face);
-            Material adjacentType = adjacent.getType();
-
-            if (isDangerous(adjacentType)) return false;
-
-            if (adjacent.getRelative(BlockFace.DOWN).getType().isAir()) {
-                return false;
-            }
-        }
-
-        return true;
+        return !world.getBlockAt(x, y - 1, z).getType().isAir();
     }
 
     private boolean isSafeStandingBlock(Material material) {

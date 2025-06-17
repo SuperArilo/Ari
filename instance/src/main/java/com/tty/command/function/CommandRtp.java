@@ -62,7 +62,7 @@ public class CommandRtp {
 
         if (!(sender instanceof Player player)) return;
 
-        if (!PlayerStatusCheck.playerStatusCheck(player)) return;
+        if (!PlayerStatusCheck.playerStatusCheck(player) && !this.sender.isOp()) return;
 
         if (!TeleportCheck.create().preCheckStatus(
                 player,

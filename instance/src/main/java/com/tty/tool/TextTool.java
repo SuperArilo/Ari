@@ -7,6 +7,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -146,7 +147,7 @@ public class TextTool {
             builder.append(Component.text(content.substring(lastEnd)));
         }
 
-        return builder.build();
+        return builder.build().decoration(TextDecoration.ITALIC, false);
     }
     /**
      * 生成渐变文本的 Component

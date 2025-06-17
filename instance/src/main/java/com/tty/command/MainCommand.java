@@ -50,7 +50,6 @@ public class MainCommand implements TabExecutor {
                 if (Ari.debug) {
                     Ari.instance.SQLInstance.reconnect();
                 }
-                Ari.instance.commandAlias.reloadAllAlias();
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent());
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.success", FilePath.Lang));
             }

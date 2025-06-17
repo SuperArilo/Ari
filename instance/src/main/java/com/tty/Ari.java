@@ -69,7 +69,6 @@ public class Ari extends JavaPlugin {
         this.SQLInstance = new SQLInstance();
 
         this.printLogo();
-        ConfigObjectUtils.setRtpWorldConfig();
     }
     @Override
     public void onDisable() {
@@ -110,6 +109,7 @@ public class Ari extends JavaPlugin {
             Ari.debug = newDebugState;
         }
         loadConfigInMemory();
+        ConfigObjectUtils.setRtpWorldConfig();
     }
     private static void loadConfigInMemory() {
         ConfigObjectUtils.clearConfigs();

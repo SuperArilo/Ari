@@ -70,7 +70,7 @@ public class ConfigObjectUtils {
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
         try {
-            return gson.fromJson(gson.toJson(value), type);
+            return gson.fromJson(gson.toJsonTree(value), type);
         } catch (JsonSyntaxException e) {
             Log.error("Failed to convert value at path: " + keyPath + " in file: " + fileName + " to type: " + type.getTypeName(), e);
             return defaultValue;

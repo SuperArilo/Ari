@@ -48,6 +48,7 @@ public class Ari extends JavaPlugin {
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
         Log.debug(Level.INFO, "----------------");
+
     }
 
     @Override
@@ -67,6 +68,8 @@ public class Ari extends JavaPlugin {
         }
         //sql
         this.SQLInstance = new SQLInstance();
+
+        ConfigObjectUtils.setRtpWorldConfig();
 
         this.printLogo();
     }
@@ -109,7 +112,6 @@ public class Ari extends JavaPlugin {
             Ari.debug = newDebugState;
         }
         loadConfigInMemory();
-        ConfigObjectUtils.setRtpWorldConfig();
     }
     private static void loadConfigInMemory() {
         ConfigObjectUtils.clearConfigs();

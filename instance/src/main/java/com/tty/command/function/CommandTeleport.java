@@ -45,7 +45,7 @@ public class CommandTeleport extends TpCheck {
         }
         //请求成功，移除该请求
         this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
-        TpStatusValue.remove(player, TeleportType.PLAYER);
+        TpStatusValue.remove(player, null,TeleportType.PLAYER);
         TeleportThread teleportThread = switch (status.getAriCommand()) {
             case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
             case TPAHERE -> TeleportThread.playerToPlayer((Player) this.sender, player);
@@ -68,7 +68,7 @@ public class CommandTeleport extends TpCheck {
         if (TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
-            if(TpStatusValue.remove(player, TeleportType.PLAYER)) {
+            if(TpStatusValue.remove(player, null,TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
                 player.sendMessage(
                         TextTool.setHEXColorText(

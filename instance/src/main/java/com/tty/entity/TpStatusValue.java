@@ -1,6 +1,7 @@
 package com.tty.entity;
 
 import com.tty.lib.enum_type.TeleportType;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -23,8 +24,12 @@ public class TpStatusValue {
      * @param player 玩家
      * @param type 传送类型
      */
-    public static synchronized boolean remove(Player player, TeleportType type) {
-        return statusList.removeIf(obj -> obj.getPlayUUID().equals(player.getUniqueId()) && obj.getType().equals(type));
+    public static synchronized boolean remove(Player player, Location location, TeleportType type) {
+        return statusList.removeIf(obj ->
+                obj.getType().equals(type) &&
+                        obj.getPlayUUID().equals(player.getUniqueId()) &&
+                        (obj.getLocation() == null || obj.getLocation().equals(location))
+        );
     }
 
 }

@@ -17,8 +17,9 @@ public interface TeleportCheck {
      * 检查被传送玩家是否已经发起过传送请求
      * @param player 被传送玩家
      * @param location 目标位置
+     * @param delay 传送冷却
      */
-    boolean preCheckStatus(Player player, Location location);
+    boolean preCheckStatus(Player player, Location location, long delay);
     /**
      * 查询玩家之间传送的请求
      * @param player 被传送的玩家

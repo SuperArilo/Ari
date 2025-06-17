@@ -81,7 +81,7 @@ public class WarpListListener implements Listener {
                                                         new TeleportCallback() {
                                                             @Override
                                                             public void onCancel() {
-                                                                TpStatusValue.remove(player, TeleportType.POINT);
+                                                                TpStatusValue.remove(player, targetLocation,TeleportType.POINT);
                                                             }
                                                             @Override
                                                             public void after() {
@@ -91,7 +91,7 @@ public class WarpListListener implements Listener {
                                                                     String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "0.0");
                                                                     player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
                                                                 }
-                                                                TpStatusValue.remove(player, TeleportType.POINT);
+                                                                TpStatusValue.remove(player, targetLocation, TeleportType.POINT);
                                                             }
                                                             @Override
                                                             public void before(TeleportThread teleportThread) {
@@ -100,7 +100,7 @@ public class WarpListListener implements Listener {
                                                                     teleportThread.cancel();
                                                                     return;
                                                                 }
-                                                                if(!TeleportCheck.create().preCheckStatus(player, targetLocation)) {
+                                                                if(!TeleportCheck.create().preCheckStatus(player, targetLocation, 200L)) {
                                                                     teleportThread.cancel();
                                                                 }
                                                             }

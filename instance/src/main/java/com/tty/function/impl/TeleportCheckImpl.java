@@ -21,7 +21,7 @@ public class TeleportCheckImpl implements TeleportCheck {
     public void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
         if(this.checkHaveTeleportStatus(player, targetPlayer) == null) {
             player.sendMessage(TextTool.setHEXColorText("function.tpa.send-message", FilePath.Lang));
-            this.addTeleportStatusTask(player, targetPlayer, ariCommand);
+            this.addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
             String message = ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class, "null");
             boolean isTpa = message.contains(LangType.TPASENDER.getType());
             targetPlayer.sendMessage(
@@ -36,9 +36,9 @@ public class TeleportCheckImpl implements TeleportCheck {
     }
 
     @Override
-    public boolean preCheckStatus(Player player, Location location) {
+    public boolean preCheckStatus(Player player, Location location, long delay) {
         if(this.checkHaveTeleportStatus(player, location) == null) {
-            this.addTeleportStatusTask(player, location);
+            this.addTeleportStatusTask(player, location, delay);
             return true;
         } else {
             player.sendMessage(TextTool.setHEXColorText("teleport.again", FilePath.Lang));
@@ -51,7 +51,7 @@ public class TeleportCheckImpl implements TeleportCheck {
         return TpStatusValue.statusList.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
-                                obj.getBePlayerUUID().equals(targetPlayer.getUniqueId()) &&
+                                (obj.getBePlayerUUID() != null && obj.getBePlayerUUID().equals(targetPlayer.getUniqueId())) &&
                                 obj.getType().equals(TeleportType.PLAYER))
                 .findFirst()
                 .orElse(null);
@@ -63,7 +63,7 @@ public class TeleportCheckImpl implements TeleportCheck {
         return TpStatusValue.statusList.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
-                                obj.getLocation().equals(location) &&
+                                (obj.getLocation() == null || obj.getLocation().equals(location)) &&
                                 obj.getType().equals(TeleportType.POINT))
                 .findFirst()
                 .orElse(null);
@@ -72,20 +72,22 @@ public class TeleportCheckImpl implements TeleportCheck {
      * 添加玩家传送到玩家的状态
      * @param player       被传送玩家
      * @param targetPlayer 接收玩家
+     * @param delay 传送冷却
      */
-    private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand) {
+    private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, ariCommand);
         TpStatusValue.addStatus(build);
-        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, TeleportType.PLAYER), 200L);
+        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, null,TeleportType.PLAYER), delay);
     }
     /**
      * 添加玩家传送到玩家的状态
      * @param player 被传送玩家
      * @param location 传送地方
+     * @param delay 传送冷却
      */
-    private void addTeleportStatusTask(Player player, Location location) {
+    private void addTeleportStatusTask(Player player, Location location, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), location, TeleportType.POINT, null);
         TpStatusValue.addStatus(build);
-        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, TeleportType.POINT), 200L);
+        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, location, TeleportType.POINT), delay);
     }
 }

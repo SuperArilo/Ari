@@ -9,7 +9,6 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.Log;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.audience.Audience;
@@ -34,8 +33,6 @@ public class PlayerTabManager implements Listener {
     //换行
     private final JoinConfiguration newlineSeparator = JoinConfiguration.separator(Component.newline());
 
-    //debug
-    private Integer debugCount = 0;
 
     public PlayerTabManager() {
         this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class, 1);
@@ -52,17 +49,9 @@ public class PlayerTabManager implements Listener {
         }
         this.buildLayout();
         this.playerTabTask = Lib.Scheduler.runAtFixedRate(Ari.instance, i -> {
-            if (this.debugCount < 5 && Ari.debug) {
-                this.debugCount++;
-            }
             Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
             if (onlinePlayers.isEmpty()) return;
-            final long l = System.currentTimeMillis();
             this.sendTab(onlinePlayers);
-            if (this.debugCount >= 5 && Ari.debug) {
-                Log.debug("update tab time: " + (System.currentTimeMillis() - l) + "ms");
-                this.debugCount = 0;
-            }
         }, 1L, this.updateInterval);
     }
 

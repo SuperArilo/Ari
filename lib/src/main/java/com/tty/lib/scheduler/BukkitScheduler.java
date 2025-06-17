@@ -5,6 +5,7 @@ import com.tty.lib.task.CancellableTask;
 import com.tty.lib.task.WrapperScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -57,6 +58,13 @@ public class BukkitScheduler implements Scheduler {
 
     @Override
     public CancellableTask runAtRegion(Plugin plugin, Location loc, Consumer<CancellableTask> task) {
+        AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
+        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(atomicReference.get()))));
+        return atomicReference.get();
+    }
+
+    @Override
+    public CancellableTask runAtRegion(Plugin plugin, World world, int chunkX, int chunkZ, Consumer<CancellableTask> task) {
         AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
         atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(atomicReference.get()))));
         return atomicReference.get();

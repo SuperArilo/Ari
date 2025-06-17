@@ -5,6 +5,7 @@ import com.tty.lib.task.CancellableTask;
 import com.tty.lib.task.WrapperScheduledTask;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Consumer;
@@ -41,6 +42,11 @@ public class FoliaScheduler implements Scheduler {
     @Override
     public CancellableTask runAtRegion(Plugin plugin, Location loc, Consumer<CancellableTask> task) {
         return new WrapperScheduledTask<>(Bukkit.getRegionScheduler().run(plugin, loc, i -> task.accept(new WrapperScheduledTask<>(i))));
+    }
+
+    @Override
+    public CancellableTask runAtRegion(Plugin plugin, World world, int chunkX, int chunkZ, Consumer<CancellableTask> task) {
+        return new WrapperScheduledTask<>(Bukkit.getRegionScheduler().run(plugin, world, chunkX, chunkZ, i ->  task.accept(new WrapperScheduledTask<>(i))));
     }
 
     @Override

@@ -54,7 +54,7 @@ public class Ari extends JavaPlugin {
     public void onEnable() {
 
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault"));
-        PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault"));
+        PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
 
         this.registerCommands();
         this.registerListener();

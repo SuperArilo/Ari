@@ -38,6 +38,11 @@ public class MainCommand implements TabExecutor {
         }
         switch (type) {
             case CIALLO -> new CommandCiallo(commandSender).ciallo();
+            case RTP -> {
+                if(!commandCheck.commandSenderHavePermission(AriCommand.RTP)) return true;
+                if(!commandCheck.isPlayer()) break;
+                new CommandRtp(commandSender).rtp();
+            }
             case RELOAD -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));

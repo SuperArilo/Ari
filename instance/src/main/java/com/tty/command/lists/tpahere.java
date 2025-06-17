@@ -2,8 +2,10 @@ package com.tty.command.lists;
 
 import com.tty.command.function.CommandTeleport;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.FilePath;
 import com.tty.function.CommandCheck;
 import com.tty.function.impl.CommandCheckImpl;
+import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -20,6 +22,8 @@ public class tpahere implements TabExecutor {
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
             new CommandTeleport(commandSender, strings[0]).tpahere();
+        } else {
+            commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
         }
         return true;
     }

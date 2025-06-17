@@ -2,8 +2,10 @@ package com.tty.command.lists;
 
 import com.tty.command.function.CommandTp;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.FilePath;
 import com.tty.function.CommandCheck;
 import com.tty.function.impl.CommandCheckImpl;
+import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,6 +25,8 @@ public class tp implements TabExecutor {
         if (!commandCheck.isTheInstructionCorrect()) return false;
         if (commandCheck.allCheck() && strings.length == 1) {
             new CommandTp(commandSender, strings[0]).tp();
+        } else {
+            commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
         }
         return true;
     }

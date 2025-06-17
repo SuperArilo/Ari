@@ -55,23 +55,43 @@ public class MainCommand implements TabExecutor {
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.success", FilePath.Lang));
             }
             case TP -> {
-                if (!commandCheck.commandSenderHavePermission(AriCommand.TP) || strings.length != 2) return true;
+                if (!commandCheck.commandSenderHavePermission(AriCommand.TP)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTp(commandSender, strings[1]).tp();
             }
             case TPA -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA) || strings.length != 2) return true;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTeleport(commandSender, strings[1]).tpa();
             }
             case TPAACCEPT -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT) || strings.length != 2) return true;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTeleport(commandSender, strings[1]).tpaaccept();
             }
             case TPAHERE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE) || strings.length != 2) return true;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTeleport(commandSender, strings[1]).tpahere();
             }
             case TPAREFUSE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE) | strings.length != 2) return true;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTeleport(commandSender, strings[1]).tparefuse();
             }
             case HOME -> {
@@ -126,7 +146,11 @@ public class MainCommand implements TabExecutor {
                 new CommandWarp(commandSender).deleteWarp(strings[1]);
             }
             case TIME -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TIME) || strings.length != 2) return true;
+                if(!commandCheck.commandSenderHavePermission(AriCommand.TIME)) return true;
+                if (strings.length != 2) {
+                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    return true;
+                }
                 new CommandTime((Player) commandSender).control(strings[1]);
             }
             case SPAWN -> {

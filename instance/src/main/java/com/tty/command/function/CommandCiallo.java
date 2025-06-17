@@ -14,7 +14,7 @@ public class CommandCiallo {
     }
 
     public void ciallo() {
-        Bukkit.broadcast(TextTool.setHEXColorText("玩家 " + this.sender.getName() + ": " + CIALLO));
+        Bukkit.broadcast(TextTool.setHEXColorText("玩家 " + this.sender.getName() + ": 我宣布个事，我是柚子厨 " + CIALLO));
     }
 
 }

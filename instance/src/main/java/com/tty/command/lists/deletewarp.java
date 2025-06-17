@@ -2,7 +2,9 @@ package com.tty.command.lists;
 
 import com.tty.command.function.CommandWarp;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.FilePath;
 import com.tty.function.CommandCheck;
+import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -18,6 +20,8 @@ public class deletewarp implements TabExecutor {
         if (!check.isTheInstructionCorrect()) return false;
         if (check.allCheck() && strings.length == 1) {
             new CommandWarp(commandSender).deleteWarp(strings[0]);
+        } else {
+            commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
         }
         return true;
     }

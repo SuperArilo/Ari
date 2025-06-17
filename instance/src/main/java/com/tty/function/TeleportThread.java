@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
+import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;
@@ -123,14 +124,17 @@ public class TeleportThread {
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
                 }
-                Lib.Scheduler.runAtRegion(
-                        Ari.instance, this.initLocation,
-                        i -> Bukkit.getPluginManager().callEvent(
-                                new PlayerTeleportEvent(
-                                        threadPlayer,
-                                        this.initLocation,
-                                        this.targetLocation,
-                                        PlayerTeleportEvent.TeleportCause.PLUGIN)));
+                //folia
+                if(ServerPlatform.isFolia()) {
+                    Lib.Scheduler.runAtRegion(
+                            Ari.instance, this.initLocation,
+                            i -> Bukkit.getPluginManager().callEvent(
+                                    new PlayerTeleportEvent(
+                                            threadPlayer,
+                                            this.initLocation,
+                                            this.targetLocation,
+                                            PlayerTeleportEvent.TeleportCause.PLUGIN)));
+                }
             }
         }, 0, 20);
     }

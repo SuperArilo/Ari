@@ -27,5 +27,5 @@ server:
     on-login: true
     on-leave: true
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false

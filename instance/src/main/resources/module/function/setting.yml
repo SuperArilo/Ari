@@ -31,3 +31,6 @@ chat:
     admin: '<<#EEEE00>管理员</#EEEE00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
     default: '<<#00AA00>玩家</#00AA00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
     _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+rtp:
+  enable: true
+  delay: 3

@@ -15,7 +15,8 @@ public enum LangType {
     SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]"),
     SPAWNLOCATION("[SpawnLocation]"),
     SOURCEDISPLAYNAME("[SourceDisplayNane]"),
-    CHATMESSAGE("[Message]");
+    CHATMESSAGE("[Message]"),
+    RTPSEARCHCOUNT("[RtpSearchCount]");
     private final String type;
 
     LangType(String type) {

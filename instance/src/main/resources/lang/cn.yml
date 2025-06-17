@@ -5,6 +5,7 @@ base:
   on-error: '&2服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&4否'
+  status-not-allow: '&4当前状态不允许此操作！'
   on-edit:
     cancel: '已取消操作！'
     title: '&7请输入新内容'
@@ -30,7 +31,7 @@ teleport:
   cooling: '传送冷却中...'
   none-location: '没有上一个保存的位置'
   costed: '本次传送花费了 [costed]'
-  again: '你已经发起过传送请求了'
+  again: '你已经发起过传送请求了，请等待一段时间再重试。'
   tips-back: '&b上次死亡的地点: [DeathLocation] &7输入/back返回'
 function:
   public:
@@ -74,6 +75,11 @@ function:
   deletewarp:
     success: '删除成功'
     none: '删除失败，尝试联系管理员'
+  rtp:
+    searching: '正在搜索中...'
+    search-count: '剩余尝试次数 &6[RtpSearchCount]'
+    search-failure: '&4搜索失败，请重试'
+    world-disable: '&8当前世界已经被禁用随机传送'
   unknown: '&4未知指令，请重新输入'
 server:
   time:

@@ -46,3 +46,6 @@ deletewarp:
 time:
   enable: true
   tab-complete: true
+rtp:
+  enable: true
+  tab-complete: false

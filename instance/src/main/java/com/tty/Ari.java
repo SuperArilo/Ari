@@ -69,6 +69,7 @@ public class Ari extends JavaPlugin {
         this.SQLInstance = new SQLInstance();
 
         this.printLogo();
+        ConfigObjectUtils.setRtpWorldConfig();
     }
     @Override
     public void onDisable() {

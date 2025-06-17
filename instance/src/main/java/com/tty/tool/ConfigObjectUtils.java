@@ -3,6 +3,9 @@ package com.tty.tool;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
+import com.tty.Ari;
+import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.FunctionType;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -13,7 +16,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +47,10 @@ public class ConfigObjectUtils {
      * @return 返回指定类型
      */
     public static  <T> T getValue(String keyPath, String fileName, Type type, T defaultValue) {
+        if (keyPath.isEmpty()) {
+            Log.error("file path is empty");
+            return defaultValue;
+        }
         YamlConfiguration fileConfiguration = getObject(fileName);
         if (fileConfiguration == null) {
             Log.error("Config file not found: " + fileName);
@@ -171,6 +181,46 @@ public class ConfigObjectUtils {
             throw new IllegalArgumentException("World not found: " + worldPart);
         }
         return new Location(world, x, y, z, yaw, pitch);
+    }
+
+    public static void setRtpWorldConfig() {
+
+        Map<String, Object> value = getValue(
+                "rtp.worlds",
+                FilePath.FunctionConfig.getName(),
+                new TypeToken<Map<String, Object>>(){}.getType(),
+                null);
+        YamlConfiguration function = getObject(FilePath.FunctionConfig.getName());
+
+        if (value == null) {
+            value = new HashMap<>();
+            for (World world : Bukkit.getWorlds()) {
+                value.put(world.getName(), createWorldRtp());
+            }
+            function.set("rtp.worlds", value);
+        } else {
+            for (World world : Bukkit.getWorlds()) {
+                if (value.containsKey(world.getName())) continue;
+                value.put(world.getName(), createWorldRtp());
+            }
+            function.set("rtp.worlds", value);
+        }
+        setConfig(FilePath.FunctionConfig.getName(), function);
+
+        File file = new File(Ari.instance.getDataFolder(), FilePath.FunctionConfig.getPath());
+        try {
+            function.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static Map<String, Object> createWorldRtp() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("enable", true);
+        map.put("min", 300);
+        map.put("max", 1500);
+        return map;
     }
 
     public static void setConfigs(Map<String, YamlConfiguration> configs) {

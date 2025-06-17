@@ -7,7 +7,6 @@ import com.tty.enumType.FilePath;
 import com.tty.function.TeleportCheck;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
-import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.RandomGeneratorUtils;
 import com.tty.tool.ConfigObjectUtils;
@@ -20,7 +19,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.Map;
 
@@ -59,6 +57,7 @@ public class CommandRtp {
                     TextTool.setHEXColorText(
                             "function.rtp.world-disable",
                             FilePath.Lang));
+            return;
         }
 
         if (!(sender instanceof Player player)) return;
@@ -115,23 +114,11 @@ public class CommandRtp {
                 Player player = (Player) this.sender;
                 player.clearTitle();
                 Lib.Scheduler.runAtEntity(Ari.instance, player, b -> {
-                    Location beforeLocation = player.getLocation();
                     Location targetLocation = new Location(this.world, x + 0.5, finalY, z + 0.5);
                     boolean teleport = EntityTeleport.teleport(player, targetLocation);
                     this.sender.sendMessage(TextTool.setHEXColorText(
                             teleport ? "teleport.success":"base.on-error",
                             FilePath.Lang));
-                    //folia
-                    if (teleport && ServerPlatform.isFolia()) {
-                        Lib.Scheduler.run(
-                                Ari.instance,
-                                a -> Bukkit.getPluginManager().callEvent(
-                                        new PlayerTeleportEvent(
-                                                player,
-                                                beforeLocation,
-                                                targetLocation,
-                                                PlayerTeleportEvent.TeleportCause.PLUGIN)));
-                    }
                 }, () -> Log.error("teleport error on " + player.getName()));
             } else {
                 Log.debug(" not safe skip...");

@@ -4,16 +4,13 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
-import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.sound.Sound;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,17 +120,6 @@ public class TeleportThread {
                         threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
-                }
-                //folia
-                if(ServerPlatform.isFolia()) {
-                    Lib.Scheduler.runAtRegion(
-                            Ari.instance, this.initLocation,
-                            i -> Bukkit.getPluginManager().callEvent(
-                                    new PlayerTeleportEvent(
-                                            threadPlayer,
-                                            this.initLocation,
-                                            this.targetLocation,
-                                            PlayerTeleportEvent.TeleportCause.PLUGIN)));
                 }
             }
         }, 0, 20);

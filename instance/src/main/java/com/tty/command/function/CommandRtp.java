@@ -70,7 +70,6 @@ public class CommandRtp {
                 ConfigObjectUtils.getValue("rtp.delay", FilePath.FunctionConfig.getName(), Integer.class, 3) * 20)) return;
 
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
-            this.sendCountTitle();
             if (this.count <= 0) {
                 this.sender.clearTitle();
                 this.sender.sendMessage(TextTool.setHEXColorText("function.rtp.search-failure", FilePath.Lang));
@@ -89,6 +88,7 @@ public class CommandRtp {
 
     private void search() {
         final long l = System.currentTimeMillis();
+        this.sendCountTitle();
         this.count--;
         if (this.count <= 0) {
             return;
@@ -99,32 +99,35 @@ public class CommandRtp {
         int chunkX = x >> 4;
         int chunkZ = z >> 4;
 
-        Lib.Scheduler.runAtRegion(Ari.instance, this.world, chunkX, chunkZ, i -> {
-            Block block = this.getHighestBlockAt(x, z);
-            if (block == null) {
+        int relativeX = x & 0xF;
+        int relativeZ = z & 0xF;
+
+        this.world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
+            ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot();
+            int highestBlockYAt = chunkSnapshot.getHighestBlockYAt(relativeX, relativeZ);
+            Block block = chunk.getBlock(relativeX, highestBlockYAt, relativeZ);
+            Lib.Scheduler.runAtRegion(Ari.instance, this.world, chunkX, chunkZ, i -> {
+                if (this.isLocationSafe(block)) {
+                    int y = block.getLocation().getBlockY();
+                    Log.debug("random location " + x + ", " + y + ", " + z);
+                    this.isDone = true;
+                    this.count = 10;
+                    int finalY = y + 1;
+                    Player player = (Player) this.sender;
+                    player.clearTitle();
+                    Lib.Scheduler.runAtEntity(Ari.instance, player, b -> {
+                        Location targetLocation = new Location(this.world, x + 0.5, finalY, z + 0.5);
+                        boolean teleport = EntityTeleport.teleport(player, targetLocation);
+                        this.sender.sendMessage(TextTool.setHEXColorText(
+                                teleport ? "teleport.success":"base.on-error",
+                                FilePath.Lang));
+                    }, () -> Log.error("teleport error on " + player.getName()));
+                } else {
+                    Log.debug(" not safe skip...");
+                }
                 this.isRunning = false;
-                return;
-            }
-            if (this.isLocationSafe(block)) {
-                int y = block.getLocation().getBlockY();
-                Log.debug("random location " + x + ", " + y + ", " + z);
-                this.isDone = true;
-                this.count = 10;
-                int finalY = y + 1;
-                Player player = (Player) this.sender;
-                player.clearTitle();
-                Lib.Scheduler.runAtEntity(Ari.instance, player, b -> {
-                    Location targetLocation = new Location(this.world, x + 0.5, finalY, z + 0.5);
-                    boolean teleport = EntityTeleport.teleport(player, targetLocation);
-                    this.sender.sendMessage(TextTool.setHEXColorText(
-                            teleport ? "teleport.success":"base.on-error",
-                            FilePath.Lang));
-                }, () -> Log.error("teleport error on " + player.getName()));
-            } else {
-                Log.debug(" not safe skip...");
-            }
-            this.isRunning = false;
-            Log.debug("search time: " + (System.currentTimeMillis() -l) + "ms");
+                Log.debug("search time: " + (System.currentTimeMillis() -l) + "ms");
+            });
         });
     }
 

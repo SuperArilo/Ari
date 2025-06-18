@@ -44,7 +44,7 @@ public class Ari extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.initLogger(this.getLogger(), Ari.debug);
+        Log.initLogger(this.getLogger());
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
         Log.debug(Level.INFO, "----------------");
@@ -103,14 +103,7 @@ public class Ari extends JavaPlugin {
     public static void reloadAllConfig() {
         Ari.instance.saveDefaultConfig();
         Ari.instance.reloadConfig();
-        boolean newDebugState = Ari.instance.getConfig().getBoolean("debug.enable", false);
-        if (!Ari.debug && newDebugState) {
-            Ari.instance.saveResource("config.yml", true);
-            Ari.instance.reloadConfig();
-            Ari.debug = true;
-        } else {
-            Ari.debug = newDebugState;
-        }
+        debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
         loadConfigInMemory();
     }
     private static void loadConfigInMemory() {

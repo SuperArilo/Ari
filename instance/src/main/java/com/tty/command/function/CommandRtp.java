@@ -88,8 +88,8 @@ public class CommandRtp {
 
     private void search() {
         final long l = System.currentTimeMillis();
-        this.sendCountTitle();
         this.count--;
+        this.sendCountTitle();
         if (this.count <= 0) {
             return;
         }
@@ -103,8 +103,7 @@ public class CommandRtp {
         int relativeZ = z & 0xF;
 
         this.world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
-            ChunkSnapshot chunkSnapshot = chunk.getChunkSnapshot();
-            int highestBlockYAt = chunkSnapshot.getHighestBlockYAt(relativeX, relativeZ);
+            int highestBlockYAt = chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
             Block block = chunk.getBlock(relativeX, highestBlockYAt, relativeZ);
             Lib.Scheduler.runAtRegion(Ari.instance, this.world, chunkX, chunkZ, i -> {
                 if (this.isLocationSafe(block)) {
@@ -129,20 +128,6 @@ public class CommandRtp {
                 Log.debug("search time: " + (System.currentTimeMillis() -l) + "ms");
             });
         });
-    }
-
-    private Block getHighestBlockAt(int x, int z) {
-        final int maxHeight = this.world.getMaxHeight() - 1;
-        final int minHeight = this.world.getMinHeight();
-
-        int start = this.world.getEnvironment().equals(World.Environment.NETHER) ? 90:maxHeight;
-        for (int y = start;y >= minHeight;y--) {
-            Block block = this.world.getBlockAt(x, y, z);
-            if (block.isLiquid()) break;
-            if (block.isEmpty() || block.isPassable()) continue;
-            return block;
-        }
-        return null;
     }
 
     private boolean isLocationSafe(Block feetBlock) {
@@ -207,24 +192,18 @@ public class CommandRtp {
     }
 
     private void sendCountTitle() {
-        Lib.Scheduler.runAtEntity(Ari.instance, (Player) this.sender, k -> {
-            if (this.isDone || this.count <= 0) {
-                k.cancel();
-                return;
-            }
-            String sub = ConfigObjectUtils.getValue(
-                    "function.rtp.search-count",
-                    FilePath.Lang.getName(),
-                    String.class,
-                    "null");
-            sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
-            Title title = TextTool.setPlayerTitle(
-                    ConfigObjectUtils.getValue("function.rtp.searching", FilePath.Lang.getName(), String.class, "null"),
-                    sub,
-                    0,
-                    1000L,
-                    1000L);
-            this.sender.showTitle(title);
-        }, () -> Log.error("error on rtp"));
+        String sub = ConfigObjectUtils.getValue(
+                "function.rtp.search-count",
+                FilePath.Lang.getName(),
+                String.class,
+                "null");
+        sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
+        Title title = TextTool.setPlayerTitle(
+                ConfigObjectUtils.getValue("function.rtp.searching", FilePath.Lang.getName(), String.class, "null"),
+                sub,
+                0,
+                1000L,
+                1000L);
+        this.sender.showTitle(title);
     }
 }

@@ -46,12 +46,7 @@ public class MainCommand implements TabExecutor {
             case RELOAD -> {
                 if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));
-                Ari.reloadAllConfig();
-                if (Ari.debug) {
-                    Ari.instance.SQLInstance.reconnect();
-                }
-                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent());
-                commandSender.sendMessage(TextTool.setHEXColorText("function.reload.success", FilePath.Lang));
+                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent<>(commandSender));
             }
             case TP -> {
                 if (!commandCheck.commandSenderHavePermission(AriCommand.TP)) return true;

@@ -25,6 +25,11 @@ public class FoliaScheduler implements Scheduler {
     }
 
     @Override
+    public CancellableTask runAtEntityFixedRate(Plugin plugin, Entity entity, Consumer<CancellableTask> task, Runnable errorCallback, long delay, long rate) {
+        return new WrapperScheduledTask<>(entity.getScheduler().runAtFixedRate(plugin, i -> task.accept(new WrapperScheduledTask<>(i)), errorCallback, delay, rate));
+    }
+
+    @Override
     public CancellableTask runAtFixedRate(Plugin plugin, Consumer<CancellableTask> task, long delay, long rate) {
         return new WrapperScheduledTask<>(Bukkit.getGlobalRegionScheduler().runAtFixedRate(plugin, i -> task.accept(new WrapperScheduledTask<>(i)), delay, rate));
     }

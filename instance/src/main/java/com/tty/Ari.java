@@ -4,6 +4,7 @@ import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
@@ -11,6 +12,7 @@ import com.tty.listener.home.EditHomeListener;
 import com.tty.listener.home.HomeListListener;
 import com.tty.listener.player.CustomChatFormantListener;
 import com.tty.listener.player.OnPlayerListener;
+import com.tty.listener.player.PlayerActionListener;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
 import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
@@ -44,7 +46,7 @@ public class Ari extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.initLogger(this.getLogger());
+        Log.initLogger(this.getLogger(), debug);
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
         Log.debug(Level.INFO, "----------------");
@@ -98,6 +100,7 @@ public class Ari extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerTabManager(), this);
         Bukkit.getPluginManager().registerEvents(new CustomChatFormantListener(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerActionListener(), this);
     }
 
     public static void reloadAllConfig() {

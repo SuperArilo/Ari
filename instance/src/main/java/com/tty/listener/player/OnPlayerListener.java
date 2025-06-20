@@ -5,7 +5,7 @@ import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

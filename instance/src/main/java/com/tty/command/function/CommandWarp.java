@@ -4,7 +4,7 @@ import com.tty.enumType.FilePath;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;

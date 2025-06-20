@@ -4,6 +4,7 @@ import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
@@ -11,6 +12,7 @@ import com.tty.listener.home.EditHomeListener;
 import com.tty.listener.home.HomeListListener;
 import com.tty.listener.player.CustomChatFormantListener;
 import com.tty.listener.player.OnPlayerListener;
+import com.tty.listener.player.PlayerActionListener;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
 import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
@@ -27,6 +29,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginDescriptionFile;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -44,7 +47,7 @@ public class Ari extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.initLogger(this.getLogger());
+        Log.initLogger(this.getLogger(), debug);
         Log.debug(Level.INFO, "----------------");
         Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
         Log.debug(Level.INFO, "----------------");
@@ -87,17 +90,19 @@ public class Ari extends JavaPlugin {
         }
     }
     private void registerListener() {
-        Bukkit.getPluginManager().registerEvents(new HomeListListener(), this);
-        Bukkit.getPluginManager().registerEvents(new EditHomeListener(), this);
-        Bukkit.getPluginManager().registerEvents(new RecordLastLocationListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        Bukkit.getPluginManager().registerEvents(new WarpListListener(), this);
-        Bukkit.getPluginManager().registerEvents(new EditWarpListener(), this);
-        Bukkit.getPluginManager().registerEvents(new OnPlayerListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerSkipNight(), this);
-        Bukkit.getPluginManager().registerEvents(new OnPluginReloadListener(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerTabManager(), this);
-        Bukkit.getPluginManager().registerEvents(new CustomChatFormantListener(), this);
+        PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new HomeListListener(), this);
+        pluginManager.registerEvents(new EditHomeListener(), this);
+        pluginManager.registerEvents(new RecordLastLocationListener(), this);
+        pluginManager.registerEvents(new PlayerListener(), this);
+        pluginManager.registerEvents(new WarpListListener(), this);
+        pluginManager.registerEvents(new EditWarpListener(), this);
+        pluginManager.registerEvents(new OnPlayerListener(), this);
+        pluginManager.registerEvents(new PlayerSkipNight(), this);
+        pluginManager.registerEvents(new OnPluginReloadListener(), this);
+        pluginManager.registerEvents(new PlayerTabManager(), this);
+        pluginManager.registerEvents(new CustomChatFormantListener(), this);
+        pluginManager.registerEvents(new PlayerActionListener(), this);
     }
 
     public static void reloadAllConfig() {

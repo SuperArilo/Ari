@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 public interface Scheduler {
     CancellableTask run(Plugin plugin, Consumer<CancellableTask> task);
     CancellableTask runAtEntity(Plugin plugin, Entity entity, Consumer<CancellableTask> task, Runnable errorCallback);
+    CancellableTask runAtEntityFixedRate(Plugin plugin, Entity entity, Consumer<CancellableTask> task, Runnable errorCallback, long delay, long rate);
     CancellableTask runAtFixedRate(Plugin plugin, Consumer<CancellableTask> task, long delay, long rate);
     CancellableTask runAsync(Plugin plugin, Consumer<CancellableTask> task);
     CancellableTask runAsyncAtFixedRate(Plugin plugin, Consumer<CancellableTask> task, long c, long rate);

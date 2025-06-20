@@ -36,6 +36,20 @@ public class BukkitScheduler implements Scheduler {
     }
 
     @Override
+    public CancellableTask runAtEntityFixedRate(Plugin plugin, Entity entity, Consumer<CancellableTask> task, Runnable errorCallback, long delay, long rate) {
+        AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            try {
+                task.accept(new WrapperScheduledTask<>(atomicReference.get()));
+            } catch (Exception e) {
+                errorCallback.run();
+            }
+        }, delay, rate);
+        atomicReference.set(new WrapperScheduledTask<>(bukkitTask));
+        return atomicReference.get();
+    }
+
+    @Override
     public CancellableTask runAtFixedRate(Plugin plugin, Consumer<CancellableTask> task, long delay, long rate) {
         AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
         atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTaskTimer(plugin, () -> task.accept(atomicReference.get()), delay, rate)));

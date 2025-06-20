@@ -5,7 +5,7 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.TeleportType;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;

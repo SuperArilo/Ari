@@ -3,6 +3,7 @@ package com.tty.listener;
 import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
@@ -14,6 +15,7 @@ public class OnPluginReloadListener implements Listener {
     @EventHandler
     public void pluginReload(CustomPluginReloadEvent event) {
         Ari.reloadAllConfig();
+        Log.initLogger(Ari.instance.getLogger(), Ari.debug);
         if (Ari.debug) {
             Ari.instance.SQLInstance.reconnect();
         }

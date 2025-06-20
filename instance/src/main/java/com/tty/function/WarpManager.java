@@ -6,7 +6,7 @@ import com.tty.enumType.FilePath;
 import com.tty.function.impl.BaseFunctionImpl;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
-import com.tty.tool.Log;
+import com.tty.lib.tool.Log;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;

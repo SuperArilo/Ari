@@ -34,3 +34,10 @@ chat:
 rtp:
   enable: true
   delay: 3
+action:
+  sit:
+    enable: true
+    disable-block:
+      - 'example'
+  lie:
+    enable: true

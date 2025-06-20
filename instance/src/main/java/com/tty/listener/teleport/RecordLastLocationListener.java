@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 public class RecordLastLocationListener implements Listener {
     @EventHandler
     public void lastLocation(PlayerTeleportEvent event) {
+        if (event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN)) return;
         TeleportThread.lastLocation.put(event.getPlayer().getUniqueId(), event.getFrom());
     }
     @EventHandler

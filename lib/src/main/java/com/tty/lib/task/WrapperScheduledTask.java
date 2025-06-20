@@ -7,13 +7,12 @@ public record WrapperScheduledTask<T>(T task) implements CancellableTask {
 
     @Override
     public void cancel() {
-        if (task == null) {
-            throw new IllegalStateException("Task not initialized");
-        }
-        if (task instanceof BukkitTask bukkitTask) {
-            bukkitTask.cancel();
-        } else if (task instanceof ScheduledTask scheduledTask) {
-            scheduledTask.cancel();
+        switch (task) {
+            case null -> throw new IllegalStateException("Task not initialized");
+            case BukkitTask bukkitTask -> bukkitTask.cancel();
+            case ScheduledTask scheduledTask -> scheduledTask.cancel();
+            default -> {
+            }
         }
     }
 

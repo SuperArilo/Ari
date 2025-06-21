@@ -48,10 +48,6 @@ public class Ari extends JavaPlugin {
         instance = this;
         reloadAllConfig();
         Log.initLogger(this.getLogger(), debug);
-        Log.debug(Level.INFO, "----------------");
-        Log.debug(Level.INFO, "   " + ConfigObjectUtils.getValue("debug.on-open", FilePath.Lang.getName(), String.class, "ed") + "   ");
-        Log.debug(Level.INFO, "----------------");
-
     }
 
     @Override

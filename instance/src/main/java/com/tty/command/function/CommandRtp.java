@@ -25,7 +25,7 @@ import java.util.Map;
 public class CommandRtp {
 
     private final CommandSender sender;
-    private int count = 5;
+    private int count = 10;
     private boolean isRunning = false;
     private boolean isDone = false;
     private final World world;
@@ -86,6 +86,7 @@ public class CommandRtp {
     }
 
     private void search() {
+
         final long l = System.currentTimeMillis();
         this.count--;
         this.sendCountTitle();
@@ -101,16 +102,17 @@ public class CommandRtp {
         int relativeX = x & 0xF;
         int relativeZ = z & 0xF;
 
+        boolean isNether = this.world.getEnvironment().equals(World.Environment.NETHER);
+
         this.world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
-            int highestBlockYAt = chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
-            Block block = chunk.getBlock(relativeX, highestBlockYAt, relativeZ);
+
+            int highestBlockYAt = isNether ? this.getHighestBlockYAtNether(chunk, relativeX, relativeZ):chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
             Lib.Scheduler.runAtRegion(Ari.instance, this.world, chunkX, chunkZ, i -> {
-                if (this.isLocationSafe(block)) {
-                    int y = block.getLocation().getBlockY();
-                    Log.debug("random location " + x + ", " + y + ", " + z);
+                if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
+                    Log.debug("random location " + x + ", " + highestBlockYAt + ", " + z);
                     this.isDone = true;
                     this.count = 10;
-                    int finalY = y + 1;
+                    int finalY = highestBlockYAt + 1;
                     Player player = (Player) this.sender;
                     player.clearTitle();
                     Lib.Scheduler.runAtEntity(Ari.instance, player, b -> {
@@ -126,31 +128,55 @@ public class CommandRtp {
                 this.isRunning = false;
                 Log.debug("search time: " + (System.currentTimeMillis() -l) + "ms");
             });
+        }).exceptionally(i -> {
+            Log.error("search error", i);
+            return null;
         });
     }
 
-    private boolean isLocationSafe(Block feetBlock) {
-        World world = feetBlock.getWorld();
-        int x = feetBlock.getX();
-        int y = feetBlock.getY();
-        int z = feetBlock.getZ();
+    //下界特殊处理
+    private int getHighestBlockYAtNether(Chunk chunk, int chunkX, int chunkZ) {
+        final int minHeight = this.world.getMinHeight();
 
-        Material feetMaterial = feetBlock.getType();
-        if (!isSafeStandingBlock(feetMaterial)) {
+        int value = 0;
+        for (int y = 80;y >= minHeight;y--) {
+            Block block = chunk.getBlock(chunkX, y, chunkZ);
+            if (block.isLiquid()) break;
+            if (block.isEmpty() || block.isPassable()) continue;
+            value = y;
+            break;
+        }
+        return value;
+    }
+    private boolean isLocationSafe(Chunk chunk, int chunkX, int chunkY, int chunkZ) {
+
+        Block block = chunk.getBlock(chunkX, chunkY, chunkZ);
+
+        //身体检查
+        Material head = chunk.getBlock(chunkX, chunkY + 2, chunkZ).getType();
+        Material body = chunk.getBlock(chunkX, chunkY + 1, chunkZ).getType();
+        Material feet = block.getType();
+
+        //周围检查
+        Material left = block.getRelative(1, 0, 0).getType();
+        Material right = block.getRelative(-1, 0, 0).getType();
+        Material front = block.getRelative(0, 1, 0).getType();
+        Material behind = block.getRelative(0, -1, 0).getType();
+
+        if (!isSafeStandingBlock(feet)) {
             return false;
         }
 
-        Material bodyMaterial = world.getBlockAt(x, y + 1, z).getType();
-        Material headMaterial = world.getBlockAt(x, y + 2, z).getType();
-
-        if (isSolid(bodyMaterial) || isSolid(headMaterial) ||
-                isDangerous(bodyMaterial) || isDangerous(headMaterial)) {
+        if (isSolid(body) ||
+                isDangerous(body) || isDangerous(head) ||
+                isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
             return false;
         }
 
-        if (isDangerous(feetMaterial)) return false;
+        if (isDangerous(feet)) return false;
 
-        return !world.getBlockAt(x, y - 1, z).getType().isAir();
+        return !chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir();
+
     }
 
     private boolean isSafeStandingBlock(Material material) {

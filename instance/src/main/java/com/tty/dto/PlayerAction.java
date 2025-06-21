@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 
-import static com.tty.listener.player.PlayerActionListener.PLAYER_ACTION_MAP;
+import static com.tty.listener.player.PlayerActionListener.PLAYER_SIT_ACTION_MAP;
 
 public class PlayerAction {
 
@@ -53,7 +53,7 @@ public class PlayerAction {
                 entity.remove();
             }
         }
-        PLAYER_ACTION_MAP.remove(this.player);
+        PLAYER_SIT_ACTION_MAP.remove(this.player);
     }
 
 }

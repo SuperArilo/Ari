@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class PlayerActionListener implements Listener {
 
-    public static final Map<Player, PlayerAction> PLAYER_ACTION_MAP = new HashMap<>();
+    public static final Map<Player, PlayerAction> PLAYER_SIT_ACTION_MAP = new HashMap<>();
 
     @EventHandler
     public void onPlayInteract(PlayerInteractEvent event) {
@@ -46,7 +46,7 @@ public class PlayerActionListener implements Listener {
         Player player = event.getPlayer();
         Block clicked = event.getClickedBlock();
         //已经存在 return
-        if (PLAYER_ACTION_MAP.containsKey(player)) {
+        if (PLAYER_SIT_ACTION_MAP.containsKey(player)) {
             event.setCancelled(true);
             return;
         }
@@ -55,27 +55,38 @@ public class PlayerActionListener implements Listener {
 
         PlayerAction playerAction = new PlayerAction(player);
         playerAction.sit(this.calculateSeatLocation(clicked, player));
-        PLAYER_ACTION_MAP.put(player, playerAction);
+        PLAYER_SIT_ACTION_MAP.put(player, playerAction);
 
     }
 
+    //玩家相互骑乘
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         //未开启
         if (!this.isEnable()) return;
-        if (event.getRightClicked() instanceof Player clickPlayer && !clickPlayer.isInsideVehicle()) {
-            clickPlayer.addPassenger(event.getPlayer());
-        }
+        //发起骑乘的玩家
+        Player player = event.getPlayer();
+        //被点击的玩家
+        Entity clickedPlayer = event.getRightClicked();
+        //被点击的玩家有玩家骑乘
+        if (!clickedPlayer.getPassengers().isEmpty()) return;
+
+        //右手必须为空才能骑乘
+        if (!player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return;
+
+        clickedPlayer.addPassenger(player);
     }
     @EventHandler
     public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
         //未开启
         if (!this.isEnable()) return;
-        if (event.isSneaking()) {
-            Player player = event.getPlayer();
-            List<Entity> passengers = player.getPassengers();
-            if (!passengers.isEmpty()) {
-                player.eject();
+        if (!event.isSneaking()) return;
+        Player player = event.getPlayer();
+        List<Entity> passengers = player.getPassengers();
+        if (!passengers.isEmpty()) {
+            player.eject();
+            for (Entity passenger : passengers) {
+                passenger.eject();
             }
         }
     }
@@ -85,8 +96,17 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
         if (!this.isEnable()) return;
+        //被攻击者
         Entity entity = event.getEntity();
-        if (entity instanceof Player player && PLAYER_ACTION_MAP.containsKey(player)) {
+        //攻击者
+        Entity damager = event.getDamager();
+
+        List<Entity> passengers = damager.getPassengers();
+
+        //当攻击玩家的乘客为 0 那就表示此玩家没有被骑乘
+        if (passengers.isEmpty()) return;
+        //如果此玩家有乘客，那就判断攻击对象是不是乘客, 如果是，取消攻击
+        if (passengers.contains(entity)) {
             event.setCancelled(true);
         }
     }
@@ -94,7 +114,7 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayerBreakBlock(BlockBreakEvent event) {
         if (!this.isEnable()) return;
-        if (PLAYER_ACTION_MAP.containsKey(event.getPlayer())) {
+        if (PLAYER_SIT_ACTION_MAP.containsKey(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
@@ -102,7 +122,7 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayerPlaceBlock(BlockPlaceEvent event) {
         if (!this.isEnable()) return;
-        if (PLAYER_ACTION_MAP.containsKey(event.getPlayer())) {
+        if (PLAYER_SIT_ACTION_MAP.containsKey(event.getPlayer())) {
             event.setCancelled(true);
         }
     }
@@ -111,18 +131,18 @@ public class PlayerActionListener implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (!this.isEnable()) return;
         Player player = event.getPlayer();
-        PlayerAction playerAction = PLAYER_ACTION_MAP.get(player);
+        PlayerAction playerAction = PLAYER_SIT_ACTION_MAP.get(player);
         if (playerAction == null) return;
         playerAction.cancel();
-        PLAYER_ACTION_MAP.remove(player);
+        PLAYER_SIT_ACTION_MAP.remove(player);
     }
 
     @EventHandler
     public void onVehicleExit(VehicleExitEvent event) {
         if (!this.isEnable()) return;
-        if (event.getExited() instanceof Player player && PLAYER_ACTION_MAP.get(player) != null) {
-            PLAYER_ACTION_MAP.get(player).cancel();
-            PLAYER_ACTION_MAP.remove(player);
+        if (event.getExited() instanceof Player player && PLAYER_SIT_ACTION_MAP.get(player) != null) {
+            PLAYER_SIT_ACTION_MAP.get(player).cancel();
+            PLAYER_SIT_ACTION_MAP.remove(player);
         }
     }
 
@@ -154,7 +174,6 @@ public class PlayerActionListener implements Listener {
 
     private float getYawFromBlockFace(BlockFace face) {
         return switch (face) {
-            case NORTH -> 0.0F;
             case EAST -> 90.0F;
             case SOUTH -> 180.0F;
             case WEST -> -90.0F;

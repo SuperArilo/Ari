@@ -68,6 +68,9 @@ public class PlayerActionListener implements Listener {
         Player player = event.getPlayer();
         //被点击的玩家
         Entity clickedPlayer = event.getRightClicked();
+
+        if(!(clickedPlayer instanceof Player)) return;
+
         //被点击的玩家有玩家骑乘
         if (!clickedPlayer.getPassengers().isEmpty()) return;
 
@@ -90,7 +93,6 @@ public class PlayerActionListener implements Listener {
             }
         }
     }
-
 
     //取消玩家攻击
     @EventHandler

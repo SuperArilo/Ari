@@ -7,9 +7,7 @@ import com.tty.lib.Lib;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
-import net.kyori.adventure.sound.Sound;
 import org.bukkit.Location;
-import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -110,13 +108,11 @@ public class TeleportThread {
                 switch (this.type) {
                     case POINT -> Lib.Scheduler.runAtEntity(Ari.instance, threadPlayer, i -> {
                         EntityTeleport.teleport(threadPlayer, this.targetLocation);
-                        threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                         threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
                     case PLAYER -> Lib.Scheduler.runAtEntity(Ari.instance, threadPlayer, i -> {
                         EntityTeleport.teleport(threadPlayer, this.targetPlayer.getLocation());
-                        threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                         threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
                         callback.after();
                     }, () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));

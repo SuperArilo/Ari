@@ -26,7 +26,7 @@ base:
 teleport:
   ing: '传送过程中！请不要移动...'
   success: '传送成功！'
-  break: '74传送过程中被阻断或者取消'
+  break: '&4传送过程中被阻断或者取消'
   unable-player: '该玩家离线或者不存在！'
   cooling: '传送冷却中...'
   none-location: '没有上一个保存的位置'

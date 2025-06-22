@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
@@ -106,24 +105,20 @@ public class TeleportThread {
             //传送时间到达
             if (timerIndex.get() == 0) {
                 t.cancel();
-                AtomicBoolean status = new AtomicBoolean(false);
                 switch (this.type) {
                     case POINT -> Lib.Scheduler.runAtEntity(
                             Ari.instance,
                             threadPlayer,
-                            i -> status.set(EntityTeleport.teleport(threadPlayer, this.targetLocation)),
+                            i -> EntityTeleport.teleport(threadPlayer, this.targetLocation),
                             () -> Log.error("teleport error! type: " + TeleportType.POINT.name()));
                     case PLAYER -> Lib.Scheduler.runAtEntity(
                             Ari.instance,
                             threadPlayer,
-                            i -> status.set(EntityTeleport.teleport(threadPlayer, this.targetPlayer.getLocation())),
+                            i -> EntityTeleport.teleport(threadPlayer, this.targetPlayer.getLocation()),
                             () -> Log.error("teleport error! type: " + TeleportType.PLAYER.name()));
                 }
-                boolean b = status.get();
-                if (b) {
-                    callback.after();
-                }
-                threadPlayer.sendMessage(TextTool.setHEXColorText(b ? "teleport.success":"teleport.break", FilePath.Lang));
+                callback.after();
+                threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.success", FilePath.Lang));
             }
         }, 0, 20);
     }

@@ -5,7 +5,6 @@ import com.tty.Ari;
 import com.tty.dto.PlayerSitAction;
 import com.tty.enumType.FilePath;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -54,10 +53,7 @@ public class PlayerActionListener implements Listener {
             return;
         }
 
-        if (clicked == null || player.getVehicle() != null || !this.isCanSit(clicked)) {
-            player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
-            return;
-        }
+        if (clicked == null || player.getVehicle() != null || !this.isCanSit(clicked)) return;
 
         PlayerSitAction playerAction = new PlayerSitAction(player);
         if (playerAction.sit(this.calculateSeatLocation(clicked, player))) {

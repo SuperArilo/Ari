@@ -80,6 +80,9 @@ function:
     search-count: '剩余尝试次数 &6[RtpSearchCount]'
     search-failure: '&4搜索失败，请重试'
     world-disable: '&8当前世界已经被禁用随机传送'
+  sit:
+    tips: '&f按下 &2潜行键 &f来取消'
+    error-location: '&4当前位置不允许坐下'
   unknown: '&4未知指令，请重新输入'
 server:
   time:

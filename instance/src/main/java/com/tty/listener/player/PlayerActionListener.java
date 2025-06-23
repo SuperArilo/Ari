@@ -1,12 +1,14 @@
 package com.tty.listener.player;
 
 import com.google.gson.reflect.TypeToken;
-import com.tty.dto.PlayerAction;
+import com.tty.dto.PlayerSitAction;
 import com.tty.enumType.FilePath;
 import com.tty.tool.ConfigObjectUtils;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -32,7 +34,7 @@ import java.util.Map;
 
 public class PlayerActionListener implements Listener {
 
-    public static final Map<Player, PlayerAction> PLAYER_SIT_ACTION_MAP = new HashMap<>();
+    public static final Map<Player, PlayerSitAction> PLAYER_SIT_ACTION_MAP = new HashMap<>();
 
     @EventHandler
     public void onPlayInteract(PlayerInteractEvent event) {
@@ -53,10 +55,11 @@ public class PlayerActionListener implements Listener {
 
         if (clicked == null || player.getVehicle() != null || !this.isCanSit(clicked)) return;
 
-        PlayerAction playerAction = new PlayerAction(player);
-        playerAction.sit(this.calculateSeatLocation(clicked, player));
+        PlayerSitAction playerAction = new PlayerSitAction(player);
+        //add
         PLAYER_SIT_ACTION_MAP.put(player, playerAction);
 
+        playerAction.sit(this.calculateSeatLocation(clicked, player));
     }
 
     //玩家相互骑乘
@@ -132,8 +135,9 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         if (!this.isEnable()) return;
+        if (!event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN)) return;
         Player player = event.getPlayer();
-        PlayerAction playerAction = PLAYER_SIT_ACTION_MAP.get(player);
+        PlayerSitAction playerAction = PLAYER_SIT_ACTION_MAP.get(player);
         if (playerAction == null) return;
         playerAction.cancel();
         PLAYER_SIT_ACTION_MAP.remove(player);
@@ -162,15 +166,22 @@ public class PlayerActionListener implements Listener {
     }
 
     private Location calculateSeatLocation(Block clickedBlock, Player player) {
-        Location loc = clickedBlock.getLocation().add(0.5, 0.3, 0.5);
+        Location loc = clickedBlock.getLocation();
+        BlockData blockData = clickedBlock.getBlockData();
 
-        loc.add(0, 0.25, 0);
-        if (clickedBlock.getBlockData() instanceof Stairs stairs) {
+        double centerX = 0.5;
+        double centerZ = 0.5;
+
+        if (blockData instanceof Stairs stairs) {
+            loc.add(centerX, 0.5, centerZ);
             loc.setYaw(this.getYawFromBlockFace(stairs.getFacing()));
-        } else {
+        } else if (blockData instanceof Slab slab){
+            switch (slab.getType()) {
+                case BOTTOM ->  loc.add(centerX, 0.5, centerZ);
+                case TOP, DOUBLE -> loc.add(centerX, 1, centerZ);
+            }
             loc.setYaw(player.getYaw());
         }
-
         return loc;
     }
 

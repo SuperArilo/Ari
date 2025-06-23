@@ -8,6 +8,7 @@ base:
   status-not-allow: '&4当前状态不允许此操作！'
   on-edit:
     cancel: '已取消操作！'
+    timeout-cancel: '&7编辑超时，已自动取消！'
     title: '&7请输入新内容'
     sub-title: '&6cancel &7取消'
     rename:

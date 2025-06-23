@@ -49,7 +49,7 @@ public class TextTool {
      */
     public static TextComponent setHEXColorText(String path, FilePath filePath) {
         String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class, "null");
-        if (content == null) {
+        if (content == null || content.equals("null")) {
             Log.error(path + " path does not exist in the " + filePath.getName() + " file");
             Log.error(filePath.getName() + " path: " + filePath.getPath());
             return returnNoContentText();

@@ -1,12 +1,15 @@
 package com.tty.listener.player;
 
 import com.google.gson.reflect.TypeToken;
+import com.tty.Ari;
 import com.tty.dto.PlayerSitAction;
 import com.tty.enumType.FilePath;
 import com.tty.tool.ConfigObjectUtils;
+import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
@@ -19,11 +22,9 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.Material;
-import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.player.PlayerToggleSneakEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.BoundingBox;
 
@@ -53,13 +54,15 @@ public class PlayerActionListener implements Listener {
             return;
         }
 
-        if (clicked == null || player.getVehicle() != null || !this.isCanSit(clicked)) return;
+        if (clicked == null || player.getVehicle() != null || !this.isCanSit(clicked)) {
+            player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
+            return;
+        }
 
         PlayerSitAction playerAction = new PlayerSitAction(player);
-        //add
-        PLAYER_SIT_ACTION_MAP.put(player, playerAction);
-
-        playerAction.sit(this.calculateSeatLocation(clicked, player));
+        if (playerAction.sit(this.calculateSeatLocation(clicked, player))) {
+            PLAYER_SIT_ACTION_MAP.put(player, playerAction);
+        }
     }
 
     //玩家相互骑乘
@@ -96,7 +99,6 @@ public class PlayerActionListener implements Listener {
             }
         }
     }
-
     //取消玩家攻击
     @EventHandler
     public void onPlayerAttack(EntityDamageByEntityEvent event) {
@@ -152,10 +154,36 @@ public class PlayerActionListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+        if (player.isInsideVehicle()) {
+            if (player.getVehicle() instanceof ArmorStand armorStand) {
+                player.leaveVehicle();
+                armorStand.remove();
+            }
+        }
+    }
+    @EventHandler
+    public void onServerShutdown(PluginDisableEvent event) {
+        if (event.getPlugin() instanceof Ari) {
+            PLAYER_SIT_ACTION_MAP.forEach((k, v) -> v.cancel());
+        }
+    }
+
     private boolean isCanSit(Block block) {
-        Collection<Entity> nearbyEntities = block.getLocation().getWorld().getNearbyEntities(BoundingBox.of(block));
+        Location location = block.getLocation();
+        Collection<Entity> nearbyEntities = location.getWorld().getNearbyEntities(BoundingBox.of(block));
         boolean b = nearbyEntities.stream().allMatch(entity -> entity instanceof ArmorStand);
         if (!b) {
+            return false;
+        }
+        //判断当前坐的位置上方是否是空气
+        if (!location.clone().add(0, 1, 0).getBlock().getType().equals(Material.AIR)) {
+            return false;
+        }
+        //倒放楼梯不允许
+        if (block.getBlockData() instanceof Stairs stairs && stairs.getHalf().equals(Bisected.Half.TOP)) {
             return false;
         }
         Material type = block.getType();

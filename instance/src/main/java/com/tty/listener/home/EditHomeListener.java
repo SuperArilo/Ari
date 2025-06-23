@@ -11,6 +11,7 @@ import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
@@ -27,6 +28,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -88,7 +90,16 @@ public class EditHomeListener implements Listener {
                                     1000));
                     clickedInventory.close();
                     this.editStatus.add(holder);
-                    //rename home
+                    if (holder.getTask() == null) {
+                        CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
+                            if (this.removeIfPlayInEditList(player)) {
+                                player.sendMessage(TextTool.setHEXColorText("base.on-edit.timeout-cancel", FilePath.Lang));
+                            }
+                            holder.setTask(null);
+                        }, 200L);
+                        holder.setTask(cancellableTask);
+                        //延迟执行
+                    }
                 }
                 case LOCATION -> {
                     //reset LOCATION
@@ -145,48 +156,54 @@ public class EditHomeListener implements Listener {
             event.setCancelled(true);
         }
     }
-
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        this.removeIfPlayInEditList(event.getPlayer());
+    }
     @EventHandler
     public void getNeedEditHomeChat(AsyncChatEvent event) {
         if (this.editStatus.isEmpty()) return;
-        event.setCancelled(true);
         Player player = event.getPlayer();
-        String message = TextTool.componentToString(event.message());
-        List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.HomeConfig.getName(), new TypeToken<List<String>>(){}.getType(), List.of());
-        if(value == null) {
-            Log.error("name-check list is null, check config");
-            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-            return;
-        }
-        if(!FormatUtils.checkName(message) || value.contains(message)) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
-            return;
-        }
-        if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class, 15)) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
-            return;
-        }
+        if (this.editStatus.stream().anyMatch(i -> i.getPlayer().equals(player))) {
+            event.setCancelled(true);
 
-        Audience.audience(player).clearTitle();
-
-        if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
-            this.removeIfPlayInEditList(player);
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.cancel", FilePath.Lang));
-            return;
-        }
-        // 使用 removeIf 删除满足条件的元素
-        this.editStatus.removeIf(i -> {
-            if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                ServerHome home = (ServerHome) i.getMeta();
-                home.setHomeName(message);
-                new HomeEditor(home, player).open();
-                Log.debug("player: [" + player.getName() + "] edit home-name status removed");
-                return true;
+            String message = TextTool.componentToString(event.message());
+            List<String> value = ConfigObjectUtils.getValue("main.name-check", FilePath.HomeConfig.getName(), new TypeToken<List<String>>(){}.getType(), List.of());
+            if(value == null) {
+                Log.error("name-check list is null, check config");
+                player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+                return;
             }
-            return false;
-        });
+            if(!FormatUtils.checkName(message) || value.contains(message)) {
+                player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
+                return;
+            }
+            if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class, 15)) {
+                player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
+                return;
+            }
+
+            Audience.audience(player).clearTitle();
+
+            if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
+                this.removeIfPlayInEditList(player);
+                player.sendMessage(TextTool.setHEXColorText("base.on-edit.cancel", FilePath.Lang));
+                return;
+            }
+            // 使用 removeIf 删除满足条件的元素
+            this.editStatus.removeIf(i -> {
+                if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
+                    ServerHome home = (ServerHome) i.getMeta();
+                    home.setHomeName(message);
+                    new HomeEditor(home, player).open();
+                    Log.debug("player: [" + player.getName() + "] edit home-name status removed");
+                    return true;
+                }
+                return false;
+            });
+        }
     }
-    protected synchronized void removeIfPlayInEditList(Player player) {
-        this.editStatus.removeIf(e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()));
+    protected synchronized boolean removeIfPlayInEditList(Player player) {
+        return this.editStatus.removeIf(e -> e.getPlayer().getUniqueId().equals(player.getUniqueId()));
     }
 }

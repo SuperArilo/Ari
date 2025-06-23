@@ -13,6 +13,7 @@ import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.TitleInputType;
+import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
@@ -30,6 +31,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -112,6 +114,15 @@ public class EditWarpListener implements Listener {
                                     1000));
                     clickedInventory.close();
                     this.editMap.put(player.getUniqueId(), OnEdit.build(holder, TitleInputType.valueOf(type.name())));
+                    if (holder.getTask() == null) {
+                        CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
+                            if (this.removeIfPlayerInMap(player) != null) {
+                                player.sendMessage(TextTool.setHEXColorText("base.on-edit.timeout-cancel", FilePath.Lang));
+                            }
+                            holder.setTask(null);
+                        }, 200L);
+                        holder.setTask(cancellableTask);
+                    }
                 }
                 case LOCATION -> {
                     Location newLocation = player.getLocation();
@@ -173,13 +184,17 @@ public class EditWarpListener implements Listener {
             event.setCancelled(true);
         }
     }
-
+    @EventHandler
+    public void onPlayerLeave(PlayerQuitEvent event) {
+        this.removeIfPlayerInMap(event.getPlayer());
+    }
     @EventHandler
     public void getNeedEditWarpChat(AsyncChatEvent event) {
         if (this.editMap.isEmpty()) return;
+        Player player = event.getPlayer();
+        if (!this.editMap.containsKey(player.getUniqueId())) return;
         event.setCancelled(true);
 
-        Player player = event.getPlayer();
         OnEdit onEdit = this.editMap.get(player.getUniqueId());
         if(onEdit == null) return;
         String message = TextTool.componentToString(event.message());
@@ -212,11 +227,11 @@ public class EditWarpListener implements Listener {
                     serverWarp.setWarpName(message);
                 }
                 case PERMISSION -> {
-                     if(!FormatUtils.isValidPermissionNode(message)) {
-                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.permission.permission-error", FilePath.Lang));
-                         return;
-                     }
-                     serverWarp.setPermission(message);
+                    if(!FormatUtils.isValidPermissionNode(message)) {
+                        player.sendMessage(TextTool.setHEXColorText("base.on-edit.permission.permission-error", FilePath.Lang));
+                        return;
+                    }
+                    serverWarp.setPermission(message);
                 }
                 case COST -> {
                     try {
@@ -236,8 +251,7 @@ public class EditWarpListener implements Listener {
         Log.debug("player: [" + player.getName() + "] edit warp-name status removed");
     }
 
-
-    private synchronized void removeIfPlayerInMap(@NotNull Player player) {
-        this.editMap.remove(player.getUniqueId());
+    private synchronized OnEdit removeIfPlayerInMap(@NotNull Player player) {
+        return this.editMap.remove(player.getUniqueId());
     }
 }

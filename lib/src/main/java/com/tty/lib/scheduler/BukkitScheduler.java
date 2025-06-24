@@ -17,7 +17,7 @@ public class BukkitScheduler implements Scheduler {
     @Override
     public CancellableTask run(Plugin plugin, Consumer<CancellableTask> task) {
         AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
-        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(new WrapperScheduledTask<>(atomicReference.get())))));
+        atomicReference.set(new WrapperScheduledTask<>(Bukkit.getScheduler().runTask(plugin, () -> task.accept(atomicReference.get()))));
         return atomicReference.get();
     }
 
@@ -40,7 +40,7 @@ public class BukkitScheduler implements Scheduler {
         AtomicReference<WrapperScheduledTask<BukkitTask>> atomicReference = new AtomicReference<>();
         BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             try {
-                task.accept(new WrapperScheduledTask<>(atomicReference.get()));
+                task.accept(atomicReference.get());
             } catch (Exception e) {
                 errorCallback.run();
             }

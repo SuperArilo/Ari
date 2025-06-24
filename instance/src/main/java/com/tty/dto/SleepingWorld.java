@@ -7,6 +7,7 @@ import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
+import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.GameRule;
@@ -83,9 +84,10 @@ public class SleepingWorld {
             int numSleepersNeeded = Math.max(a / 100, 1);
             //已经睡下的人
             long sleepers = this.getSleepPlayers();
-            if (world.getTime() >= TimePeriod.WAKE_UP.getEnd() ||
-                    world.getTime() < TimePeriod.SUNSET.getStart() &&
-                            (world.isThundering() || world.hasStorm()) &&
+            long worldTime = world.getTime();
+            Log.debug("world time :" + world.getTime() + " abs: " + TimePeriod.WAKE_UP.getEnd());
+            if ((worldTime >= TimePeriod.WAKE_UP.getEnd() || (worldTime > 0 && worldTime < TimePeriod.SUNRISE.getEnd())) ||
+                    (world.isThundering() || world.hasStorm()) &&
                             !this.skipNightOver) {
                 Lib.Scheduler.run(Ari.instance, i-> {
                     world.setStorm(false);

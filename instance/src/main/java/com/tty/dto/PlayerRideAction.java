@@ -36,7 +36,7 @@ public class PlayerRideAction {
 
     private void createTask() {
         this.task = Lib.Scheduler.runAtEntityFixedRate(Ari.instance, this.player, i -> {
-            if (this.cloud.getPassengers().isEmpty()) {
+            if (this.cloud.getPassengers().isEmpty() && this.player.isDead()) {
                 this.cancel();
                 Log.debug("ride length: " + PLAYER_RIDE_ACTION_MAP.size());
             }

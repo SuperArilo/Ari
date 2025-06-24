@@ -8,7 +8,7 @@ import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Player;
 
 import static com.tty.listener.player.PlayerActionListener.PLAYER_SIT_ACTION_MAP;
@@ -17,7 +17,7 @@ public class PlayerSitAction {
 
     private final Player player;
     private CancellableTask task;
-    private ArmorStand armorStand;
+    private AreaEffectCloud cloud;
 
     public PlayerSitAction(Player player) {
         this.player = player;
@@ -25,20 +25,18 @@ public class PlayerSitAction {
 
     public boolean sit(Location location) {
 
-       this.armorStand = this.player.getWorld().spawn(location, ArmorStand.class, entity -> {
+       this.cloud = this.player.getWorld().spawn(location, AreaEffectCloud.class, entity -> {
             entity.setInvulnerable(true);
             entity.setGravity(false);
-            entity.setSmall(true);
-            entity.setMarker(true);
             entity.setInvisible(true);
-            entity.setRotation(location.getYaw(), 0);
+            entity.setRadius(0);
             entity.addPassenger(this.player);
         });
 
         this.player.setRotation(location.getYaw(), 0);
         this.player.sendActionBar(TextTool.setHEXColorText("function.sit.tips", FilePath.Lang));
         this.task = Lib.Scheduler.runAtEntityFixedRate(Ari.instance, this.player, i -> {
-            if (this.player.isInsideVehicle() && this.player.getVehicle() instanceof ArmorStand a) {
+            if (this.player.isInsideVehicle() && this.player.getVehicle() instanceof AreaEffectCloud a) {
                 Location check_1 = a.getLocation();
                 Location check_2 = a.getLocation().clone().subtract(0, 0.5, 0);
 
@@ -59,20 +57,20 @@ public class PlayerSitAction {
                 }
             } else {
                 this.cancel();
-                Log.debug("From " + this.player.getName() + " - " + "sit length: " + PLAYER_SIT_ACTION_MAP.size());
+                Log.debug("sit length: " + PLAYER_SIT_ACTION_MAP.size());
             }
         }, () -> {}, 1L, 20L);
         return true;
     }
 
     public void cancel() {
-        this.player.leaveVehicle();
+        if (this.cloud == null) return;
         if (this.task != null) {
             this.task.cancel();
+            this.task = null;
         }
-        if (this.armorStand != null) {
-            this.armorStand.remove();
-        }
+        this.player.leaveVehicle();
+        this.cloud.remove();
         PLAYER_SIT_ACTION_MAP.remove(this.player);
         //同步移除实体和sit状态
         if (!this.player.isOnline()) {

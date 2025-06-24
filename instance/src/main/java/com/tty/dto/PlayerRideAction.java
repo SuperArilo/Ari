@@ -23,9 +23,8 @@ public class PlayerRideAction {
         this.cloud = player.getWorld().spawn(location, AreaEffectCloud.class, entity -> {
             entity.setInvulnerable(true);
             entity.setGravity(false);
-            entity.setInvisible(false);
+            entity.setInvisible(true);
             entity.setRadius(0);
-            entity.setRotation(location.getYaw(), 0);
             player.addPassenger(entity);
             this.createTask();
         });
@@ -39,7 +38,7 @@ public class PlayerRideAction {
         this.task = Lib.Scheduler.runAtEntityFixedRate(Ari.instance, this.player, i -> {
             if (this.cloud.getPassengers().isEmpty()) {
                 this.cancel();
-                Log.debug("From " + this.player.getName() + " - " + "ride length: " + PLAYER_RIDE_ACTION_MAP.size());
+                Log.debug("ride length: " + PLAYER_RIDE_ACTION_MAP.size());
             }
         }, () -> {}, 1L, 20L);
     }

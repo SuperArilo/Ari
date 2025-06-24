@@ -60,7 +60,6 @@ public class PlayerActionListener implements Listener {
             PLAYER_SIT_ACTION_MAP.put(player, playerAction);
         }
     }
-
     //玩家相互骑乘
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
@@ -100,7 +99,20 @@ public class PlayerActionListener implements Listener {
             event.setCancelled(true);
         }
     }
-
+    @EventHandler
+    public void onToggleSneak(PlayerToggleSneakEvent event) {
+        if (!this.isEnable()) return;
+        if (!event.isSneaking()) return;
+        Player player = event.getPlayer();
+        PlayerRideAction rideAction = PLAYER_RIDE_ACTION_MAP.get(player);
+        if (rideAction != null)  {
+            rideAction.cancel();
+        }
+        PlayerSitAction sitAction = PLAYER_SIT_ACTION_MAP.get(player);
+        if (sitAction != null) {
+            sitAction.cancel();
+        }
+    }
     @EventHandler
     public void onServerShutdown(PluginDisableEvent event) {
         if (!this.isEnable()) return;
@@ -140,12 +152,12 @@ public class PlayerActionListener implements Listener {
         double centerZ = 0.5;
 
         if (blockData instanceof Stairs stairs) {
-            loc.add(centerX, 0.5, centerZ);
+            loc.add(centerX, 0, centerZ);
             loc.setYaw(this.getYawFromBlockFace(stairs.getFacing()));
         } else if (blockData instanceof Slab slab){
             switch (slab.getType()) {
-                case BOTTOM ->  loc.add(centerX, 0.5, centerZ);
-                case TOP, DOUBLE -> loc.add(centerX, 1, centerZ);
+                case BOTTOM ->  loc.add(centerX, 0, centerZ);
+                case TOP, DOUBLE -> loc.add(centerX, 0.5, centerZ);
             }
             loc.setYaw(player.getYaw());
         }

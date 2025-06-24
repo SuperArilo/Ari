@@ -152,6 +152,7 @@ public class PlayerActionListener implements Listener {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
+        if (!this.isEnable()) return;
         Player player = event.getPlayer();
         if (player.isInsideVehicle()) {
             if (player.getVehicle() instanceof ArmorStand armorStand) {
@@ -162,6 +163,7 @@ public class PlayerActionListener implements Listener {
     }
     @EventHandler
     public void onServerShutdown(PluginDisableEvent event) {
+        if (!this.isEnable()) return;
         if (event.getPlugin() instanceof Ari) {
             PLAYER_SIT_ACTION_MAP.forEach((k, v) -> v.cancel());
         }

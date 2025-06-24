@@ -86,7 +86,8 @@ public class SleepingWorld {
             long sleepers = this.getSleepPlayers();
             long worldTime = world.getTime();
             Log.debug("world time :" + world.getTime() + " abs: " + TimePeriod.WAKE_UP.getEnd());
-            if ((worldTime >= TimePeriod.WAKE_UP.getEnd() || (worldTime > 0 && worldTime < TimePeriod.SUNRISE.getEnd())) ||
+            if ((worldTime >= TimePeriod.WAKE_UP.getEnd() ||
+                    (worldTime > 0 && worldTime < TimePeriod.SUNRISE.getEnd())) ||
                     (world.isThundering() || world.hasStorm()) &&
                             !this.skipNightOver) {
                 Lib.Scheduler.run(Ari.instance, i-> {

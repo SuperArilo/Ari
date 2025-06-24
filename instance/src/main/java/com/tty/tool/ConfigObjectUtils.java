@@ -193,6 +193,11 @@ public class ConfigObjectUtils {
                 null);
         YamlConfiguration function = getObject(FilePath.FunctionConfig.getName());
 
+        if(function.getKeys(false).isEmpty()) {
+            Log.error("rtp initialization failed, Function file is null");
+            return;
+        }
+
         if (value == null) {
             value = new HashMap<>();
             for (World world : Bukkit.getWorlds()) {

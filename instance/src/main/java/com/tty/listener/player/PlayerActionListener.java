@@ -2,6 +2,7 @@ package com.tty.listener.player;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
+import com.tty.dto.PlayerRideAction;
 import com.tty.dto.PlayerSitAction;
 import com.tty.enumType.FilePath;
 import com.tty.tool.ConfigObjectUtils;
@@ -20,11 +21,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.Material;
 import org.bukkit.event.server.PluginDisableEvent;
-import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.util.BoundingBox;
 
 import java.util.Collection;
@@ -35,6 +34,7 @@ import java.util.Map;
 public class PlayerActionListener implements Listener {
 
     public static final Map<Player, PlayerSitAction> PLAYER_SIT_ACTION_MAP = new HashMap<>();
+    public static final Map<Player, PlayerRideAction> PLAYER_RIDE_ACTION_MAP = new HashMap<>();
 
     @EventHandler
     public void onPlayInteract(PlayerInteractEvent event) {
@@ -69,49 +69,20 @@ public class PlayerActionListener implements Listener {
         //发起骑乘的玩家
         Player player = event.getPlayer();
         //被点击的玩家
-        Entity clickedPlayer = event.getRightClicked();
+        if(!(event.getRightClicked() instanceof Player clickedPlayer)) return;
 
-        if(!(clickedPlayer instanceof Player)) return;
-
-        //被点击的玩家有玩家骑乘
+        //被点击的玩家如果有乘客（隐藏实体
         if (!clickedPlayer.getPassengers().isEmpty()) return;
 
         //右手必须为空才能骑乘
         if (!player.getInventory().getItemInMainHand().getType().equals(Material.AIR)) return;
 
-        clickedPlayer.addPassenger(player);
-    }
-    @EventHandler
-    public void onPlayerToggleSneak(PlayerToggleSneakEvent event) {
-        //未开启
-        if (!this.isEnable()) return;
-        if (!event.isSneaking()) return;
-        Player player = event.getPlayer();
-        List<Entity> passengers = player.getPassengers();
-        if (!passengers.isEmpty()) {
-            player.eject();
-            for (Entity passenger : passengers) {
-                passenger.eject();
-            }
-        }
-    }
-    //取消玩家攻击
-    @EventHandler
-    public void onPlayerAttack(EntityDamageByEntityEvent event) {
-        if (!this.isEnable()) return;
-        //被攻击者
-        Entity entity = event.getEntity();
-        //攻击者
-        Entity damager = event.getDamager();
+        //如果存在就 return
+        if (PLAYER_RIDE_ACTION_MAP.containsKey(clickedPlayer)) return;
 
-        List<Entity> passengers = damager.getPassengers();
-
-        //当攻击玩家的乘客为 0 那就表示此玩家没有被骑乘
-        if (passengers.isEmpty()) return;
-        //如果此玩家有乘客，那就判断攻击对象是不是乘客, 如果是，取消攻击
-        if (passengers.contains(entity)) {
-            event.setCancelled(true);
-        }
+        PlayerRideAction rideAction = new PlayerRideAction(clickedPlayer);
+        PLAYER_RIDE_ACTION_MAP.put(clickedPlayer, rideAction);
+        rideAction.addPassenger(player);
     }
     //取消玩家破坏
     @EventHandler
@@ -129,43 +100,13 @@ public class PlayerActionListener implements Listener {
             event.setCancelled(true);
         }
     }
-    //当玩家取消坐
-    @EventHandler
-    public void onPlayerTeleport(PlayerTeleportEvent event) {
-        if (!this.isEnable()) return;
-        if (!event.getCause().equals(PlayerTeleportEvent.TeleportCause.UNKNOWN)) return;
-        Player player = event.getPlayer();
-        PlayerSitAction playerAction = PLAYER_SIT_ACTION_MAP.get(player);
-        if (playerAction == null) return;
-        playerAction.cancel();
-        PLAYER_SIT_ACTION_MAP.remove(player);
-    }
 
-    @EventHandler
-    public void onVehicleExit(VehicleExitEvent event) {
-        if (!this.isEnable()) return;
-        if (event.getExited() instanceof Player player && PLAYER_SIT_ACTION_MAP.get(player) != null) {
-            PLAYER_SIT_ACTION_MAP.get(player).cancel();
-            PLAYER_SIT_ACTION_MAP.remove(player);
-        }
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        if (!this.isEnable()) return;
-        Player player = event.getPlayer();
-        if (player.isInsideVehicle()) {
-            if (player.getVehicle() instanceof ArmorStand armorStand) {
-                player.leaveVehicle();
-                armorStand.remove();
-            }
-        }
-    }
     @EventHandler
     public void onServerShutdown(PluginDisableEvent event) {
         if (!this.isEnable()) return;
         if (event.getPlugin() instanceof Ari) {
             PLAYER_SIT_ACTION_MAP.forEach((k, v) -> v.cancel());
+            PLAYER_RIDE_ACTION_MAP.forEach((k, v) -> v.cancel());
         }
     }
 

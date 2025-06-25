@@ -73,8 +73,10 @@ public class PlayerSit extends BaseAction {
         Location location = this.actionBlock.getLocation();
         //判断sit位置上方是否村子有效空间
         //判断是否已经有玩家sit到指定位置
+        BlockData blockData = this.actionBlock.getBlockData();
         if (!location.clone().add(0, 1, 0).getBlock().isEmpty() ||
-                location.getNearbyLivingEntities(1).stream().anyMatch(i -> i instanceof Player)) {
+                location.getNearbyLivingEntities(1).stream().anyMatch(i -> i instanceof Player) &&
+                        (blockData instanceof Stairs || blockData instanceof Slab)) {
             this.player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
             return false;
         }
@@ -83,7 +85,7 @@ public class PlayerSit extends BaseAction {
         //获取列表判断是否满足的方块
         if (this.getDisableList().contains(name)) return false;
 
-        BlockData blockData = this.actionBlock.getBlockData();
+
         //如果为楼梯sit
         if (blockData instanceof Stairs stairs) {
             //如果为倒放楼梯，不允许

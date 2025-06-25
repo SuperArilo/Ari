@@ -45,20 +45,16 @@ public class PlayerSit extends BaseAction {
                 this.player,
                 i -> {
                     Log.debug("player: " + this.player.getName() + " sit now, status: " + PLAYER_SIT_ACTION_MAP.size());
-                    if (!this.player.isInsideVehicle()) {
-                        this.cancel();
-                        PLAYER_SIT_ACTION_MAP.remove(this.player);
-                        return;
-                    }
                     if (this.player.isDead() ||
                             this.player.isFlying() ||
                             !this.player.isOnline() ||
-                            !this.entity.getLocation().clone().subtract(0, 0.5, 0).getBlock().isSolid()) {
+                            !this.player.isInsideVehicle()) {
                         this.cancel();
                         PLAYER_SIT_ACTION_MAP.remove(this.player);
                     }
                 },
                 () -> {
+                    Log.error("player: " + this.player.getName() + "sit error");
                     this.cancel();
                     PLAYER_SIT_ACTION_MAP.remove(this.player);
                 },

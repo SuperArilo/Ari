@@ -55,7 +55,7 @@ public class EconomyUtils {
      * @return true 足够，false 不足够
      */
     public static boolean hasEnoughBalance(Player player, double cost) {
-        if(isNull()) return false;
+        if(isNull()) return true;
         return getBalance(player) >= cost;
     }
 

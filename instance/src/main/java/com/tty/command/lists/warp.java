@@ -1,8 +1,8 @@
 package com.tty.command.lists;
 
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandWarp;
 import com.tty.enumType.AriCommand;
-import com.tty.function.CommandCheck;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -11,19 +11,18 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class warp  implements TabExecutor {
+public class warp extends BaseCommandCheck implements TabExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.WARP);
-        if(!check.isTheInstructionCorrect()) return false;
-        if(check.allCheck()) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
+        if(!this.isTheInstructionCorrect(command, AriCommand.WARP)) return false;
+        if(this.quickCheck(commandSender, AriCommand.WARP)) {
             new CommandWarp(commandSender).warp();
         }
         return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         return List.of();
     }
 }

@@ -136,7 +136,6 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
         CompletableFuture<Boolean> future = new CompletableFuture<>();
         long start = System.currentTimeMillis();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 int delete = connection.createQuery("""
                                     delete from %splayer_home
@@ -145,12 +144,7 @@ public class HomeManager extends BaseFunctionImpl implements BaseManager<ServerH
                         .addParameter("home_id", homeId)
                         .addParameter("player_uuid", player.getUniqueId())
                         .executeUpdate().getResult();
-                if(delete == 1){
-                    player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
-                } else {
-                    player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
-                }
-                future.complete(true);
+                future.complete(delete == 1);
             } catch (Exception e) {
                 future.completeExceptionally(e);
                 Log.error("remove home fail, id: " + homeId, e);

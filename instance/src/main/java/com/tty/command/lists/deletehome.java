@@ -1,9 +1,9 @@
 package com.tty.command.lists;
 
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandHome;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.CommandCheck;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,14 +13,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class deletehome implements TabExecutor {
+public class deletehome extends BaseCommandCheck implements TabExecutor {
 
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.DELETEHOME);
-        if (!check.isTheInstructionCorrect()) return false;
-        if (check.allCheck() && strings.length == 1) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
+        if (!this.isTheInstructionCorrect(command, AriCommand.DELETEHOME)) return false;
+        if (this.quickCheck(commandSender, AriCommand.DELETEHOME) && strings.length == 1) {
             new CommandHome(commandSender).deleteHome(strings[0]);
         } else {
             commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
@@ -29,9 +28,7 @@ public class deletehome implements TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-//        if(!command.getName().equalsIgnoreCase(AriCommand.DELETEHOME.getShow())) return List.of();
-//        return new CommandHome(commandSender).getHomeList();
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         return List.of();
     }
 }

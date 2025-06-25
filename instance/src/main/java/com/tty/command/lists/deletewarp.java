@@ -1,9 +1,9 @@
 package com.tty.command.lists;
 
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandWarp;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.CommandCheck;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,12 +13,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class deletewarp implements TabExecutor {
+public class deletewarp extends BaseCommandCheck implements TabExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheck check = CommandCheck.create(commandSender, command, AriCommand.DELETEWARP);
-        if (!check.isTheInstructionCorrect()) return false;
-        if (check.allCheck() && strings.length == 1) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
+        if (!this.isTheInstructionCorrect(command, AriCommand.DELETEWARP)) return false;
+        if (this.quickCheck(commandSender, AriCommand.DELETEWARP) && strings.length == 1) {
             new CommandWarp(commandSender).deleteWarp(strings[0]);
         } else {
             commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
@@ -27,7 +26,7 @@ public class deletewarp implements TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         return List.of();
     }
 }

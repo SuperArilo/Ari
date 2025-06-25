@@ -1,12 +1,10 @@
 package com.tty.command;
 
-import com.tty.Ari;
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.CommandCheck;
-import com.tty.function.impl.CommandCheckImpl;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
@@ -21,12 +19,11 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class MainCommand implements TabExecutor {
+public class MainCommand extends BaseCommandCheck implements TabExecutor {
 
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl commandCheck = CommandCheck.create(commandSender, command, AriCommand.ARI);
-        if (!commandCheck.isTheInstructionCorrect()) return false;
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,  String @NotNull [] strings) {
+        if (!this.isTheInstructionCorrect(command, AriCommand.ARI)) return false;
         if (strings.length == 0) return false;
 
         AriCommand type;
@@ -39,17 +36,16 @@ public class MainCommand implements TabExecutor {
         switch (type) {
             case CIALLO -> new CommandCiallo(commandSender).ciallo();
             case RTP -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.RTP)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (this.quickCheck(commandSender, AriCommand.RTP)) break;
                 new CommandRtp(commandSender).rtp();
             }
             case RELOAD -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.RELOAD)) return true;
+                if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent<>(commandSender));
             }
             case TP -> {
-                if (!commandCheck.commandSenderHavePermission(AriCommand.TP)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.TP)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -57,7 +53,7 @@ public class MainCommand implements TabExecutor {
                 new CommandTp(commandSender, strings[1]).tp();
             }
             case TPA -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPA)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.TPA)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -65,7 +61,7 @@ public class MainCommand implements TabExecutor {
                 new CommandTeleport(commandSender, strings[1]).tpa();
             }
             case TPAACCEPT -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAACCEPT)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.TPAACCEPT)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -73,7 +69,7 @@ public class MainCommand implements TabExecutor {
                 new CommandTeleport(commandSender, strings[1]).tpaaccept();
             }
             case TPAHERE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAHERE)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.TPAHERE)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -81,7 +77,7 @@ public class MainCommand implements TabExecutor {
                 new CommandTeleport(commandSender, strings[1]).tpahere();
             }
             case TPAREFUSE -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TPAREFUSE)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.TPAREFUSE)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -89,13 +85,11 @@ public class MainCommand implements TabExecutor {
                 new CommandTeleport(commandSender, strings[1]).tparefuse();
             }
             case HOME -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.HOME)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.HOME)) break;
                 new CommandHome(commandSender).home();
             }
             case SETHOME -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.SETHOME)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -103,8 +97,7 @@ public class MainCommand implements TabExecutor {
                 new CommandHome(commandSender).setHome(strings[1]);
             }
             case DELETEHOME -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.DELETEHOME)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -112,18 +105,15 @@ public class MainCommand implements TabExecutor {
                 new CommandHome(commandSender).deleteHome(strings[1]);
             }
             case BACK -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.BACK)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if(!this.quickCheck(commandSender, AriCommand.BACK)) break;
                 new CommandBack(commandSender).startDo();
             }
             case WARP -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.WARP)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.WARP)) break;
                 new CommandWarp(commandSender).warp();
             }
             case SETWARP -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.SETHOME)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -131,8 +121,7 @@ public class MainCommand implements TabExecutor {
                 new CommandWarp(commandSender).setWarp(strings[1]);
             }
             case DELETEWARP -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.DELETEWARP)) return true;
-                if(!commandCheck.isPlayer()) break;
+                if (!this.quickCheck(commandSender, AriCommand.DELETEWARP)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -140,7 +129,7 @@ public class MainCommand implements TabExecutor {
                 new CommandWarp(commandSender).deleteWarp(strings[1]);
             }
             case TIME -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.TIME)) return true;
+                if (!this.hasPermission(commandSender, AriCommand.TIME)) break;
                 if (strings.length != 2) {
                     commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
                     return true;
@@ -148,22 +137,20 @@ public class MainCommand implements TabExecutor {
                 new CommandTime((Player) commandSender).control(strings[1]);
             }
             case SPAWN -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.SPAWN)) return true;
+                if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
                 new CommandSpawn(commandSender).convey();
             }
             case SETSPAWN -> {
-                if(!commandCheck.commandSenderHavePermission(AriCommand.SETSPAWN)) return true;
-                if (commandCheck.isPlayer()) {
-                    Location location = ((Player) commandSender).getLocation();
-                    new CommandSpawn(commandSender).set(location);
-                }
+                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
+                Location location = ((Player) commandSender).getLocation();
+                new CommandSpawn(commandSender).set(location);
             }
         }
         return true;
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         if(!(command.getName().equalsIgnoreCase(AriCommand.ARI.getShow()))) return List.of();
         //返回所有具有权限的指令给玩家
         if (strings[0].isEmpty()) {

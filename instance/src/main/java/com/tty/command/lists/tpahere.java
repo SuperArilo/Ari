@@ -1,10 +1,9 @@
 package com.tty.command.lists;
 
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandTeleport;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.CommandCheck;
-import com.tty.function.impl.CommandCheckImpl;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,13 +13,12 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class tpahere implements TabExecutor {
+public class tpahere extends BaseCommandCheck implements TabExecutor {
     
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheckImpl check = CommandCheck.create(commandSender, command, AriCommand.TPAHERE);
-        if (!check.isTheInstructionCorrect()) return false;
-        if (check.allCheck() && strings.length == 1) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
+        if (!this.isTheInstructionCorrect(command, AriCommand.TPAHERE)) return false;
+        if (this.quickCheck(commandSender, AriCommand.TPAHERE) && strings.length == 1) {
             new CommandTeleport(commandSender, strings[0]).tpahere();
         } else {
             commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
@@ -28,7 +26,7 @@ public class tpahere implements TabExecutor {
         return true;
     }
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TPAHERE.getShow())) return List.of();
         return new CommandTeleport(commandSender, strings[0]).getOnlinePlayers(AriCommand.TPAHERE);
     }

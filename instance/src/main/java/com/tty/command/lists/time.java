@@ -1,9 +1,9 @@
 package com.tty.command.lists;
 
+import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandTime;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.CommandCheck;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
@@ -16,12 +16,11 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class time implements TabExecutor {
+public class time extends BaseCommandCheck implements TabExecutor {
     @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        CommandCheck check = CommandCheck.create(commandSender, command,AriCommand.TIME);
-        if (!check.isTheInstructionCorrect()) return false;
-        if (check.allCheck() && strings.length == 1) {
+    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
+        if (!this.isTheInstructionCorrect(command, AriCommand.TIME)) return false;
+        if (this.quickCheck(commandSender, AriCommand.TIME) && strings.length == 1) {
             new CommandTime((Player) commandSender).control(strings[0]);
         } else {
             commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
@@ -30,7 +29,7 @@ public class time implements TabExecutor {
     }
 
     @Override
-    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
         if(!command.getName().equalsIgnoreCase(AriCommand.TIME.getShow())) return List.of();
         List<String> list = new ArrayList<>();
         for (TimePeriod timePeriod : TimePeriod.values()) {

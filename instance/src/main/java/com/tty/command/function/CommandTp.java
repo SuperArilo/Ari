@@ -2,6 +2,7 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
+import com.tty.command.check.TeleportCheck;
 import com.tty.function.TeleportThread;
 import com.tty.lib.Lib;
 import com.tty.tool.TextTool;
@@ -9,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandTp extends TpCheck {
+public class CommandTp extends TeleportCheck {
 
     private final CommandSender sender;
     private final String targetPlayerName;

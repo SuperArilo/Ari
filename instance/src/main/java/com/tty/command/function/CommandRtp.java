@@ -4,7 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.rtp.RtpConfig;
 import com.tty.enumType.FilePath;
-import com.tty.function.TeleportCheck;
+import com.tty.command.check.TeleportCheck;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 
-public class CommandRtp {
+public class CommandRtp extends TeleportCheck {
 
     private final CommandSender sender;
     private int count = 10;
@@ -63,10 +63,11 @@ public class CommandRtp {
 
         if (!PlayerStatusCheck.playerStatusCheck(player) && !this.sender.isOp()) return;
 
-        if (!TeleportCheck.create().preCheckStatus(
+        if (!this.preCheckStatus(
                 player,
                 null,
-                ConfigObjectUtils.getValue("rtp.delay", FilePath.FunctionConfig.getName(), Integer.class, 3) * 20)) return;
+                ConfigObjectUtils.getValue("rtp.delay", FilePath.FunctionConfig.getName(), Integer.class, 3) * 20)
+        ) return;
 
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
             if (this.count <= 0) {

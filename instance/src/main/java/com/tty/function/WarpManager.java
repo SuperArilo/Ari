@@ -3,7 +3,6 @@ package com.tty.function;
 import com.tty.Ari;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
-import com.tty.function.impl.BaseFunctionImpl;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
 import com.tty.lib.tool.Log;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public class WarpManager extends BaseFunctionImpl {
+public class WarpManager extends BaseFunction {
 
     private final Player player;
     private final Location location;

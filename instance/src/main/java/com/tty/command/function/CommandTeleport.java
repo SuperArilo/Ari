@@ -5,7 +5,7 @@ import com.tty.entity.TeleportStatus;
 import com.tty.entity.TpStatusValue;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.function.TeleportCheck;
+import com.tty.command.check.TeleportCheck;
 import com.tty.function.TeleportThread;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
@@ -20,7 +20,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandTeleport extends TpCheck {
+public class CommandTeleport extends TeleportCheck {
 
     private final CommandSender sender;
     private final String playerName;
@@ -32,13 +32,13 @@ public class CommandTeleport extends TpCheck {
 
     public void tpa() {
         if(!this.preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
+        this.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     public void tpaaccept() {
         if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
-        TeleportStatus status = TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender);
+        TeleportStatus status = this.checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
             return;
@@ -65,7 +65,7 @@ public class CommandTeleport extends TpCheck {
             this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
             return;
         }
-        if (TeleportCheck.create().checkHaveTeleportStatus(player, (Player) this.sender) == null) {
+        if (this.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
             if(TpStatusValue.remove(player, null,TeleportType.PLAYER)) {
@@ -85,7 +85,7 @@ public class CommandTeleport extends TpCheck {
 
     public void tpahere() {
         if(!preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.create().preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
+        this.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
     public List<String> getOnlinePlayers(AriCommand ariCommand) {

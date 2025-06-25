@@ -30,7 +30,10 @@ public class CommandHome {
 
     public void deleteHome(String homeId) {
         if(FormatUtils.checkIdName(homeId)) {
-            HomeManager.create(((Player) this.sender)).deleteInstance(homeId);
+            HomeManager
+                    .create(((Player) this.sender)).
+                    deleteInstance(homeId)
+                    .thenAccept(status -> this.sender.sendMessage(TextTool.setHEXColorText("function.home." + (status ? "delete-success":"not-found"), FilePath.Lang)));
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
         }

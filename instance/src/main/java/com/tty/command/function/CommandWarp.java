@@ -39,7 +39,10 @@ public class CommandWarp {
 
     public void deleteWarp(String warpId) {
         if(FormatUtils.checkIdName(warpId)) {
-            WarpManager.create(((Player) this.sender)).deleteInstance(warpId);
+            WarpManager
+                    .create(((Player) this.sender))
+                    .deleteInstance(warpId)
+                    .thenAccept(status -> this.sender.sendMessage(TextTool.setHEXColorText("function.warp." + (status ? "delete-success":"not-found"), FilePath.Lang)));
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
         }

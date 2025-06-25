@@ -2,7 +2,6 @@ package com.tty.listener.warp;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.entity.TpStatusValue;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
@@ -86,7 +85,7 @@ public class WarpListListener extends TeleportCheck implements Listener {
                                                 new TeleportCallback() {
                                                     @Override
                                                     public void onCancel() {
-                                                        TpStatusValue.remove(player, targetLocation,TeleportType.POINT);
+                                                        TeleportCheck.remove(player, targetLocation,TeleportType.POINT);
                                                     }
                                                     @Override
                                                     public void after() {
@@ -96,7 +95,7 @@ public class WarpListListener extends TeleportCheck implements Listener {
                                                             String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "0.0");
                                                             player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
                                                         }
-                                                        TpStatusValue.remove(player, targetLocation, TeleportType.POINT);
+                                                        TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
                                                     }
                                                     @Override
                                                     public void before(TeleportThread teleportThread) {

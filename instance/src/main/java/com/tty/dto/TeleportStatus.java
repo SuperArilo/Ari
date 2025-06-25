@@ -1,4 +1,4 @@
-package com.tty.entity;
+package com.tty.dto;
 
 import com.tty.enumType.AriCommand;
 import com.tty.lib.enum_type.TeleportType;

@@ -1,8 +1,7 @@
 package com.tty.command.function;
 
 import com.tty.Ari;
-import com.tty.entity.TeleportStatus;
-import com.tty.entity.TpStatusValue;
+import com.tty.dto.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.command.check.TeleportCheck;
@@ -45,7 +44,7 @@ public class CommandTeleport extends TeleportCheck {
         }
         //请求成功，移除该请求
         this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
-        TpStatusValue.remove(player, null,TeleportType.PLAYER);
+        TeleportCheck.remove(player, null,TeleportType.PLAYER);
         TeleportThread teleportThread = switch (status.getAriCommand()) {
             case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
             case TPAHERE -> TeleportThread.playerToPlayer((Player) this.sender, player);
@@ -68,7 +67,7 @@ public class CommandTeleport extends TeleportCheck {
         if (this.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
-            if(TpStatusValue.remove(player, null,TeleportType.PLAYER)) {
+            if(TeleportCheck.remove(player, null,TeleportType.PLAYER)) {
                 this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
                 player.sendMessage(
                         TextTool.setHEXColorText(
@@ -104,7 +103,7 @@ public class CommandTeleport extends TeleportCheck {
         if(this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
-            TpStatusValue.statusList.stream().filter(obj ->
+            TeleportCheck.TELEPORT_STATUS.stream().filter(obj ->
                             obj.getBePlayerUUID().equals(((Player) this.sender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
                     .forEach(e -> {
                         Player p = server.getPlayer(e.getPlayUUID());

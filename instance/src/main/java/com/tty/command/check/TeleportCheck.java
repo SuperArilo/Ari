@@ -1,8 +1,7 @@
 package com.tty.command.check;
 
 import com.tty.Ari;
-import com.tty.entity.TeleportStatus;
-import com.tty.entity.TpStatusValue;
+import com.tty.dto.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
@@ -15,8 +14,13 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class TeleportCheck {
+
+    public static final List<TeleportStatus> TELEPORT_STATUS = new ArrayList<>();
 
     /**
      * 检查是否已经向目标玩家发送过传送请求
@@ -66,7 +70,7 @@ public class TeleportCheck {
      * @return 传送请求类
      */
     public TeleportStatus checkHaveTeleportStatus(Player player, Player targetPlayer) {
-        return TpStatusValue.statusList.stream()
+        return TELEPORT_STATUS.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
                                 (obj.getBePlayerUUID() != null && obj.getBePlayerUUID().equals(targetPlayer.getUniqueId())) &&
@@ -82,7 +86,7 @@ public class TeleportCheck {
      * @return 传送请求类
      */
     public TeleportStatus checkHaveTeleportStatus(Player player, Location location) {
-        return TpStatusValue.statusList.stream()
+        return TELEPORT_STATUS.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
                                 (obj.getLocation() == null || obj.getLocation().equals(location)) &&
@@ -98,8 +102,8 @@ public class TeleportCheck {
      */
     private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, ariCommand);
-        TpStatusValue.addStatus(build);
-        Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> TpStatusValue.remove(player, null,TeleportType.PLAYER), delay);
+        TELEPORT_STATUS.add(build);
+        Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> remove(player, null,TeleportType.PLAYER), delay);
     }
     /**
      * 添加玩家传送到玩家的状态
@@ -109,8 +113,8 @@ public class TeleportCheck {
      */
     private void addTeleportStatusTask(Player player, Location location, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), location, TeleportType.POINT, null);
-        TpStatusValue.addStatus(build);
-        Lib.Scheduler.runLater(Ari.instance, i -> TpStatusValue.remove(player, location, TeleportType.POINT), delay);
+        TELEPORT_STATUS.add(build);
+        Lib.Scheduler.runLater(Ari.instance, i -> remove(player, location, TeleportType.POINT), delay);
     }
 
     public boolean preCheck(CommandSender sender, String targetPlayerName) {
@@ -128,5 +132,18 @@ public class TeleportCheck {
             return false;
         }
         return true;
+    }
+
+    /**
+     * 移除指定玩家已经保存的传送状态
+     * @param player 玩家
+     * @param type 传送类型
+     */
+    public static synchronized boolean remove(Player player, Location location, TeleportType type) {
+        return TELEPORT_STATUS.removeIf(obj ->
+                obj.getType().equals(type) &&
+                        obj.getPlayUUID().equals(player.getUniqueId()) &&
+                        (obj.getLocation() == null || obj.getLocation().equals(location))
+        );
     }
 }

@@ -5,20 +5,24 @@ import com.tty.lib.tool.Log;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public abstract class BaseAction {
 
-    public final Player player;
+    public static final Map<Player, BaseAction> PLAYER_ACTION_MAP = new HashMap<>();
+
+    public final Player action_player;
     public CancellableTask task;
     public Entity entity;
 
-    public BaseAction(Player player) {
-        this.player = player;
+    public BaseAction(Player action_player) {
+        this.action_player = action_player;
     }
 
     public void cancel() {
-        this.player.eject();
+        this.action_player.eject();
         if (this.entity != null) {
             this.entity.remove();
         }
@@ -26,15 +30,20 @@ public abstract class BaseAction {
             this.task.cancel();
             this.task = null;
         }
-        if (!this.player.isOnline()) {
-            this.player.saveData();
+        if (!this.action_player.isOnline()) {
+            this.action_player.saveData();
         }
-        Log.debug("player: " + this.player.getName() + " action remove");
+        PLAYER_ACTION_MAP.remove(this.action_player);
+        Log.debug("action_player: " + this.action_player.getName() + " action remove");
     }
 
-    public abstract boolean action(@Nullable Entity entity);
+    public abstract void action();
 
     public abstract boolean check();
 
     protected abstract void createEntity(Location location);
+
+    public void add() {
+        PLAYER_ACTION_MAP.put(action_player, this);
+    }
 }

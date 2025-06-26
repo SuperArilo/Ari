@@ -20,9 +20,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import java.util.List;
 
-import static com.tty.listener.player.PlayerActionListener.PLAYER_SIT_ACTION_MAP;
-
-
 public class PlayerSit extends BaseAction {
 
     public final Block actionBlock;
@@ -33,39 +30,38 @@ public class PlayerSit extends BaseAction {
     }
 
     @Override
-    public boolean action(Entity entity) {
+    public void action() {
         Location location = this.locationRecalculate();
         this.createEntity(location);
         //设置玩家转向
-        this.player.setRotation(location.getYaw(), 0);
-        this.player.sendActionBar(TextTool.setHEXColorText("function.sit.tips", FilePath.Lang));
+        this.action_player.setRotation(location.getYaw(), 0);
+        this.action_player.sendActionBar(TextTool.setHEXColorText("function.sit.tips", FilePath.Lang));
 
         this.task = Lib.Scheduler.runAtEntityFixedRate(
                 Ari.instance,
-                this.player,
+                this.action_player,
                 i -> {
-                    Log.debug("player: " + this.player.getName() + " sit now, status: " + PLAYER_SIT_ACTION_MAP.size());
-                    if (this.player.isDead() ||
-                            this.player.isFlying() ||
-                            !this.player.isOnline() ||
-                            !this.player.isInsideVehicle()) {
+                    Log.debug("action_player: " + this.action_player.getName() + " sit now, status: " + PLAYER_ACTION_MAP.size());
+                    if (this.action_player.isDead() ||
+                            this.action_player.isFlying() ||
+                            !this.action_player.isOnline() ||
+                            !this.action_player.isInsideVehicle()) {
                         this.cancel();
-                        PLAYER_SIT_ACTION_MAP.remove(this.player);
                     }
                 },
                 () -> {
-                    Log.error("player: " + this.player.getName() + "sit error");
+                    Log.error("action_player: " + this.action_player.getName() + "sit error");
                     this.cancel();
-                    PLAYER_SIT_ACTION_MAP.remove(this.player);
                 },
                 1L,
                 20L);
-        return true;
+        this.add();
     }
 
 
     @Override
     public boolean check() {
+        if (PLAYER_ACTION_MAP.containsKey(this.action_player)) return false;
 
         String name = this.actionBlock.getType().name();
         //获取列表判断是否满足的方块
@@ -76,7 +72,7 @@ public class PlayerSit extends BaseAction {
         if (blockData instanceof Stairs stairs) {
             //如果为倒放楼梯，不允许
             if (!this.checkTop() || stairs.getHalf().equals(Bisected.Half.TOP)) {
-                this.player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
+                this.action_player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
                 return false;
             }
             return name.endsWith("_STAIRS");
@@ -84,7 +80,7 @@ public class PlayerSit extends BaseAction {
         //如果为半砖sit
         if (blockData instanceof Slab) {
             if (!this.checkTop()) {
-                this.player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
+                this.action_player.sendActionBar(TextTool.setHEXColorText("function.sit.error-location", FilePath.Lang));
                 return false;
             }
             return name.endsWith("_SLAB");
@@ -94,13 +90,13 @@ public class PlayerSit extends BaseAction {
 
     @Override
     protected void createEntity(Location location) {
-        this.entity = this.player.getWorld().spawnEntity(location, EntityType.AREA_EFFECT_CLOUD, CreatureSpawnEvent.SpawnReason.CUSTOM, e -> {
+        this.entity = this.action_player.getWorld().spawnEntity(location, EntityType.AREA_EFFECT_CLOUD, CreatureSpawnEvent.SpawnReason.CUSTOM, e -> {
             if (e instanceof AreaEffectCloud cloud) {
                 cloud.setRadius(0);
                 cloud.setInvulnerable(true);
                 cloud.setGravity(false);
                 cloud.setInvisible(true);
-                cloud.addPassenger(this.player);
+                cloud.addPassenger(this.action_player);
             }
         });
     }
@@ -120,7 +116,7 @@ public class PlayerSit extends BaseAction {
                 case BOTTOM ->  location.add(centerX, 0, centerZ);
                 case TOP, DOUBLE -> location.add(centerX, 0.5, centerZ);
             }
-            location.setYaw(player.getYaw());
+            location.setYaw(action_player.getYaw());
         }
         return location;
     }

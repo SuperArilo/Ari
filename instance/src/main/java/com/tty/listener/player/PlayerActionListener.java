@@ -21,15 +21,16 @@ public class PlayerActionListener implements Listener {
     public void onPlayInteract(PlayerInteractEvent event) {
         //未开启
         if (!this.isEnable()) return;
+        Player player = event.getPlayer();
         //动作不匹配
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) return;
         //右手不为空
-        if (event.getItem() != null) return;
+        if (event.getItem() != null || !player.getInventory().getItemInMainHand().getType().isAir()) return;
         //判断被点击的方块是否存在
         Block clickedBlock = event.getClickedBlock();
         if (clickedBlock == null) return;
         //判断发起动作的玩家是否有骑乘实体
-        Player player = event.getPlayer();
+
         if (player.getVehicle() != null) return;
 
         PlayerSit sit = new PlayerSit(player, clickedBlock);

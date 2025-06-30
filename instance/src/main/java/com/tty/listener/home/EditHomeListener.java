@@ -207,7 +207,7 @@ public class EditHomeListener implements Listener {
                 if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
                     HomeEditor editor = (HomeEditor) i.getMeta();
                     editor.currentHome.setHomeName(message);
-                    editor.open();
+                    Lib.Scheduler.runAtEntity(Ari.instance, player, p -> editor.open(), () -> {});
                     Log.debug("player: [" + player.getName() + "] edit home-name status removed");
                     return true;
                 }

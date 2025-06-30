@@ -246,7 +246,7 @@ public class EditWarpListener implements Listener {
             throw new RuntimeException(e);
         }
         this.editMap.remove(player.getUniqueId());
-        warpEditor.open();
+        Lib.Scheduler.runAtEntity(Ari.instance, player, i -> warpEditor.open(), () -> {});
         Log.debug("player: [" + player.getName() + "] edit warp-name status removed");
     }
 

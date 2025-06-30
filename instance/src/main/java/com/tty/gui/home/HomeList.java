@@ -22,14 +22,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.enchantments.Enchantment;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 
 public class HomeList extends BasePageGui<ServerHome> {
@@ -61,8 +62,6 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     public void renderDataItem() {
-        Log.debug(Level.INFO, "---------- render home list ----------");
-        long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<String> rawLore = this.gui.getDataItems().getLore();
         for (int i = 0; i < this.data.size(); i++) {
@@ -94,10 +93,13 @@ public class HomeList extends BasePageGui<ServerHome> {
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
+            if (ph.isTopSlot()) {
+                itemMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-        Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
 
     @Override

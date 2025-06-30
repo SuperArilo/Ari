@@ -111,6 +111,7 @@ public class WarpListListener extends TeleportCheck implements Listener {
                                                 });
                             } else if(eventClick.isRightClick()) {
                                 if(isOwner || player.isOp()) {
+                                    inventory.close();
                                     new WarpEditor(instance, player).open();
                                 } else {
                                     player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));

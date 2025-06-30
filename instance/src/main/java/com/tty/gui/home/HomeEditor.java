@@ -10,6 +10,7 @@ import com.tty.enumType.GuiType;
 import com.tty.gui.BaseGui;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
@@ -19,14 +20,14 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 public class HomeEditor extends BaseGui {
-    private final HomeEditorGUI gui;
-    private final ServerHome currentHome;
+    public final HomeEditorGUI gui;
+    public final ServerHome currentHome;
 
     public HomeEditor(ServerHome serverHome, Player player) {
         super(player);
         this.currentHome = serverHome;
         this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this.currentHome), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
     }
 
     @Override
@@ -36,7 +37,7 @@ public class HomeEditor extends BaseGui {
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        Map<String, FunctionItems> functionItems = this.gui.getFunctionItems();
+        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.gui.getFunctionItems());
         if (functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {
@@ -55,9 +56,19 @@ public class HomeEditor extends BaseGui {
                         }
                         item.setName(name);
                     }
+                    case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
+                            LocationKeyType.TOP_SLOT.getKey(),
+                            ConfigObjectUtils.getValue(
+                                    this.currentHome.isTopSlot() ? "base.yes_re":"base.no_re",
+                                    FilePath.Lang.getName(),
+                                    String.class,
+                                    "null"))).toList());
                 }
             }
         }
         return functionItems;
     }
+
+    @Override
+    protected void renderDataItem() {}
 }

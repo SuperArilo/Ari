@@ -4,7 +4,6 @@ import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.dto.OnEdit;
-import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;
@@ -75,14 +74,14 @@ public class EditWarpListener implements Listener {
             if(type == null) return;
             event.setCancelled(true);
 
-            ServerWarp serverWarp = (ServerWarp) holder.getMeta();
-            WarpManager warpManager = WarpManager.create(Bukkit.getPlayer(UUID.fromString(serverWarp.getCreateBy())));
+            WarpEditor warpEditor = (WarpEditor) holder.getMeta();
+            WarpManager warpManager = WarpManager.create(Bukkit.getPlayer(UUID.fromString(warpEditor.currentWarp.getCreateBy())));
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
                     new WarpList(player).open();
                 }
-                case DELETE -> warpManager.deleteInstance(serverWarp.getWarpId()).thenAccept(i -> {
+                case DELETE -> warpManager.deleteInstance(warpEditor.currentWarp.getWarpId()).thenAccept(i -> {
                         if (i) {
                             player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
                             Lib.Scheduler.run(Ari.instance, ab -> {
@@ -102,7 +101,7 @@ public class EditWarpListener implements Listener {
                     if (type.equals(FunctionType.PERMISSION) && event.getClick().isRightClick()) {
                         clickMeta.displayName(TextTool.setHEXColorText(""));
                         clickItem.setItemMeta(clickMeta);
-                        serverWarp.setPermission(null);
+                        warpEditor.currentWarp.setPermission(null);
                         return;
                     }
                     Audience.audience(player).showTitle(
@@ -126,7 +125,7 @@ public class EditWarpListener implements Listener {
                 }
                 case LOCATION -> {
                     Location newLocation = player.getLocation();
-                    serverWarp.setLocation(newLocation.toString());
+                    warpEditor.currentWarp.setLocation(newLocation.toString());
                     clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
                     clickItem.setItemMeta(clickMeta);
                 }
@@ -143,13 +142,13 @@ public class EditWarpListener implements Listener {
                     newItemMeta.getPersistentDataContainer().set(icon_type, PersistentDataType.STRING, string);
                     newItemStake.setItemMeta(newItemMeta);
                     clickedInventory.setItem(event.getSlot(), newItemStake);
-                    serverWarp.setShowMaterial(current.name());
+                    warpEditor.currentWarp.setShowMaterial(current.name());
                 }
                 case SAVE -> {
-                    Log.debug("start saving warp id:" + serverWarp.getWarpId());
+                    Log.debug("start saving warp id:" + warpEditor.currentWarp.getWarpId());
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                     clickItem.setItemMeta(clickMeta);
-                    CompletableFuture<Boolean> future = warpManager.modify(serverWarp);
+                    CompletableFuture<Boolean> future = warpManager.modify(warpEditor.currentWarp);
                     future.thenAccept(status -> {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
@@ -211,7 +210,7 @@ public class EditWarpListener implements Listener {
             return;
         }
 
-        ServerWarp serverWarp = (ServerWarp) onEdit.getHolder().getMeta();
+        WarpEditor warpEditor = (WarpEditor) onEdit.getHolder().getMeta();
         try {
             switch (onEdit.getType()) {
                 case RENAME -> {
@@ -224,19 +223,19 @@ public class EditWarpListener implements Listener {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                         return;
                     }
-                    serverWarp.setWarpName(message);
+                    warpEditor.currentWarp.setWarpName(message);
                 }
                 case PERMISSION -> {
                     if(!FormatUtils.isValidPermissionNode(message)) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.permission.permission-error", FilePath.Lang));
                         return;
                     }
-                    serverWarp.setPermission(message);
+                    warpEditor.currentWarp.setPermission(message);
                 }
                 case COST -> {
                     try {
                         Double i = Double.parseDouble(message);
-                        serverWarp.setCost(i);
+                        warpEditor.currentWarp.setCost(i);
                     } catch (NumberFormatException e) {
                         player.sendMessage(TextTool.setHEXColorText("base.on-edit.cost.format-error", FilePath.Lang));
                         return;
@@ -247,7 +246,7 @@ public class EditWarpListener implements Listener {
             throw new RuntimeException(e);
         }
         this.editMap.remove(player.getUniqueId());
-        new WarpEditor(serverWarp, player).open();
+        warpEditor.open();
         Log.debug("player: [" + player.getName() + "] edit warp-name status removed");
     }
 

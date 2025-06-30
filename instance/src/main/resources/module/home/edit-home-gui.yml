@@ -26,6 +26,14 @@ functionItems:
     slot: [20]
     lore:
       - '&2左击: &6设置为当前位置'
+  top_slot:
+    name: "置顶显示"
+    type: TOP_SLOT
+    material: DIAMOND
+    slot: [22]
+    lore:
+      - '&2左击: &6将当前Home置顶显示'
+      - '&7当前置顶状态: [top_slot]'
   rename:
     type: RENAME
     material: name_tag

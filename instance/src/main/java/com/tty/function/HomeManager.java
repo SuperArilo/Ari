@@ -37,8 +37,10 @@ public class HomeManager extends BaseFunction implements BaseManager<ServerHome>
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 Page page = Page.create(pageNum, pageSize);
                 List<ServerHome> serverHomes = connection.createQuery("""
-                                    select * from %splayer_home as ph
-                                    where ph.player_uuid = :player_uuid limit :limit offset :offset
+                                    SELECT * FROM %splayer_home AS ph
+                                    WHERE ph.player_uuid = :player_uuid
+                                    ORDER BY ph.top_slot DESC, ph.id
+                                    LIMIT :limit OFFSET :offset
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("player_uuid", this.player.getUniqueId())
                         .addParameter("limit", page.getLimit())
@@ -165,12 +167,14 @@ public class HomeManager extends BaseFunction implements BaseManager<ServerHome>
                                     update %splayer_home set
                                     home_name = :home_name,
                                     location = :location,
-                                    show_material = :show_material
+                                    show_material = :show_material,
+                                    top_slot = :top_slot
                                     where home_id = :home_id and player_uuid = :player_uuid
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("home_name", instance.getHomeName())
                         .addParameter("location", instance.getLocation())
                         .addParameter("show_material", instance.getShowMaterial())
+                        .addParameter("top_slot", instance.isTopSlot())
                         .addParameter("home_id", instance.getHomeId())
                         .addParameter("player_uuid", this.player.getUniqueId())
                         .executeUpdate().getResult();

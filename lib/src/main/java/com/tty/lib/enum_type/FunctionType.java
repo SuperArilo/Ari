@@ -9,6 +9,7 @@ public enum FunctionType {
     ICON("图标"),
     MASKICON("遮罩图标"),
     LOCATION("位置"),
+    TOP_SLOT("置顶"),
     DATA("数据"),
     RENAME("重命名"),
     SAVE("保存"),

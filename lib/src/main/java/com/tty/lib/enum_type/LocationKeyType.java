@@ -11,6 +11,7 @@ public enum LocationKeyType {
     WORLDNAME("[worldName]"),
     PLAYERNAME("[playerName]"),
     COST("[cost]"),
+    TOP_SLOT("[top_slot]"),
     PERMISSION("[permission]");
 
     private final String key;

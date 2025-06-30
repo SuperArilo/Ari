@@ -10,4 +10,5 @@ public class ServerHome {
     private String playerUUID;
     private String location;
     private String showMaterial;
+    private boolean topSlot = false;
 }

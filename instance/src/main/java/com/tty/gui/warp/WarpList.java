@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.logging.Level;
 
 public class WarpList extends BasePageGui<ServerWarp> {
 
@@ -37,8 +36,8 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     public WarpList(Player player) {
         super(player);
-        this.gui = com.tty.tool.ConfigObjectUtils.yamlConvertToObj(
-                com.tty.tool.ConfigObjectUtils.getObject(FilePath.WarpList.getName()).saveToString(),
+        this.gui = ConfigObjectUtils.yamlConvertToObj(
+                ConfigObjectUtils.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
@@ -63,8 +62,6 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     protected void renderDataItem() {
-        Log.debug(Level.INFO, "---------- render warp list ----------");
-        long start = System.currentTimeMillis();
         List<Integer> dataSlot = this.gui.getDataItems().getSlot();
         List<String> rawLore = this.gui.getDataItems().getLore();
         for (int i = 0;i < this.data.size();i++) {
@@ -117,6 +114,8 @@ public class WarpList extends BasePageGui<ServerWarp> {
                                 yield line.replace(keyType.getKey(), cost.toString());
                             }
                         }
+                        case TOP_SLOT ->
+                                line.replace(LocationKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? "base.yes_re":"base.no_re");
                         case PERMISSION -> {
                             boolean hasPermission = serverWarp.getPermission() == null ||
                                     serverWarp.getPermission().isEmpty() ||
@@ -134,7 +133,6 @@ public class WarpList extends BasePageGui<ServerWarp> {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-        Log.debug(Level.INFO, "---------- render time: " + (System.currentTimeMillis() - start) + "ms ----------");
     }
 
     @Override

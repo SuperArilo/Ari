@@ -3,7 +3,6 @@ package com.tty.listener.home;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
@@ -11,13 +10,14 @@ import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -68,20 +68,20 @@ public class EditHomeListener implements Listener {
             event.setCancelled(true);
             if (type == null) return;
 
-            ServerHome home = (ServerHome) holder.getMeta();
-            HomeManager homeManager = HomeManager.create(Bukkit.getPlayer(UUID.fromString(home.getPlayerUUID())));
+            HomeEditor homeEditor = (HomeEditor) holder.getMeta();
+            HomeManager homeManager = HomeManager.create(Bukkit.getPlayer(UUID.fromString(homeEditor.currentHome.getPlayerUUID())));
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
                     new HomeList(player).open();
                 }
                 case DELETE -> //delete home
-                        homeManager.deleteInstance(home.getHomeId()).thenAccept(i -> Lib.Scheduler.run(Ari.instance, j -> {
+                        homeManager.deleteInstance(homeEditor.currentHome.getHomeId()).thenAccept(i -> Lib.Scheduler.run(Ari.instance, j -> {
                             clickedInventory.close();
                             new HomeList(player).open();
                         }));
                 case RENAME -> {
-                    Audience.audience(player).showTitle(
+                    player.showTitle(
                             TextTool.setPlayerTitle(
                                     ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class, ""),
                                    ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class, ""),
@@ -104,7 +104,7 @@ public class EditHomeListener implements Listener {
                 case LOCATION -> {
                     //reset LOCATION
                     Location newLocation = player.getLocation();
-                    home.setLocation(newLocation.toString());
+                    homeEditor.currentHome.setLocation(newLocation.toString());
                     clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
                     clickItem.setItemMeta(clickMeta);
                 }
@@ -121,14 +121,27 @@ public class EditHomeListener implements Listener {
                     newItemMeta.getPersistentDataContainer().set(icon_type, PersistentDataType.STRING, string);
                     newItemStake.setItemMeta(newItemMeta);
                     clickedInventory.setItem(event.getSlot(), newItemStake);
-                    home.setShowMaterial(current.name());
+                    homeEditor.currentHome.setShowMaterial(current.name());
+                }
+                case TOP_SLOT -> {
+                    homeEditor.currentHome.setTopSlot(!homeEditor.currentHome.isTopSlot());
+                    homeEditor.gui.getFunctionItems().forEach((k, v) -> {
+                        if (v.getType().equals(FunctionType.TOP_SLOT)) {
+                            List<String> lore = v.getLore();
+                            List<TextComponent> list = lore.stream().map(p -> TextTool.setHEXColorText(
+                                    p.replace(LocationKeyType.TOP_SLOT.getKey(),
+                                    ConfigObjectUtils.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang.getName(), String.class, "null")))).toList();
+                            clickMeta.lore(list);
+                            clickItem.setItemMeta(clickMeta);
+                        }
+                    });
                 }
                 case SAVE -> {
                     //save
                     Log.debug("start saving home");
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                     clickItem.setItemMeta(clickMeta);
-                    CompletableFuture<Boolean> future = homeManager.modify(home);
+                    CompletableFuture<Boolean> future = homeManager.modify(homeEditor.currentHome);
                     future.thenAccept(status -> {
                         if(status) {
                             clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
@@ -182,8 +195,7 @@ public class EditHomeListener implements Listener {
                 player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                 return;
             }
-
-            Audience.audience(player).clearTitle();
+            player.clearTitle();
 
             if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
                 this.removeIfPlayInEditList(player);
@@ -193,9 +205,9 @@ public class EditHomeListener implements Listener {
             // 使用 removeIf 删除满足条件的元素
             this.editStatus.removeIf(i -> {
                 if (i.getPlayer().getUniqueId().equals(player.getUniqueId())) {
-                    ServerHome home = (ServerHome) i.getMeta();
-                    home.setHomeName(message);
-                    new HomeEditor(home, player).open();
+                    HomeEditor editor = (HomeEditor) i.getMeta();
+                    editor.currentHome.setHomeName(message);
+                    editor.open();
                     Log.debug("player: [" + player.getName() + "] edit home-name status removed");
                     return true;
                 }

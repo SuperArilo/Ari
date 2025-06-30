@@ -21,14 +21,14 @@ import java.util.Map;
 
 public class WarpEditor extends BaseGui {
 
-    private final WarpEditorGUI gui;
-    private final ServerWarp currentWarp;
+    public final WarpEditorGUI gui;
+    public final ServerWarp currentWarp;
 
     public WarpEditor(ServerWarp serverWarp, Player player) {
         super(player);
         this.currentWarp = serverWarp;
         this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this.currentWarp), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle()));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle()));
     }
 
     @Override
@@ -75,4 +75,7 @@ public class WarpEditor extends BaseGui {
         }
         return functionItems;
     }
+
+    @Override
+    protected void renderDataItem() {}
 }

@@ -2,9 +2,10 @@ package com.tty.tool;
 
 
 import com.tty.Ari;
+import com.tty.enumType.SqlTable;
+import com.tty.enumType.SqlUpdate;
 import com.tty.lib.enum_type.SQLType;
 import com.tty.lib.tool.Log;
-import com.tty.sql.Table;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sql2o.Connection;
@@ -40,9 +41,15 @@ public class SQLInstance {
         }
 
         try (Connection connection = SESSION_FACTORY.open()) {
-            connection.createQuery(Table.players).executeUpdate();
-            connection.createQuery(Table.playerHomes).executeUpdate();
-            connection.createQuery(Table.warps).executeUpdate();
+            for (SqlTable value : SqlTable.values()) {
+                connection.createQuery(value.getSql()).executeUpdate();
+            }
+            //update sql
+            try {
+                for (SqlUpdate update : SqlUpdate.values()) {
+                    connection.createQuery(update.getUpdateSql()).executeUpdate();
+                }
+            } catch (Exception ignored) {}
         }
 
     }
@@ -84,6 +91,7 @@ public class SQLInstance {
         colMaps.put("home_id", "homeId");
         colMaps.put("home_name", "homeName");
         colMaps.put("show_material", "showMaterial");
+        colMaps.put("top_slot", "topSlot");
         colMaps.put("warp_id", "warpId");
         colMaps.put("warp_name", "warpName");
         colMaps.put("create_by", "createBy");

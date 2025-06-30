@@ -11,6 +11,7 @@ import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
 import com.tty.listener.home.HomeListListener;
 import com.tty.listener.player.CustomChatFormantListener;
+import com.tty.listener.player.KeepInventoryAndExperience;
 import com.tty.listener.player.OnPlayerJoinAndLeaveListener;
 import com.tty.listener.player.PlayerActionListener;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
@@ -98,6 +99,7 @@ public class Ari extends JavaPlugin {
         pluginManager.registerEvents(new PlayerTabManager(), this);
         pluginManager.registerEvents(new CustomChatFormantListener(), this);
         pluginManager.registerEvents(new PlayerActionListener(), this);
+        pluginManager.registerEvents(new KeepInventoryAndExperience(), this);
     }
 
     public static void reloadAllConfig() {

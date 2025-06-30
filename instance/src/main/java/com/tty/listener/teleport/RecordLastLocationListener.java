@@ -7,6 +7,7 @@ import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.LangType;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
+import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -47,8 +48,9 @@ public class RecordLastLocationListener implements Listener {
         Player player = event.getPlayer();
         Location deathLocation = TeleportThread.lastLocation.get(player.getUniqueId());
         if (deathLocation == null) return;
+        //构建显示坐标
         String location = TextTool.XYZText(deathLocation.getX(), deathLocation.getY(), deathLocation.getZ());
         String value = ConfigObjectUtils.getValue("teleport.tips-back", FilePath.Lang.getName(), String.class, "null");
-        event.getPlayer().sendMessage(TextTool.setHEXColorText(value.replace(LangType.DEATHLOCATION.getType(), location)));
+        event.getPlayer().sendMessage(TextTool.setClickEventText(value.replace(LangType.DEATHLOCATION.getType(), location), ClickEvent.Action.RUN_COMMAND, "/back"));
     }
 }

@@ -33,7 +33,7 @@ teleport:
   none-location: '没有上一个保存的位置'
   costed: '本次传送花费了 [costed]'
   again: '你已经发起过传送请求了，请等待一段时间再重试。'
-  tips-back: '&b上次死亡的地点: [DeathLocation] &7输入/back返回'
+  tips-back: '&b上次死亡的地点: [DeathLocation] &7/back返回或者点击此消息'
 function:
   public:
     agree: '&a[同意]'

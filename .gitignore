@@ -3,3 +3,4 @@
 /target/**
 /instance/target/**
 /lib/target/**
+/.paper-nms/**

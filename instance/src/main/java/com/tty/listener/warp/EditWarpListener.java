@@ -82,10 +82,13 @@ public class EditWarpListener implements Listener {
                     clickedInventory.close();
                     new WarpList(player).open();
                 }
-                case DELETE -> {
-                    warpManager.deleteInstance(serverWarp.getWarpId()).thenAccept(i -> {
+                case DELETE -> warpManager.deleteInstance(serverWarp.getWarpId()).thenAccept(i -> {
                         if (i) {
                             player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
+                            Lib.Scheduler.run(Ari.instance, ab -> {
+                                clickedInventory.close();
+                                new WarpList(player).open();
+                            });
                         } else {
                             player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
                         }
@@ -93,9 +96,6 @@ public class EditWarpListener implements Listener {
                         Log.error("deleting warp error", i);
                        return null;
                     });
-                    clickedInventory.close();
-                    new WarpList(player).open();
-                }
                 case RENAME, COST, PERMISSION -> {
                     //检查是否有经济插件，如果没有就return
                     if (type.equals(FunctionType.COST) && EconomyUtils.isNull()) return;

@@ -44,6 +44,8 @@ public class PlayerSit extends BaseAction {
                     Log.debug("action_player: " + this.action_player.getName() + " sit now, status: " + PLAYER_ACTION_MAP.size());
                     if (this.action_player.isDead() ||
                             this.action_player.isFlying() ||
+                            this.action_player.isSleeping() ||
+                            this.action_player.isDeeplySleeping() ||
                             !this.action_player.isOnline() ||
                             !this.action_player.isInsideVehicle()) {
                         this.cancel();

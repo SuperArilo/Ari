@@ -62,6 +62,8 @@ public class PlayerRide extends BaseAction {
                     if (!this.entity.isInsideVehicle() ||
                             this.entity.getPassengers().isEmpty() ||
                             this.bePlayer.isDead() ||
+                            this.action_player.isSleeping() ||
+                            this.action_player.isDeeplySleeping() ||
                             !this.bePlayer.isOnline() ||
                             this.bePlayer.isSneaking() ||
                             this.bePlayer.isSwimming()) {

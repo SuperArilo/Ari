@@ -52,8 +52,10 @@ public class HomeListListener implements Listener {
                                                 player, ConfigObjectUtils.parseLocation(home.getLocation()))
                                         .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
                             } else if (click.equals(ClickType.RIGHT)) {
-                                Lib.Scheduler.run(Ari.instance, l -> inventory.close());
-                                new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                                Lib.Scheduler.run(Ari.instance, p -> {
+                                    inventory.close();
+                                    new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                                });
                             }
                         }
                         Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), o -> inventory.close());

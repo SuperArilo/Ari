@@ -29,25 +29,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class WarpList extends BasePageGui<ServerWarp> {
 
-    private final WarpListGUI gui;
+    public WarpListGUI gui;
 
     public WarpList(Player player) {
         super(player);
+    }
+
+    @Override
+    public CompletableFuture<List<ServerWarp>> requestData() {
+        return WarpManager.create(this.player).asyncGetList(this.pageNum, this.pageSize);
+    }
+
+    @Override
+    protected void init() {
         this.gui = ConfigObjectUtils.yamlConvertToObj(
                 ConfigObjectUtils.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        WarpManager.create(this.player)
-                .asyncGetList(this.pageNum, this.pageSize)
-                .thenAccept(list -> {
-                    this.data = list;
-                    this.updateGui(this.gui.getDataItems().getSlot());
-                });
+        this.inventory = Bukkit.createInventory(
+                new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9,
+                TextTool.setHEXColorText(this.gui.getTitle(),player));
     }
 
     @Override
@@ -135,37 +141,4 @@ public class WarpList extends BasePageGui<ServerWarp> {
         }
     }
 
-    @Override
-    public void prev() {
-        this.pageNum--;
-        if(this.pageNum <= 0) {
-            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-prev", FilePath.Lang));
-            Log.debug("warp list: 第一页");
-            this.pageNum = 1;
-            return;
-        }
-        WarpManager.create(this.player)
-                .asyncGetList(this.pageNum, this.pageSize)
-                .thenAccept(list -> {
-                    this.data = list;
-                    this.updateGui(this.gui.getDataItems().getSlot());
-                });
-    }
-
-    @Override
-    public void next() {
-        this.pageNum++;
-        WarpManager.create(this.player)
-                .asyncGetList(this.pageNum, this.pageSize)
-                .thenAccept(list -> {
-                    if (list.isEmpty()) {
-                        this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
-                        Log.debug("warp list: 最后一页");
-                        this.pageNum--;
-                    } else {
-                        this.data = list;
-                        this.updateGui(this.gui.getDataItems().getSlot());
-                    }
-                });
-    }
 }

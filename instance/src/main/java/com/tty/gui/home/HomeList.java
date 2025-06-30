@@ -31,23 +31,27 @@ import org.bukkit.enchantments.Enchantment;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 
 public class HomeList extends BasePageGui<ServerHome> {
 
-    private final HomeListGUI gui;
+    public HomeListGUI gui;
 
     public HomeList(Player player) {
         super(player);
+    }
+
+    @Override
+    public CompletableFuture<List<ServerHome>> requestData() {
+        return HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+    }
+
+    @Override
+    protected void init() {
         this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
-        HomeManager.create(this.player)
-                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
-                .thenAccept(list -> {
-                    this.data = list;
-                    this.updateGui(this.gui.getDataItems().getSlot());
-                });
     }
 
     @Override
@@ -100,38 +104,5 @@ public class HomeList extends BasePageGui<ServerHome> {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }
-    }
-
-    @Override
-    public void prev() {
-        this.pageNum--;
-        if(this.pageNum <= 0) {
-            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-prev", FilePath.Lang));
-            Log.debug("home list: 第一页");
-            this.pageNum = 1;
-            return;
-        }
-        HomeManager.create(this.player)
-                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
-                .thenAccept(list -> {
-                    this.data = list;
-                    this.updateGui(this.gui.getDataItems().getSlot());
-                });
-    }
-    @Override
-    public void next() {
-        this.pageNum++;
-        HomeManager.create(this.player)
-                .asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size())
-                .thenAccept(list -> {
-                    if(list.isEmpty()) {
-                        this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
-                        Log.debug("home list: 最后一页");
-                        this.pageNum--;
-                    } else {
-                        this.data = list;
-                        this.updateGui(this.gui.getDataItems().getSlot());
-                    }
-                });
     }
 }

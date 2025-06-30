@@ -3,9 +3,7 @@ package com.tty.gui;
 import com.tty.Ari;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
@@ -28,15 +26,13 @@ public abstract class BaseGui {
         this.player = player;
     }
     public void open() {
-        Lib.Scheduler.runAtRegion(Ari.instance, this.player.getLocation(), e -> {
-            this.player.openInventory(this.inventory);
-            Lib.Scheduler.runAsync(Ari.instance, i -> {
-                long l = System.currentTimeMillis();
-                this.BaseRenderMasks(this.renderMasks());
-                this.BaseRenderFunctionItems(this.renderFunctionItems());
-                Log.debug("render gui time: " + (System.currentTimeMillis() - l) + "ms");
-            });
-        });
+        this.player.openInventory(this.inventory);
+        this.startRender();
+    }
+
+    private void startRender() {
+        this.BaseRenderMasks(this.renderMasks());
+        this.BaseRenderFunctionItems(this.renderFunctionItems());
     }
 
     protected void BaseRenderMasks(Mask mask) {
@@ -78,18 +74,12 @@ public abstract class BaseGui {
     protected abstract Map<String, FunctionItems> renderFunctionItems();
 
     /**
-     * 渲染gui中带数据的item
-     */
-    protected abstract void renderDataItem();
-
-    /**
      * 指定位置更新当前的GUI
-     * @param slots 更新位置
      */
-    public void updateGui(List<Integer> slots) {
+    public void updateGui() {
         if(this.inventory == null) return;
-        slots.forEach(i -> this.inventory.clear(i));
-        this.renderDataItem();
+        this.inventory.clear();
+        this.startRender();
     }
 
 }

@@ -68,7 +68,4 @@ public class HomeEditor extends BaseGui {
         }
         return functionItems;
     }
-
-    @Override
-    protected void renderDataItem() {}
 }

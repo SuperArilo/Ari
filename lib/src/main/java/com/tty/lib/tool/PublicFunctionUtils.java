@@ -3,9 +3,8 @@ package com.tty.lib.tool;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.io.*;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class PublicFunctionUtils {
@@ -31,5 +30,23 @@ public class PublicFunctionUtils {
                 .filter(Objects::nonNull)
                 .filter(s -> s.toLowerCase().startsWith(lowerPrefix))
                 .toList();
+    }
+
+    public static <K, V> Map<K, V> deepCopyBySerialization(Map<K, V> original) {
+        if (original.isEmpty()) {
+            return new HashMap<>();
+        }
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream(); ObjectOutputStream oos = new ObjectOutputStream(baos)) {
+            oos.writeObject(original);
+            oos.flush();
+            try (ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+                 ObjectInputStream ois = new ObjectInputStream(bais)) {
+                @SuppressWarnings("unchecked")
+                Map<K, V> copy = (Map<K, V>) ois.readObject();
+                return copy;
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new IllegalArgumentException("Deep copy failed: " + e.getMessage(), e);
+        }
     }
 }

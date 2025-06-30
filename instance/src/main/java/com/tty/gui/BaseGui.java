@@ -5,6 +5,7 @@ import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
@@ -15,7 +16,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,42 +31,14 @@ public abstract class BaseGui {
         Lib.Scheduler.runAtRegion(Ari.instance, this.player.getLocation(), e -> {
             this.player.openInventory(this.inventory);
             Lib.Scheduler.runAsync(Ari.instance, i -> {
+                long l = System.currentTimeMillis();
                 this.BaseRenderMasks(this.renderMasks());
                 this.BaseRenderFunctionItems(this.renderFunctionItems());
+                Log.debug("render gui time: " + (System.currentTimeMillis() - l) + "ms");
             });
         });
     }
 
-    protected List<String> parseLayout(List<String> layout) {
-        List<String> result = new ArrayList<>(layout.size() * 9);
-        StringBuilder bracketContent = null;
-        for (String line : layout) {
-            boolean inBrackets = false;
-            for (int i = 0; i < line.length(); i++) {
-                char c = line.charAt(i);
-                if (c == '(') {
-                    if (!inBrackets) {
-                        inBrackets = true;
-                        bracketContent = new StringBuilder();
-                    }
-                } else if (c == ')') {
-                    if (inBrackets) {
-                        inBrackets = false;
-                        result.add(bracketContent.toString());
-                        bracketContent = null;
-                    }
-                } else if (inBrackets) {
-                    bracketContent.append(c);
-                } else {
-                    result.add(String.valueOf(c));
-                }
-            }
-            if (inBrackets) {
-                bracketContent = null;
-            }
-        }
-        return result;
-    }
     protected void BaseRenderMasks(Mask mask) {
         List<TextComponent> collect = mask.getLore().stream().map(i -> TextTool.setHEXColorText(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
@@ -104,5 +76,20 @@ public abstract class BaseGui {
      * @return Map<String, FunctionItems>类
      */
     protected abstract Map<String, FunctionItems> renderFunctionItems();
+
+    /**
+     * 渲染gui中带数据的item
+     */
+    protected abstract void renderDataItem();
+
+    /**
+     * 指定位置更新当前的GUI
+     * @param slots 更新位置
+     */
+    public void updateGui(List<Integer> slots) {
+        if(this.inventory == null) return;
+        slots.forEach(i -> this.inventory.clear(i));
+        this.renderDataItem();
+    }
 
 }

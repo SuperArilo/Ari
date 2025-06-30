@@ -11,14 +11,12 @@ public class KeepInventoryAndExperience implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getPlayer();
-        boolean a = PermissionUtils.hasPermission(player, "ari.keepinventory");
-        boolean b = PermissionUtils.hasPermission(player, "ari.keepexperience");
-        event.setKeepInventory(a);
-        event.setKeepLevel(b);
-        if (a) {
+        if (PermissionUtils.hasPermission(player, "ari.keepinventory")) {
+            event.setKeepInventory(true);
             event.getDrops().clear();
         }
-        if (b) {
+        if (PermissionUtils.hasPermission(player, "ari.keepexperience")) {
+            event.setKeepLevel(true);
             event.setDroppedExp(0);
         }
     }

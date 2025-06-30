@@ -5,6 +5,7 @@ import com.tty.command.function.CommandTime;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.TimePeriod;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -35,6 +36,6 @@ public class time extends BaseCommandCheck implements TabExecutor {
         for (TimePeriod timePeriod : TimePeriod.values()) {
             list.add(timePeriod.getDescription());
         }
-        return list;
+        return PublicFunctionUtils.filterByPrefix(list, strings[0]);
     }
 }

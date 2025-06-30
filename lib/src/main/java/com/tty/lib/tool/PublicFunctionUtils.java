@@ -3,6 +3,9 @@ package com.tty.lib.tool;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class PublicFunctionUtils {
@@ -19,5 +22,14 @@ public class PublicFunctionUtils {
             runnable.run();
         }
     }
-
+    public static List<String> filterByPrefix(List<String> list, String prefix) {
+        if (prefix == null || prefix.isEmpty()) {
+            return new ArrayList<>(list);
+        }
+        String lowerPrefix = prefix.toLowerCase();
+        return list.stream()
+                .filter(Objects::nonNull)
+                .filter(s -> s.toLowerCase().startsWith(lowerPrefix))
+                .toList();
+    }
 }

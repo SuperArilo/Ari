@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
-public class OnPlayerListener implements Listener {
+public class OnPlayerJoinAndLeaveListener implements Listener {
     /**
      * 记录玩家进入服务器的时间戳
      */

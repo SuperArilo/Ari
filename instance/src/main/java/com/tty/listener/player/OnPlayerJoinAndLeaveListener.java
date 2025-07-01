@@ -1,11 +1,13 @@
 package com.tty.listener.player;
 
 import com.tty.Ari;
+import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.lib.tool.Log;
+import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +16,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.WorldSaveEvent;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -30,11 +34,12 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
         boolean login = Ari.instance.getConfig().getBoolean("server.message.on-login", false);
         Player player = event.getPlayer();
-        PlayerManager build = PlayerManager.build(player);
+        PlayerManager build = new PlayerManager();
         if (first || login) {
             event.joinMessage(null);
         }
-        build.asyncGetInstance(player.getUniqueId().toString()).thenAccept(i -> {
+        long time = System.currentTimeMillis();
+        build.asyncGetInstance(SqlKeyBuilder.build("player_uuid", "uuid", "", player.getUniqueId().toString())).thenAccept(i -> {
             if (i == null || !player.hasPlayedBefore()) {
                 if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
                     Lib.Scheduler.runAtEntity(Ari.instance, player, a -> {
@@ -45,14 +50,18 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                 if(first) {
                     Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
                 }
-                build.createInstance(player.getUniqueId().toString());
+
+                ServerPlayer serverPlayer = new ServerPlayer();
+                serverPlayer.setPlayerName(player.getName());
+                serverPlayer.setPlayerUUID(player.getUniqueId().toString());
+                build.createInstance(serverPlayer);
             } else {
                 if(login) {
                     Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
                 }
             }
         });
-        playerLoginTimes.put(player.getUniqueId(), System.currentTimeMillis());
+        playerLoginTimes.put(player.getUniqueId(), time);
     }
 
     @EventHandler
@@ -61,9 +70,20 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
             event.quitMessage(TextTool.setHEXColorText("server.message.on-leave", FilePath.Lang, player));
         }
+        this.saveData(player);
+    }
 
-        PlayerManager manager = PlayerManager.build(player);
-        manager.asyncGetInstance(player.getUniqueId().toString())
+    @EventHandler
+    public void savePlayerData(WorldSaveEvent event) {
+        Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
+        for (Player onlinePlayer : onlinePlayers) {
+            this.saveData(onlinePlayer);
+        }
+    }
+
+    private void saveData(Player player)  {
+        PlayerManager manager = new PlayerManager();
+        manager.asyncGetInstance(SqlKeyBuilder.build("player_uuid", "uuid", "", player.getUniqueId().toString()))
                 .thenAccept(p -> {
                     long l = System.currentTimeMillis();
                     if(p == null) {
@@ -76,5 +96,4 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                     playerLoginTimes.remove(player.getUniqueId());
                 });
     }
-
 }

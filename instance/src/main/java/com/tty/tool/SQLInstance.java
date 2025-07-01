@@ -17,27 +17,21 @@ import java.util.logging.Level;
 
 public class SQLInstance {
 
-    private final FileConfiguration config;
     public static SQLType sqlType;
     public static Sql2o SESSION_FACTORY;
 
-    public SQLInstance()  {
-        this.config = Ari.instance.getConfig();
-        this.start();
-    }
-
-    private void start() {
+    public static void start() {
         Log.debug(Level.INFO, "Start connecting");
         try {
-            sqlType = SQLType.valueOf(config.getString("data.storage-type", "null").toUpperCase());
+            sqlType = SQLType.valueOf(Ari.instance.getConfig().getString("data.storage-type", "null").toUpperCase());
         } catch (Exception e) {
             Log.warning("storage-type is null, Running sqlite mode");
             sqlType = SQLType.SQLITE;
         }
         Log.debug(Level.INFO, "The database type is " + sqlType.getType());
         switch (sqlType) {
-            case MYSQL -> this.createMysql();
-            case SQLITE -> this.createSQLite();
+            case MYSQL -> createMysql();
+            case SQLITE -> createSQLite();
         }
 
         try (Connection connection = SESSION_FACTORY.open()) {
@@ -53,13 +47,14 @@ public class SQLInstance {
         }
 
     }
-    public void reconnect() {
+    public static void reconnect() {
         Log.debug(Level.INFO, "Connection is closing...");
         SQLInstance.SESSION_FACTORY = null;
         Log.debug(Level.INFO, "Connection closed successfully");
-        this.start();
+        start();
     }
-    protected void createMysql() {
+    protected static void createMysql() {
+        FileConfiguration config = Ari.instance.getConfig();
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
         hikariDataSource.setJdbcUrl("jdbc:mysql://" + config.getString("data.address") + ":" + config.getString("data.port") +  "/" + config.getString("data.database") + "?useUnicode=true&character_set_server=utf8mb4");
@@ -71,14 +66,14 @@ public class SQLInstance {
         hikariDataSource.setKeepaliveTime(config.getLong("data.keepalive-time"));
         setLiteFactory(hikariDataSource);
     }
-    protected void createSQLite() {
+    protected static void createSQLite() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
         hikariDataSource.setJdbcUrl("jdbc:sqlite:" + Ari.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
         setLiteFactory(hikariDataSource);
     }
 
-    protected void setLiteFactory(HikariDataSource dataSource) {
+    protected static void setLiteFactory(HikariDataSource dataSource) {
         SESSION_FACTORY = new Sql2o(dataSource);
         Map<String, String> colMaps = new HashMap<>();
         colMaps.put("player_name", "playerName");
@@ -95,6 +90,7 @@ public class SQLInstance {
         colMaps.put("warp_id", "warpId");
         colMaps.put("warp_name", "warpName");
         colMaps.put("create_by", "createBy");
+        colMaps.put("create_time", "createTime");
         SESSION_FACTORY.setDefaultColumnMappings(colMaps);
     }
 

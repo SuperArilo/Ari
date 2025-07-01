@@ -5,6 +5,7 @@ import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.FilePath;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
+import com.tty.tool.SQLInstance;
 import com.tty.tool.TextTool;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,7 @@ public class OnPluginReloadListener implements Listener {
         Ari.reloadAllConfig();
         Log.initLogger(Ari.instance.getLogger(), Ari.debug);
         if (Ari.debug) {
-            Ari.instance.SQLInstance.reconnect();
+            SQLInstance.reconnect();
         }
         Ari.instance.commandAlias.reloadAllAlias();
         ConfigObjectUtils.setRtpWorldConfig();

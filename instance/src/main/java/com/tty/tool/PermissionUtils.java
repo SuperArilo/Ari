@@ -61,6 +61,7 @@ public class PermissionUtils {
     }
 
     public static int getMaxCountInPermission(Player player, String typeString) {
+        if (player.isOp()) return Integer.MAX_VALUE;
         int initValue = 0;
         String firstErrorPermission = null;
         for (PermissionAttachmentInfo permissionInfo : player.getEffectivePermissions()) {

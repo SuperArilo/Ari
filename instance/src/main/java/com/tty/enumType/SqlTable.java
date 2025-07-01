@@ -36,7 +36,15 @@ public enum SqlTable {
                 show_material VARCHAR(128) NOT NULL,
                 permission VARCHAR(128) default NULL,
                 cost INTEGER default 0);
-             """);
+             """),
+    Spawn_Location("""
+                CREATE TABLE IF NOT EXISTS %sspawn (
+                id INTEGER PRIMARY KEY %s,
+                world VARCHAR(128) NOT NULL,
+                location VARCHAR(128) NOT NULL,
+                create_by VARCHAR(128) NOT NULL,
+                create_time INTEGER NULL DEFAULT 0);
+            """);
     private final String sql;
 
     SqlTable(String sql) {

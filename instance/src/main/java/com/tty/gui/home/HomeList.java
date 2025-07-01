@@ -10,10 +10,12 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
 import com.tty.gui.BasePageGui;
+import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
+import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
@@ -44,7 +46,11 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     public CompletableFuture<List<ServerHome>> requestData() {
-        return HomeManager.create(this.player).asyncGetList(this.pageNum, this.gui.getDataItems().getSlot().size());
+        return new HomeManager()
+                .asyncGetList(
+                        Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()),
+                        SqlKeyBuilder.build("player_uuid", "uuid", "", this.player.getUniqueId().toString()),
+                        SqlKeyBuilder.build("top_slot", "desc"));
     }
 
     @Override

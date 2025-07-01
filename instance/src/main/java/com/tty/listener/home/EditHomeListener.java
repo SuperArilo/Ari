@@ -18,7 +18,6 @@ import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -35,7 +34,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -69,17 +67,25 @@ public class EditHomeListener implements Listener {
             if (type == null) return;
 
             HomeEditor homeEditor = (HomeEditor) holder.getMeta();
-            HomeManager homeManager = HomeManager.create(Bukkit.getPlayer(UUID.fromString(homeEditor.currentHome.getPlayerUUID())));
+            HomeManager homeManager = new HomeManager();
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
                     new HomeList(player).open();
                 }
                 case DELETE -> //delete home
-                        homeManager.deleteInstance(homeEditor.currentHome.getHomeId()).thenAccept(i -> Lib.Scheduler.run(Ari.instance, j -> {
-                            clickedInventory.close();
-                            new HomeList(player).open();
-                        }));
+                        homeManager.deleteInstance(homeEditor.currentHome).thenAccept(i -> {
+                            if (i) {
+                                player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
+                                Lib.Scheduler.run(Ari.instance, j -> {
+                                    clickedInventory.close();
+                                    new HomeList(player).open();
+                                });
+                            } else {
+                                player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
+                            }
+
+                        });
                 case RENAME -> {
                     player.showTitle(
                             TextTool.setPlayerTitle(

@@ -8,7 +8,6 @@ import com.tty.enumType.GuiType;
 import com.tty.function.TeleportCallback;
 import com.tty.command.check.TeleportCheck;
 import com.tty.function.TeleportThread;
-import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
@@ -17,7 +16,6 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.tool.Log;
 import com.tty.tool.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -60,68 +58,57 @@ public class WarpListListener extends TeleportCheck implements Listener {
                         Log.error("can't find warpId: " + warpId);
                         break;
                     }
-                    WarpManager.create(Bukkit.getPlayer(UUID.fromString(first.get().getCreateBy())))
-                        .asyncGetInstance(warpId)
-                        .thenAccept(instance -> {
-                            if(instance == null) {
-                                player.sendMessage(TextTool.setHEXColorText("function.warp.not-found", FilePath.Lang));
+                    ServerWarp instance = first.get();
+                    boolean isOwner = UUID.fromString(instance.getCreateBy()).equals(player.getUniqueId());
+                    ClickType eventClick = event.getClick();
+                    if(eventClick.isLeftClick()) {
+                        String permission = instance.getPermission();
+                        if(permission != null && !permission.isEmpty()) {
+                            boolean hasPermission = PermissionUtils.hasPermission(player, permission);
+                            if (!hasPermission && !isOwner) {
+                                player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
                                 return;
                             }
-                            boolean isOwner = UUID.fromString(instance.getCreateBy()).equals(player.getUniqueId());
-                            ClickType eventClick = event.getClick();
-                            if(eventClick.isLeftClick()) {
-                                String permission = instance.getPermission();
-                                if(permission != null && !permission.isEmpty()) {
-                                    boolean hasPermission = PermissionUtils.hasPermission(player, permission);
-                                    if (!hasPermission && !isOwner) {
-                                        player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
-                                        return;
-                                    }
-                                }
-                                Location targetLocation = ConfigObjectUtils.parseLocation(instance.getLocation());
-                                TeleportThread.playerToLocation(player,targetLocation)
-                                        .teleport(
-                                                ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3),
-                                                new TeleportCallback() {
-                                                    @Override
-                                                    public void onCancel() {
-                                                        TeleportCheck.remove(player, targetLocation,TeleportType.POINT);
-                                                    }
-                                                    @Override
-                                                    public void after() {
-                                                        //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                                        if(!isOwner && !player.isOp() && ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false)) {
-                                                            EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                                            String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "0.0");
-                                                            player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
-                                                        }
-                                                        TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
-                                                    }
-                                                    @Override
-                                                    public void before(TeleportThread teleportThread) {
-                                                        if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
-                                                            player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
-                                                            teleportThread.cancel();
-                                                            return;
-                                                        }
-                                                        if(!WarpListListener.super.preCheckStatus(player, targetLocation, 200L)) {
-                                                            teleportThread.cancel();
-                                                        }
-                                                    }
-                                                });
-                            } else if(eventClick.isRightClick()) {
-                                if(isOwner || player.isOp()) {
-                                    inventory.close();
-                                    new WarpEditor(instance, player).open();
-                                } else {
-                                    player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));
-                                }
-                            }
-                        }).exceptionally(b -> {
-                            Log.error("error", b);
-                            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-                            return null;
-                        });
+                        }
+                        Location targetLocation = ConfigObjectUtils.parseLocation(instance.getLocation());
+                        TeleportThread.playerToLocation(player,targetLocation)
+                                .teleport(
+                                        ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3),
+                                        new TeleportCallback() {
+                                            @Override
+                                            public void onCancel() {
+                                                TeleportCheck.remove(player, targetLocation,TeleportType.POINT);
+                                            }
+                                            @Override
+                                            public void after() {
+                                                //判断是否是地标拥有者或者是不是op，如果是则不扣
+                                                if(!isOwner && !player.isOp() && ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false)) {
+                                                    EconomyUtils.withdrawPlayer(player, instance.getCost());
+                                                    String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "0.0");
+                                                    player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
+                                                }
+                                                TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
+                                            }
+                                            @Override
+                                            public void before(TeleportThread teleportThread) {
+                                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
+                                                    player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
+                                                    teleportThread.cancel();
+                                                    return;
+                                                }
+                                                if(!WarpListListener.super.preCheckStatus(player, targetLocation, 200L)) {
+                                                    teleportThread.cancel();
+                                                }
+                                            }
+                                        });
+                    } else if(eventClick.isRightClick()) {
+                        if(isOwner || player.isOp()) {
+                            inventory.close();
+                            new WarpEditor(instance, player).open();
+                        } else {
+                            player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));
+                        }
+                    }
                     Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), j -> inventory.close());
                 }
                 case PREV -> warpList.prev();

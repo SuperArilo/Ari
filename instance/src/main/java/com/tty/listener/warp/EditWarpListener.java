@@ -20,7 +20,6 @@ import com.tty.tool.EconomyUtils;
 import com.tty.tool.TextTool;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.audience.Audience;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -75,13 +74,13 @@ public class EditWarpListener implements Listener {
             event.setCancelled(true);
 
             WarpEditor warpEditor = (WarpEditor) holder.getMeta();
-            WarpManager warpManager = WarpManager.create(Bukkit.getPlayer(UUID.fromString(warpEditor.currentWarp.getCreateBy())));
+            WarpManager warpManager = new WarpManager();
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();
                     new WarpList(player).open();
                 }
-                case DELETE -> warpManager.deleteInstance(warpEditor.currentWarp.getWarpId()).thenAccept(i -> {
+                case DELETE -> warpManager.deleteInstance(warpEditor.currentWarp).thenAccept(i -> {
                         if (i) {
                             player.sendMessage(TextTool.setHEXColorText("function.warp.delete-success", FilePath.Lang));
                             Lib.Scheduler.run(Ari.instance, ab -> {

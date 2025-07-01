@@ -10,6 +10,7 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;
 import com.tty.gui.BasePageGui;
+import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
@@ -41,7 +42,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     public CompletableFuture<List<ServerWarp>> requestData() {
-        return WarpManager.create(this.player).asyncGetList(this.pageNum, this.pageSize);
+        return new WarpManager().asyncGetList(Page.create(this.pageNum, this.pageSize), List.of(), null);
     }
 
     @Override

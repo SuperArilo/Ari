@@ -96,14 +96,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 }
                 new CommandHome(commandSender).setHome(strings[1]);
             }
-            case DELETEHOME -> {
-                if (!this.quickCheck(commandSender, AriCommand.DELETEHOME)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
-                    return true;
-                }
-                new CommandHome(commandSender).deleteHome(strings[1]);
-            }
             case BACK -> {
                 if(!this.quickCheck(commandSender, AriCommand.BACK)) break;
                 new CommandBack(commandSender).startDo();
@@ -119,14 +111,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     return true;
                 }
                 new CommandWarp(commandSender).setWarp(strings[1]);
-            }
-            case DELETEWARP -> {
-                if (!this.quickCheck(commandSender, AriCommand.DELETEWARP)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
-                    return true;
-                }
-                new CommandWarp(commandSender).deleteWarp(strings[1]);
             }
             case TIME -> {
                 if (!this.hasPermission(commandSender, AriCommand.TIME)) break;

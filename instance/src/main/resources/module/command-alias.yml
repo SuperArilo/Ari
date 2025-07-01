@@ -19,9 +19,6 @@ tparefuse:
 home:
   enable: true
   tab-complete: false
-deletehome:
-  enable: true
-  tab-complete: false
 sethome:
   enable: true
   tab-complete: false
@@ -38,9 +35,6 @@ spawn:
   enable: true
   tab-complete: false
 setspawn:
-  enable: true
-  tab-complete: false
-deletewarp:
   enable: true
   tab-complete: false
 time:

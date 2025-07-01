@@ -1,6 +1,8 @@
 package com.tty.lib.tool;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.*;
@@ -49,4 +51,29 @@ public class PublicFunctionUtils {
             throw new IllegalArgumentException("Deep copy failed: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * 检查材质是否是ITEM
+     * @param material 被检查的材质
+     * @return 返回一个正确的材质
+     */
+    public static Material checkIsItem(Material material) {
+        if(!material.isItem() || !material.isSolid()) {
+            return Material.DIRT;
+        }
+        return material;
+    }
+    /**
+     * 检查材质是否是 ItemStack
+     * @param itemStack 被检查的item
+     * @return 返回一个正确的item
+     */
+    public static ItemStack checkIsItemStack(ItemStack itemStack) {
+        if (itemStack == null) {
+            itemStack = new ItemStack(Material.DIRT);
+            itemStack.setItemMeta(itemStack.getItemMeta());
+        }
+        return itemStack;
+    }
+
 }

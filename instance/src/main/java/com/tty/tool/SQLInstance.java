@@ -3,7 +3,6 @@ package com.tty.tool;
 
 import com.tty.Ari;
 import com.tty.enumType.SqlTable;
-import com.tty.enumType.SqlUpdate;
 import com.tty.lib.enum_type.SQLType;
 import com.tty.lib.tool.Log;
 import com.zaxxer.hikari.HikariDataSource;
@@ -38,12 +37,8 @@ public class SQLInstance {
             for (SqlTable value : SqlTable.values()) {
                 connection.createQuery(value.getSql()).executeUpdate();
             }
-            //update sql
-            try {
-                for (SqlUpdate update : SqlUpdate.values()) {
-                    connection.createQuery(update.getUpdateSql()).executeUpdate();
-                }
-            } catch (Exception ignored) {}
+        } catch (Exception e) {
+            Log.error("sql error", e);
         }
 
     }
@@ -97,5 +92,8 @@ public class SQLInstance {
     public static String getTablePrefix() {
         return Ari.instance.getConfig().getString("data.table-prefix", "ari");
     }
+
+
+
 
 }

@@ -27,8 +27,8 @@ public class TeleportCheck {
      * @param player 被传送玩家
      * @param targetPlayer 目标玩家
      */
-    public void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
-        if (this.checkHaveTeleportStatus(player, targetPlayer) != null) {
+    public static void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
+        if (checkHaveTeleportStatus(player, targetPlayer) != null) {
             player.sendMessage(TextTool.setHEXColorText(
                     ConfigObjectUtils.getValue(
                             "function.tpa.again",
@@ -38,7 +38,7 @@ public class TeleportCheck {
             return;
         }
         player.sendMessage(TextTool.setHEXColorText("function.tpa.send-message", FilePath.Lang));
-        this.addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
+        addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
         String message = ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class, "null");
         boolean isTpa = message.contains(LangType.TPASENDER.getType());
         targetPlayer.sendMessage(
@@ -54,9 +54,9 @@ public class TeleportCheck {
      * @param location 目标位置
      * @param delay 传送冷却
      */
-    public boolean preCheckStatus(Player player, Location location, long delay) {
-        if(this.checkHaveTeleportStatus(player, location) == null) {
-            this.addTeleportStatusTask(player, location, delay);
+    public static boolean preCheckStatus(Player player, Location location, long delay) {
+        if(checkHaveTeleportStatus(player, location) == null) {
+            addTeleportStatusTask(player, location, delay);
             return true;
         } else {
             player.sendMessage(TextTool.setHEXColorText("teleport.again", FilePath.Lang));
@@ -69,7 +69,7 @@ public class TeleportCheck {
      * @param targetPlayer 目标玩家
      * @return 传送请求类
      */
-    public TeleportStatus checkHaveTeleportStatus(Player player, Player targetPlayer) {
+    public static TeleportStatus checkHaveTeleportStatus(Player player, Player targetPlayer) {
         return TELEPORT_STATUS.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
@@ -85,7 +85,7 @@ public class TeleportCheck {
      * @param location 目标地方
      * @return 传送请求类
      */
-    public TeleportStatus checkHaveTeleportStatus(Player player, Location location) {
+    public static TeleportStatus checkHaveTeleportStatus(Player player, Location location) {
         return TELEPORT_STATUS.stream()
                 .filter(obj ->
                         obj.getPlayUUID().equals(player.getUniqueId()) &&
@@ -100,7 +100,7 @@ public class TeleportCheck {
      * @param targetPlayer 接收玩家
      * @param delay 传送冷却
      */
-    private void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand, long delay) {
+    private static void addTeleportStatusTask(Player player, Player targetPlayer, AriCommand ariCommand, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, ariCommand);
         TELEPORT_STATUS.add(build);
         Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> remove(player, null,TeleportType.PLAYER), delay);
@@ -111,13 +111,13 @@ public class TeleportCheck {
      * @param location 传送地方
      * @param delay 传送冷却
      */
-    private void addTeleportStatusTask(Player player, Location location, long delay) {
+    private static void addTeleportStatusTask(Player player, Location location, long delay) {
         TeleportStatus build = TeleportStatus.build(player.getUniqueId(), location, TeleportType.POINT, null);
         TELEPORT_STATUS.add(build);
         Lib.Scheduler.runLater(Ari.instance, i -> remove(player, location, TeleportType.POINT), delay);
     }
 
-    public boolean preCheck(CommandSender sender, String targetPlayerName) {
+    public static boolean preCheck(CommandSender sender, String targetPlayerName) {
         if(!(sender instanceof Player)) {
             sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
             return false;

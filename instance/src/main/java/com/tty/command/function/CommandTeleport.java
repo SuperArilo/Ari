@@ -30,14 +30,14 @@ public class CommandTeleport extends TeleportCheck {
     }
 
     public void tpa() {
-        if(!this.preCheck(this.sender, this.playerName)) return;
-        this.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
+        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
+        TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     public void tpaaccept() {
-        if(!this.preCheck(this.sender, this.playerName)) return;
+        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
-        TeleportStatus status = this.checkHaveTeleportStatus(player, (Player) this.sender);
+        TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
             return;
@@ -58,13 +58,13 @@ public class CommandTeleport extends TeleportCheck {
     }
 
     public void tparefuse() {
-        if(!this.preCheck(this.sender, this.playerName)) return;
+        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if(player == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
             return;
         }
-        if (this.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
+        if (TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
         } else {
             if(TeleportCheck.remove(player, null,TeleportType.PLAYER)) {
@@ -84,7 +84,7 @@ public class CommandTeleport extends TeleportCheck {
 
     public void tpahere() {
         if(!preCheck(this.sender, this.playerName)) return;
-        this.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
+        TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
     public List<String> getOnlinePlayers(AriCommand ariCommand) {

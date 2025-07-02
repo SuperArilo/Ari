@@ -2,9 +2,9 @@ package com.tty.command.function;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
+import com.tty.command.check.TeleportCheck;
 import com.tty.dto.rtp.RtpConfig;
 import com.tty.enumType.FilePath;
-import com.tty.command.check.TeleportCheck;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
@@ -22,7 +22,7 @@ import org.bukkit.entity.Player;
 import java.util.Map;
 
 
-public class CommandRtp extends TeleportCheck {
+public class CommandRtp {
 
     private final CommandSender sender;
     private int count = 10;
@@ -63,7 +63,7 @@ public class CommandRtp extends TeleportCheck {
 
         if (!PlayerStatusCheck.playerStatusCheck(player) && !this.sender.isOp()) return;
 
-        if (!this.preCheckStatus(
+        if (!TeleportCheck.preCheckStatus(
                 player,
                 null,
                 ConfigObjectUtils.getValue("rtp.delay", FilePath.FunctionConfig.getName(), Integer.class, 3) * 20)

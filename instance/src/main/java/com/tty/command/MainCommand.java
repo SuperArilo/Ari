@@ -5,7 +5,7 @@ import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.lib.enum_type.TimePeriod;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
@@ -163,8 +163,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     st.add(type.getShow());
                 }
             }
-            Collections.sort(st);
-            return st;
+            return PublicFunctionUtils.filterByPrefix(st, strings[0]);
         } else if (strings.length == 2) {
             AriCommand c;
             try {
@@ -197,10 +196,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 }
                 case TIME -> {
                     List<String> list = new ArrayList<>();
-                    for (TimePeriod timePeriod : TimePeriod.values()) {
-                        list.add(timePeriod.getDescription());
-                    }
-                    return list;
+                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
                 }
             }
         }

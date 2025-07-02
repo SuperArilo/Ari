@@ -7,7 +7,6 @@ import com.tty.function.PlayerManager;
 import com.tty.lib.EntityTeleport;
 import com.tty.lib.Lib;
 import com.tty.lib.tool.Log;
-import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,28 +38,29 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
             event.joinMessage(null);
         }
         long time = System.currentTimeMillis();
-        build.asyncGetInstance(SqlKeyBuilder.build("player_uuid", "uuid", "", player.getUniqueId().toString())).thenAccept(i -> {
-            if (i == null || !player.hasPlayedBefore()) {
-                if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
-                    Lib.Scheduler.runAtEntity(Ari.instance, player, a -> {
-                        Location spawnLocation = player.getWorld().getSpawnLocation();
-                        EntityTeleport.teleport(player, spawnLocation);
-                    }, () -> {});
-                }
-                if(first) {
-                    Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
-                }
+        build.asyncGetInstance(player.getUniqueId().toString())
+                .thenAccept(i -> {
+                    if (i == null || !player.hasPlayedBefore()) {
+                        if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
+                            Lib.Scheduler.runAtEntity(Ari.instance, player, a -> {
+                                Location spawnLocation = player.getWorld().getSpawnLocation();
+                                EntityTeleport.teleport(player, spawnLocation);
+                            }, () -> {});
+                        }
+                        if(first) {
+                            Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
+                        }
 
-                ServerPlayer serverPlayer = new ServerPlayer();
-                serverPlayer.setPlayerName(player.getName());
-                serverPlayer.setPlayerUUID(player.getUniqueId().toString());
-                build.createInstance(serverPlayer);
-            } else {
-                if(login) {
-                    Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
-                }
-            }
-        });
+                        ServerPlayer serverPlayer = new ServerPlayer();
+                        serverPlayer.setPlayerName(player.getName());
+                        serverPlayer.setPlayerUUID(player.getUniqueId().toString());
+                        build.createInstance(serverPlayer);
+                    } else {
+                        if(login) {
+                            Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
+                        }
+                    }
+                });
         playerLoginTimes.put(player.getUniqueId(), time);
     }
 
@@ -83,7 +83,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
 
     private void saveData(Player player)  {
         PlayerManager manager = new PlayerManager();
-        manager.asyncGetInstance(SqlKeyBuilder.build("player_uuid", "uuid", "", player.getUniqueId().toString()))
+        manager.asyncGetInstance(player.getUniqueId().toString())
                 .thenAccept(p -> {
                     long l = System.currentTimeMillis();
                     if(p == null) {

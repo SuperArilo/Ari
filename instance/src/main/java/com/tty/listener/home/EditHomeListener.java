@@ -67,7 +67,7 @@ public class EditHomeListener implements Listener {
             if (type == null) return;
 
             HomeEditor homeEditor = (HomeEditor) holder.getMeta();
-            HomeManager homeManager = new HomeManager();
+            HomeManager homeManager = new HomeManager(player);
             switch (type) {
                 case REBACK -> {
                     clickedInventory.close();

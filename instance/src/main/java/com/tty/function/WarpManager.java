@@ -4,11 +4,8 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
-import com.tty.lib.dto.SqlKey;
-import com.tty.lib.dto.SqlOrderByKey;
 import com.tty.tool.SQLInstance;
 import org.sql2o.Connection;
-import org.sql2o.Query;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,16 +13,18 @@ import java.util.concurrent.CompletableFuture;
 public class WarpManager implements BaseManager<ServerWarp> {
 
     @Override
-    public CompletableFuture<List<ServerWarp>> asyncGetList(Page page, List<SqlKey> sqlKeys, List<SqlOrderByKey> orderByKeys) {
+    public CompletableFuture<List<ServerWarp>> asyncGetList(Page page) {
         CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-            String sql = this.buildWhereSql("select * from %swarps", page, sqlKeys, orderByKeys);
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                Query query = connection.createQuery(sql);
-                for (SqlKey key : sqlKeys) {
-                    query.addParameter(key.getValueKey(), key.getValue());
-                }
-                future.complete(query.executeAndFetch(ServerWarp.class));
+                List<ServerWarp> serverWarps = connection.createQuery("""
+                                    select * from %swarps
+                                    limit :limit offset :offset
+                                """.formatted(SQLInstance.getTablePrefix()))
+                        .addParameter("limit", page.getLimit())
+                        .addParameter("offset", page.getOffset())
+                        .executeAndFetch(ServerWarp.class);
+                future.complete(serverWarps);
             }  catch (Exception e) {
                 future.completeExceptionally(e);
             }
@@ -33,17 +32,35 @@ public class WarpManager implements BaseManager<ServerWarp> {
         return future;
     }
 
-    @Override
-    public CompletableFuture<ServerWarp> asyncGetInstance(List<SqlKey> sqlKeys) {
+    public CompletableFuture<List<ServerWarp>> asyncGetCountByPlayer(String uuid) {
+        CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
+        Lib.Scheduler.runAsync(Ari.instance, i -> {
+            try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
+                List<ServerWarp> serverWarps = connection.createQuery("""
+                                    select * from %swarps
+                                    where create_by = :uuid
+                                """.formatted(SQLInstance.getTablePrefix()))
+                        .addParameter("uuid", uuid)
+                        .executeAndFetch(ServerWarp.class);
+                future.complete(serverWarps);
+            } catch (Exception e) {
+                future.completeExceptionally(e);
+            }
+        });
+        return future;
+    }
+
+    public CompletableFuture<ServerWarp> asyncGetInstance(String warpId) {
         CompletableFuture<ServerWarp> future = new CompletableFuture<>();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-            String sql = this.buildWhereSql("select * from %swarps", null, sqlKeys, null);
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                Query query = connection.createQuery(sql);
-                for (SqlKey key : sqlKeys) {
-                    query.addParameter(key.getValueKey(), key.getValue());
-                }
-                future.complete(query.executeAndFetchFirst(ServerWarp.class));
+                ServerWarp serverWarp = connection.createQuery("""
+                                    select * from %swarps
+                                    where warp_id = :warpId
+                                """.formatted(SQLInstance.getTablePrefix()))
+                        .addParameter("warpId", warpId)
+                        .executeAndFetchFirst(ServerWarp.class);
+                future.complete(serverWarp);
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }

@@ -4,12 +4,10 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerHome;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
-import com.tty.lib.dto.SqlKey;
-import com.tty.lib.dto.SqlOrderByKey;
 import com.tty.lib.tool.Log;
 import com.tty.tool.SQLInstance;
+import org.bukkit.entity.Player;
 import org.sql2o.Connection;
-import org.sql2o.Query;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -17,36 +15,47 @@ import java.util.logging.Level;
 
 public class HomeManager implements BaseManager<ServerHome> {
 
+    private final Player player;
+
+    public HomeManager(Player player) {
+        this.player = player;
+    }
+
     @Override
-    public CompletableFuture<List<ServerHome>> asyncGetList(Page page, List<SqlKey> sqlKeys, List<SqlOrderByKey> orderByKeys) {
+    public CompletableFuture<List<ServerHome>> asyncGetList(Page page) {
         CompletableFuture<List<ServerHome>> future = new CompletableFuture<>();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-            String sql = this.buildWhereSql("SELECT * FROM %splayer_home", page, sqlKeys, orderByKeys);
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                Query query = connection.createQuery(sql);
-                for (SqlKey key : sqlKeys) {
-                    query.addParameter(key.getValueKey(), key.getValue());
-                }
-                future.complete(query.executeAndFetch(ServerHome.class));
+                List<ServerHome> serverHomes = connection.createQuery("""
+                                    SELECT * FROM %splayer_home
+                                    where player_uuid = :uuid
+                                    order by top_slot desc,id
+                                    limit :limit offset :offset
+                                """.formatted(SQLInstance.getTablePrefix()))
+                        .addParameter("uuid", this.player.getUniqueId().toString())
+                        .addParameter("limit", page.getLimit())
+                        .addParameter("offset", page.getOffset())
+                        .executeAndFetch(ServerHome.class);
+                future.complete(serverHomes);
             } catch (Exception e) {
-                Log.error("query home error!", e);
-                future.complete(List.of());
+                future.completeExceptionally(e);
             }
         });
         return future;
     }
 
-    @Override
-    public CompletableFuture<ServerHome> asyncGetInstance(List<SqlKey> sqlKeys) {
+    public CompletableFuture<ServerHome> asyncGetInstance(String homeId) {
         CompletableFuture<ServerHome> future = new CompletableFuture<>();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-            String sql = this.buildWhereSql("select * from %splayer_home", null, sqlKeys, null);
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                Query query = connection.createQuery(sql);
-                for (SqlKey key : sqlKeys) {
-                    query.addParameter(key.getValueKey(), key.getValue());
-                }
-                future.complete(query.executeAndFetchFirst(ServerHome.class));
+                ServerHome serverHome = connection.createQuery("""
+                                    select * from %splayer_home
+                                    where player_uuid = :uuid and home_id = :homeId
+                                """.formatted(SQLInstance.getTablePrefix()))
+                        .addParameter("uuid", this.player.getUniqueId().toString())
+                        .addParameter("homeId", homeId)
+                        .executeAndFetchFirst(ServerHome.class);
+                future.complete(serverHome);
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }

@@ -10,7 +10,6 @@ import com.tty.lib.dto.Page;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import lombok.SneakyThrows;
@@ -31,42 +30,40 @@ public class CommandHome {
     public void setHome(String homeId) {
         if(FormatUtils.checkIdName(homeId)) {
             Player player = (Player) this.sender;
-            HomeManager homeManager = new HomeManager();
-            homeManager.asyncGetList(
-                    Page.create(1, Integer.MAX_VALUE),
-                    SqlKeyBuilder.build("player_uuid", "uuid", "", player.getUniqueId().toString()),
-                    null).thenAccept(serverHomes -> {
-                if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
-                    this.sender.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
-                    return;
-                }
-                if (serverHomes.stream().anyMatch(c -> c.getHomeId().equals(homeId))) {
-                    this.sender.sendMessage(TextTool.setHEXColorText("function.home.exist", FilePath.Lang, player));
-                    return;
-                }
+            HomeManager homeManager = new HomeManager(player);
+            homeManager.asyncGetList(Page.create(1, Integer.MAX_VALUE))
+                    .thenAccept(serverHomes -> {
+                        if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
+                            this.sender.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));
+                            return;
+                        }
+                        if (serverHomes.stream().anyMatch(c -> c.getHomeId().equals(homeId))) {
+                            this.sender.sendMessage(TextTool.setHEXColorText("function.home.exist", FilePath.Lang, player));
+                            return;
+                        }
 
 
-                Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), task -> {
-                    ServerHome serverHome = new ServerHome();
-                    serverHome.setHomeId(homeId);
-                    serverHome.setHomeName(homeId);
-                    serverHome.setPlayerUUID(player.getUniqueId().toString());
-                    serverHome.setLocation(player.getLocation().toString());
-                    serverHome.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
+                        Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), task -> {
+                            ServerHome serverHome = new ServerHome();
+                            serverHome.setHomeId(homeId);
+                            serverHome.setHomeName(homeId);
+                            serverHome.setPlayerUUID(player.getUniqueId().toString());
+                            serverHome.setLocation(player.getLocation().toString());
+                            serverHome.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
 
-                    homeManager.createInstance(serverHome)
-                            .thenAccept(status -> this.sender.sendMessage(TextTool.setHEXColorText(status ? "function.home.create-success":"base.save.on-error", FilePath.Lang, player)))
-                            .exceptionally(i -> {
-                                Log.error("create home error", i);
-                                this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-                                return null;
-                            });
-                });
-            }).exceptionally(i -> {
-                Log.error("create home error", i);
-                this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
-                return null;
-            });
+                            homeManager.createInstance(serverHome)
+                                    .thenAccept(status -> this.sender.sendMessage(TextTool.setHEXColorText(status ? "function.home.create-success":"base.save.on-error", FilePath.Lang, player)))
+                                    .exceptionally(i -> {
+                                        Log.error("create home error", i);
+                                        this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+                                        return null;
+                                    });
+                        });
+                    }).exceptionally(i -> {
+                        Log.error("create home error", i);
+                        this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+                        return null;
+                    });
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.home.id-error", FilePath.Lang));
         }

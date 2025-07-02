@@ -6,11 +6,9 @@ import com.tty.enumType.FilePath;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
-import com.tty.lib.dto.Page;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import lombok.SneakyThrows;
@@ -36,10 +34,7 @@ public class CommandWarp {
         if(FormatUtils.checkIdName(warpId)) {
             Player player = (Player) this.sender;
             WarpManager warpManager = new WarpManager();
-            warpManager.asyncGetList(
-                    Page.create(1, Integer.MAX_VALUE),
-                            SqlKeyBuilder.build("create_by", "uuid", "", player.getUniqueId().toString()),
-                            null)
+            warpManager.asyncGetCountByPlayer(player.getUniqueId().toString())
                 .thenAccept(serverWarps -> {
                     if (serverWarps.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "warp")) {
                         this.sender.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));

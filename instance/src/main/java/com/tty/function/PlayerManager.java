@@ -4,40 +4,36 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
-import com.tty.lib.dto.SqlKey;
-import com.tty.lib.dto.SqlOrderByKey;
 import com.tty.tool.SQLInstance;
 import org.sql2o.Connection;
-import org.sql2o.Query;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class PlayerManager implements BaseManager<ServerPlayer> {
 
-
     @Override
-    public CompletableFuture<List<ServerPlayer>> asyncGetList(Page page, List<SqlKey> sqlKeys, List<SqlOrderByKey> orderByKeys) {
+    public CompletableFuture<List<ServerPlayer>> asyncGetList(Page page) {
         return null;
     }
 
-    @Override
-    public CompletableFuture<ServerPlayer> asyncGetInstance(List<SqlKey> sqlKeys) {
+    public CompletableFuture<ServerPlayer> asyncGetInstance(String uuid) {
         CompletableFuture<ServerPlayer> future = new CompletableFuture<>();
         Lib.Scheduler.runAsync(Ari.instance, i -> {
-            String sql = this.buildWhereSql("select * from %splayers", null, sqlKeys, null);
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                Query query = connection.createQuery(sql);
-                for (SqlKey key : sqlKeys) {
-                    query.addParameter(key.getValueKey(), key.getValue());
-                }
-                future.complete(query.executeAndFetchFirst(ServerPlayer.class));
+                ServerPlayer serverPlayer = connection.createQuery("""
+                                    select * from %splayers
+                                    where player_uuid = :uuid
+                                """.formatted(SQLInstance.getTablePrefix())).addParameter("uuid", uuid)
+                        .executeAndFetchFirst(ServerPlayer.class);
+                future.complete(serverPlayer);
             } catch (Exception e) {
                 future.completeExceptionally(e);
             }
         });
         return future;
     }
+
 
     @Override
     public CompletableFuture<Boolean> createInstance(ServerPlayer instance) {

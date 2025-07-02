@@ -15,7 +15,6 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
-import com.tty.lib.tool.SqlKeyBuilder;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
@@ -46,11 +45,7 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     public CompletableFuture<List<ServerHome>> requestData() {
-        return new HomeManager()
-                .asyncGetList(
-                        Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()),
-                        SqlKeyBuilder.build("player_uuid", "uuid", "", this.player.getUniqueId().toString()),
-                        SqlKeyBuilder.build("top_slot", "desc"));
+        return new HomeManager(this.player).asyncGetList(Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()));
     }
 
     @Override

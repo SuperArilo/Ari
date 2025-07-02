@@ -10,6 +10,7 @@ import com.tty.enumType.GuiType;
 import com.tty.gui.BaseGui;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.FormatUtils;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.EconomyUtils;
 import com.tty.tool.TextTool;
@@ -38,7 +39,7 @@ public class WarpEditor extends BaseGui {
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        Map<String, FunctionItems> functionItems = this.gui.getFunctionItems();
+        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.gui.getFunctionItems());
         if(functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {
@@ -70,6 +71,13 @@ public class WarpEditor extends BaseGui {
                             item.setName(cost == null ? "":cost.toString());
                         }
                     }
+                    case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
+                            LocationKeyType.TOP_SLOT.getKey(),
+                            ConfigObjectUtils.getValue(
+                                    this.currentWarp.isTopSlot() ? "base.yes_re":"base.no_re",
+                                    FilePath.Lang.getName(),
+                                    String.class,
+                                    "null"))).toList());
                 }
             }
         }

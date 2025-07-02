@@ -11,7 +11,7 @@ import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.enum_type.TitleInputType;
+import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
@@ -19,6 +19,7 @@ import com.tty.listener.BaseEditFunctionGuiListener;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.EconomyUtils;
 import com.tty.tool.TextTool;
+import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -91,7 +92,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                                 10000 ,
                                 1000));
                 inventory.close();
-                this.addEditInstance(player, OnEdit.build(holder, TitleInputType.valueOf(type.name())));
+                this.addEditInstance(player, OnEdit.build(holder, FunctionType.valueOf(type.name())));
                 if (holder.getTask() == null) {
                     CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                         if (this.removeEditInstance(player) != null) {
@@ -148,6 +149,19 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     return null;
                 });
             }
+            case TOP_SLOT -> {
+                warpEditor.currentWarp.setTopSlot(!warpEditor.currentWarp.isTopSlot());
+                warpEditor.gui.getFunctionItems().forEach((k, v) -> {
+                    if (v.getType().equals(FunctionType.TOP_SLOT)) {
+                        List<String> lore = v.getLore();
+                        List<TextComponent> list = lore.stream().map(p -> TextTool.setHEXColorText(
+                                p.replace(LocationKeyType.TOP_SLOT.getKey(),
+                                        ConfigObjectUtils.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang.getName(), String.class, "null")))).toList();
+                        clickMeta.lore(list);
+                        clickItem.setItemMeta(clickMeta);
+                    }
+                });
+            }
         }
     }
 
@@ -168,7 +182,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     return false;
                 }
                 if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.WarpConfig.getName(), new TypeToken<Integer>(){}.getType(), 15) &&
-                        onEdit.getType().equals(TitleInputType.RENAME)) {
+                        onEdit.getType().equals(FunctionType.RENAME)) {
                     player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
                     return false;
                 }

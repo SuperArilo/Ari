@@ -19,6 +19,7 @@ public class WarpManager implements BaseManager<ServerWarp> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 List<ServerWarp> serverWarps = connection.createQuery("""
                                     select * from %swarps
+                                    order by top_slot desc
                                     limit :limit offset :offset
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("limit", page.getLimit())
@@ -116,9 +117,12 @@ public class WarpManager implements BaseManager<ServerWarp> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 int update = connection.createQuery("""
                                     update %swarps set
-                                        warp_name = :warpName, location = :location,
-                                        show_material = :showMaterial, permission = :permission,
-                                        cost = :cost
+                                        warp_name = :warpName,
+                                        location = :location,
+                                        show_material = :showMaterial,
+                                        permission = :permission,
+                                        cost = :cost,
+                                        top_slot = :topSlot
                                     where warp_id = :warpId and create_by = :createBy
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .bind(instance)

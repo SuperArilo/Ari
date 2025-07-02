@@ -21,7 +21,9 @@ import com.tty.tool.PermissionUtils;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -137,6 +139,10 @@ public class WarpList extends BasePageGui<ServerWarp> {
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());
+            if (serverWarp.isTopSlot()) {
+                itemMeta.addEnchant(Enchantment.UNBREAKING, 1, true);
+                itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            }
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(dataSlot.get(i), itemStack);
         }

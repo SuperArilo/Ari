@@ -12,7 +12,6 @@ import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
-import com.tty.lib.enum_type.TitleInputType;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
@@ -85,7 +84,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                                 10000 ,
                                 1000));
                 inventory.close();
-                this.addEditInstance(player, OnEdit.build(holder, TitleInputType.RENAME));
+                this.addEditInstance(player, OnEdit.build(holder, type));
                 if (holder.getTask() == null) {
                     CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                         if (this.removeEditInstance(player) != null) {

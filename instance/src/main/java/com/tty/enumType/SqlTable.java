@@ -24,7 +24,7 @@ public enum SqlTable {
                 player_uuid VARCHAR(128) NOT NULL,
                 location VARCHAR(128) NOT NULL,
                 show_material VARCHAR(128) NOT NULL,
-                top_slot boolean NOT NULL DEFAULT false);
+                top_slot boolean NOT NULL DEFAULT 0);
             """),
     Warps("""
                 CREATE TABLE IF NOT EXISTS %swarps (
@@ -35,7 +35,8 @@ public enum SqlTable {
                 location VARCHAR(128) NOT NULL,
                 show_material VARCHAR(128) NOT NULL,
                 permission VARCHAR(128) default NULL,
-                cost INTEGER default 0);
+                cost INTEGER default 0,
+                top_slot boolean NOT NULL DEFAULT 0);
              """),
     Spawn_Location("""
                 CREATE TABLE IF NOT EXISTS %sspawn (

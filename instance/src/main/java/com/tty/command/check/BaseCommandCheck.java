@@ -37,6 +37,7 @@ public class BaseCommandCheck {
     protected boolean hasPermission(CommandSender sender, AriCommand command) {
         if (!PermissionUtils.hasPermission(sender, command.getPermission())) {
             sender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
+            return false;
         }
         return true;
     }

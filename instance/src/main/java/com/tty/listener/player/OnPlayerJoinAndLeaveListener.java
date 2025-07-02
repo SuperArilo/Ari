@@ -50,11 +50,12 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         if(first) {
                             Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
                         }
-
-                        ServerPlayer serverPlayer = new ServerPlayer();
-                        serverPlayer.setPlayerName(player.getName());
-                        serverPlayer.setPlayerUUID(player.getUniqueId().toString());
-                        build.createInstance(serverPlayer);
+                        if (i == null) {
+                            ServerPlayer serverPlayer = new ServerPlayer();
+                            serverPlayer.setPlayerName(player.getName());
+                            serverPlayer.setPlayerUUID(player.getUniqueId().toString());
+                            build.createInstance(serverPlayer);
+                        }
                     } else {
                         if(login) {
                             Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));

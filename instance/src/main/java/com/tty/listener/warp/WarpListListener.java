@@ -10,7 +10,6 @@ import com.tty.command.check.TeleportCheck;
 import com.tty.function.TeleportThread;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
-import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
@@ -86,9 +85,12 @@ public class WarpListListener extends BaseGuiListener {
                                         @Override
                                         public void after() {
                                             //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                            if(!isOwner && !player.isOp() && ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false)) {
+                                            if(!isOwner &&
+                                                    !player.isOp() &&
+                                                    ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) &&
+                                                    !EconomyUtils.isNull()) {
                                                 EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                                String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "0.0");
+                                                String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "null");
                                                 player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
                                             }
                                             TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
@@ -104,6 +106,7 @@ public class WarpListListener extends BaseGuiListener {
                                                 }
                                         }
                                     });
+                    inventory.close();
                 } else if(eventClick.isRightClick()) {
                     if(isOwner || player.isOp()) {
                         inventory.close();
@@ -112,7 +115,6 @@ public class WarpListListener extends BaseGuiListener {
                         player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));
                     }
                 }
-                Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), j -> inventory.close());
             }
             case PREV -> warpList.prev();
             case NEXT -> warpList.next();

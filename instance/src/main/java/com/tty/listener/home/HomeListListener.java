@@ -5,10 +5,10 @@ import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.function.TeleportThread;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
+import com.tty.function.Teleport;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.listener.BaseGuiListener;
 import com.tty.tool.ConfigObjectUtils;
@@ -45,24 +45,22 @@ public class HomeListListener extends BaseGuiListener {
             case DATA -> {
                 String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
                 if (homeId == null) break;
-                Lib.Scheduler.runAsync(Ari.instance, i -> {
-                    Optional<ServerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
-                    if(first.isPresent()) {
-                        ServerHome home = first.get();
-                        ClickType click = event.getClick();
-                        if (click.equals(ClickType.LEFT)) {
-                            TeleportThread.playerToLocation(
-                                            player, ConfigObjectUtils.parseLocation(home.getLocation()))
-                                    .teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
-                        } else if (click.equals(ClickType.RIGHT)) {
-                            Lib.Scheduler.run(Ari.instance, p -> {
-                                inventory.close();
-                                new HomeEditor(home,(Player) event.getWhoClicked()).open();
-                            });
-                        }
-                    }
-                    Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), o -> inventory.close());
-                });
+                Optional<ServerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
+                if(first.isEmpty()) return;
+                ServerHome home = first.get();
+                ClickType click = event.getClick();
+                if (click.equals(ClickType.LEFT)) {
+                    Teleport.create(
+                            player,
+                            ConfigObjectUtils.parseLocation(home.getLocation()),
+                            ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3)).teleport();
+                } else if (click.equals(ClickType.RIGHT)) {
+                    Lib.Scheduler.run(Ari.instance, p -> {
+                        inventory.close();
+                        new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                    });
+                }
+                Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), o -> inventory.close());
             }
             case PREV -> homeList.prev();
             case NEXT -> homeList.next();

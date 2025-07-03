@@ -5,7 +5,7 @@ import com.tty.Ari;
 import com.tty.command.check.TeleportCheck;
 import com.tty.dto.rtp.RtpConfig;
 import com.tty.enumType.FilePath;
-import com.tty.lib.EntityTeleport;
+import com.tty.function.Teleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.Log;
@@ -117,10 +117,7 @@ public class CommandRtp {
                     player.clearTitle();
                     Lib.Scheduler.runAtEntity(Ari.instance, player, b -> {
                         Location targetLocation = new Location(this.world, x + 0.5, finalY, z + 0.5);
-                        boolean teleport = EntityTeleport.teleport(player, targetLocation);
-                        this.sender.sendMessage(TextTool.setHEXColorText(
-                                teleport ? "teleport.success":"base.on-error",
-                                FilePath.Lang));
+                        Teleport.create(player, targetLocation, 0).teleport();
                     }, () -> Log.error("teleport error on " + player.getName()));
                 }
                 this.isRunning = false;

@@ -5,11 +5,11 @@ import com.tty.dto.TeleportStatus;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.command.check.TeleportCheck;
-import com.tty.function.TeleportThread;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.PermissionUtils;
+import com.tty.function.Teleport;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
@@ -18,6 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommandTeleport extends TeleportCheck {
 
@@ -45,13 +46,14 @@ public class CommandTeleport extends TeleportCheck {
         //请求成功，移除该请求
         this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
         TeleportCheck.remove(player, null,TeleportType.PLAYER);
-        TeleportThread teleportThread = switch (status.getAriCommand()) {
-            case TPA -> TeleportThread.playerToPlayer(player, ((Player) this.sender));
-            case TPAHERE -> TeleportThread.playerToPlayer((Player) this.sender, player);
+        Integer value = ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3);
+        Teleport teleport = switch (status.getAriCommand()) {
+            case TPA -> Teleport.create(player, ((Player) this.sender).getLocation(), value);
+            case TPAHERE -> Teleport.create((Player) this.sender, Objects.requireNonNull(player).getLocation(), value);
             default -> null;
         };
-        if (teleportThread != null) {
-            teleportThread.teleport(ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3));
+        if (teleport != null) {
+            teleport.teleport();
         } else {
             this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error", FilePath.Lang));
         }

@@ -2,9 +2,9 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
-import com.tty.function.TeleportThread;
 import com.tty.lib.enum_type.LangType;
 import com.tty.tool.ConfigObjectUtils;
+import com.tty.function.Teleport;
 import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -33,10 +33,11 @@ public class CommandSpawn {
 
     public void convey() {
         if (this.sender instanceof Player player) {
-            TeleportThread.playerToLocation(
+            Teleport.create(
                     player,
-                    player.getWorld().getSpawnLocation())
-                    .teleport(Ari.instance.getConfig().getInt("server.spawn.teleport-delay", 3));
+                    player.getWorld().getSpawnLocation(),
+                    Ari.instance.getConfig().getInt("server.spawn.teleport-delay", 3))
+                    .teleport();
         }
     }
 

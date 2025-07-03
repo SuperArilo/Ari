@@ -5,9 +5,8 @@ import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.function.TeleportCallback;
 import com.tty.command.check.TeleportCheck;
-import com.tty.function.TeleportThread;
+import com.tty.function.Teleport;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.enum_type.FunctionType;
@@ -74,38 +73,32 @@ public class WarpListListener extends BaseGuiListener {
                         }
                     }
                     Location targetLocation = ConfigObjectUtils.parseLocation(instance.getLocation());
-                    TeleportThread.playerToLocation(player,targetLocation)
-                            .teleport(
-                                    ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3),
-                                    new TeleportCallback() {
-                                        @Override
-                                        public void onCancel() {
-                                            TeleportCheck.remove(player, targetLocation,TeleportType.POINT);
-                                        }
-                                        @Override
-                                        public void after() {
-                                            //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                            if(!isOwner &&
-                                                    !player.isOp() &&
-                                                    ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) &&
-                                                    !EconomyUtils.isNull()) {
-                                                EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                                String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "null");
-                                                player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
-                                            }
-                                            TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
-                                        }
-                                        @Override
-                                        public void before(TeleportThread teleportThread) {
-                                            if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
-                                                player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
-                                                teleportThread.cancel();
-                                            }
-                                                if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
-                                                    teleportThread.cancel();
-                                                }
-                                        }
-                                    });
+                    Teleport.create(player,
+                                    targetLocation,
+                                    ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3))
+                                    .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
+                            .before(t -> {
+                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
+                                    player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
+                                    t.cancel();
+                                }
+                                if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
+                                    t.cancel();
+                                }
+                            })
+                            .teleport()
+                            .after(() -> {
+                                //判断是否是地标拥有者或者是不是op，如果是则不扣
+                                if(!isOwner &&
+                                        !player.isOp() &&
+                                        ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) &&
+                                        !EconomyUtils.isNull()) {
+                                    EconomyUtils.withdrawPlayer(player, instance.getCost());
+                                    String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "null");
+                                    player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
+                                }
+                                TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
+                            });
                     inventory.close();
                 } else if(eventClick.isRightClick()) {
                     if(isOwner || player.isOp()) {

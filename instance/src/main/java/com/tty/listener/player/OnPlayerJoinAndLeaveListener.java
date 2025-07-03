@@ -16,10 +16,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class OnPlayerJoinAndLeaveListener implements Listener {
@@ -27,7 +27,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     /**
      * 记录玩家进入服务器的时间戳
      */
-    private static final Map<UUID, Long> playerLoginTimes = new HashMap<>();
+    private static final Map<UUID, Long> PLAYER_LOGIN_TIMES = new ConcurrentHashMap<>();
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
@@ -37,7 +37,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if (first || login) {
             event.joinMessage(null);
         }
-        playerLoginTimes.put(player.getUniqueId(), System.currentTimeMillis());
+        PLAYER_LOGIN_TIMES.put(player.getUniqueId(), System.currentTimeMillis());
         build.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if (i == null || !player.hasPlayedBefore()) {
@@ -74,7 +74,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     }
 
     @EventHandler
-    public void savePlayerData(WorldSaveEvent event) {
+    public void onWorldSave(WorldSaveEvent event) {
         Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
         for (Player onlinePlayer : onlinePlayers) {
             SavePlayerData(onlinePlayer, true);
@@ -87,7 +87,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         playerManager.setExecutionMode(asyncMode);
         String uuid = player.getUniqueId().toString();
         long currentTime = System.currentTimeMillis();
-        Long loginTime = playerLoginTimes.get(player.getUniqueId());
+        Long loginTime = PLAYER_LOGIN_TIMES.get(player.getUniqueId());
         if (loginTime == null) {
             Log.warning("No login time recorded for player: " + player.getName());
             return;
@@ -106,7 +106,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                 .thenAccept(success -> {
                     if (success) {
                         Log.debug("Saved player data: " + player.getName());
-                        playerLoginTimes.remove(player.getUniqueId());
+                        PLAYER_LOGIN_TIMES.remove(player.getUniqueId());
                     } else {
                         Log.error("Failed to save player data: " + player.getName());
                     }

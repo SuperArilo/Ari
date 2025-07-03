@@ -9,7 +9,9 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
+import org.sql2o.connectionsources.ConnectionSource;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -19,7 +21,7 @@ public class SQLInstance {
     public static SQLType sqlType;
     public static Sql2o SESSION_FACTORY;
 
-    public static void start() {
+    public void start() {
         Log.debug(Level.INFO, "Start connecting");
         try {
             sqlType = SQLType.valueOf(Ari.instance.getConfig().getString("data.storage-type", "null").toUpperCase());
@@ -29,8 +31,8 @@ public class SQLInstance {
         }
         Log.debug(Level.INFO, "The database type is " + sqlType.getType());
         switch (sqlType) {
-            case MYSQL -> createMysql();
-            case SQLITE -> createSQLite();
+            case MYSQL -> this.createMysql();
+            case SQLITE -> this.createSQLite();
         }
 
         try (Connection connection = SESSION_FACTORY.open()) {
@@ -42,13 +44,20 @@ public class SQLInstance {
         }
 
     }
-    public static void reconnect() {
+    public void reconnect() {
         Log.debug(Level.INFO, "Connection is closing...");
+        ConnectionSource connectionSource = SQLInstance.SESSION_FACTORY.getConnectionSource();
+        try {
+            java.sql.Connection connection = connectionSource.getConnection();
+            connection.close();
+            Log.debug(Level.INFO, "Connection closed successfully");
+        } catch (SQLException e) {
+            Log.error("close sql connection error", e);
+        }
         SQLInstance.SESSION_FACTORY = null;
-        Log.debug(Level.INFO, "Connection closed successfully");
-        start();
+        this.start();
     }
-    protected static void createMysql() {
+    protected void createMysql() {
         FileConfiguration config = Ari.instance.getConfig();
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
@@ -59,16 +68,16 @@ public class SQLInstance {
         hikariDataSource.setMinimumIdle(config.getInt("data.minimum-idle"));
         hikariDataSource.setMaxLifetime(config.getInt("data.connection-timeout"));
         hikariDataSource.setKeepaliveTime(config.getLong("data.keepalive-time"));
-        setLiteFactory(hikariDataSource);
+        this.setLiteFactory(hikariDataSource);
     }
-    protected static void createSQLite() {
+    protected void createSQLite() {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(sqlType.getDriver());
         hikariDataSource.setJdbcUrl("jdbc:sqlite:" + Ari.instance.getDataFolder().getAbsolutePath() + "/" + "AriDB.db");
-        setLiteFactory(hikariDataSource);
+        this.setLiteFactory(hikariDataSource);
     }
 
-    protected static void setLiteFactory(HikariDataSource dataSource) {
+    protected void setLiteFactory(HikariDataSource dataSource) {
         SESSION_FACTORY = new Sql2o(dataSource);
         Map<String, String> colMaps = new HashMap<>();
         colMaps.put("player_name", "playerName");

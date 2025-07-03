@@ -41,6 +41,7 @@ public class Ari extends JavaPlugin {
 
     public static Ari instance;
     public static Boolean debug = false;
+    public SQLInstance sqlInstance;
     public CommandAlias commandAlias;
     @Override
     public void onLoad() {
@@ -64,7 +65,8 @@ public class Ari extends JavaPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new HomePAPI().register();
         }
-        SQLInstance.start();
+        this.sqlInstance = new SQLInstance();
+        this.sqlInstance.start();
 
         ConfigObjectUtils.setRtpWorldConfig();
 

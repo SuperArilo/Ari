@@ -6,12 +6,12 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class BaseAction {
 
-    public static final Map<Player, BaseAction> PLAYER_ACTION_MAP = new HashMap<>();
+    public static final Map<Player, BaseAction> PLAYER_ACTION_MAP = new ConcurrentHashMap<>();
 
     public final Player action_player;
     public CancellableTask task;

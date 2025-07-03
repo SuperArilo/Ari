@@ -122,8 +122,6 @@ public class CommandRtp {
                                 teleport ? "teleport.success":"base.on-error",
                                 FilePath.Lang));
                     }, () -> Log.error("teleport error on " + player.getName()));
-                } else {
-                    Log.debug(" not safe skip...");
                 }
                 this.isRunning = false;
                 Log.debug("search time: " + (System.currentTimeMillis() -l) + "ms");

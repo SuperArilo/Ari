@@ -4,12 +4,10 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.lib.EntityTeleport;
-import com.tty.lib.Lib;
+import com.tty.function.Teleport;
 import com.tty.lib.tool.Log;
 import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -26,7 +24,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class OnPlayerJoinAndLeaveListener implements Listener {
 
-
     /**
      * 记录玩家进入服务器的时间戳
      */
@@ -40,15 +37,12 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if (first || login) {
             event.joinMessage(null);
         }
-        long time = System.currentTimeMillis();
+        playerLoginTimes.put(player.getUniqueId(), System.currentTimeMillis());
         build.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if (i == null || !player.hasPlayedBefore()) {
                         if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
-                            Lib.Scheduler.runAtEntity(Ari.instance, player, a -> {
-                                Location spawnLocation = player.getWorld().getSpawnLocation();
-                                EntityTeleport.teleport(player, spawnLocation);
-                            }, () -> {});
+                            Teleport.create(player, player.getWorld().getSpawnLocation(), 0).teleport();
                         }
                         if(first) {
                             Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
@@ -64,8 +58,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
                         }
                     }
+                }).exceptionally(i -> {
+                   Log.error("get player data error", i);
+                   return null;
                 });
-        playerLoginTimes.put(player.getUniqueId(), time);
     }
 
     @EventHandler

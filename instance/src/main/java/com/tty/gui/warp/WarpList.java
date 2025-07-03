@@ -44,7 +44,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     public CompletableFuture<List<ServerWarp>> requestData() {
-        return new WarpManager().asyncGetList(Page.create(this.pageNum, this.pageSize));
+        return new WarpManager(true).getList(Page.create(this.pageNum, this.pageSize));
     }
 
     @Override

@@ -46,15 +46,7 @@ public class SQLInstance {
     }
     public void reconnect() {
         Log.debug(Level.INFO, "Connection is closing...");
-        ConnectionSource connectionSource = SQLInstance.SESSION_FACTORY.getConnectionSource();
-        try {
-            java.sql.Connection connection = connectionSource.getConnection();
-            connection.close();
-            Log.debug(Level.INFO, "Connection closed successfully");
-        } catch (SQLException e) {
-            Log.error("close sql connection error", e);
-        }
-        SQLInstance.SESSION_FACTORY = null;
+        close();
         this.start();
     }
     protected void createMysql() {
@@ -102,7 +94,14 @@ public class SQLInstance {
         return Ari.instance.getConfig().getString("data.table-prefix", "ari");
     }
 
-
-
+    public static void close() {
+        try {
+            SQLInstance.SESSION_FACTORY.getConnectionSource().getConnection().close();
+            Log.debug(Level.INFO, "Connection closed successfully");
+        } catch (SQLException e) {
+            Log.error("close sql connection error", e);
+        }
+        SQLInstance.SESSION_FACTORY = null;
+    }
 
 }

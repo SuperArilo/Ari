@@ -6,10 +6,14 @@ import com.tty.lib.dto.Page;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class SpawnManager implements BaseManager<ServerSpawn>{
+public class SpawnManager extends BaseManager<ServerSpawn> {
+
+    public SpawnManager(boolean isAsync) {
+        super(isAsync);
+    }
 
     @Override
-    public CompletableFuture<List<ServerSpawn>> asyncGetList(Page page) {
+    public CompletableFuture<List<ServerSpawn>> getList(Page page) {
         return null;
     }
 
@@ -22,7 +26,6 @@ public class SpawnManager implements BaseManager<ServerSpawn>{
     public CompletableFuture<Boolean> deleteInstance(ServerSpawn instance) {
         return null;
     }
-
 
     @Override
     public CompletableFuture<Boolean> modify(ServerSpawn instance) {

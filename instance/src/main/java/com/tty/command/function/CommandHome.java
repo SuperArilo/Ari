@@ -30,8 +30,8 @@ public class CommandHome {
     public void setHome(String homeId) {
         if(FormatUtils.checkIdName(homeId)) {
             Player player = (Player) this.sender;
-            HomeManager homeManager = new HomeManager(player);
-            homeManager.asyncGetList(Page.create(1, Integer.MAX_VALUE))
+            HomeManager homeManager = new HomeManager(player, true);
+            homeManager.getList(Page.create(1, Integer.MAX_VALUE))
                     .thenAccept(serverHomes -> {
                         if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
                             this.sender.sendMessage(TextTool.setHEXColorText("function.home.exceeds", FilePath.Lang));

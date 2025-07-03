@@ -55,7 +55,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         if(type == null) return;
 
         WarpEditor warpEditor = (WarpEditor) holder.getMeta();
-        WarpManager warpManager = new WarpManager();
+        WarpManager warpManager = new WarpManager(true);
         switch (type) {
             case REBACK -> {
                 inventory.close();

@@ -45,7 +45,7 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     public CompletableFuture<List<ServerHome>> requestData() {
-        return new HomeManager(this.player).asyncGetList(Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()));
+        return new HomeManager(this.player, true).getList(Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()));
     }
 
     @Override

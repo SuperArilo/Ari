@@ -56,7 +56,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
         if (type == null) return;
 
         HomeEditor homeEditor = (HomeEditor) holder.getMeta();
-        HomeManager homeManager = new HomeManager(player);
+        HomeManager homeManager = new HomeManager(player, true);
         switch (type) {
             case REBACK -> {
                 inventory.close();

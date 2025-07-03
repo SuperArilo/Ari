@@ -33,8 +33,8 @@ public class CommandWarp {
     public void setWarp(String warpId) {
         if(FormatUtils.checkIdName(warpId)) {
             Player player = (Player) this.sender;
-            WarpManager warpManager = new WarpManager();
-            warpManager.asyncGetCountByPlayer(player.getUniqueId().toString())
+            WarpManager warpManager = new WarpManager(true);
+            warpManager.getCountByPlayer(player.getUniqueId().toString())
                 .thenAccept(serverWarps -> {
                     if (serverWarps.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "warp")) {
                         this.sender.sendMessage(TextTool.setHEXColorText("function.warp.exceeds", FilePath.Lang));

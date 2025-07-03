@@ -1,8 +1,6 @@
 package com.tty.function;
 
-import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
-import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
 import com.tty.tool.SQLInstance;
 import org.sql2o.Connection;
@@ -10,35 +8,36 @@ import org.sql2o.Connection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class PlayerManager implements BaseManager<ServerPlayer> {
+public class PlayerManager extends BaseManager<ServerPlayer> {
+
+    public PlayerManager(boolean isAsync) {
+        super(isAsync);
+    }
 
     @Override
-    public CompletableFuture<List<ServerPlayer>> asyncGetList(Page page) {
+    public CompletableFuture<List<ServerPlayer>> getList(Page page) {
         return null;
     }
 
-    public CompletableFuture<ServerPlayer> asyncGetInstance(String uuid) {
-        CompletableFuture<ServerPlayer> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+    public CompletableFuture<ServerPlayer> getInstance(String uuid) {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                ServerPlayer serverPlayer = connection.createQuery("""
+                return connection.createQuery("""
                                     select * from %splayers
                                     where player_uuid = :uuid
                                 """.formatted(SQLInstance.getTablePrefix())).addParameter("uuid", uuid)
                         .executeAndFetchFirst(ServerPlayer.class);
-                future.complete(serverPlayer);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
+
             }
         });
-        return future;
     }
+
+
 
 
     @Override
     public CompletableFuture<Boolean> createInstance(ServerPlayer instance) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 int result = connection.createQuery("""
                                     insert into %splayers
@@ -47,12 +46,9 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
                                     (:playerName, :playerUUID, :firstLoginTime, :lastLoginOffTime, :totalOnlineTime, :namePrefix, :nameSuffix)
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .bind(instance).executeUpdate().getResult();
-                future.complete(result == 1);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
+                return result == 1;
             }
         });
-        return future;
     }
 
     @Override
@@ -62,8 +58,7 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
 
     @Override
     public CompletableFuture<Boolean> modify(ServerPlayer instance) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 int result = connection.createQuery("""
                                     update %splayers set
@@ -77,11 +72,8 @@ public class PlayerManager implements BaseManager<ServerPlayer> {
                         .bind(instance)
                         .executeUpdate()
                         .getResult();
-                future.complete(result == 1);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
+                return result == 1;
             }
         });
-        return future;
     }
 }

@@ -10,14 +10,17 @@ import org.sql2o.Connection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-public class WarpManager implements BaseManager<ServerWarp> {
+public class WarpManager extends BaseManager<ServerWarp> {
+
+    public WarpManager(boolean isAsync) {
+        super(isAsync);
+    }
 
     @Override
-    public CompletableFuture<List<ServerWarp>> asyncGetList(Page page) {
-        CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+    public CompletableFuture<List<ServerWarp>> getList(Page page) {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                List<ServerWarp> serverWarps = connection.createQuery("""
+                return connection.createQuery("""
                                     select * from %swarps
                                     order by top_slot desc
                                     limit :limit offset :offset
@@ -25,48 +28,34 @@ public class WarpManager implements BaseManager<ServerWarp> {
                         .addParameter("limit", page.getLimit())
                         .addParameter("offset", page.getOffset())
                         .executeAndFetch(ServerWarp.class);
-                future.complete(serverWarps);
-            }  catch (Exception e) {
-                future.completeExceptionally(e);
             }
         });
-        return future;
     }
 
-    public CompletableFuture<List<ServerWarp>> asyncGetCountByPlayer(String uuid) {
-        CompletableFuture<List<ServerWarp>> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+    public CompletableFuture<List<ServerWarp>> getCountByPlayer(String uuid) {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                List<ServerWarp> serverWarps = connection.createQuery("""
+                return connection.createQuery("""
                                     select * from %swarps
                                     where create_by = :uuid
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("uuid", uuid)
                         .executeAndFetch(ServerWarp.class);
-                future.complete(serverWarps);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
             }
         });
-        return future;
     }
 
-    public CompletableFuture<ServerWarp> asyncGetInstance(String warpId) {
-        CompletableFuture<ServerWarp> future = new CompletableFuture<>();
-        Lib.Scheduler.runAsync(Ari.instance, i -> {
+    public CompletableFuture<ServerWarp> getInstance(String warpId) {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
-                ServerWarp serverWarp = connection.createQuery("""
+                return connection.createQuery("""
                                     select * from %swarps
                                     where warp_id = :warpId
                                 """.formatted(SQLInstance.getTablePrefix()))
                         .addParameter("warpId", warpId)
                         .executeAndFetchFirst(ServerWarp.class);
-                future.complete(serverWarp);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
             }
         });
-        return future;
     }
 
     @Override
@@ -112,8 +101,7 @@ public class WarpManager implements BaseManager<ServerWarp> {
 
     @Override
     public CompletableFuture<Boolean> modify(ServerWarp instance) {
-        CompletableFuture<Boolean> future = new CompletableFuture<>();
-        Lib.Scheduler.run(Ari.instance, i -> {
+        return this.executeTask(() -> {
             try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                 int update = connection.createQuery("""
                                     update %swarps set
@@ -128,11 +116,8 @@ public class WarpManager implements BaseManager<ServerWarp> {
                         .bind(instance)
                         .executeUpdate()
                         .getResult();
-                future.complete(update == 1);
-            } catch (Exception e) {
-                future.completeExceptionally(e);
+                return update == 1;
             }
         });
-        return future;
     }
 }

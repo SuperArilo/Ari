@@ -30,11 +30,13 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.Collection;
 
 
 public class Ari extends JavaPlugin {
@@ -74,7 +76,12 @@ public class Ari extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        super.onDisable();
+        Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
+        for (Player player : onlinePlayers) {
+            OnPlayerJoinAndLeaveListener.SavePlayerData(player, false);
+        }
+
+        SQLInstance.close();
     }
 
     private void registerCommands() {

@@ -21,9 +21,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 
 public class OnPlayerJoinAndLeaveListener implements Listener {
+
+
     /**
      * 记录玩家进入服务器的时间戳
      */
@@ -33,12 +36,12 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
         boolean login = Ari.instance.getConfig().getBoolean("server.message.on-login", false);
         Player player = event.getPlayer();
-        PlayerManager build = new PlayerManager();
+        PlayerManager build = new PlayerManager(true);
         if (first || login) {
             event.joinMessage(null);
         }
         long time = System.currentTimeMillis();
-        build.asyncGetInstance(player.getUniqueId().toString())
+        build.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if (i == null || !player.hasPlayedBefore()) {
                         if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
@@ -71,30 +74,51 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
             event.quitMessage(TextTool.setHEXColorText("server.message.on-leave", FilePath.Lang, player));
         }
-        this.saveData(player);
+        SavePlayerData(player, true);
     }
 
     @EventHandler
     public void savePlayerData(WorldSaveEvent event) {
         Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
         for (Player onlinePlayer : onlinePlayers) {
-            this.saveData(onlinePlayer);
+            SavePlayerData(onlinePlayer, true);
         }
     }
 
-    private void saveData(Player player)  {
-        PlayerManager manager = new PlayerManager();
-        manager.asyncGetInstance(player.getUniqueId().toString())
-                .thenAccept(p -> {
-                    long l = System.currentTimeMillis();
-                    if(p == null) {
-                        Log.warning("player: " + player.getUniqueId() + " data is null, exiting");
-                        return;
+    public static void SavePlayerData(Player player, boolean asyncMode) {
+        // 临时设置执行模式（针对本次调用）
+        PlayerManager playerManager = new PlayerManager(asyncMode);
+        playerManager.setExecutionMode(asyncMode);
+        String uuid = player.getUniqueId().toString();
+        long currentTime = System.currentTimeMillis();
+        Long loginTime = playerLoginTimes.get(player.getUniqueId());
+        if (loginTime == null) {
+            Log.warning("No login time recorded for player: " + player.getName());
+            return;
+        }
+        long onlineDuration = currentTime - loginTime;
+        playerManager.getInstance(uuid)
+                .thenCompose(serverPlayer -> {
+                    if (serverPlayer == null) {
+                        Log.error("Player data not found: " + uuid);
+                        return CompletableFuture.completedFuture(false);
                     }
-                    p.setLastLoginOffTime(l);
-                    p.setTotalOnlineTime(p.getTotalOnlineTime() + l - playerLoginTimes.get(player.getUniqueId()));
-                    manager.modify(p);
-                    playerLoginTimes.remove(player.getUniqueId());
-                });
+                    serverPlayer.setLastLoginOffTime(currentTime);
+                    serverPlayer.setTotalOnlineTime(serverPlayer.getTotalOnlineTime() + onlineDuration);
+                    return playerManager.modify(serverPlayer);
+                })
+                .thenAccept(success -> {
+                    if (success) {
+                        Log.debug("Saved player data: " + player.getName());
+                        playerLoginTimes.remove(player.getUniqueId());
+                    } else {
+                        Log.error("Failed to save player data: " + player.getName());
+                    }
+                })
+                .exceptionally(ex -> {
+                    Log.error("Error saving player data for " + player.getName(), ex);
+                    return null;
+                })
+                .whenComplete((result, ex) -> playerManager.setExecutionMode(playerManager.isAsync));
     }
 }

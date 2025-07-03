@@ -11,7 +11,6 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.RandomGeneratorUtils;
 import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.PlayerStatusCheck;
 import com.tty.tool.TextTool;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -61,7 +60,7 @@ public class CommandRtp {
 
         if (!(sender instanceof Player player)) return;
 
-        if (!PlayerStatusCheck.playerStatusCheck(player) && !this.sender.isOp()) return;
+        if ((player.isSleeping() || player.isDeeplySleeping() || player.isFlying()) && !this.sender.isOp()) return;
 
         if (!TeleportCheck.preCheckStatus(
                 player,
@@ -151,6 +150,12 @@ public class CommandRtp {
     }
     private boolean isLocationSafe(Chunk chunk, int chunkX, int chunkY, int chunkZ) {
 
+        //判断Y轴高度合不合法
+        if (chunkY < chunk.getWorld().getMinHeight()) {
+            Log.debug("rtp: illegal Y-axis height.");
+            return false;
+        }
+
         Block block = chunk.getBlock(chunkX, chunkY, chunkZ);
 
         //身体检查
@@ -165,18 +170,27 @@ public class CommandRtp {
         Material behind = block.getRelative(0, -1, 0).getType();
 
         if (!isSafeStandingBlock(feet)) {
+            Log.debug("standing block illegal.");
             return false;
         }
 
         if (isSolid(body) ||
                 isDangerous(body) || isDangerous(head) ||
                 isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
+            Log.debug("the blocks around the player are illegal.");
             return false;
         }
 
-        if (isDangerous(feet)) return false;
+        if (isDangerous(feet)) {
+            Log.debug("feet block is dangerous.");
+            return false;
+        }
+        if (chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir()) {
+            Log.debug("feet block illegal.");
+            return false;
+        }
 
-        return !chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir();
+        return true;
 
     }
 

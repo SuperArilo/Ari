@@ -8,7 +8,9 @@ import com.tty.lib.Lib;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.Bisected;
@@ -17,6 +19,8 @@ import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import java.util.List;
 
@@ -125,10 +129,28 @@ public class PlayerSit extends BaseAction {
 
     private boolean checkTop() {
         Location location = this.actionBlock.getLocation();
-        //判断sit位置上方是否村子有效空间
-        //判断是否已经有玩家sit到指定位置
-        return location.clone().add(0, 1, 0).getBlock().isEmpty() &&
-                location.getNearbyLivingEntities(1).stream().noneMatch(i -> i instanceof Player);
+        World world = location.getWorld();
+
+        if (!location.clone().add(0, 2, 0).getBlock().isEmpty()) {
+            return false;
+        }
+
+        double x = location.getX();
+        double y = location.getY();
+        double z = location.getZ();
+        BoundingBox seatBox = BoundingBox.of(
+                new Vector(x + 0.1, y + 1, z + 0.1),
+                new Vector(x + 0.9, y + 1.8, z + 0.9)
+        );
+
+        for (Entity entity : world.getNearbyEntities(seatBox)) {
+            if (entity instanceof Player player &&
+                    !player.equals(this.action_player) &&
+                    player.getGameMode() != GameMode.SPECTATOR) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private float getYawFromBlockFace(BlockFace face) {

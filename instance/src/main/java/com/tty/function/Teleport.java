@@ -3,6 +3,7 @@ package com.tty.function;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
+import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigObjectUtils;
@@ -29,8 +30,8 @@ public class Teleport {
     private final int delay;
     protected boolean status = true;
 
-    private final Location entityInitLocation;
-    private final double entityInitHealth;
+    private final Location initLocation;
+    private final double initHealth;
 
     protected Consumer<Teleport> before;
     protected Runnable after = () -> {};
@@ -39,8 +40,8 @@ public class Teleport {
 
     protected Teleport(Player player, Location targetLocation, int delay) {
         this.player = player;
-        this.entityInitHealth = player.getHealth();
-        this.entityInitLocation = player.getLocation();
+        this.initHealth = player.getHealth();
+        this.initLocation = player.getLocation();
         this.targetLocation = targetLocation;
         this.delay = Math.max(delay, 0);
 
@@ -118,6 +119,9 @@ public class Teleport {
                                 PlayerTeleportEvent.TeleportCause.PLUGIN)
                         .thenAccept(p -> {
                             if (p) {
+                                if (ServerPlatform.isFolia()) {
+                                    Bukkit.getPluginManager().callEvent(new PlayerTeleportEvent(threadPlayer, this.initLocation,this.targetLocation, PlayerTeleportEvent.TeleportCause.PLUGIN));
+                                }
                                 threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             }
                             this.after.run();
@@ -137,7 +141,7 @@ public class Teleport {
      * @param entity 被检查的实体
      */
     private boolean hasLostHealth(Damageable entity) {
-        return entity.getHealth() < this.entityInitHealth;
+        return entity.getHealth() < this.initHealth;
     }
 
     /**
@@ -146,7 +150,7 @@ public class Teleport {
      */
     protected boolean hasMoved(Damageable entity) {
         Location currentLocation = entity.getLocation();
-        return makePositive(this.entityInitLocation.getX() - currentLocation.getX()) + makePositive(this.entityInitLocation.getY() - currentLocation.getY()) + makePositive(this.entityInitLocation.getZ() - currentLocation.getZ()) > 0.1;
+        return makePositive(this.initLocation.getX() - currentLocation.getX()) + makePositive(this.initLocation.getY() - currentLocation.getY()) + makePositive(this.initLocation.getZ() - currentLocation.getZ()) > 0.1;
     }
 
     protected double makePositive(double d) {

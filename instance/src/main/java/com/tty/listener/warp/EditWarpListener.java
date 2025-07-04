@@ -130,9 +130,9 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = warpManager.modify(warpEditor.currentWarp);
                 future.thenAccept(status -> {
+                    clickMeta.lore(List.of(TextTool.setHEXColorText(status ? "base.save.done":"base.save.error", FilePath.Lang)));
+                    clickItem.setItemMeta(clickMeta);
                     if(status) {
-                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
-                        clickItem.setItemMeta(clickMeta);
                         Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
                             clickMeta.lore(List.of());
                             clickItem.setItemMeta(clickMeta);
@@ -142,10 +142,6 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     Log.error("saving warp error", i);
                     clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
                     clickItem.setItemMeta(clickMeta);
-                    Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
-                        clickMeta.lore(List.of());
-                        clickItem.setItemMeta(clickMeta);
-                    }, 20L);
                     return null;
                 });
             }

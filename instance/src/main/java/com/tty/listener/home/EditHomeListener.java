@@ -131,23 +131,22 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 });
             }
             case SAVE -> {
-                //save
-                Log.debug("start saving home");
                 clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = homeManager.modify(homeEditor.currentHome);
                 future.thenAccept(status -> {
-                    if(status) {
-                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.done", FilePath.Lang)));
+                    clickMeta.lore(List.of(TextTool.setHEXColorText(status ? "base.save.done":"base.save.error", FilePath.Lang)));
+                    clickItem.setItemMeta(clickMeta);
+                    Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
+                        clickMeta.lore(List.of());
                         clickItem.setItemMeta(clickMeta);
-                        Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
-                            clickMeta.lore(List.of());
-                            clickItem.setItemMeta(clickMeta);
-                        }, 20);
-                    } else {
-                        clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
-                        Log.error("save home error");
-                    }
+                    }, 20);
+                }).exceptionally(i -> {
+                    Log.error("save home error", i);
+                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                    clickItem.setItemMeta(clickMeta);
+                    player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+                    return null;
                 });
             }
         }

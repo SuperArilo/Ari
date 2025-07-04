@@ -10,7 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class CommandTp {
+public class CommandTp extends TeleportCheck {
 
     private final CommandSender sender;
     private final String targetPlayerName;
@@ -21,7 +21,7 @@ public class CommandTp {
     }
 
     public void tp() {
-        if (!TeleportCheck.preCheck(this.sender, this.targetPlayerName)) return;
+        if (!this.preCheck(this.sender, this.targetPlayerName)) return;
         Player targetPlayer = Bukkit.getPlayer(this.targetPlayerName);
         if (targetPlayer == null) return;
         Lib.Scheduler.runAtEntity(

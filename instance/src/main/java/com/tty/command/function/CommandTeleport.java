@@ -31,12 +31,12 @@ public class CommandTeleport extends TeleportCheck {
     }
 
     public void tpa() {
-        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     public void tpaaccept() {
-        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
@@ -60,7 +60,7 @@ public class CommandTeleport extends TeleportCheck {
     }
 
     public void tparefuse() {
-        if(!TeleportCheck.preCheck(this.sender, this.playerName)) return;
+        if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if(player == null) {
             this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));

@@ -78,9 +78,8 @@ public class Ari extends JavaPlugin {
     public void onDisable() {
         Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
         for (Player player : onlinePlayers) {
-            OnPlayerJoinAndLeaveListener.SavePlayerData(player, false);
+            OnPlayerJoinAndLeaveListener.SavePlayerData(player, false, true);
         }
-
         SQLInstance.close();
     }
 

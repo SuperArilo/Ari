@@ -70,18 +70,24 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
             event.quitMessage(TextTool.setHEXColorText("server.message.on-leave", FilePath.Lang, player));
         }
-        SavePlayerData(player, true);
+        SavePlayerData(player, true, true);
     }
 
     @EventHandler
     public void onWorldSave(WorldSaveEvent event) {
         Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
         for (Player onlinePlayer : onlinePlayers) {
-            SavePlayerData(onlinePlayer, true);
+            SavePlayerData(onlinePlayer, true, false);
         }
     }
 
-    public static void SavePlayerData(Player player, boolean asyncMode) {
+    /**
+     * 保存玩家在线时长数据数据
+     * @param player 被保存的玩家
+     * @param asyncMode 保存模式。同步和异步
+     * @param needRemove 保存完成是否移除玩家进服时间
+     */
+    public static void SavePlayerData(Player player, boolean asyncMode, boolean needRemove) {
         // 临时设置执行模式（针对本次调用）
         PlayerManager playerManager = new PlayerManager(asyncMode);
         playerManager.setExecutionMode(asyncMode);
@@ -106,7 +112,9 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                 .thenAccept(success -> {
                     if (success) {
                         Log.debug("Saved player data: " + player.getName());
-                        PLAYER_LOGIN_TIMES.remove(player.getUniqueId());
+                        if (needRemove) {
+                            PLAYER_LOGIN_TIMES.remove(player.getUniqueId());
+                        }
                     } else {
                         Log.error("Failed to save player data: " + player.getName());
                     }

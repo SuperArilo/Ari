@@ -34,6 +34,7 @@ chat:
 rtp:
   enable: true
   delay: 3
+  worlds:
 action:
   sit:
     enable: true

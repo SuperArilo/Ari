@@ -3,10 +3,14 @@ package com.tty.function;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
+import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.Log;
+import com.tty.tool.ConfigObjectUtils;
 import com.tty.tool.TextTool;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -35,7 +39,7 @@ public class Teleport {
         this.entityInitHealth = player.getHealth();
         this.entityInitLocation = player.getLocation();
         this.targetLocation = targetLocation;
-        this.delay = delay;
+        this.delay = Math.max(delay, 0);
     }
     public Teleport aborted(Runnable runnable) {
         this.aborted = runnable;
@@ -46,9 +50,8 @@ public class Teleport {
         return this;
     }
 
-    public Teleport after(Runnable runnable) {
-        runnable.run();
-        return this;
+    public void after(Runnable runnable) {
+        this.after = runnable;
     }
 
     public Teleport teleport() {
@@ -57,7 +60,7 @@ public class Teleport {
         }
         AtomicInteger timerIndex = new AtomicInteger();
         if (this.player.isOp()) {
-            timerIndex.set(1);
+            timerIndex.set(0);
         } else {
             timerIndex.set(delay);
             this.player.sendMessage(TextTool.setHEXColorText("teleport.ing", FilePath.Lang));
@@ -82,14 +85,19 @@ public class Teleport {
                 return;
             }
 
-            Log.debug("start time: " + timerIndex.get() + "s");
-
-            timerIndex.decrementAndGet();
-            if (timerIndex.get() < 0) {
-                timerIndex.set(0);
+            if (timerIndex.get() > 0) {
+                threadPlayer.showTitle(TextTool.setPlayerTitle(
+                        ConfigObjectUtils.getValue("teleport.title.main", FilePath.Lang.getName(), String.class, "null"),
+                        ConfigObjectUtils.getValue("teleport.title.sub-title", FilePath.Lang.getName(), String.class, "null")
+                                .replace(LangType.TELEPORTDELAY.getType(), String.valueOf(timerIndex.get())),
+                        200,
+                        1000,
+                        200));
+                timerIndex.decrementAndGet();
+                return;
+            } else {
+                threadPlayer.clearTitle();
             }
-
-            if (timerIndex.get() != 0) return;
             t.cancel();
             Lib.Scheduler.runAtEntity(Ari.instance,
                     threadPlayer,
@@ -103,6 +111,9 @@ public class Teleport {
                         threadPlayer.teleportAsync(this.targetLocation,
                                 PlayerTeleportEvent.TeleportCause.PLUGIN)
                         .thenAccept(p -> {
+                            if (p) {
+                                threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
+                            }
                             this.after.run();
                             threadPlayer.sendMessage(TextTool.setHEXColorText(p ? "teleport.success":"function.tpa.error", FilePath.Lang));
                         });

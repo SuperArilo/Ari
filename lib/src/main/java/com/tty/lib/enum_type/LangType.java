@@ -16,7 +16,8 @@ public enum LangType {
     SPAWNLOCATION("[SpawnLocation]"),
     SOURCEDISPLAYNAME("[SourceDisplayNane]"),
     CHATMESSAGE("[Message]"),
-    RTPSEARCHCOUNT("[RtpSearchCount]");
+    RTPSEARCHCOUNT("[RtpSearchCount]"),
+    TELEPORTDELAY("[TeleportDelay]");
     private final String type;
 
     LangType(String type) {

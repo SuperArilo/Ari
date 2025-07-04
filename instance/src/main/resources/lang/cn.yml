@@ -25,6 +25,9 @@ base:
   permission:
     no-permission: '&4没有权限'
 teleport:
+  title:
+    main: '请不要移动...'
+    sub-title: '&6[TeleportDelay]'
   ing: '传送过程中！请不要移动...'
   success: '传送成功！'
   break: '&4传送过程中被阻断或者取消'

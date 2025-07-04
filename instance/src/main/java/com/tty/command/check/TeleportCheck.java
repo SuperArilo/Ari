@@ -117,7 +117,14 @@ public class TeleportCheck {
         Lib.Scheduler.runLater(Ari.instance, i -> remove(player, location, TeleportType.POINT), delay);
     }
 
-    public static boolean preCheck(CommandSender sender, String targetPlayerName) {
+    /**
+     * 预先检查发起者和被发起者是否在游戏里发起，目标玩家是否在线
+     * @param sender 指令发起者
+     * @param targetPlayerName 目标玩家
+     * @return 返回检查结果 true 通过， false 失败
+     */
+
+    public boolean preCheck(CommandSender sender, String targetPlayerName) {
         if(!(sender instanceof Player)) {
             sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
             return false;

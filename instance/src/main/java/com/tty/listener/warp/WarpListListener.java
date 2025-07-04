@@ -76,7 +76,6 @@ public class WarpListListener extends BaseGuiListener {
                     Teleport.create(player,
                                     targetLocation,
                                     ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3))
-                                    .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
                             .before(t -> {
                                 if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
                                     player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
@@ -86,6 +85,7 @@ public class WarpListListener extends BaseGuiListener {
                                     t.cancel();
                                 }
                             })
+                            .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
                             .teleport()
                             .after(() -> {
                                 //判断是否是地标拥有者或者是不是op，如果是则不扣

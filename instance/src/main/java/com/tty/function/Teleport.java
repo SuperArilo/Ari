@@ -20,6 +20,9 @@ import java.util.function.Consumer;
 
 public class Teleport {
 
+    private final String title;
+    private final String subTitle;
+
     private final Player player;
     private final Location targetLocation;
 
@@ -40,6 +43,10 @@ public class Teleport {
         this.entityInitLocation = player.getLocation();
         this.targetLocation = targetLocation;
         this.delay = Math.max(delay, 0);
+
+        this.title = ConfigObjectUtils.getValue("teleport.title.main", FilePath.Lang.getName(), String.class, "null");
+        this.subTitle = ConfigObjectUtils.getValue("teleport.title.sub-title", FilePath.Lang.getName(), String.class, "null");
+
     }
     public Teleport aborted(Runnable runnable) {
         this.aborted = runnable;
@@ -87,9 +94,8 @@ public class Teleport {
 
             if (timerIndex.get() > 0) {
                 threadPlayer.showTitle(TextTool.setPlayerTitle(
-                        ConfigObjectUtils.getValue("teleport.title.main", FilePath.Lang.getName(), String.class, "null"),
-                        ConfigObjectUtils.getValue("teleport.title.sub-title", FilePath.Lang.getName(), String.class, "null")
-                                .replace(LangType.TELEPORTDELAY.getType(), String.valueOf(timerIndex.get())),
+                        this.title,
+                        this.subTitle.replace(LangType.TELEPORTDELAY.getType(), String.valueOf(timerIndex.get())),
                         200,
                         1000,
                         200));

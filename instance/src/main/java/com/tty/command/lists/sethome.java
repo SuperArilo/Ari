@@ -4,7 +4,8 @@ import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandHome;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -21,7 +22,7 @@ public class sethome extends BaseCommandCheck implements TabExecutor {
         if (this.quickCheck(commandSender, AriCommand.SETHOME) && strings.length == 1) {
             new CommandHome(commandSender).setHome(strings[0]);
         } else {
-            commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
         }
         return true;
     }

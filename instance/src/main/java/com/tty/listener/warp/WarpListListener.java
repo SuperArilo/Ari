@@ -12,6 +12,7 @@ import com.tty.gui.warp.WarpList;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseGuiListener;
 import com.tty.tool.*;
@@ -46,7 +47,7 @@ public class WarpListListener extends BaseGuiListener {
         CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
         assert holder != null;
 
-        FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
+        FunctionType type = ConfigUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
         if(type == null) return;
         Player player = holder.getPlayer();
         WarpList warpList = (WarpList) holder.getMeta();
@@ -68,17 +69,17 @@ public class WarpListListener extends BaseGuiListener {
                     if(permission != null && !permission.isEmpty()) {
                         boolean hasPermission = PermissionUtils.hasPermission(player, permission);
                         if (!hasPermission && !isOwner) {
-                            player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-teleport", FilePath.Lang));
+                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.warp.no-permission-teleport", FilePath.Lang)));
                             return;
                         }
                     }
-                    Location targetLocation = ConfigObjectUtils.parseLocation(instance.getLocation());
+                    Location targetLocation = ConfigUtils.parseLocation(instance.getLocation());
                     Teleport.create(player,
                                     targetLocation,
-                                    ConfigObjectUtils.getValue("main.teleport.delay", FilePath.WarpConfig.getName(), Integer.class, 3))
+                                    ConfigUtils.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
                             .before(t -> {
-                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, true)) {
-                                    player.sendMessage(TextTool.setHEXColorText("function.warp.not-enough-money", FilePath.Lang));
+                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
+                                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.warp.not-enough-money", FilePath.Lang)));
                                     t.cancel();
                                 }
                                 if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
@@ -91,11 +92,11 @@ public class WarpListListener extends BaseGuiListener {
                                 //判断是否是地标拥有者或者是不是op，如果是则不扣
                                 if(!isOwner &&
                                         !player.isOp() &&
-                                        ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) &&
+                                        ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
                                         !EconomyUtils.isNull()) {
                                     EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                    String value = ConfigObjectUtils.getValue("teleport.costed", FilePath.Lang.getName(), String.class, "null");
-                                    player.sendMessage(TextTool.setHEXColorText(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
+                                    String value = ConfigUtils.getValue("teleport.costed", FilePath.Lang);
+                                    player.sendMessage(ComponentUtils.text(value.replace(LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural())));
                                 }
                                 TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
                             });
@@ -105,7 +106,7 @@ public class WarpListListener extends BaseGuiListener {
                         inventory.close();
                         new WarpEditor(instance, player).open();
                     } else {
-                        player.sendMessage(TextTool.setHEXColorText("function.warp.no-permission-edit", FilePath.Lang));
+                        player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.warp.no-permission-edit", FilePath.Lang)));
                     }
                 }
             }

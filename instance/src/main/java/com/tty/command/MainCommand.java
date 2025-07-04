@@ -5,9 +5,10 @@ import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
-import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -30,7 +31,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
         try {
             type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
         } catch (Exception e) {
-            commandSender.sendMessage(TextTool.setHEXColorText("function.unknown", FilePath.Lang));
+            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.unknown", FilePath.Lang)));
             return true;
         }
         switch (type) {
@@ -41,13 +42,13 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             }
             case RELOAD -> {
                 if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
-                commandSender.sendMessage(TextTool.setHEXColorText("function.reload.doing", FilePath.Lang));
+                commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.doing", FilePath.Lang)));
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent<>(commandSender));
             }
             case TP -> {
                 if (!this.quickCheck(commandSender, AriCommand.TP)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTp(commandSender, strings[1]).tp();
@@ -55,7 +56,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case TPA -> {
                 if (!this.quickCheck(commandSender, AriCommand.TPA)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTeleport(commandSender, strings[1]).tpa();
@@ -63,7 +64,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case TPAACCEPT -> {
                 if (!this.quickCheck(commandSender, AriCommand.TPAACCEPT)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTeleport(commandSender, strings[1]).tpaaccept();
@@ -71,7 +72,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case TPAHERE -> {
                 if (!this.quickCheck(commandSender, AriCommand.TPAHERE)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTeleport(commandSender, strings[1]).tpahere();
@@ -79,7 +80,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case TPAREFUSE -> {
                 if (!this.quickCheck(commandSender, AriCommand.TPAREFUSE)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTeleport(commandSender, strings[1]).tparefuse();
@@ -91,7 +92,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case SETHOME -> {
                 if (!this.quickCheck(commandSender, AriCommand.SETHOME)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandHome(commandSender).setHome(strings[1]);
@@ -107,7 +108,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case SETWARP -> {
                 if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandWarp(commandSender).setWarp(strings[1]);
@@ -115,7 +116,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case TIME -> {
                 if (!this.hasPermission(commandSender, AriCommand.TIME)) break;
                 if (strings.length != 2) {
-                    commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
                     return true;
                 }
                 new CommandTime((Player) commandSender).control(strings[1]);

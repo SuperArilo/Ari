@@ -1,4 +1,7 @@
 package com.tty.lib.tool;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+
 import java.text.DecimalFormat;
 
 public class FormatUtils {
@@ -45,5 +48,30 @@ public class FormatUtils {
      */
     public static boolean isValidPermissionNode(String node) {
         return node != null && node.matches(PERMISSION_NODE_REGEX);
+    }
+
+    /**
+     * 将 Component 转成 String
+     * @param component 被转对象
+     * @return 返回String
+     */
+    public static String componentToString(Component component) {
+        if(component instanceof TextComponent) {
+            return ((TextComponent) component).content();
+        }
+        return component.toString();
+    }
+
+    /**
+     * 返回 基础格式化的文本坐标
+     * @param x x轴
+     * @param y y轴
+     * @param z z轴
+     * @return 返回基础格式化的文本坐标
+     */
+    public static String XYZText(Double x, Double y, Double z) {
+        return "&2x: &6" + FormatUtils.formatTwoDecimalPlaces(x) +
+                " &2y: &6" + FormatUtils.formatTwoDecimalPlaces(y) +
+                " &2z: &6" + FormatUtils.formatTwoDecimalPlaces(z);
     }
 }

@@ -4,7 +4,7 @@ import com.tty.Ari;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -36,11 +36,11 @@ public abstract class BaseGui {
     }
 
     protected void BaseRenderMasks(Mask mask) {
-        List<TextComponent> collect = mask.getLore().stream().map(i -> TextTool.setHEXColorText(i, this.player)).toList();
+        List<TextComponent> collect = mask.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(TextTool.setHEXColorText(mask.getName(), this.player));
+            itemMeta.displayName(ComponentUtils.text(mask.getName(), this.player));
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.MASKICON.name());
             itemMeta.lore(collect);
             itemStack.setItemMeta(itemMeta);
@@ -51,8 +51,8 @@ public abstract class BaseGui {
         functionItemMap.forEach((k, v) -> {
             ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
-            mo.displayName(TextTool.setHEXColorText(v.getName(), this.player));
-            mo.lore(v.getLore().stream().map(q -> TextTool.setHEXColorText(q, this.player)).toList());
+            mo.displayName(ComponentUtils.text(v.getName(), this.player));
+            mo.lore(v.getLore().stream().map(this::apply).toList());
             mo.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, v.getType().name());
             o.setItemMeta(mo);
             for (Integer integer : v.getSlot()) {
@@ -82,4 +82,7 @@ public abstract class BaseGui {
         this.startRender();
     }
 
+    private TextComponent apply(String q) {
+        return ComponentUtils.text(q, this.player);
+    }
 }

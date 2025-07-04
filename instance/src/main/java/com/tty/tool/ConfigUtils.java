@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
-public class ConfigObjectUtils {
+public class ConfigUtils {
 
-    public static final Map<String, YamlConfiguration> CONFIGS = new ConcurrentHashMap<>();
+    protected static final Map<String, YamlConfiguration> CONFIGS = new ConcurrentHashMap<>();
 
     /**
      *
@@ -40,26 +40,30 @@ public class ConfigObjectUtils {
         return CONFIGS.get(fileName);
     }
 
+    public static String getValue(String keyPath, FilePath filePath) {
+        return getValue(keyPath, filePath, String.class, "null");
+    }
+
     /**
      * 根据指定的文件和路径获取指定的值
      * @param keyPath 值的路径
-     * @param fileName 文件名字
+     * @param filePath 文件名字
      * @param type 值的类型
      * @return 返回指定类型
      */
-    public static  <T> T getValue(String keyPath, String fileName, Type type, T defaultValue) {
+    public static <T> T getValue(String keyPath, FilePath filePath, Type type, T defaultValue) {
         if (keyPath.isEmpty()) {
             Log.error("file path is empty");
             return defaultValue;
         }
-        YamlConfiguration fileConfiguration = getObject(fileName);
+        YamlConfiguration fileConfiguration = getObject(filePath.getName());
         if (fileConfiguration == null) {
-            Log.error("Config file not found: " + fileName);
+            Log.error("Config file not found: " + filePath.getName());
             return defaultValue;
         }
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
-            Log.error("Value not found for path: " + keyPath + " in file: " + fileName);
+            Log.error("Value not found for path: " + keyPath + " in file: " + filePath.getName());
             return defaultValue;
         }
         if (value instanceof MemorySection) {
@@ -73,7 +77,7 @@ public class ConfigObjectUtils {
         try {
             return gson.fromJson(gson.toJsonTree(value), type);
         } catch (JsonSyntaxException e) {
-            Log.error("Failed to convert value at path: " + keyPath + " in file: " + fileName + " to type: " + type.getTypeName(), e);
+            Log.error("Failed to convert value at path: " + keyPath + " in file: " + filePath.getName() + " to type: " + type.getTypeName(), e);
             return defaultValue;
         }
     }
@@ -188,7 +192,7 @@ public class ConfigObjectUtils {
 
         Map<String, Object> value = getValue(
                 "rtp.worlds",
-                FilePath.FunctionConfig.getName(),
+                FilePath.FunctionConfig,
                 new TypeToken<Map<String, Object>>(){}.getType(),
                 null);
         YamlConfiguration function = getObject(FilePath.FunctionConfig.getName());

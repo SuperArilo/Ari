@@ -9,10 +9,10 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.gui.BaseGui;
 import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -26,8 +26,8 @@ public class HomeEditor extends BaseGui {
     public HomeEditor(ServerHome serverHome, Player player) {
         super(player);
         this.currentHome = serverHome;
-        this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.gui = ConfigUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
     }
 
     @Override
@@ -45,7 +45,7 @@ public class HomeEditor extends BaseGui {
                     case RENAME -> item.setName(this.currentHome.getHomeName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = ConfigObjectUtils.parseLocation(this.currentHome.getLocation());
+                        Location location = ConfigUtils.parseLocation(this.currentHome.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
                                 case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
@@ -58,11 +58,9 @@ public class HomeEditor extends BaseGui {
                     }
                     case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
                             LocationKeyType.TOP_SLOT.getKey(),
-                            ConfigObjectUtils.getValue(
+                            ConfigUtils.getValue(
                                     this.currentHome.isTopSlot() ? "base.yes_re":"base.no_re",
-                                    FilePath.Lang.getName(),
-                                    String.class,
-                                    "null"))).toList());
+                                    FilePath.Lang))).toList());
                 }
             }
         }

@@ -8,10 +8,10 @@ import com.tty.enumType.FilePath;
 import com.tty.function.Teleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.RandomGeneratorUtils;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -34,9 +34,9 @@ public class CommandRtp {
         this.sender = sender;
         this.world = ((Player) sender).getWorld();
 
-        Map<String, RtpConfig> value = ConfigObjectUtils.getValue(
+        Map<String, RtpConfig> value = ConfigUtils.getValue(
                 "rtp.worlds",
-                FilePath.FunctionConfig.getName(),
+                FilePath.FunctionConfig,
                 new TypeToken<Map<String, RtpConfig>>() {
                 }.getType(),
                 null);
@@ -44,17 +44,14 @@ public class CommandRtp {
     }
 
     public void rtp() {
-        if (this.config == null || !ConfigObjectUtils.getValue(
+        if (this.config == null || !ConfigUtils.getValue(
                 "rtp.enable",
-                FilePath.FunctionConfig.getName(),
+                FilePath.FunctionConfig,
                 Boolean.class,
                 false)) return;
 
         if (!this.config.isEnable()) {
-            this.sender.sendMessage(
-                    TextTool.setHEXColorText(
-                            "function.rtp.world-disable",
-                            FilePath.Lang));
+            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.rtp.world-disable", FilePath.Lang)));
             return;
         }
 
@@ -65,13 +62,13 @@ public class CommandRtp {
         if (!TeleportCheck.preCheckStatus(
                 player,
                 null,
-                ConfigObjectUtils.getValue("rtp.delay", FilePath.FunctionConfig.getName(), Integer.class, 3) * 20)
+                ConfigUtils.getValue("rtp.delay", FilePath.FunctionConfig, Integer.class, 3) * 20)
         ) return;
 
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
             if (this.count <= 0) {
                 this.sender.clearTitle();
-                this.sender.sendMessage(TextTool.setHEXColorText("function.rtp.search-failure", FilePath.Lang));
+                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.rtp.search-failure", FilePath.Lang)));
                 i.cancel();
                 return;
             }
@@ -211,14 +208,14 @@ public class CommandRtp {
     }
 
     private void sendCountTitle() {
-        String sub = ConfigObjectUtils.getValue(
+        String sub = ConfigUtils.getValue(
                 "function.rtp.search-count",
-                FilePath.Lang.getName(),
+                FilePath.Lang,
                 String.class,
                 "null");
         sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
-        Title title = TextTool.setPlayerTitle(
-                ConfigObjectUtils.getValue("function.rtp.searching", FilePath.Lang.getName(), String.class, "null"),
+        Title title = ComponentUtils.setPlayerTitle(
+                ConfigUtils.getValue("function.rtp.searching", FilePath.Lang, String.class, "null"),
                 sub,
                 0,
                 1000L,

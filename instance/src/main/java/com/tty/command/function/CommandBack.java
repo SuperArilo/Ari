@@ -2,9 +2,9 @@ package com.tty.command.function;
 
 import com.tty.command.check.TeleportCheck;
 import com.tty.enumType.FilePath;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.function.Teleport;
-import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,14 +23,14 @@ public class CommandBack {
         Player player = (Player) this.sender;
         Location beforeLocation = TELEPORT_LAST_LOCATION.get(player);
         if(beforeLocation == null) {
-            player.sendMessage(TextTool.setHEXColorText("teleport.none-location", FilePath.Lang));
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.none-location", FilePath.Lang)));
             return;
         }
        if(TeleportCheck.preCheckStatus(player, beforeLocation, 60L) || this.sender.isOp()) {
            Teleport.create(
                    player,
                    beforeLocation,
-                   ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3))
+                   ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3))
                    .teleport();
        }
     }

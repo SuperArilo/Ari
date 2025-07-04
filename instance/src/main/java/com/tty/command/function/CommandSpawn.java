@@ -3,9 +3,10 @@ package com.tty.command.function;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.function.Teleport;
-import com.tty.tool.TextTool;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,11 +23,11 @@ public class CommandSpawn {
         if (this.sender instanceof Player) {
             boolean b = ((Player) this.sender).getWorld().setSpawnLocation(location);
             if (b) {
-                String st = ConfigObjectUtils.getValue("function.spawn.set-success", FilePath.Lang.getName(), String.class, "null");
-                st = st.replace(LangType.SPAWNLOCATION.getType(), TextTool.XYZText(location.getX(), location.y(), location.z()));
-                sender.sendMessage(TextTool.setHEXColorText(st));
+                String st = ConfigUtils.getValue("function.spawn.set-success", FilePath.Lang);
+                st = st.replace(LangType.SPAWNLOCATION.getType(), FormatUtils.XYZText(location.getX(), location.y(), location.z()));
+                sender.sendMessage(ComponentUtils.text(st));
             } else {
-                sender.sendMessage(TextTool.setHEXColorText("function.spawn.set-failure", FilePath.Lang));
+                sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.spawn.set-failure", FilePath.Lang)));
             }
         }
     }

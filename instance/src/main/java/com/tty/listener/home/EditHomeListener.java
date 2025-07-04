@@ -13,11 +13,11 @@ import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.task.CancellableTask;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -51,7 +51,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
 
         ItemMeta clickMeta = clickItem.getItemMeta();
         NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
-        FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
+        FunctionType type = ConfigUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
         event.setCancelled(true);
         if (type == null) return;
 
@@ -65,21 +65,21 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             case DELETE -> //delete home
                     homeManager.deleteInstance(homeEditor.currentHome).thenAccept(i -> {
                         if (i) {
-                            player.sendMessage(TextTool.setHEXColorText("function.home.delete-success", FilePath.Lang));
+                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.delete-success", FilePath.Lang)));
                             Lib.Scheduler.run(Ari.instance, j -> {
                                 inventory.close();
                                 new HomeList(player).open();
                             });
                         } else {
-                            player.sendMessage(TextTool.setHEXColorText("function.home.not-found", FilePath.Lang));
+                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.not-found", FilePath.Lang)));
                         }
 
                     });
             case RENAME -> {
                 player.showTitle(
-                        TextTool.setPlayerTitle(
-                                ConfigObjectUtils.getValue("base.on-edit.title", FilePath.Lang.getName(), String.class, ""),
-                                ConfigObjectUtils.getValue("base.on-edit.sub-title", FilePath.Lang.getName(), String.class, ""),
+                        ComponentUtils.setPlayerTitle(
+                                ConfigUtils.getValue("base.on-edit.title", FilePath.Lang),
+                                ConfigUtils.getValue("base.on-edit.sub-title", FilePath.Lang),
                                 1000,
                                 10000 ,
                                 1000));
@@ -88,7 +88,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 if (holder.getTask() == null) {
                     CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                         if (this.removeEditInstance(player) != null) {
-                            player.sendMessage(TextTool.setHEXColorText("base.on-edit.timeout-cancel", FilePath.Lang));
+                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.timeout-cancel", FilePath.Lang)));
                         }
                         holder.setTask(null);
                     }, 200L);
@@ -99,7 +99,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 //reset LOCATION
                 Location newLocation = player.getLocation();
                 homeEditor.currentHome.setLocation(newLocation.toString());
-                clickMeta.displayName(TextTool.setHEXColorText(TextTool.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
+                clickMeta.displayName(ComponentUtils.text(FormatUtils.XYZText(newLocation.getX(), newLocation.getY(), newLocation.getZ())));
                 clickItem.setItemMeta(clickMeta);
             }
             case ICON -> {
@@ -122,20 +122,20 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 homeEditor.gui.getFunctionItems().forEach((k, v) -> {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
-                        List<TextComponent> list = lore.stream().map(p -> TextTool.setHEXColorText(
-                                p.replace(LocationKeyType.TOP_SLOT.getKey(),
-                                        ConfigObjectUtils.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang.getName(), String.class, "null")))).toList();
+                        List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
+                                p.replace(LocationKeyType.TOP_SLOT.getKey(), ConfigUtils.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))
+                        ).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
                     }
                 });
             }
             case SAVE -> {
-                clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.ing", FilePath.Lang)));
+                clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.ing", FilePath.Lang))));
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = homeManager.modify(homeEditor.currentHome);
                 future.thenAccept(status -> {
-                    clickMeta.lore(List.of(TextTool.setHEXColorText(status ? "base.save.done":"base.save.error", FilePath.Lang)));
+                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue(status ? "base.save.done":"base.save.error", FilePath.Lang))));
                     clickItem.setItemMeta(clickMeta);
                     Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
                         clickMeta.lore(List.of());
@@ -143,9 +143,9 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                     }, 20);
                 }).exceptionally(i -> {
                     Log.error("save home error", i);
-                    clickMeta.lore(List.of(TextTool.setHEXColorText("base.save.error", FilePath.Lang)));
+                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.error", FilePath.Lang))));
                     clickItem.setItemMeta(clickMeta);
-                    player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
                     return null;
                 });
             }
@@ -155,20 +155,19 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
     @Override
     public boolean onTitleEditStatus(String message, OnEdit onEdit) {
         Player player = onEdit.getHolder().getPlayer();
-        List<Object> checkList = ConfigObjectUtils
+        List<Object> checkList = ConfigUtils
                 .getValue(
                         "main.name-check",
-
-                        FilePath.HomeConfig.getName(),
+                        FilePath.HomeConfig,
                         new TypeToken<List<String>>() {
                         }.getType(),
                         List.of());
         if(!FormatUtils.checkName(message) || checkList.contains(message)) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-error", FilePath.Lang));
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-error", FilePath.Lang)));
             return false;
         }
-        if(message.length() > ConfigObjectUtils.getValue("main.name-length", FilePath.HomeConfig.getName(), Integer.class, 15)) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.rename.name-too-long", FilePath.Lang));
+        if(message.length() > ConfigUtils.getValue("main.name-length", FilePath.HomeConfig, Integer.class, 15)) {
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-too-long", FilePath.Lang)));
             return false;
         }
         HomeEditor editor = (HomeEditor) onEdit.getHolder().getMeta();

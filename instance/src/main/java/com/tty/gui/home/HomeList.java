@@ -13,10 +13,10 @@ import com.tty.gui.BasePageGui;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -50,9 +50,9 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     protected void init() {
-        this.gui = ConfigObjectUtils.yamlConvertToObj(ConfigObjectUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
+        this.gui = ConfigUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, TextTool.setHEXColorText(this.gui.getTitle(), player));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
     }
 
     @Override
@@ -78,9 +78,9 @@ public class HomeList extends BasePageGui<ServerHome> {
                 Log.warning("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
                 continue;
             }
-            itemMeta.displayName(TextTool.setHEXColorText(ph.getHomeName(), this.player));
+            itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = ConfigObjectUtils.parseLocation(ph.getLocation());
+            Location location = ConfigUtils.parseLocation(ph.getLocation());
             rawLore.forEach(line -> {
                 String replacedLine = line;
                 for (LocationKeyType keyType : LocationKeyType.values()) {
@@ -93,7 +93,7 @@ public class HomeList extends BasePageGui<ServerHome> {
                         default -> replacedLine;
                     };
                 }
-                textComponents.add(TextTool.setHEXColorText(replacedLine));
+                textComponents.add(ComponentUtils.text(replacedLine));
             });
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());

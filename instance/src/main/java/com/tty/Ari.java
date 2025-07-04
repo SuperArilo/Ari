@@ -70,7 +70,7 @@ public class Ari extends JavaPlugin {
         this.sqlInstance = new SQLInstance();
         this.sqlInstance.start();
 
-        ConfigObjectUtils.setRtpWorldConfig();
+        ConfigUtils.setRtpWorldConfig();
 
         this.printLogo();
     }
@@ -115,7 +115,7 @@ public class Ari extends JavaPlugin {
         loadConfigInMemory();
     }
     private static void loadConfigInMemory() {
-        ConfigObjectUtils.clearConfigs();
+        ConfigUtils.clearConfigs();
         FileConfiguration pluginConfig = Ari.instance.getConfig();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
@@ -128,7 +128,7 @@ public class Ari extends JavaPlugin {
             } else if (pluginConfig.getBoolean("debug.overwrite-file", false)) {
                 Ari.instance.saveResource(path, true);
             }
-            ConfigObjectUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
+            ConfigUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
         }
     }
 

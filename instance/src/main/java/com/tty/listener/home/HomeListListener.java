@@ -11,7 +11,7 @@ import com.tty.lib.Lib;
 import com.tty.function.Teleport;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.listener.BaseGuiListener;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -36,7 +36,7 @@ public class HomeListListener extends BaseGuiListener {
         ItemStack currentItem = event.getCurrentItem();
         assert currentItem != null;
 
-        FunctionType type = ConfigObjectUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
+        FunctionType type = ConfigUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
         if(type == null) return;
         Player player = holder.getPlayer();
         HomeList homeList = (HomeList) holder.getMeta();
@@ -52,8 +52,8 @@ public class HomeListListener extends BaseGuiListener {
                 if (click.equals(ClickType.LEFT)) {
                     Teleport.create(
                             player,
-                            ConfigObjectUtils.parseLocation(home.getLocation()),
-                            ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3)).teleport();
+                            ConfigUtils.parseLocation(home.getLocation()),
+                            ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3)).teleport();
                 } else if (click.equals(ClickType.RIGHT)) {
                     Lib.Scheduler.run(Ari.instance, p -> {
                         inventory.close();

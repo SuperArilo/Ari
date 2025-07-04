@@ -1,6 +1,7 @@
 package com.tty.tool;
 
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;
@@ -80,7 +81,7 @@ public class PermissionUtils {
             }
         }
         if (initValue == 0 && firstErrorPermission != null) {
-            player.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang));
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
             Log.error("player " + player.getName() + " permission format error: " + firstErrorPermission);
         }
         return initValue;

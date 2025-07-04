@@ -4,8 +4,8 @@ import com.tty.enumType.FilePath;
 import com.tty.function.TimeManager;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.entity.Player;
 
 public class CommandTime {
@@ -21,17 +21,17 @@ public class CommandTime {
         try {
             period = TimePeriod.valueOf(timePeriod.toUpperCase());
         } catch (Exception e) {
-            String replace = ConfigObjectUtils.getValue("server.time.not-exist-period", FilePath.Lang.getName(), String.class, "NUll").replace(LangType.PERIOD.getType(), timePeriod);
-            this.player.sendMessage(TextTool.setHEXColorText(replace));
+            String replace = ConfigUtils.getValue("server.time.not-exist-period", FilePath.Lang).replace(LangType.PERIOD.getType(), timePeriod);
+            this.player.sendMessage(ComponentUtils.text(replace));
             return;
         }
         TimeManager.build(this.player.getWorld()).timeSet(period.getStart());
-        String value = ConfigObjectUtils.getValue("server.time.tips", FilePath.Lang.getName(), String.class, "null");
+        String value = ConfigUtils.getValue("server.time.tips", FilePath.Lang);
         if (value == null) {
             this.player.sendMessage("no content " + timePeriod + "in lang");
             return;
         }
-        value = value.replace(LangType.TIME.getType(), ConfigObjectUtils.getValue("server.time.name." + period.getDescription(), FilePath.Lang.getName(), String.class, "null"));
-        this.player.sendMessage(TextTool.setHEXColorText(value));
+        value = value.replace(LangType.TIME.getType(), ConfigUtils.getValue("server.time.name." + period.getDescription(), FilePath.Lang));
+        this.player.sendMessage(ComponentUtils.text(value));
     }
 }

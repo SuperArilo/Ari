@@ -5,8 +5,10 @@ import com.tty.dto.OnEdit;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,11 +39,11 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
         Player player = event.getPlayer();
         if (!this.onPlayerEditInstance.containsKey(player)) return;
         event.setCancelled(true);
-        String message = TextTool.componentToString(event.message());
+        String message = FormatUtils.componentToString(event.message());
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
             player.clearTitle();
             this.removeEditInstance(player);
-            player.sendMessage(TextTool.setHEXColorText("base.on-edit.cancel", FilePath.Lang));
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.cancel", FilePath.Lang)));
             return;
         }
         if (this.onTitleEditStatus(message, this.onPlayerEditInstance.get(player))) {

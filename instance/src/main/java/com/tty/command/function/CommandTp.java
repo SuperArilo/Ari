@@ -5,7 +5,8 @@ import com.tty.command.check.TeleportCheck;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.function.Teleport;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -28,6 +29,6 @@ public class CommandTp extends TeleportCheck {
                 Ari.instance,
                 (Player) this.sender,
                 i-> Teleport.create((Player) this.sender, targetPlayer.getLocation(), 1).teleport(),
-                () -> this.sender.sendMessage(TextTool.setHEXColorText("base.on-error", FilePath.Lang)));
+                () -> this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang))));
     }
 }

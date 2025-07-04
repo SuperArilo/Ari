@@ -7,10 +7,10 @@ import com.tty.enumType.FilePath;
 import com.tty.command.check.TeleportCheck;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
 import com.tty.function.Teleport;
-import com.tty.tool.TextTool;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
@@ -40,13 +40,13 @@ public class CommandTeleport extends TeleportCheck {
         Player player = Bukkit.getPlayerExact(this.playerName);
         TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
+            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.been-done", FilePath.Lang)));
             return;
         }
         //请求成功，移除该请求
-        this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.agree", FilePath.Lang));
+        this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.agree", FilePath.Lang)));
         TeleportCheck.remove(player, null,TeleportType.PLAYER);
-        Integer value = ConfigObjectUtils.getValue("main.teleport.delay", FilePath.TPA.getName(), Integer.class, 3);
+        Integer value = ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
         Teleport teleport = switch (status.getAriCommand()) {
             case TPA -> Teleport.create(player, ((Player) this.sender).getLocation(), value);
             case TPAHERE -> Teleport.create((Player) this.sender, Objects.requireNonNull(player).getLocation(), value);
@@ -55,7 +55,7 @@ public class CommandTeleport extends TeleportCheck {
         if (teleport != null) {
             teleport.teleport();
         } else {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.error", FilePath.Lang));
+            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.error", FilePath.Lang)));
         }
     }
 
@@ -63,23 +63,22 @@ public class CommandTeleport extends TeleportCheck {
         if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if(player == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
+            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.unable-player", FilePath.Lang)));
             return;
         }
         if (TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
-            this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.been-done", FilePath.Lang));
+            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.been-done", FilePath.Lang)));
         } else {
             if(TeleportCheck.remove(player, null,TeleportType.PLAYER)) {
-                this.sender.sendMessage(TextTool.setHEXColorText("function.tpa.refuse-success", FilePath.Lang));
+                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.refuse-success", FilePath.Lang)));
+
                 player.sendMessage(
-                        TextTool.setHEXColorText(
-                                ConfigObjectUtils.getValue(
+                        ComponentUtils.text(
+                                ConfigUtils.getValue(
                                         "function.tpa.refused",
-                                        FilePath.Lang.getName(),
-                                        String.class,
-                                        "null").replace(LangType.TPABESENDER.getType(), this.sender.getName())));
+                                        FilePath.Lang).replace(LangType.TPABESENDER.getType(), this.sender.getName())));
             } else {
-                this.sender.sendMessage(TextTool.setHEXColorText("function.public.break", FilePath.Lang));
+                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.break", FilePath.Lang)));
             }
         }
     }

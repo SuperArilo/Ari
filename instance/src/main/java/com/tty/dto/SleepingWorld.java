@@ -7,9 +7,9 @@ import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -46,8 +46,8 @@ public class SleepingWorld {
                     for (Player player : this.world.getPlayers()) {
                         if (this.playerCondition(player.getWorld()) || !player.isSleeping() || !player.isDeeplySleeping()) continue;
                         Lib.Scheduler.runAtEntity(Ari.instance, player, b -> player.showTitle(
-                                TextTool.setPlayerTitle(timeManager.tickToTime(i),
-                                        ConfigObjectUtils.getValue("server.time.skip-to-night", FilePath.Lang.getName(), String.class, "null"),
+                                ComponentUtils.setPlayerTitle(timeManager.tickToTime(i),
+                                        ConfigUtils.getValue("server.time.skip-to-night", FilePath.Lang),
                                         0L,
                                         1000L,
                                         1000L)), () -> {});
@@ -61,9 +61,9 @@ public class SleepingWorld {
     private void sendTipsActionBar() {
         for (Player player : this.world.getPlayers()) {
             if (!player.isSleeping()) {
-                String l = ConfigObjectUtils.getValue("server.time.report-status", FilePath.Lang.getName(), String.class, "null");
+                String l = ConfigUtils.getValue("server.time.report-status", FilePath.Lang);
                 player.sendActionBar(
-                        TextTool.setHEXColorText(
+                        ComponentUtils.text(
                                 l.replace(LangType.SLEEPPLAYERS.getType(), String.valueOf(this.getSleepPlayers()))
                                         .replace(LangType.SKIPNIGHTTICKINCREMENT.getType(), String.valueOf(this.timeManager.getAddTick()))));
             }

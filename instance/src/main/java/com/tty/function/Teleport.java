@@ -5,9 +5,9 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.LangType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -45,8 +45,8 @@ public class Teleport {
         this.targetLocation = targetLocation;
         this.delay = Math.max(delay, 0);
 
-        this.title = ConfigObjectUtils.getValue("teleport.title.main", FilePath.Lang.getName(), String.class, "null");
-        this.subTitle = ConfigObjectUtils.getValue("teleport.title.sub-title", FilePath.Lang.getName(), String.class, "null");
+        this.title = ConfigUtils.getValue("teleport.title.main", FilePath.Lang);
+        this.subTitle = ConfigUtils.getValue("teleport.title.sub-title", FilePath.Lang);
 
     }
     public Teleport aborted(Runnable runnable) {
@@ -71,7 +71,7 @@ public class Teleport {
             timerIndex.set(0);
         } else {
             timerIndex.set(delay);
-            this.player.sendMessage(TextTool.setHEXColorText("teleport.ing", FilePath.Lang));
+            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.ing", FilePath.Lang)));
         }
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance,t -> {
             if (!this.status) {
@@ -89,12 +89,12 @@ public class Teleport {
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
                 this.aborted.run();
-                threadPlayer.sendMessage(TextTool.setHEXColorText("teleport.break", FilePath.Lang));
+                threadPlayer.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.break", FilePath.Lang)));
                 return;
             }
 
             if (timerIndex.get() > 0) {
-                threadPlayer.showTitle(TextTool.setPlayerTitle(
+                threadPlayer.showTitle(ComponentUtils.setPlayerTitle(
                         this.title,
                         this.subTitle.replace(LangType.TELEPORTDELAY.getType(), String.valueOf(timerIndex.get())),
                         200,
@@ -125,7 +125,7 @@ public class Teleport {
                                 threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             }
                             this.after.run();
-                            threadPlayer.sendMessage(TextTool.setHEXColorText(p ? "teleport.success":"function.tpa.error", FilePath.Lang));
+                            threadPlayer.sendMessage(ComponentUtils.text(ConfigUtils.getValue(p ? "teleport.success":"function.tpa.error", FilePath.Lang)));
                         });
                     },
                     () -> Log.error("teleport error on player: " + threadPlayer.getName()));

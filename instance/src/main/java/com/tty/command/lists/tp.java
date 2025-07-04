@@ -4,7 +4,8 @@ import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandTp;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -22,7 +23,7 @@ public class tp extends BaseCommandCheck implements TabExecutor {
         if (this.quickCheck(commandSender, AriCommand.TP) && strings.length == 1) {
             new CommandTp(commandSender, strings[0]).tp();
         } else {
-            commandSender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
         }
         return true;
     }

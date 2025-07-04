@@ -1,6 +1,6 @@
 package com.tty.command.function;
 
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -14,7 +14,7 @@ public class CommandCiallo {
     }
 
     public void ciallo() {
-        Bukkit.broadcast(TextTool.setHEXColorText("玩家 " + this.sender.getName() + ": 我宣布个事，我是柚子厨 " + CIALLO));
+        Bukkit.broadcast(ComponentUtils.text("玩家 " + this.sender.getName() + ": 我宣布个事，我是柚子厨 " + CIALLO));
     }
 
 }

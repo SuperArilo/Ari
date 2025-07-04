@@ -2,8 +2,9 @@ package com.tty.command.check;
 
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
-import com.tty.tool.TextTool;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -23,7 +24,9 @@ public class BaseCommandCheck {
      */
     protected boolean isPlayer(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue(
+                    "function.public.not-player",
+                    FilePath.Lang)));
             return false;
         }
         return true;
@@ -36,7 +39,7 @@ public class BaseCommandCheck {
      */
     protected boolean hasPermission(CommandSender sender, AriCommand command) {
         if (!PermissionUtils.hasPermission(sender, command.getPermission())) {
-            sender.sendMessage(TextTool.setHEXColorText("base.permission.no-permission", FilePath.Lang));
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.permission.no-permission", FilePath.Lang)));
             return false;
         }
         return true;

@@ -7,8 +7,8 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
-import com.tty.tool.ConfigObjectUtils;
-import com.tty.tool.TextTool;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -29,24 +29,22 @@ public class TeleportCheck {
      */
     public static void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
         if (checkHaveTeleportStatus(player, targetPlayer) != null) {
-            player.sendMessage(TextTool.setHEXColorText(
-                    ConfigObjectUtils.getValue(
+            player.sendMessage(ComponentUtils.text(
+                    ConfigUtils.getValue(
                             "function.tpa.again",
-                            FilePath.Lang.getName(),
-                            String.class,
-                            "null").replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
+                            FilePath.Lang).replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
             return;
         }
-        player.sendMessage(TextTool.setHEXColorText("function.tpa.send-message", FilePath.Lang));
+        player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.send-message", FilePath.Lang)));
         addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
-        String message = ConfigObjectUtils.getValue("function.tpa.get-message", FilePath.Lang.getName(), String.class, "null");
+        String message = ConfigUtils.getValue("function.tpa.get-message", FilePath.Lang);
         boolean isTpa = message.contains(LangType.TPASENDER.getType());
         targetPlayer.sendMessage(
-                TextTool.setHEXColorText(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
+                ComponentUtils.text(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
                         .appendNewline()
-                        .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.agree", FilePath.Lang.getName(), String.class, "null"), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                        .append(TextTool.setHEXColorText(ConfigObjectUtils.getValue("function.public.center", FilePath.Lang.getName(), String.class, "null")))
-                        .append(TextTool.setClickEventText(ConfigObjectUtils.getValue("function.public.refuse", FilePath.Lang.getName(), String.class, "null"), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                        .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                        .append(ComponentUtils.text(ConfigUtils.getValue("function.public.center", FilePath.Lang)))
+                        .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.refuse", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
     }
     /**
      * 检查被传送玩家是否已经发起过传送请求
@@ -59,7 +57,7 @@ public class TeleportCheck {
             addTeleportStatusTask(player, location, delay);
             return true;
         } else {
-            player.sendMessage(TextTool.setHEXColorText("teleport.again", FilePath.Lang));
+            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.again", FilePath.Lang)));
             return false;
         }
     }
@@ -126,16 +124,16 @@ public class TeleportCheck {
 
     public boolean preCheck(CommandSender sender, String targetPlayerName) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(TextTool.setHEXColorText("function.public.not-player", FilePath.Lang));
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.not-player", FilePath.Lang)));
             return false;
         }
         if (targetPlayerName.equals(sender.getName())) {
-            sender.sendMessage(TextTool.setHEXColorText("function.public.fail", FilePath.Lang));
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
             return false;
         }
         Player player = Ari.instance.getServer().getPlayerExact(targetPlayerName);
         if(player == null) {
-            sender.sendMessage(TextTool.setHEXColorText("teleport.unable-player", FilePath.Lang));
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.unable-player", FilePath.Lang)));
             return false;
         }
         return true;

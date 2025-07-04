@@ -1,8 +1,5 @@
-package com.tty.tool;
+package com.tty.lib.tool;
 
-import com.tty.enumType.FilePath;
-import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -20,87 +17,22 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("deprecation")
-public class TextTool {
+public class ComponentUtils {
 
     private static final Pattern GRADIENT_PATTERN = Pattern.compile("<#([A-Fa-f0-9]{6})>(.*?)</#([A-Fa-f0-9]{6})>");
 
-    /**
-     * 设置彩色文本格式
-     * @param path 内容在yaml的路径
-     * @param filePath yaml文件路径
-     * @param player 需要PAPI变量时的玩家对象
-     * @return 返回彩色文本
-     */
-    public static TextComponent setHEXColorText(String path, FilePath filePath, Player player) {
-        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class, "null");
-        if (content == null) {
-            Log.error(path + " path does not exist in the " + filePath.getName() + " file");
-            Log.error(filePath.getName() + " path: " + filePath.getPath());
-            return returnNoContentText();
-        }
-        return renderComponent(content, player);
-    }
-
-    /**
-     * 设置彩色文本格式
-     * @param path 内容在yaml的路径
-     * @param filePath yaml文件路径
-     * @return 返回彩色文本
-     */
-    public static TextComponent setHEXColorText(String path, FilePath filePath) {
-        String content = ConfigObjectUtils.getValue(path, filePath.getName(), String.class, "null");
+    public static TextComponent text(String content) {
         if (content == null || content.equals("null")) {
-            Log.error(path + " path does not exist in the " + filePath.getName() + " file");
-            Log.error(filePath.getName() + " path: " + filePath.getPath());
             return returnNoContentText();
         }
         return renderComponent(content, null);
     }
 
-    /**
-     * 设置彩色文本格式
-     * @param content 被设置的内容
-     * @param player 需要PAPI变量时的玩家对象
-     * @return 返回彩色文本
-     */
-    public static TextComponent setHEXColorText(String content, Player player) {
-        if(content == null) return returnNoContentText();
-        return renderComponent(content, player);
-    }
-
-    /**
-     * 设置彩色文本格式
-     * @param content 被设置的内容
-     * @return 返回彩色文本
-     */
-    public static TextComponent setHEXColorText(String content) {
-        if(content == null) return returnNoContentText();
-        return renderComponent(content, null);
-    }
-
-    /**
-     * 返回 基础格式化的文本坐标
-     * @param x x轴
-     * @param y y轴
-     * @param z z轴
-     * @return 返回基础格式化的文本坐标
-     */
-    public static String XYZText(Double x, Double y, Double z) {
-        return "&2x: &6" + FormatUtils.formatTwoDecimalPlaces(x) +
-                " &2y: &6" + FormatUtils.formatTwoDecimalPlaces(y) +
-                " &2z: &6" + FormatUtils.formatTwoDecimalPlaces(z);
-    }
-
-    /**
-     * 将 Component 转成 String
-     * @param component 被转对象
-     * @return 返回String
-     */
-    public static String componentToString(Component component) {
-        if(component instanceof TextComponent) {
-            return ((TextComponent) component).content();
+    public static TextComponent text(String content, Player player) {
+        if (content == null || content.equals("null")) {
+            return returnNoContentText();
         }
-        return component.toString();
+        return renderComponent(content, player);
     }
 
     /**
@@ -114,12 +46,16 @@ public class TextTool {
      */
     public static Title setPlayerTitle(@NotNull String title, @NotNull String subTitle, long fadeIn, long stay, long fadeOut) {
         return Title.title(
-                setHEXColorText(title),
-                setHEXColorText(subTitle),
+                text(title),
+                text(subTitle),
                 Title.Times.times(Duration.ofMillis(fadeIn), Duration.ofMillis(stay), Duration.ofMillis(fadeOut))
         );
     }
-    @NotNull
+
+    public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
+        return text(content).clickEvent(ClickEvent.clickEvent(action, actionText));
+    }
+
     protected static TextComponent renderComponent(String content, Player player) {
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             content = PlaceholderAPI.setPlaceholders(player, content);
@@ -153,7 +89,7 @@ public class TextTool {
     /**
      * 生成渐变文本的 Component
      */
-    private static Component generateGradientText(String text, String startColorHex, String endColorHex) {
+    protected static Component generateGradientText(String text, String startColorHex, String endColorHex) {
         int[] startColor = hexToRgb(startColorHex);
         int[] endColor = hexToRgb(endColorHex);
 
@@ -180,22 +116,17 @@ public class TextTool {
     /**
      * 将十六进制颜色字符串转换为 RGB 数组
      */
-    private static int[] hexToRgb(String hex) {
+    protected static int[] hexToRgb(String hex) {
         int r = Integer.parseInt(hex.substring(0, 2), 16);
         int g = Integer.parseInt(hex.substring(2, 4), 16);
         int b = Integer.parseInt(hex.substring(4, 6), 16);
         return new int[]{r, g, b};
     }
 
-
-    public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
-        return setHEXColorText(content).clickEvent(ClickEvent.clickEvent(action, actionText));
-    }
     /**
      * 当出错时候返回到客户端的文本
      */
     protected static TextComponent returnNoContentText() {
         return Component.text("Warning: content is null, see in the console");
     }
-
 }

@@ -13,12 +13,12 @@ import com.tty.gui.BasePageGui;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.tool.EconomyUtils;
 import com.tty.tool.PermissionUtils;
-import com.tty.tool.TextTool;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -49,14 +49,14 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     protected void init() {
-        this.gui = ConfigObjectUtils.yamlConvertToObj(
-                ConfigObjectUtils.getObject(FilePath.WarpList.getName()).saveToString(),
+        this.gui = ConfigUtils.yamlConvertToObj(
+                ConfigUtils.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
         this.pageSize = this.gui.getDataItems().getSlot().size();
         this.inventory = Bukkit.createInventory(
                 new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9,
-                TextTool.setHEXColorText(this.gui.getTitle(),player));
+                ComponentUtils.text(this.gui.getTitle(), player));
     }
 
     @Override
@@ -82,16 +82,16 @@ public class WarpList extends BasePageGui<ServerWarp> {
                 Log.error("Skip the rendering warpId [" + serverWarp.getWarpId() + "] process...");
                 continue;
             }
-            itemMeta.displayName(TextTool.setHEXColorText(serverWarp.getWarpName(), this.player));
+            itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = ConfigObjectUtils.parseLocation(serverWarp.getLocation());
+            Location location = ConfigUtils.parseLocation(serverWarp.getLocation());
             rawLore.stream().filter(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if(keyType == LocationKeyType.PERMISSION && line.contains(keyType.getKey())) {
-                        return ConfigObjectUtils.getValue("main.permission", FilePath.WarpConfig.getName(), Boolean.class, false);
+                        return ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, false);
                     }
                     if(keyType == LocationKeyType.COST && line.contains(keyType.getKey())) {
-                        return ConfigObjectUtils.getValue("main.cost", FilePath.WarpConfig.getName(), Boolean.class, false) && !EconomyUtils.isNull();
+                        return ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) && !EconomyUtils.isNull();
                     }
                 }
                 return true;
@@ -130,11 +130,11 @@ public class WarpList extends BasePageGui<ServerWarp> {
                                     serverWarp.getPermission().isEmpty() ||
                                     PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), ConfigObjectUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang.getName(), String.class, "null"));
+                            yield line.replace(keyType.getKey(), ConfigUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang));
                         }
                     };
                 }
-                return TextTool.setHEXColorText(line, player);
+                return ComponentUtils.text(line, player);
             }).forEach(textComponents::add);
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());

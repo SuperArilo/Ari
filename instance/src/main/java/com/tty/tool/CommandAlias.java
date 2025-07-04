@@ -33,8 +33,8 @@ public class CommandAlias {
     }
 
     public void init() {
-        YamlConfiguration aliasFile = ConfigObjectUtils.getObject(FilePath.CommandAlias.getName());
-        this.alias = ConfigObjectUtils.yamlConvertToObj(aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
+        YamlConfiguration aliasFile = ConfigUtils.getObject(FilePath.CommandAlias.getName());
+        this.alias = ConfigUtils.yamlConvertToObj(aliasFile.saveToString(), new TypeToken<Map<String, AliasItem>>(){}.getType());
         this.registerAlias();
     }
     private void registerAlias() {

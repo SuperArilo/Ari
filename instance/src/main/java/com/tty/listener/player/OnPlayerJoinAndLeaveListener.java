@@ -5,8 +5,9 @@ import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.function.Teleport;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -45,7 +46,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             Teleport.create(player, player.getWorld().getSpawnLocation(), 0).teleport();
                         }
                         if(first) {
-                            Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-first-login", FilePath.Lang, player));
+                            Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang), player));
                         }
                         if (i == null) {
                             ServerPlayer serverPlayer = new ServerPlayer();
@@ -55,7 +56,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         }
                     } else {
                         if(login) {
-                            Bukkit.broadcast(TextTool.setHEXColorText("server.message.on-login", FilePath.Lang, player));
+                            Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-login", FilePath.Lang), player));
                         }
                     }
                 }).exceptionally(i -> {
@@ -68,7 +69,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
-            event.quitMessage(TextTool.setHEXColorText("server.message.on-leave", FilePath.Lang, player));
+            event.quitMessage(ComponentUtils.text(ConfigUtils.getValue("server.message.on-leave", FilePath.Lang), player));
         }
         SavePlayerData(player, true, true);
     }

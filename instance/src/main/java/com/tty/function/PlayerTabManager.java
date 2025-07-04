@@ -8,9 +8,9 @@ import com.tty.dto.tab.TabGroupLine;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
-import com.tty.tool.ConfigObjectUtils;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
-import com.tty.tool.TextTool;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;
@@ -35,7 +35,7 @@ public class PlayerTabManager implements Listener {
 
 
     public PlayerTabManager() {
-        this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class, 1);
+        this.updateInterval = ConfigUtils.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
         this.start();
     }
 
@@ -89,14 +89,14 @@ public class PlayerTabManager implements Listener {
         groupMap.forEach((k, v) -> Audience.audience(v.getPlayers()).forEachAudience(audience -> {
             Player player = (Player) audience;
             player.sendPlayerListHeaderAndFooter(this.buildTabLine(this.rawHeaders, player), this.buildTabLine(this.rawFooters, player));
-            player.playerListName(TextTool.setHEXColorText(this.buildPlayerRealLine(player, v)));
+            player.playerListName(ComponentUtils.text(this.buildPlayerRealLine(player, v)));
             player.setPlayerListOrder(displayIndex.getAndDecrement());
         }));
     }
 
     private Component buildTabLine(List<String> s, final Player player) {
         if (s == null || s.isEmpty()) return Component.empty();
-        return Component.join(this.newlineSeparator, s.stream().map(line -> TextTool.setHEXColorText(line, player)).toList());
+        return Component.join(this.newlineSeparator, s.stream().map(line -> ComponentUtils.text(line, player)).toList());
     }
 
     private String buildPlayerRealLine(Player player, TabGroupLine line) {
@@ -128,31 +128,31 @@ public class PlayerTabManager implements Listener {
      */
     private void buildLayout() {
         if (this.updateInterval == null) {
-            this.updateInterval = ConfigObjectUtils.getValue("tab.update-interval", FilePath.FunctionConfig.getName(), Integer.class, 1);
+            this.updateInterval = ConfigUtils.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
         }
         if(this.rawHeaders.isEmpty() || this.rawFooters.isEmpty()) {
             TypeToken<List<String>> typeToken = new TypeToken<>() {};
-            List<String> headerValue = ConfigObjectUtils.getValue("tab.layout.header", FilePath.FunctionConfig.getName(), typeToken.getType(), List.of());
+            List<String> headerValue = ConfigUtils.getValue("tab.layout.header", FilePath.FunctionConfig, typeToken.getType(), List.of());
             if (headerValue != null) {
                 this.rawHeaders.addAll(headerValue);
             }
-            List<String> footerValue = ConfigObjectUtils.getValue("tab.layout.footer", FilePath.FunctionConfig.getName(), typeToken.getType(), List.of());
+            List<String> footerValue = ConfigUtils.getValue("tab.layout.footer", FilePath.FunctionConfig, typeToken.getType(), List.of());
             if (footerValue != null) {
                 this.rawFooters.addAll(footerValue);
             }
         }
-        Map<String, TabGroupLine> lineMap = ConfigObjectUtils.getValue("tab.groups", FilePath.FunctionConfig.getName(), new TypeToken<Map<String, TabGroupLine>>() {}.getType(), new HashMap<>());
+        Map<String, TabGroupLine> lineMap = ConfigUtils.getValue("tab.groups", FilePath.FunctionConfig, new TypeToken<Map<String, TabGroupLine>>() {}.getType(), new HashMap<>());
         if (this.groupLineMap.isEmpty() && lineMap != null) {
             this.groupLineMap.putAll(lineMap);
         }
-        List<String> value = ConfigObjectUtils.getValue("tab.slot", FilePath.FunctionConfig.getName(), new TypeToken<List<String>>() {}.getType(), List.of());
+        List<String> value = ConfigUtils.getValue("tab.slot", FilePath.FunctionConfig, new TypeToken<List<String>>() {}.getType(), List.of());
         if (this.groupSequence.isEmpty() && value != null) {
             this.groupSequence.addAll(value);
         }
     }
 
     private boolean isEnable() {
-        return Boolean.TRUE.equals(ConfigObjectUtils.getValue("tab.enable", FilePath.FunctionConfig.getName(), Boolean.class, false));
+        return Boolean.TRUE.equals(ConfigUtils.getValue("tab.enable", FilePath.FunctionConfig, Boolean.class, false));
     }
 
     @EventHandler

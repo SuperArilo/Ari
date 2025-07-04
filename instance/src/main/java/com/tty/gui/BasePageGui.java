@@ -1,8 +1,9 @@
 package com.tty.gui;
 
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.TextTool;
+import com.tty.tool.ConfigUtils;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.entity.Player;
@@ -38,7 +39,7 @@ public abstract class BasePageGui<T> extends BaseGui {
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
-            this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-prev", FilePath.Lang));
+            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-prev", FilePath.Lang)));
             this.pageNum = 1;
             return;
         }
@@ -59,7 +60,7 @@ public abstract class BasePageGui<T> extends BaseGui {
         this.pageNum++;
         this.requestData().thenAccept(list -> {
            if (list.isEmpty()) {
-               this.player.sendMessage(TextTool.setHEXColorText("base.page-change.none-next", FilePath.Lang));
+               this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-next", FilePath.Lang)));
                this.pageNum--;
            } else {
                this.data = list;

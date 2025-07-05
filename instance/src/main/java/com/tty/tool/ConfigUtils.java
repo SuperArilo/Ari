@@ -40,6 +40,12 @@ public class ConfigUtils {
         return CONFIGS.get(fileName);
     }
 
+    /**
+     * 根据指定的文件和路径获取指定的值 String
+     * @param keyPath 值的路径
+     * @param filePath 文件名字
+     * @return 返回字符串类型
+     */
     public static String getValue(String keyPath, FilePath filePath) {
         return getValue(keyPath, filePath, String.class, "null");
     }

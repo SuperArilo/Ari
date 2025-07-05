@@ -51,7 +51,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
 
         ItemMeta clickMeta = clickItem.getItemMeta();
         NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
-        FunctionType type = ConfigUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
+        FunctionType type = FormatUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
         event.setCancelled(true);
         if (type == null) return;
 

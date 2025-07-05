@@ -13,6 +13,7 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseGuiListener;
 import com.tty.tool.*;
@@ -47,7 +48,7 @@ public class WarpListListener extends BaseGuiListener {
         CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
         assert holder != null;
 
-        FunctionType type = ConfigUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
+        FunctionType type = FormatUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
         if(type == null) return;
         Player player = holder.getPlayer();
         WarpList warpList = (WarpList) holder.getMeta();
@@ -73,7 +74,7 @@ public class WarpListListener extends BaseGuiListener {
                             return;
                         }
                     }
-                    Location targetLocation = ConfigUtils.parseLocation(instance.getLocation());
+                    Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
                     Teleport.create(player,
                                     targetLocation,
                                     ConfigUtils.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))

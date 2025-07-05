@@ -28,7 +28,7 @@ public class WarpEditor extends BaseGui {
     public WarpEditor(ServerWarp serverWarp, Player player) {
         super(player);
         this.currentWarp = serverWarp;
-        this.gui = ConfigUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
+        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle()));
     }
 
@@ -47,7 +47,7 @@ public class WarpEditor extends BaseGui {
                     case RENAME -> item.setName(this.currentWarp.getWarpName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = ConfigUtils.parseLocation(this.currentWarp.getLocation());
+                        Location location = FormatUtils.parseLocation(this.currentWarp.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
                                 case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));

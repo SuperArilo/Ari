@@ -26,7 +26,7 @@ public class HomeEditor extends BaseGui {
     public HomeEditor(ServerHome serverHome, Player player) {
         super(player);
         this.currentHome = serverHome;
-        this.gui = ConfigUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
+        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
     }
 
@@ -45,7 +45,7 @@ public class HomeEditor extends BaseGui {
                     case RENAME -> item.setName(this.currentHome.getHomeName());
                     case LOCATION -> {
                         String name = item.getName();
-                        Location location = ConfigUtils.parseLocation(this.currentHome.getLocation());
+                        Location location = FormatUtils.parseLocation(this.currentHome.getLocation());
                         for (LocationKeyType keyType : LocationKeyType.values()) {
                             name = switch (keyType) {
                                 case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));

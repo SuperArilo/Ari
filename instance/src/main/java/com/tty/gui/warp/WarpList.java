@@ -49,7 +49,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     protected void init() {
-        this.gui = ConfigUtils.yamlConvertToObj(
+        this.gui = FormatUtils.yamlConvertToObj(
                 ConfigUtils.getObject(FilePath.WarpList.getName()).saveToString(),
                 WarpListGUI.class
         );
@@ -84,7 +84,7 @@ public class WarpList extends BasePageGui<ServerWarp> {
             }
             itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = ConfigUtils.parseLocation(serverWarp.getLocation());
+            Location location = FormatUtils.parseLocation(serverWarp.getLocation());
             rawLore.stream().filter(line -> {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     if(keyType == LocationKeyType.PERMISSION && line.contains(keyType.getKey())) {

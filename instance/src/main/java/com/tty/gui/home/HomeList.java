@@ -50,7 +50,7 @@ public class HomeList extends BasePageGui<ServerHome> {
 
     @Override
     protected void init() {
-        this.gui = ConfigUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
+        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
         this.setPageSize(this.gui.getDataItems().getSlot().size());
         this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
     }
@@ -80,7 +80,7 @@ public class HomeList extends BasePageGui<ServerHome> {
             }
             itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
-            Location location = ConfigUtils.parseLocation(ph.getLocation());
+            Location location = FormatUtils.parseLocation(ph.getLocation());
             rawLore.forEach(line -> {
                 String replacedLine = line;
                 for (LocationKeyType keyType : LocationKeyType.values()) {

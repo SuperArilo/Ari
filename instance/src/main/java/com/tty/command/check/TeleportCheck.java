@@ -37,10 +37,9 @@ public class TeleportCheck {
         }
         player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.send-message", FilePath.Lang)));
         addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
-        String message = ConfigUtils.getValue("function.tpa.get-message", FilePath.Lang);
-        boolean isTpa = message.contains(LangType.TPASENDER.getType());
+        String message = ConfigUtils.getValue("function.tpa." + (ariCommand.equals(AriCommand.TPA) ? "to-message":"here-message"), FilePath.Lang);
         targetPlayer.sendMessage(
-                ComponentUtils.text(message.replace(isTpa ? LangType.TPASENDER.getType():LangType.TPABESENDER.getType(), isTpa ? player.getName():targetPlayer.getName()))
+                ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), player.getName()))
                         .appendNewline()
                         .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
                         .append(ComponentUtils.text(ConfigUtils.getValue("function.public.center", FilePath.Lang)))

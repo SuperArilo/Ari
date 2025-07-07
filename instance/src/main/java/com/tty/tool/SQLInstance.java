@@ -9,7 +9,6 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
-import org.sql2o.connectionsources.ConnectionSource;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -87,6 +86,8 @@ public class SQLInstance {
         colMaps.put("warp_name", "warpName");
         colMaps.put("create_by", "createBy");
         colMaps.put("create_time", "createTime");
+        colMaps.put("spawn_id", "spawnId");
+        colMaps.put("spawn_name", "spawnName");
         SESSION_FACTORY.setDefaultColumnMappings(colMaps);
     }
 

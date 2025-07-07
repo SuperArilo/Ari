@@ -13,16 +13,18 @@ import java.util.concurrent.CompletableFuture;
 
 @Setter
 @Getter
-public abstract class BasePageGui<T> extends BaseGui {
+public abstract class BasePageGui<T, I> extends BaseGui<I> {
 
     protected int pageNum = 1;
     protected int pageSize = 10;
     public List<T> data;
 
-    public BasePageGui(Player player) {
-        super(player);
+    public BasePageGui(Player player, I instance) {
+        super(player, instance);
         this.init();
-        this.requestData().thenAccept(list -> {
+        CompletableFuture<List<T>> future = this.requestData();
+        if (future == null) return;
+        future.thenAccept(list -> {
             long l = System.currentTimeMillis();
             this.data = list;
             this.renderDataItem();
@@ -77,7 +79,7 @@ public abstract class BasePageGui<T> extends BaseGui {
      * 请求数据的方法
      * @return 返回数据 CompletableFuture
      */
-    public abstract CompletableFuture<List<T>> requestData();
+    protected abstract CompletableFuture<List<T>> requestData();
 
     /**
      * 开始请求数据之前的gui配置初始化

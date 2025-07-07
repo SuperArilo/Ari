@@ -17,13 +17,17 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseGui {
+public abstract class BaseGui<I> {
 
+    public final I instance;
     protected final Player player;
     protected Inventory inventory;
 
-    public BaseGui(Player player) {
+    private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
+
+    public BaseGui(Player player, I instance) {
         this.player = player;
+        this.instance = instance;
     }
     public void open() {
         this.player.openInventory(this.inventory);
@@ -36,24 +40,26 @@ public abstract class BaseGui {
     }
 
     protected void BaseRenderMasks(Mask mask) {
+        if (mask == null) return;
         List<TextComponent> collect = mask.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(mask.getName(), this.player));
-            itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.MASKICON.name());
+            itemMeta.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, FunctionType.MASKICON.name());
             itemMeta.lore(collect);
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
     }
     protected void BaseRenderFunctionItems(Map<String, FunctionItems> functionItemMap) {
+        if (functionItemMap == null) return;
         functionItemMap.forEach((k, v) -> {
             ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
             mo.displayName(ComponentUtils.text(v.getName(), this.player));
             mo.lore(v.getLore().stream().map(this::apply).toList());
-            mo.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, v.getType().name());
+            mo.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, v.getType().name());
             o.setItemMeta(mo);
             for (Integer integer : v.getSlot()) {
                 this.inventory.setItem(integer, o);

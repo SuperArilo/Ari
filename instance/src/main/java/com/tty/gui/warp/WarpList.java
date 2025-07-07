@@ -34,12 +34,10 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class WarpList extends BasePageGui<ServerWarp> {
-
-    public WarpListGUI gui;
+public class WarpList extends BasePageGui<ServerWarp, WarpListGUI> {
 
     public WarpList(Player player) {
-        super(player);
+        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpList.name()).saveToString(), WarpListGUI.class));
     }
 
     @Override
@@ -49,30 +47,26 @@ public class WarpList extends BasePageGui<ServerWarp> {
 
     @Override
     protected void init() {
-        this.gui = FormatUtils.yamlConvertToObj(
-                ConfigUtils.getObject(FilePath.WarpList.getName()).saveToString(),
-                WarpListGUI.class
-        );
-        this.pageSize = this.gui.getDataItems().getSlot().size();
+        this.pageSize = this.instance.getDataItems().getSlot().size();
         this.inventory = Bukkit.createInventory(
-                new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.gui.getRow() * 9,
-                ComponentUtils.text(this.gui.getTitle(), player));
+                new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.instance.getRow() * 9,
+                ComponentUtils.text(this.instance.getTitle(), player));
     }
 
     @Override
     protected Mask renderMasks() {
-        return this.gui.getMask();
+        return this.instance.getMask();
     }
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        return this.gui.getFunctionItems();
+        return this.instance.getFunctionItems();
     }
 
     @Override
     protected void renderDataItem() {
-        List<Integer> dataSlot = this.gui.getDataItems().getSlot();
-        List<String> rawLore = this.gui.getDataItems().getLore();
+        List<Integer> dataSlot = this.instance.getDataItems().getSlot();
+        List<String> rawLore = this.instance.getDataItems().getLore();
         for (int i = 0;i < this.data.size();i++) {
             ServerWarp serverWarp = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));

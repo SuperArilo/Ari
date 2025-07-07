@@ -19,25 +19,24 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class HomeEditor extends BaseGui {
-    public final HomeEditorGUI gui;
+public class HomeEditor extends BaseGui<HomeEditorGUI> {
+
     public final ServerHome currentHome;
 
     public HomeEditor(ServerHome serverHome, Player player) {
-        super(player);
+        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.name()).saveToString(), HomeEditorGUI.class));
         this.currentHome = serverHome;
-        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.getName()).saveToString(), HomeEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMEEDIT, this), this.instance.getRow() * 9, ComponentUtils.text(this.instance.getTitle(), player));
     }
 
     @Override
     protected Mask renderMasks() {
-        return this.gui.getMask();
+        return this.instance.getMask();
     }
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.gui.getFunctionItems());
+        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.instance.getFunctionItems());
         if (functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {

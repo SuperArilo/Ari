@@ -119,7 +119,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             }
             case TOP_SLOT -> {
                 homeEditor.currentHome.setTopSlot(!homeEditor.currentHome.isTopSlot());
-                homeEditor.gui.getFunctionItems().forEach((k, v) -> {
+                homeEditor.instance.getFunctionItems().forEach((k, v) -> {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(

@@ -20,26 +20,24 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class WarpEditor extends BaseGui {
+public class WarpEditor extends BaseGui<WarpEditorGUI> {
 
-    public final WarpEditorGUI gui;
     public final ServerWarp currentWarp;
 
     public WarpEditor(ServerWarp serverWarp, Player player) {
-        super(player);
+        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.name()).saveToString(), WarpEditorGUI.class));
         this.currentWarp = serverWarp;
-        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.getName()).saveToString(), WarpEditorGUI.class);
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle()));
+        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this), this.instance.getRow() * 9, ComponentUtils.text(this.instance.getTitle()));
     }
 
     @Override
     protected Mask renderMasks() {
-        return this.gui.getMask();
+        return this.instance.getMask();
     }
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.gui.getFunctionItems());
+        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.instance.getFunctionItems());
         if(functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {

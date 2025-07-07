@@ -15,8 +15,8 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
+import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -35,40 +35,41 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public class HomeList extends BasePageGui<ServerHome> {
-
-    public HomeListGUI gui;
+public class HomeList extends BasePageGui<ServerHome, HomeListGUI> {
 
     public HomeList(Player player) {
-        super(player);
+        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.name()).saveToString(), HomeListGUI.class));
     }
 
     @Override
     public CompletableFuture<List<ServerHome>> requestData() {
-        return new HomeManager(this.player, true).getList(Page.create(this.pageNum, this.gui.getDataItems().getSlot().size()));
+        return new HomeManager(this.player, true)
+                .getList(Page.create(this.pageNum, this.instance.getDataItems().getSlot().size()));
     }
 
     @Override
     protected void init() {
-        this.gui = FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.getName()).saveToString(), HomeListGUI.class);
-        this.setPageSize(this.gui.getDataItems().getSlot().size());
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.HOMELIST, this), this.gui.getRow() * 9, ComponentUtils.text(this.gui.getTitle(), player));
+        this.setPageSize(this.instance.getDataItems().getSlot().size());
+        this.inventory = Bukkit.createInventory(
+                new CustomInventoryHolder(player, GuiType.HOMELIST, this),
+                this.instance.getRow() * 9,
+                ComponentUtils.text(this.instance.getTitle(), player));
     }
 
     @Override
     protected Mask renderMasks() {
-        return this.gui.getMask();
+        return this.instance.getMask();
     }
 
     @Override
     protected Map<String, FunctionItems> renderFunctionItems() {
-        return this.gui.getFunctionItems();
+        return this.instance.getFunctionItems();
     }
 
     @Override
     public void renderDataItem() {
-        List<Integer> dataSlot = this.gui.getDataItems().getSlot();
-        List<String> rawLore = this.gui.getDataItems().getLore();
+        List<Integer> dataSlot = this.instance.getDataItems().getSlot();
+        List<String> rawLore = this.instance.getDataItems().getLore();
         for (int i = 0; i < this.data.size(); i++) {
             ServerHome ph = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));

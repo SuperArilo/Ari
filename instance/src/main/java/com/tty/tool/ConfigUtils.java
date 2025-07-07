@@ -59,14 +59,14 @@ public class ConfigUtils {
             Log.error("file path is empty");
             return defaultValue;
         }
-        YamlConfiguration fileConfiguration = getObject(filePath.getName());
+        YamlConfiguration fileConfiguration = getObject(filePath.name());
         if (fileConfiguration == null) {
-            Log.error("Config file not found: " + filePath.getName());
+            Log.error("Config file not found: " + filePath.name());
             return defaultValue;
         }
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
-            Log.error("Value not found for path: " + keyPath + " in file: " + filePath.getName());
+            Log.error("Value not found for path: " + keyPath + " in file: " + filePath.name());
             return defaultValue;
         }
         if (value instanceof MemorySection) {
@@ -80,7 +80,7 @@ public class ConfigUtils {
         try {
             return gson.fromJson(gson.toJsonTree(value), type);
         } catch (JsonSyntaxException e) {
-            Log.error("Failed to convert value at path: " + keyPath + " in file: " + filePath.getName() + " to type: " + type.getTypeName(), e);
+            Log.error("Failed to convert value at path: " + keyPath + " in file: " + filePath.name() + " to type: " + type.getTypeName(), e);
             return defaultValue;
         }
     }
@@ -92,7 +92,7 @@ public class ConfigUtils {
                 FilePath.FunctionConfig,
                 new TypeToken<Map<String, Object>>(){}.getType(),
                 null);
-        YamlConfiguration function = getObject(FilePath.FunctionConfig.getName());
+        YamlConfiguration function = getObject(FilePath.FunctionConfig.name());
 
         if(function.getKeys(false).isEmpty()) {
             Log.error("rtp initialization failed, Function file is null");
@@ -112,7 +112,7 @@ public class ConfigUtils {
             }
             function.set("rtp.worlds", value);
         }
-        setConfig(FilePath.FunctionConfig.getName(), function);
+        setConfig(FilePath.FunctionConfig.name(), function);
 
         File file = new File(Ari.instance.getDataFolder(), FilePath.FunctionConfig.getPath());
         try {

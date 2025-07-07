@@ -4,22 +4,22 @@ import lombok.Getter;
 
 @Getter
 public enum FilePath {
-    Lang("lang","lang/[lang].yml"),
-    TPA("tpa", "module/tpa/setting.yml"),
-    CommandAlias("commandAlias", "module/command-alias.yml"),
-    HomeList("homeList", "module/home/home-gui.yml"),
-    HomeConfig("homeConfig", "module/home/setting.yml"),
-    HomeEditor("homeEditor", "module/home/edit-home-gui.yml"),
-    WarpList("warpList", "module/warp/warp-gui.yml"),
-    WarpConfig("warpConfig", "module/warp/setting.yml"),
-    WarpEditor("warpEditor", "module/warp/edit-warp-gui.yml"),
-    FunctionConfig("functionConfig", "module/function/setting.yml");
+    Lang("lang/[lang].yml"),
+    TPA("module/tpa/setting.yml"),
+    CommandAlias("module/command-alias.yml"),
+    HomeList("module/home/home-gui.yml"),
+    HomeConfig("module/home/setting.yml"),
+    HomeEditor("module/home/edit-home-gui.yml"),
+    WarpList("module/warp/warp-gui.yml"),
+    WarpConfig("module/warp/setting.yml"),
+    WarpEditor("module/warp/edit-warp-gui.yml"),
+    FunctionConfig("module/function/setting.yml"),
+    SpawnConfig("module/spawn/setting.yml"),
+    SpawnList("module/spawn/spawn-gui.yml");
 
-    private final String name;
     private final String path;
 
-    FilePath(String name, String path) {
-        this.name = name;
+    FilePath(String path) {
         this.path = path;
     }
 

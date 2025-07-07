@@ -16,6 +16,7 @@ import com.tty.listener.player.KeepInventoryAndExperience;
 import com.tty.listener.player.OnPlayerJoinAndLeaveListener;
 import com.tty.listener.player.PlayerActionListener;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
+import com.tty.listener.spawn.SpawnListListener;
 import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
@@ -99,6 +100,7 @@ public class Ari extends JavaPlugin {
         pluginManager.registerEvents(new PlayerListener(), this);
         pluginManager.registerEvents(new WarpListListener(GuiType.WARPLIST), this);
         pluginManager.registerEvents(new EditWarpListener(GuiType.WARPEDIT), this);
+        pluginManager.registerEvents(new SpawnListListener(GuiType.SPAWNLIST), this);
         pluginManager.registerEvents(new OnPlayerJoinAndLeaveListener(), this);
         pluginManager.registerEvents(new PlayerSkipNight(), this);
         pluginManager.registerEvents(new OnPluginReloadListener(), this);
@@ -128,7 +130,7 @@ public class Ari extends JavaPlugin {
             } else if (pluginConfig.getBoolean("debug.overwrite-file", false)) {
                 Ari.instance.saveResource(path, true);
             }
-            ConfigUtils.setConfig(filePath.getName(), YamlConfiguration.loadConfiguration(file));
+            ConfigUtils.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));
         }
     }
 

@@ -2,14 +2,14 @@ package com.tty.gui.spawn;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.menu.BaseDataMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.entity.menu.spawn.SpawnListGUI;
 import com.tty.entity.sql.ServerSpawn;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.SpawnManager;
-import com.tty.gui.BasePageGui;
+import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
@@ -26,27 +26,28 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class SpawnList extends BasePageGui<ServerSpawn, SpawnListGUI> {
-
+public class SpawnList extends BaseDataItemInventory<ServerSpawn> {
 
     public SpawnList(Player player) {
-        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.SpawnList.name()).saveToString(), SpawnListGUI.class));
+        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.SpawnList.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override
-    protected Mask renderMasks() {
-        return this.instance.getMask();
+    protected Mask getMasks() {
+        return null;
     }
 
     @Override
-    protected Map<String, FunctionItems> renderFunctionItems() {
-        return this.instance.getFunctionItems();
+    protected Map<String, FunctionItems> getFunctionItems() {
+        return null;
+    }
+
+    @Override
+    protected CustomInventoryHolder createHolder() {
+        return new CustomInventoryHolder(player, GuiType.SPAWNLIST, this);
     }
 
     @Override
@@ -55,18 +56,8 @@ public class SpawnList extends BasePageGui<ServerSpawn, SpawnListGUI> {
     }
 
     @Override
-    protected void init() {
-        this.setPageSize(this.instance.getDataItems().getSlot().size());
-        this.inventory = Bukkit.createInventory(
-                new CustomInventoryHolder(player, GuiType.SPAWNLIST, this),
-                this.instance.getRow() * 9,
-                ComponentUtils.text(this.instance.getTitle(), player));
-    }
-
-    @Override
-    protected void renderDataItem() {
-        List<Integer> dataSlot = this.instance.getDataItems().getSlot();
-        List<String> rawLore = this.instance.getDataItems().getLore();
+    protected Map<Integer, ItemStack> getRenderItem() {
+        Map<Integer, ItemStack> map = new HashMap<>();
         for (int i = 0; i < this.data.size(); i++) {
             ServerSpawn serverSpawn = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverSpawn.getShowMaterial().toUpperCase()));
@@ -79,7 +70,7 @@ public class SpawnList extends BasePageGui<ServerSpawn, SpawnListGUI> {
             itemMeta.displayName(ComponentUtils.text(serverSpawn.getSpawnName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverSpawn.getLocation());
-            for (String line : rawLore) {
+            for (String line : this.baseDataInstance.getDataItems().getLore()) {
                 for (LocationKeyType keyType : LocationKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverSpawn.getSpawnId());
@@ -112,7 +103,9 @@ public class SpawnList extends BasePageGui<ServerSpawn, SpawnListGUI> {
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
             itemStack.setItemMeta(itemMeta);
-            this.inventory.setItem(dataSlot.get(i), itemStack);
+            map.put(this.baseDataInstance.getDataItems().getSlot().get(i), itemStack);
         }
+        return map;
     }
+
 }

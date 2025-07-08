@@ -1,11 +1,14 @@
 package com.tty.gui;
 
 import com.tty.Ari;
+import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.menu.BaseMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.ComponentUtils;
 import net.kyori.adventure.text.TextComponent;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -13,34 +16,40 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseGui<I> {
+public abstract class BaseInventory {
 
-    public final I instance;
+    public final BaseMenu baseInstance;
     protected final Player player;
-    protected Inventory inventory;
+    private Inventory inventory;
 
     private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
 
-    public BaseGui(Player player, I instance) {
+    public BaseInventory(BaseMenu instance, Player player) {
+        this.baseInstance = instance;
         this.player = player;
-        this.instance = instance;
     }
+
     public void open() {
+        this.inventory = Bukkit.createInventory(this.createHolder(), this.baseInstance.getRow() * 9, ComponentUtils.text(this.baseInstance.getTitle(), player));
         this.player.openInventory(this.inventory);
-        this.startRender();
+        this.renderMasks();
+        this.renderFunctionItems();
     }
 
-    private void startRender() {
-        this.BaseRenderMasks(this.renderMasks());
-        this.BaseRenderFunctionItems(this.renderFunctionItems());
-    }
+    protected abstract Mask getMasks();
 
-    protected void BaseRenderMasks(Mask mask) {
-        if (mask == null) return;
+    protected abstract Map<String, FunctionItems> getFunctionItems();
+
+    private void renderMasks() {
+        Mask mask = this.getMasks();
+        if (mask == null) {
+            mask = this.baseInstance.getMask();
+        }
         List<TextComponent> collect = mask.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList();
         for (Integer i : mask.getSlot()) {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
@@ -52,13 +61,17 @@ public abstract class BaseGui<I> {
             this.inventory.setItem(i, itemStack);
         }
     }
-    protected void BaseRenderFunctionItems(Map<String, FunctionItems> functionItemMap) {
-        if (functionItemMap == null) return;
-        functionItemMap.forEach((k, v) -> {
+
+    private void renderFunctionItems() {
+        Map<String, FunctionItems> functionItems = this.getFunctionItems();
+        if (functionItems == null || functionItems.isEmpty()) {
+            functionItems = this.baseInstance.getFunctionItems();
+        }
+        functionItems.forEach((k, v) -> {
             ItemStack o = new ItemStack(Material.valueOf(v.getMaterial().toUpperCase()));
             ItemMeta mo = o.getItemMeta();
             mo.displayName(ComponentUtils.text(v.getName(), this.player));
-            mo.lore(v.getLore().stream().map(this::apply).toList());
+            mo.lore(v.getLore().stream().map(i -> ComponentUtils.text(i, this.player)).toList());
             mo.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, v.getType().name());
             o.setItemMeta(mo);
             for (Integer integer : v.getSlot()) {
@@ -67,28 +80,13 @@ public abstract class BaseGui<I> {
         });
     }
 
-    /**
-     * 渲染gui的mask-item方法
-     * @return Mask类
-     */
-    protected abstract Mask renderMasks();
+    protected abstract CustomInventoryHolder createHolder();
 
-    /**
-     * 渲染gui中带功能的item
-     * @return Map<String, FunctionItems>类
-     */
-    protected abstract Map<String, FunctionItems> renderFunctionItems();
-
-    /**
-     * 指定位置更新当前的GUI
-     */
-    public void updateGui() {
-        if(this.inventory == null) return;
-        this.inventory.clear();
-        this.startRender();
+    protected void clearItem(int index) {
+        this.inventory.clear(index);
     }
 
-    private TextComponent apply(String q) {
-        return ComponentUtils.text(q, this.player);
+    protected void setItem(int index, @NotNull ItemStack itemStack) {
+        this.inventory.setItem(index, itemStack);
     }
 }

@@ -2,14 +2,14 @@ package com.tty.gui.warp;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.menu.BaseDataMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.entity.menu.warp.WarpListGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;
-import com.tty.gui.BasePageGui;
+import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
@@ -28,16 +28,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class WarpList extends BasePageGui<ServerWarp, WarpListGUI> {
+public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     public WarpList(Player player) {
-        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpList.name()).saveToString(), WarpListGUI.class));
+        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpList.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override
@@ -46,27 +43,10 @@ public class WarpList extends BasePageGui<ServerWarp, WarpListGUI> {
     }
 
     @Override
-    protected void init() {
-        this.pageSize = this.instance.getDataItems().getSlot().size();
-        this.inventory = Bukkit.createInventory(
-                new CustomInventoryHolder(player, GuiType.WARPLIST, this), this.instance.getRow() * 9,
-                ComponentUtils.text(this.instance.getTitle(), player));
-    }
-
-    @Override
-    protected Mask renderMasks() {
-        return this.instance.getMask();
-    }
-
-    @Override
-    protected Map<String, FunctionItems> renderFunctionItems() {
-        return this.instance.getFunctionItems();
-    }
-
-    @Override
-    protected void renderDataItem() {
-        List<Integer> dataSlot = this.instance.getDataItems().getSlot();
-        List<String> rawLore = this.instance.getDataItems().getLore();
+    protected Map<Integer, ItemStack> getRenderItem() {
+        Map<Integer, ItemStack> map = new HashMap<>();
+        List<Integer> dataSlot = this.baseDataInstance.getDataItems().getSlot();
+        List<String> rawLore = this.baseDataInstance.getDataItems().getLore();
         for (int i = 0;i < this.data.size();i++) {
             ServerWarp serverWarp = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
@@ -138,8 +118,24 @@ public class WarpList extends BasePageGui<ServerWarp, WarpListGUI> {
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
             itemStack.setItemMeta(itemMeta);
-            this.inventory.setItem(dataSlot.get(i), itemStack);
+            map.put(dataSlot.get(i), itemStack);
         }
+        return map;
+    }
+
+    @Override
+    protected Mask getMasks() {
+        return null;
+    }
+
+    @Override
+    protected Map<String, FunctionItems> getFunctionItems() {
+        return null;
+    }
+
+    @Override
+    protected CustomInventoryHolder createHolder() {
+        return new CustomInventoryHolder(player, GuiType.WARPLIST, this);
     }
 
 }

@@ -2,14 +2,14 @@ package com.tty.gui.home;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.menu.BaseDataMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.entity.menu.home.HomeListGUI;
 import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
-import com.tty.gui.BasePageGui;
+import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LocationKeyType;
@@ -18,7 +18,6 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -30,46 +29,29 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.enchantments.Enchantment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 
-public class HomeList extends BasePageGui<ServerHome, HomeListGUI> {
+public class HomeList extends BaseDataItemInventory<ServerHome> {
 
     public HomeList(Player player) {
-        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.name()).saveToString(), HomeListGUI.class));
+        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override
     public CompletableFuture<List<ServerHome>> requestData() {
         return new HomeManager(this.player, true)
-                .getList(Page.create(this.pageNum, this.instance.getDataItems().getSlot().size()));
+                .getList(Page.create(this.pageNum, this.baseDataInstance.getDataItems().getSlot().size()));
     }
 
     @Override
-    protected void init() {
-        this.setPageSize(this.instance.getDataItems().getSlot().size());
-        this.inventory = Bukkit.createInventory(
-                new CustomInventoryHolder(player, GuiType.HOMELIST, this),
-                this.instance.getRow() * 9,
-                ComponentUtils.text(this.instance.getTitle(), player));
-    }
-
-    @Override
-    protected Mask renderMasks() {
-        return this.instance.getMask();
-    }
-
-    @Override
-    protected Map<String, FunctionItems> renderFunctionItems() {
-        return this.instance.getFunctionItems();
-    }
-
-    @Override
-    public void renderDataItem() {
-        List<Integer> dataSlot = this.instance.getDataItems().getSlot();
-        List<String> rawLore = this.instance.getDataItems().getLore();
+    protected Map<Integer, ItemStack> getRenderItem() {
+        Map<Integer, ItemStack> map = new HashMap<>();
+        List<Integer> dataSlot = this.baseDataInstance.getDataItems().getSlot();
+        List<String> rawLore = this.baseDataInstance.getDataItems().getLore();
         for (int i = 0; i < this.data.size(); i++) {
             ServerHome ph = this.data.get(i);
             ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
@@ -104,7 +86,24 @@ public class HomeList extends BasePageGui<ServerHome, HomeListGUI> {
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             }
             itemStack.setItemMeta(itemMeta);
-            this.inventory.setItem(dataSlot.get(i), itemStack);
+            map.put(dataSlot.get(i), itemStack);
         }
+        return map;
     }
+
+    @Override
+    protected Mask getMasks() {
+        return null;
+    }
+
+    @Override
+    protected Map<String, FunctionItems> getFunctionItems() {
+        return null;
+    }
+
+    @Override
+    protected CustomInventoryHolder createHolder() {
+        return new CustomInventoryHolder(player, GuiType.HOMELIST, this);
+    }
+
 }

@@ -1,27 +1,28 @@
 package com.tty.gui;
 
+import com.tty.entity.menu.BaseDataMenu;
 import com.tty.enumType.FilePath;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-@Setter
-@Getter
-public abstract class BasePageGui<T, I> extends BaseGui<I> {
+public abstract class BaseDataItemInventory<T> extends BaseInventory {
 
     protected int pageNum = 1;
-    protected int pageSize = 10;
+    protected int pageSize;
+    public final BaseDataMenu baseDataInstance;
     public List<T> data;
 
-    public BasePageGui(Player player, I instance) {
-        super(player, instance);
-        this.init();
+    public BaseDataItemInventory(BaseDataMenu baseDataInstance, Player player) {
+        super(baseDataInstance, player);
+        this.baseDataInstance = baseDataInstance;
+        this.pageSize = baseDataInstance.getDataItems().getSlot().size();
         CompletableFuture<List<T>> future = this.requestData();
         if (future == null) return;
         future.thenAccept(list -> {
@@ -31,7 +32,7 @@ public abstract class BasePageGui<T, I> extends BaseGui<I> {
             Log.debug("render gui time: " + (System.currentTimeMillis() - l) + "ms");
         }).exceptionally(i -> {
             Log.error("request data error", i);
-           return null;
+            return null;
         });
     }
 
@@ -47,7 +48,6 @@ public abstract class BasePageGui<T, I> extends BaseGui<I> {
         }
         this.requestData().thenAccept(list -> {
             this.data = list;
-            this.updateGui();
             this.renderDataItem();
         }).exceptionally(i -> {
             Log.error("request data error", i);
@@ -61,14 +61,13 @@ public abstract class BasePageGui<T, I> extends BaseGui<I> {
     public void next() {
         this.pageNum++;
         this.requestData().thenAccept(list -> {
-           if (list.isEmpty()) {
-               this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-next", FilePath.Lang)));
-               this.pageNum--;
-           } else {
-               this.data = list;
-               this.updateGui();
-               this.renderDataItem();
-           }
+            if (list.isEmpty()) {
+                this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-next", FilePath.Lang)));
+                this.pageNum--;
+            } else {
+                this.data = list;
+                this.renderDataItem();
+            }
         }).exceptionally(i -> {
             Log.error("request data error", i);
             return null;
@@ -80,15 +79,19 @@ public abstract class BasePageGui<T, I> extends BaseGui<I> {
      * @return 返回数据 CompletableFuture
      */
     protected abstract CompletableFuture<List<T>> requestData();
+    protected abstract Map<Integer, ItemStack> getRenderItem();
 
-    /**
-     * 开始请求数据之前的gui配置初始化
-     */
-    protected abstract void init();
+    private void renderDataItem() {
+        Map<Integer, ItemStack> renderItem = this.getRenderItem();
+        if (renderItem == null || renderItem.isEmpty()) return;
 
-    /**
-     * 渲染gui中带数据的item
-     */
-    protected abstract void renderDataItem();
+        for (Integer index : this.baseDataInstance.getDataItems().getSlot()) {
+            this.clearItem(index);
+        }
+        renderItem.forEach((k, v) -> {
+            if (v == null) return;
+            this.setItem(k, v);
+        });
+    }
 
 }

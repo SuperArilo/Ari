@@ -1,43 +1,40 @@
 package com.tty.gui.warp;
 
 import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.menu.BaseMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
-import com.tty.entity.menu.warp.WarpEditorGUI;
 import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.gui.BaseGui;
+import com.tty.gui.BaseInventory;
 import com.tty.lib.enum_type.LocationKeyType;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.EconomyUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class WarpEditor extends BaseGui<WarpEditorGUI> {
+public class WarpEditor extends BaseInventory {
 
     public final ServerWarp currentWarp;
 
     public WarpEditor(ServerWarp serverWarp, Player player) {
-        super(player, FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.name()).saveToString(), WarpEditorGUI.class));
+        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpEditor.name()).saveToString(), BaseMenu.class), player);
         this.currentWarp = serverWarp;
-        this.inventory = Bukkit.createInventory(new CustomInventoryHolder(player, GuiType.WARPEDIT, this), this.instance.getRow() * 9, ComponentUtils.text(this.instance.getTitle()));
     }
 
     @Override
-    protected Mask renderMasks() {
-        return this.instance.getMask();
+    protected Mask getMasks() {
+        return null;
     }
 
     @Override
-    protected Map<String, FunctionItems> renderFunctionItems() {
-        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.instance.getFunctionItems());
+    protected Map<String, FunctionItems> getFunctionItems() {
+        Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.baseInstance.getFunctionItems());
         if(functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
                 switch (item.getType()) {
@@ -79,4 +76,10 @@ public class WarpEditor extends BaseGui<WarpEditorGUI> {
         }
         return functionItems;
     }
+
+    @Override
+    protected CustomInventoryHolder createHolder() {
+        return new CustomInventoryHolder(player, GuiType.WARPEDIT, this);
+    }
+
 }

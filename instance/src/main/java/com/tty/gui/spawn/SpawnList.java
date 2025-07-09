@@ -17,6 +17,7 @@ import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
+import com.tty.tool.PermissionUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -89,6 +90,13 @@ public class SpawnList extends BaseDataItemInventory<ServerSpawn> {
                                 name = offlinePlayer.getName() != null ? offlinePlayer.getName() : "null";
                             }
                             yield line.replace(keyType.getKey(), name);
+                        }
+                        case PERMISSION -> {
+                            boolean hasPermission = serverSpawn.getPermission() == null ||
+                                    serverSpawn.getPermission().isEmpty() ||
+                                    PermissionUtils.hasPermission(this.player, serverSpawn.getPermission()) ||
+                                    UUID.fromString(serverSpawn.getCreateBy()).equals(this.player.getUniqueId());
+                            yield line.replace(keyType.getKey(), ConfigUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang));
                         }
                         default -> line;
                     };

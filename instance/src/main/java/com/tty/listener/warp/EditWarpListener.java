@@ -137,6 +137,9 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                             clickMeta.lore(List.of());
                             clickItem.setItemMeta(clickMeta);
                         }, 20L);
+                    } else {
+                        clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.error", FilePath.Lang))));
+                        clickItem.setItemMeta(clickMeta);
                     }
                 }).exceptionally(i -> {
                     Log.error("saving warp error", i);

@@ -72,7 +72,7 @@ public class SpawnManager extends BaseManager<ServerSpawn> {
                                    location = :location,
                                    permission = :permission,
                                    top_slot = :topSlot
-                                   where spawn_id = :SpawnId
+                                   where spawn_id = :spawnId
                                """.formatted(SQLInstance.getTablePrefix()))
                        .bind(instance)
                        .executeUpdate()

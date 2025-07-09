@@ -4,10 +4,12 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerSpawn;
 import com.tty.enumType.FilePath;
 import com.tty.function.SpawnManager;
+import com.tty.function.Teleport;
 import com.tty.gui.spawn.SpawnList;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
 import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
@@ -19,6 +21,7 @@ import org.bukkit.entity.Player;
 public class CommandSpawn {
 
     private final CommandSender sender;
+    private final SpawnManager manager = new SpawnManager(true);
 
     public CommandSpawn(CommandSender sender) {
         this.sender = sender;
@@ -26,8 +29,7 @@ public class CommandSpawn {
 
     public void set(String spawnId) {
         if (this.sender instanceof Player player) {
-            SpawnManager manager = new SpawnManager(true);
-            manager.getList(Page.create(1, Integer.MAX_VALUE))
+            this.manager.getList(Page.create(1, Integer.MAX_VALUE))
                 .thenAccept(list -> {
                     if (list.stream().anyMatch(c -> c.getSpawnId().equals(spawnId))) {
                         this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.spawn.exist", FilePath.Lang)));
@@ -42,7 +44,7 @@ public class CommandSpawn {
                         spawn.setLocation(location.toString());
                         spawn.setWorld(player.getWorld().getName());
                         spawn.setShowMaterial(PublicFunctionUtils.checkIsItem(location.getBlock().getRelative(BlockFace.DOWN).getType()).name());
-                        manager.createInstance(spawn)
+                        this.manager.createInstance(spawn)
                                 .thenAccept(status -> this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue(status ? "function.spawn.create-success":"base.on-error", FilePath.Lang))))
                                 .exceptionally(i -> {
                                     Log.error("create spawn error", i);
@@ -62,7 +64,23 @@ public class CommandSpawn {
         new SpawnList((Player) this.sender).open();
     }
 
-    public void openEditor() {
-
+    public void convey() {
+        Player player = (Player) this.sender;
+        this.manager.getList(Page.create(1, 1))
+            .thenAccept(list -> {
+                if (list.isEmpty()) {
+                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.spawn.no-spawn", FilePath.Lang)));
+                    return;
+                }
+                Teleport.create(player,
+                                FormatUtils.parseLocation(list.getFirst().getLocation()),
+                                ConfigUtils.getValue("main.teleport-delay", FilePath.SpawnConfig, Integer.class, 3))
+                        .teleport();
+            }).exceptionally(i -> {
+               Log.error("teleport spawn error", i);
+               this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                    return null;
+            });
     }
+
 }

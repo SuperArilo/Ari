@@ -4,11 +4,15 @@ import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
+import com.tty.function.SpawnManager;
 import com.tty.function.Teleport;
+import com.tty.lib.dto.Page;
 import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,16 +38,20 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
         boolean login = Ari.instance.getConfig().getBoolean("server.message.on-login", false);
         Player player = event.getPlayer();
-        PlayerManager build = new PlayerManager(true);
+        PlayerManager manager = new PlayerManager(true);
         if (first || login) {
             event.joinMessage(null);
         }
         PLAYER_LOGIN_TIMES.put(player.getUniqueId(), System.currentTimeMillis());
-        build.getInstance(player.getUniqueId().toString())
+        manager.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if (i == null || !player.hasPlayedBefore()) {
                         if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
-                            Teleport.create(player, player.getWorld().getSpawnLocation(), 0).teleport();
+                            new SpawnManager(true).getList(Page.create(1, 1))
+                                .thenAccept(list -> {
+                                    Location location = list.isEmpty() ? player.getWorld().getSpawnLocation(): FormatUtils.parseLocation(list.getFirst().getLocation());
+                                    Teleport.create(player, location, 0).teleport();
+                                });
                         }
                         if(first) {
                             Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang), player));
@@ -52,7 +60,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             ServerPlayer serverPlayer = new ServerPlayer();
                             serverPlayer.setPlayerName(player.getName());
                             serverPlayer.setPlayerUUID(player.getUniqueId().toString());
-                            build.createInstance(serverPlayer);
+                            manager.createInstance(serverPlayer);
                         }
                     } else {
                         if(login) {

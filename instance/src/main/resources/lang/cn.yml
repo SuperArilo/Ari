@@ -75,8 +75,10 @@ function:
     not-found: 'warp的id错误、找不到或者已被删除'
     not-enough-money: '你没有足够的金钱传送到该地标'
   spawn:
+    no-spawn: '&4服务器目前没有创建出生点'
     create-success: '&2出生点创建成功！'
     exist: '已存在相同ID的出生点'
+    delete-success: '删除成功'
     set-failure: '&4设置失败，请查看控制台（如果有错误）'
   deletewarp:
     success: '删除成功'

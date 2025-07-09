@@ -10,7 +10,6 @@ import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -123,10 +122,15 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             }
             case SPAWN -> {
                 if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
+                new CommandSpawn(commandSender).convey();
             }
             case SETSPAWN -> {
                 if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
-                Location location = ((Player) commandSender).getLocation();
+                if (strings.length != 2) {
+                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
+                    return true;
+                }
+                new CommandSpawn(commandSender).set(strings[1]);
             }
         }
         return true;

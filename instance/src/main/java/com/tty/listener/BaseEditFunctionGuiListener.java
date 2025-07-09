@@ -65,6 +65,11 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
         this.onPlayerEditInstance.put(player, onEdit);
     }
     protected OnEdit removeEditInstance(Player player) {
-        return this.onPlayerEditInstance.remove(player);
+        OnEdit onEdit = this.onPlayerEditInstance.remove(player);
+        if (onEdit == null) return null;
+        CustomInventoryHolder holder = onEdit.getHolder();
+        holder.getTask().cancel();
+        holder.setTask(null);
+        return onEdit;
     }
 }

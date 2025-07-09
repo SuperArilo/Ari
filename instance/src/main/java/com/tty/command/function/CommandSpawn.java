@@ -13,6 +13,7 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
+import com.tty.tool.PermissionUtils;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
@@ -72,8 +73,17 @@ public class CommandSpawn {
                     this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.spawn.no-spawn", FilePath.Lang)));
                     return;
                 }
+                ServerSpawn serverSpawn = list.getFirst();
+                String permission = serverSpawn.getPermission();
+                if(permission != null && !permission.isEmpty()) {
+                    boolean hasPermission = PermissionUtils.hasPermission(player, permission);
+                    if (!hasPermission && !player.isOp()) {
+                        player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.spawn.no-permission-teleport", FilePath.Lang)));
+                        return;
+                    }
+                }
                 Teleport.create(player,
-                                FormatUtils.parseLocation(list.getFirst().getLocation()),
+                                FormatUtils.parseLocation(serverSpawn.getLocation()),
                                 ConfigUtils.getValue("main.teleport-delay", FilePath.SpawnConfig, Integer.class, 3))
                         .teleport();
             }).exceptionally(i -> {

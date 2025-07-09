@@ -15,9 +15,6 @@ data:
   connection-timeout: 5000
   keepalive-time: 0
 server:
-  spawn:
-    first-join: true
-    teleport-delay: 3
   skip-night:
     enable: true
     tick-increment: 5

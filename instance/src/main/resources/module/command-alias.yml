@@ -37,9 +37,6 @@ spawn:
 spawnlist:
   enable: true
   tab-complete: false
-spawneditor:
-  enable: true
-  tab-complete: false
 setspawn:
   enable: true
   tab-complete: false

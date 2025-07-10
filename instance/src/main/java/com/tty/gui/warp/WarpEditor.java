@@ -8,7 +8,7 @@ import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.gui.BaseInventory;
-import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
@@ -43,7 +43,7 @@ public class WarpEditor extends BaseInventory {
                     case LOCATION -> {
                         String name = item.getName();
                         Location location = FormatUtils.parseLocation(this.currentWarp.getLocation());
-                        for (LocationKeyType keyType : LocationKeyType.values()) {
+                        for (IconKeyType keyType : IconKeyType.values()) {
                             name = switch (keyType) {
                                 case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
                                 case Y -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
@@ -67,7 +67,7 @@ public class WarpEditor extends BaseInventory {
                         }
                     }
                     case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
-                            LocationKeyType.TOP_SLOT.getKey(),
+                            IconKeyType.TOP_SLOT.getKey(),
                             ConfigUtils.getValue(
                                     this.currentWarp.isTopSlot() ? "base.yes_re":"base.no_re",
                                     FilePath.Lang))).toList());

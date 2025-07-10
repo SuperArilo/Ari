@@ -12,7 +12,7 @@ import com.tty.function.WarpManager;
 import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
@@ -60,17 +60,17 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverWarp.getLocation());
             rawLore.stream().filter(line -> {
-                for (LocationKeyType keyType : LocationKeyType.values()) {
-                    if(keyType == LocationKeyType.PERMISSION && line.contains(keyType.getKey())) {
+                for (IconKeyType keyType : IconKeyType.values()) {
+                    if(keyType == IconKeyType.PERMISSION && line.contains(keyType.getKey())) {
                         return ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, false);
                     }
-                    if(keyType == LocationKeyType.COST && line.contains(keyType.getKey())) {
+                    if(keyType == IconKeyType.COST && line.contains(keyType.getKey())) {
                         return ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) && !EconomyUtils.isNull();
                     }
                 }
                 return true;
             }).map(line -> {
-                for (LocationKeyType keyType : LocationKeyType.values()) {
+                for (IconKeyType keyType : IconKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
                         case X -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
@@ -98,7 +98,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                             }
                         }
                         case TOP_SLOT ->
-                                line.replace(LocationKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? "base.yes_re":"base.no_re");
+                                line.replace(IconKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? "base.yes_re":"base.no_re");
                         case PERMISSION -> {
                             boolean hasPermission = serverWarp.getPermission() == null ||
                                     serverWarp.getPermission().isEmpty() ||

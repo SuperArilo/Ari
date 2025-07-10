@@ -12,7 +12,7 @@ import com.tty.function.SpawnManager;
 import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
@@ -72,7 +72,7 @@ public class SpawnList extends BaseDataItemInventory<ServerSpawn> {
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverSpawn.getLocation());
             for (String line : this.baseDataInstance.getDataItems().getLore()) {
-                for (LocationKeyType keyType : LocationKeyType.values()) {
+                for (IconKeyType keyType : IconKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverSpawn.getSpawnId());
                         case X -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));

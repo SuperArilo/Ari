@@ -11,7 +11,7 @@ import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
@@ -154,7 +154,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
-                                p.replace(LocationKeyType.TOP_SLOT.getKey(),
+                                p.replace(IconKeyType.TOP_SLOT.getKey(),
                                         ConfigUtils.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);

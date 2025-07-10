@@ -12,7 +12,7 @@ import com.tty.function.HomeManager;
 import com.tty.gui.BaseDataItemInventory;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.enum_type.LocationKeyType;
+import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.ConfigUtils;
@@ -66,7 +66,7 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
             Location location = FormatUtils.parseLocation(ph.getLocation());
             rawLore.forEach(line -> {
                 String replacedLine = line;
-                for (LocationKeyType keyType : LocationKeyType.values()) {
+                for (IconKeyType keyType : IconKeyType.values()) {
                     replacedLine = switch (keyType) {
                         case ID -> replacedLine.replace(keyType.getKey(), ph.getHomeId());
                         case X -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));

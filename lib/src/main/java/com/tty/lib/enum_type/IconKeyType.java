@@ -3,7 +3,7 @@ package com.tty.lib.enum_type;
 import lombok.Getter;
 
 @Getter
-public enum LocationKeyType {
+public enum IconKeyType {
     ID("[ID]"),
     X("[X]"),
     Y("[Y]"),
@@ -16,7 +16,7 @@ public enum LocationKeyType {
 
     private final String key;
 
-    LocationKeyType(String key) {
+    IconKeyType(String key) {
         this.key = key;
     }
 

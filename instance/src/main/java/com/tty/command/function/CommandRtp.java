@@ -89,8 +89,9 @@ public class CommandRtp {
 
         final long l = System.currentTimeMillis();
         this.sendCountTitle();
-        int x = RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax());
-        int z = RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax());
+
+        int x = (int) Math.min(RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
+        int z = (int) Math.min(RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
 
         int chunkX = x >> 4;
         int chunkZ = z >> 4;

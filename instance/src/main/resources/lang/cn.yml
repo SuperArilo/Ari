@@ -86,10 +86,15 @@ function:
     success: '删除成功'
     none: '删除失败，尝试联系管理员'
   rtp:
-    searching: '正在搜索中...'
-    search-count: '剩余尝试次数 &6[RtpSearchCount]'
+    title-searching: '正在搜索中...'
+    title-search-count: '剩余尝试次数 &6[RtpSearchCount]'
     search-failure: '&4搜索失败，请重试'
     world-disable: '&8当前世界已经被禁用随机传送'
+    search-count-report: '&a第&6 [RtpSearchCount] &a次搜索&7: '
+    tips-result:
+      unstable-feet-position: '&4随机位置的脚下方块无法站立（如空气或液体）'
+      dangerous-feet-block: '&4随机位置的脚下方块有危险（如岩浆、仙人掌）'
+      dangerous-surroundings: '&4随机位置周围的方块存在危险（如岩浆、虚空）'
   sit:
     tips: '&f按下 &2潜行键 &f来取消'
     error-location: '&4当前位置不允许坐下'

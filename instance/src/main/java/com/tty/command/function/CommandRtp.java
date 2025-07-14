@@ -24,7 +24,9 @@ import java.util.Map;
 public class CommandRtp {
 
     private final CommandSender sender;
-    private int count = 10;
+    private final int initCount = ConfigUtils.getValue("rtp.search-count", FilePath.FunctionConfig, Integer.class, 10);
+    private int count = 0;
+    private final boolean showSearchResult = ConfigUtils.getValue("rtp.show-search-result", FilePath.FunctionConfig, Boolean.class, false);
     private boolean isRunning = false;
     private boolean isDone = false;
     private final World world;
@@ -66,7 +68,7 @@ public class CommandRtp {
         ) return;
 
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
-            if (this.count <= 0) {
+            if (this.count >= this.initCount) {
                 this.sender.clearTitle();
                 this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.rtp.search-failure", FilePath.Lang)));
                 i.cancel();
@@ -77,6 +79,7 @@ public class CommandRtp {
                 return;
             }
             if (this.isRunning) return;
+            this.count++;
             this.search();
             this.isRunning = true;
         }, 1L, 20L);
@@ -85,11 +88,7 @@ public class CommandRtp {
     private void search() {
 
         final long l = System.currentTimeMillis();
-        this.count--;
         this.sendCountTitle();
-        if (this.count <= 0) {
-            return;
-        }
         int x = RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax());
         int z = RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax());
 
@@ -102,13 +101,12 @@ public class CommandRtp {
         boolean isNether = this.world.getEnvironment().equals(World.Environment.NETHER);
 
         this.world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
-
             int highestBlockYAt = isNether ? this.getHighestBlockYAtNether(chunk, relativeX, relativeZ):chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
             Lib.Scheduler.runAtRegion(Ari.instance, this.world, chunkX, chunkZ, i -> {
                 if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
                     Log.debug("random location " + x + ", " + highestBlockYAt + ", " + z);
                     this.isDone = true;
-                    this.count = 10;
+                    this.count = 0;
                     int finalY = highestBlockYAt + 1;
                     Player player = (Player) this.sender;
                     player.clearTitle();
@@ -140,6 +138,7 @@ public class CommandRtp {
         }
         return value;
     }
+
     private boolean isLocationSafe(Chunk chunk, int chunkX, int chunkY, int chunkZ) {
 
         //判断Y轴高度合不合法
@@ -162,22 +161,26 @@ public class CommandRtp {
         Material behind = block.getRelative(0, -1, 0).getType();
 
         if (!isSafeStandingBlock(feet)) {
+            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
             Log.debug("standing block illegal.");
             return false;
         }
 
-        if (isSolid(body) ||
+        if (isSolid(body) || isSolid(head) ||
                 isDangerous(body) || isDangerous(head) ||
                 isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
+            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.dangerous-surroundings", FilePath.Lang));
             Log.debug("the blocks around the player are illegal.");
             return false;
         }
 
         if (isDangerous(feet)) {
+            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.dangerous-feet-block", FilePath.Lang));
             Log.debug("feet block is dangerous.");
             return false;
         }
         if (chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir()) {
+            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
             Log.debug("feet block illegal.");
             return false;
         }
@@ -209,17 +212,23 @@ public class CommandRtp {
 
     private void sendCountTitle() {
         String sub = ConfigUtils.getValue(
-                "function.rtp.search-count",
+                "function.rtp.title-search-count",
                 FilePath.Lang,
                 String.class,
                 "null");
-        sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
+        sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.initCount - this.count));
         Title title = ComponentUtils.setPlayerTitle(
-                ConfigUtils.getValue("function.rtp.searching", FilePath.Lang, String.class, "null"),
+                ConfigUtils.getValue("function.rtp.title-searching", FilePath.Lang, String.class, "null"),
                 sub,
                 0,
                 1000L,
                 1000L);
         this.sender.showTitle(title);
+    }
+
+    private void sendSearchMessage(String message) {
+        if (!this.showSearchResult) return;
+        String s = ConfigUtils.getValue("function.rtp.search-count-report", FilePath.Lang).replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
+        this.sender.sendMessage(ComponentUtils.text(s + message));
     }
 }

@@ -34,6 +34,8 @@ chat:
 rtp:
   enable: true
   delay: 3
+  search-count: 10
+  show-search-result: true
   worlds:
 action:
   sit:

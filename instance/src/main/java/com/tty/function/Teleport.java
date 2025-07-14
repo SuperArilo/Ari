@@ -6,7 +6,6 @@ import com.tty.lib.Lib;
 import com.tty.lib.ServerPlatform;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.Bukkit;
@@ -106,16 +105,14 @@ public class Teleport {
                 threadPlayer.clearTitle();
             }
             t.cancel();
-            Lib.Scheduler.runAtEntity(Ari.instance,
-                    threadPlayer,
-                    i -> {
-                        for (int y = 0;y <= this.targetLocation.getWorld().getMaxHeight();y++) {
-                            if (this.targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
-                                this.targetLocation.add(0, y, 0);
-                                break;
-                            }
-                        }
-                        threadPlayer.teleportAsync(this.targetLocation,
+            Lib.Scheduler.runAtRegion(Ari.instance, this.targetLocation, i -> {
+                for (int y = 0;y <= this.targetLocation.getWorld().getMaxHeight();y++) {
+                    if (this.targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
+                        this.targetLocation.add(0, y, 0);
+                        break;
+                    }
+                }
+                threadPlayer.teleportAsync(this.targetLocation,
                                 PlayerTeleportEvent.TeleportCause.PLUGIN)
                         .thenAccept(p -> {
                             if (p) {
@@ -127,9 +124,8 @@ public class Teleport {
                             this.after.run();
                             threadPlayer.sendMessage(ComponentUtils.text(ConfigUtils.getValue(p ? "teleport.success":"function.tpa.error", FilePath.Lang)));
                         });
-                    },
-                    () -> Log.error("teleport error on player: " + threadPlayer.getName()));
-            }, 0, 20);
+            });
+        }, 0, 20);
         return this;
     }
 

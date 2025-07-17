@@ -24,6 +24,8 @@ base:
     error: '&4保存失败，请联系管理员'
   permission:
     no-permission: '&4没有权限'
+  on-player:
+    hand-no-item: '&4当前手上并没有物品'
 teleport:
   title:
     main: '请不要移动...'

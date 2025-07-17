@@ -46,3 +46,6 @@ time:
 rtp:
   enable: true
   tab-complete: false
+itemname:
+  enable: true
+  tab-complete: false

@@ -58,6 +58,9 @@ public enum AriCommand {
     TIME("time",
             "ari.command.time",
             new time()),
+    ITEMNAME("itemname",
+            "ari.command.itemname",
+            new itemname()),
     RELOAD("reload",
             "ari.command.reload",
             null);

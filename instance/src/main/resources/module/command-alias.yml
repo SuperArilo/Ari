@@ -1,6 +1,3 @@
-ciallo:
-  enable: true
-  tab-complete: false
 tpa:
   enable: true
   tab-complete: true

@@ -11,6 +11,7 @@ base:
     timeout-cancel: '&7编辑超时，已自动取消！'
     title: '&7请输入新内容'
     sub-title: '&6cancel &7取消'
+    input-error: '&4输入有错误，请检查！'
     rename:
       name-error: '名称不满足'
       name-too-long: '名称过长'

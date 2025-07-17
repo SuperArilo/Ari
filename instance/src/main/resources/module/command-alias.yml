@@ -46,3 +46,6 @@ rtp:
 itemname:
   enable: true
   tab-complete: false
+itemlore:
+  enable: true
+  tab-complete: true

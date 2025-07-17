@@ -55,6 +55,9 @@ public enum AriCommand {
     ITEMNAME("itemname",
             "ari.command.itemname",
             new itemname()),
+    ITEMLORE("itemlore",
+            "ari.command.itemlore",
+            new itemlore()),
     RELOAD("reload",
             "ari.command.reload",
             null);

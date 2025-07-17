@@ -5,6 +5,7 @@ import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
+import com.tty.lib.enum_type.CommandAction;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
@@ -101,6 +102,11 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 Player player = (Player) commandSender;
                 new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[1]);
             }
+            case ITEMLORE -> {
+                if (!this.quickCheck(commandSender, AriCommand.ITEMLORE, strings.length, 3)) break;
+                Player player = (Player) commandSender;
+                new CommandItem(player, player.getInventory().getItemInMainHand()).changeLore(strings[1], strings[2]);
+            }
         }
         return true;
     }
@@ -160,6 +166,13 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     List<String> list = new ArrayList<>();
                     for (TimePeriod timePeriod : TimePeriod.values()) {
                         list.add(timePeriod.getDescription());
+                    }
+                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
+                }
+                case ITEMLORE -> {
+                    List<String> list = new ArrayList<>();
+                    for (CommandAction value : CommandAction.values()) {
+                        list.add(value.getName());
                     }
                     return PublicFunctionUtils.filterByPrefix(list, strings[1]);
                 }

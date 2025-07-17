@@ -138,7 +138,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandSpawn(commandSender).set(strings[1]);
             }
             case ITEMNAME -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings, 2)) break;
+                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
                 Player player = (Player) commandSender;
                 new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[1]);
             }

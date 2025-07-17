@@ -16,7 +16,7 @@ public class itemname extends BaseCommandCheck implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
         if (!this.isTheInstructionCorrect(command, AriCommand.ITEMNAME)) return false;
-        if (this.quickCheck(commandSender, AriCommand.ITEMNAME, strings, 1)) {
+        if (this.quickCheck(commandSender, AriCommand.ITEMNAME, strings.length, 1)) {
             Player player = (Player) commandSender;
             new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[0]);
         }

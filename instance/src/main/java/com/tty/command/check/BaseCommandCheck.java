@@ -49,9 +49,9 @@ public class BaseCommandCheck {
         return this.baseQuickCheck(sender, ariCommand);
     }
 
-    protected boolean quickCheck(CommandSender sender, AriCommand ariCommand, String[] args, int length) {
+    protected boolean quickCheck(CommandSender sender, AriCommand ariCommand, int argsLength, int length) {
         if (!this.baseQuickCheck(sender, ariCommand)) return false;
-        if (args.length != length) {
+        if (argsLength != length) {
             sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
             return false;
         }

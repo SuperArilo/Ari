@@ -3,9 +3,6 @@ package com.tty.command.lists;
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandSpawn;
 import com.tty.enumType.AriCommand;
-import com.tty.enumType.FilePath;
-import com.tty.lib.tool.ComponentUtils;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -19,11 +16,9 @@ public class setspawn extends BaseCommandCheck implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         if (!this.isTheInstructionCorrect(command, AriCommand.SETSPAWN)) return false;
-        if (this.quickCheck(sender, AriCommand.SETSPAWN) && args.length == 1) {
+        if (this.quickCheck(sender, AriCommand.SETSPAWN, args.length, 1)) {
             Player player = (Player) sender;
             new CommandSpawn(player).set(args[0]);
-        } else {
-            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
         }
         return true;
     }

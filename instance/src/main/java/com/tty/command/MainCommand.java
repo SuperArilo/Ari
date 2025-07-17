@@ -46,43 +46,23 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
             }
             case TP -> {
-                if (!this.quickCheck(commandSender, AriCommand.TP)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TP, strings.length, 2)) break;
                 new CommandTp(commandSender, strings[1]).tp();
             }
             case TPA -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPA)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TPA, strings.length, 2)) break;
                 new CommandTeleport(commandSender, strings[1]).tpa();
             }
             case TPAACCEPT -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAACCEPT)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TPAACCEPT, strings.length, 2)) break;
                 new CommandTeleport(commandSender, strings[1]).tpaaccept();
             }
             case TPAHERE -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAHERE)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TPAHERE, strings.length, 2)) break;
                 new CommandTeleport(commandSender, strings[1]).tpahere();
             }
             case TPAREFUSE -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAREFUSE)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TPAREFUSE, strings.length, 2)) break;
                 new CommandTeleport(commandSender, strings[1]).tparefuse();
             }
             case HOME -> {
@@ -90,11 +70,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandHome(commandSender).home();
             }
             case SETHOME -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETHOME)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.SETHOME, strings.length, 2)) break;
                 new CommandHome(commandSender).setHome(strings[1]);
             }
             case BACK -> {
@@ -106,19 +82,11 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandWarp(commandSender).warp();
             }
             case SETWARP -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
                 new CommandWarp(commandSender).setWarp(strings[1]);
             }
             case TIME -> {
-                if (!this.hasPermission(commandSender, AriCommand.TIME)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.TIME, strings.length, 2)) break;
                 new CommandTime((Player) commandSender).control(strings[1]);
             }
             case SPAWN -> {
@@ -130,11 +98,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandSpawn(commandSender).openList();
             }
             case SETSPAWN -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN)) break;
-                if (strings.length != 2) {
-                    commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
-                    return true;
-                }
+                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
                 new CommandSpawn(commandSender).set(strings[1]);
             }
             case ITEMNAME -> {

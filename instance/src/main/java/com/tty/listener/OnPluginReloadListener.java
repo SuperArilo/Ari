@@ -6,7 +6,6 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
-import org.bukkit.command.CommandSender;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -21,10 +20,7 @@ public class OnPluginReloadListener implements Listener {
         }
         Ari.instance.commandAlias.reloadAllAlias();
         ConfigUtils.setRtpWorldConfig();
-        Object entity = event.getEntity();
-        if (entity instanceof CommandSender commandSender) {
-            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.success", FilePath.Lang)));
-        }
+        event.getSender().sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.success", FilePath.Lang)));
     }
 
 }

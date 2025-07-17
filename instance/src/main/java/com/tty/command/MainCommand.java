@@ -42,7 +42,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             case RELOAD -> {
                 if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.doing", FilePath.Lang)));
-                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent<>(commandSender));
+                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
             }
             case TP -> {
                 if (!this.quickCheck(commandSender, AriCommand.TP)) break;

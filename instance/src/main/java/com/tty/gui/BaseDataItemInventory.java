@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 public abstract class BaseDataItemInventory<T> extends BaseInventory {
 
     protected int pageNum = 1;
-    protected int pageSize;
+    protected final int pageSize;
     public final BaseDataMenu baseDataInstance;
     public List<T> data;
 

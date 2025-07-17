@@ -46,6 +46,19 @@ public class BaseCommandCheck {
     }
 
     protected boolean quickCheck(CommandSender sender, AriCommand ariCommand) {
+        return this.baseQuickCheck(sender, ariCommand);
+    }
+
+    protected boolean quickCheck(CommandSender sender, AriCommand ariCommand, String[] args, int length) {
+        if (!this.baseQuickCheck(sender, ariCommand)) return false;
+        if (args.length != length) {
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
+            return false;
+        }
+        return true;
+    }
+
+    private boolean baseQuickCheck(CommandSender sender, AriCommand ariCommand) {
         if(!this.isPlayer(sender)) return false;
         return this.hasPermission(sender, ariCommand);
     }

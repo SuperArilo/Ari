@@ -35,7 +35,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             return true;
         }
         switch (type) {
-            case CIALLO -> new CommandCiallo(commandSender).ciallo();
             case RTP -> {
                 if (this.quickCheck(commandSender, AriCommand.RTP)) break;
                 new CommandRtp(commandSender).rtp();
@@ -44,10 +43,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
                 commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.doing", FilePath.Lang)));
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
-            }
-            case TP -> {
-                if (!this.quickCheck(commandSender, AriCommand.TP, strings.length, 2)) break;
-                new CommandTp(commandSender, strings[1]).tp();
             }
             case TPA -> {
                 if (!this.quickCheck(commandSender, AriCommand.TPA, strings.length, 2)) break;
@@ -149,16 +144,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 return List.of();
             }
             switch (c) {
-                case TP -> {
-                    Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-                    List<String> ps = new ArrayList<>();
-                    for (Player player : onlinePlayers) {
-                        String name = player.getName();
-                        if (commandSender.getName().equalsIgnoreCase(name)) continue;
-                        ps.add(player.getName());
-                    }
-                    return ps;
-                }
                 case TPA -> {
                     return new CommandTeleport(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPA);
                 }

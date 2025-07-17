@@ -6,6 +6,7 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 public class CommandTime {
@@ -25,7 +26,12 @@ public class CommandTime {
             this.player.sendMessage(ComponentUtils.text(replace));
             return;
         }
-        TimeManager.build(this.player.getWorld()).timeSet(period.getStart());
+        World world = this.player.getWorld();
+        if (!world.isBedWorks()) {
+            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("server.time.not-allowed-world", FilePath.Lang)));
+            return;
+        }
+        TimeManager.build(world).timeSet(period.getStart());
         String value = ConfigUtils.getValue("server.time.tips", FilePath.Lang);
         if (value == null) {
             this.player.sendMessage("no content " + timePeriod + "in lang");

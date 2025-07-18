@@ -78,7 +78,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandWarp(commandSender).warp();
             }
             case SETWARP -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
+                if (!this.quickCheck(commandSender, AriCommand.SETWARP, strings.length, 2)) break;
                 new CommandWarp(commandSender).setWarp(strings[1]);
             }
             case TIME -> {
@@ -98,7 +98,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 new CommandSpawn(commandSender).set(strings[1]);
             }
             case ITEMNAME -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
+                if (!this.quickCheck(commandSender, AriCommand.ITEMNAME, strings.length, 2)) break;
                 Player player = (Player) commandSender;
                 new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[1]);
             }
@@ -127,8 +127,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     commandList.add(type.getShow());
                 }
             }
-            Collections.sort(commandList);
-            return commandList;
+            return PublicFunctionUtils.filterByPrefix(commandList, strings[0]);
         } else if (strings.length == 1) {
             List<String> st = new ArrayList<>();
             for (AriCommand type : AriCommand.values()) {

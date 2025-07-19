@@ -52,6 +52,7 @@ public class TeleportCheck {
      * @param delay 传送冷却
      */
     public static boolean preCheckStatus(Player player, Location location, long delay) {
+        if (player.isOp()) return true;
         if(checkHaveTeleportStatus(player, location) == null) {
             addTeleportStatusTask(player, location, delay);
             return true;

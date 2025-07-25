@@ -44,7 +44,6 @@ public class CommandZako {
         }
 
         WhitelistInstance instance = new WhitelistInstance();
-        instance.setOperator(this.sender.getName());
         instance.setPlayerUUID(uuid.toString());
         instance.setAddTime(System.currentTimeMillis());
 

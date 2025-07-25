@@ -25,9 +25,9 @@ public class WhitelistManager extends BaseManager<WhitelistInstance> {
            try (Connection connection = SQLInstance.SESSION_FACTORY.open()) {
                int result = connection.createQuery("""
                                    insert into %swhitelist
-                                   (player_uuid, operator, add_time)
+                                   (player_uuid, add_time)
                                    values
-                                   (:playerUUID, :operator, :addTime)
+                                   (:playerUUID, :addTime)
                                """.formatted(SQLInstance.getTablePrefix()))
                        .bind(instance)
                        .executeUpdate()

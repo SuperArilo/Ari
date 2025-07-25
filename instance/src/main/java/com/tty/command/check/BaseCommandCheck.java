@@ -9,6 +9,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.PLAYER_LOGIN_TIMES;
+
 public class BaseCommandCheck {
 
     /**
@@ -60,6 +62,10 @@ public class BaseCommandCheck {
 
     private boolean baseQuickCheck(CommandSender sender, AriCommand ariCommand) {
         if(!this.isPlayer(sender)) return false;
+        if (!PLAYER_LOGIN_TIMES.containsKey(((Player) sender).getUniqueId())) {
+            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.permission.whitelist-no-permission", FilePath.Lang)));
+            return false;
+        }
         return this.hasPermission(sender, ariCommand);
     }
 }

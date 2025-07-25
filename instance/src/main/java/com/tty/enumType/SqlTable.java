@@ -50,6 +50,13 @@ public enum SqlTable {
                 create_time INTEGER NULL DEFAULT 0,
                 permission VARCHAR(128) default NULL,
                 top_slot boolean NOT NULL DEFAULT 0);
+            """),
+    Whitelist("""
+                CREATE TABLE IF NOT EXISTS %swhitelist (
+                id INTEGER PRIMARY KEY %s,
+                player_uuid VARCHAR(128) NOT NULL,
+                operator VARCHAR(128) NOT NULL,
+                add_time INTEGER NULL DEFAULT 0);
             """);
     private final String sql;
 

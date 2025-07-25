@@ -88,6 +88,7 @@ public class SQLInstance {
         colMaps.put("create_time", "createTime");
         colMaps.put("spawn_id", "spawnId");
         colMaps.put("spawn_name", "spawnName");
+        colMaps.put("add_time", "addTime");
         SESSION_FACTORY.setDefaultColumnMappings(colMaps);
     }
 

@@ -2,16 +2,19 @@ package com.tty.listener.player;
 
 import com.tty.Ari;
 import com.tty.entity.sql.ServerPlayer;
+import com.tty.entity.sql.WhitelistInstance;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.function.SpawnManager;
 import com.tty.function.Teleport;
+import com.tty.function.WhitelistManager;
 import com.tty.lib.dto.Page;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,8 +26,7 @@ import org.bukkit.event.world.WorldSaveEvent;
 import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 
 public class OnPlayerJoinAndLeaveListener implements Listener {
@@ -32,12 +34,32 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     /**
      * 记录玩家进入服务器的时间戳
      */
-    private static final Map<UUID, Long> PLAYER_LOGIN_TIMES = new ConcurrentHashMap<>();
+    public static final Map<UUID, Long> PLAYER_LOGIN_TIMES = new ConcurrentHashMap<>();
+
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+
+        if (Ari.instance.getConfig().getBoolean("server.whitelist.enable", false) && !player.isOp()) {
+            event.joinMessage(null);
+            WhitelistManager manager = new WhitelistManager(false);
+            try {
+                WhitelistInstance instance = manager.getInstance(player.getUniqueId().toString()).get(3, TimeUnit.SECONDS);
+                player.setGameMode(instance == null ? GameMode.SPECTATOR:GameMode.SURVIVAL);
+                if (instance == null) {
+                    Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-whitelist-login", FilePath.Lang), player));
+                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("server.message.tips-whitelist", FilePath.Lang)));
+                    return;
+                }
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Log.error("whitelist error", e);
+                return;
+            }
+        }
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
         boolean login = Ari.instance.getConfig().getBoolean("server.message.on-login", false);
-        Player player = event.getPlayer();
+
         PlayerManager manager = new PlayerManager(true);
         if (first || login) {
             event.joinMessage(null);

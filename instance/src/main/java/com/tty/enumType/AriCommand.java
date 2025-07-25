@@ -58,6 +58,9 @@ public enum AriCommand {
     ITEMLORE("itemlore",
             "ari.command.itemlore",
             new itemlore()),
+    ZAKO("zako",
+            "ari.command.zako",
+            new zako()),
     RELOAD("reload",
             "ari.command.reload",
             null);

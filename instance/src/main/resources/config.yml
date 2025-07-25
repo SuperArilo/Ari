@@ -23,6 +23,8 @@ server:
     on-first-login: true
     on-login: true
     on-leave: true
+  whitelist:
+    enable: true
 debug:
   enable: false
   overwrite-file: false

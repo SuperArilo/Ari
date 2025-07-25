@@ -25,8 +25,10 @@ base:
     error: '&4保存失败，请联系管理员'
   permission:
     no-permission: '&4没有权限'
+    whitelist-no-permission: '&4你没有权限执行，请联系管理员添加白名单'
   on-player:
     hand-no-item: '&4当前手上并没有物品'
+    unable-player: '该玩家离线或者不存在！'
 teleport:
   title:
     main: '请不要移动...'
@@ -101,6 +103,13 @@ function:
   sit:
     tips: '&f按下 &2潜行键 &f来取消'
     error-location: '&4当前位置不允许坐下'
+  zako:
+    add-success: '&a白名单添加成功'
+    add-failure: '&4添加失败，请查看控制台'
+    player-exist: '&4添加失败，玩家已经存在'
+    send-player: '&a管理员已为你添加白名单，请退出服务器重进'
+    remove-success: '&a白名单移除成功'
+    remove-failure: '&4白名单移除失败，不存在或者存在错误'
   unknown: '&4未知指令，请重新输入'
 server:
   time:
@@ -119,6 +128,8 @@ server:
       daylight: '破晓时刻'
       wake_up: '起床时间'
   message:
+    on-whitelist-login: '&c杂鱼玩家 &6%player_name% &3正在浏览我们的服务器！'
+    tips-whitelist: '&a请联系管理员来添加白名单'
     on-first-login: '&a欢迎玩家 &6%player_name% &a加入我们的服务器！'
     on-login: '&7玩家 &6%player_name% &7加入了服务器！'
     on-leave: '&7玩家 &6%player_name% &7离开了服务器！'

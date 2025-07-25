@@ -107,6 +107,11 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 Player player = (Player) commandSender;
                 new CommandItem(player, player.getInventory().getItemInMainHand()).changeLore(strings[1], strings[2]);
             }
+            case ZAKO -> {
+                if (!this.quickCheck(commandSender, AriCommand.ZAKO, strings.length, 3)) break;
+                Player player = (Player) commandSender;
+                new CommandZako(player).action(strings[1], strings[2]);
+            }
         }
         return true;
     }
@@ -168,7 +173,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     }
                     return PublicFunctionUtils.filterByPrefix(list, strings[1]);
                 }
-                case ITEMLORE -> {
+                case ITEMLORE, ZAKO -> {
                     List<String> list = new ArrayList<>();
                     for (CommandAction value : CommandAction.values()) {
                         list.add(value.getName());

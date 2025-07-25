@@ -46,3 +46,6 @@ itemname:
 itemlore:
   enable: true
   tab-complete: true
+zako:
+  enable: true
+  tab-complete: true

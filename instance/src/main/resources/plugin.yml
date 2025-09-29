@@ -4,7 +4,6 @@ author: Arilo007
 folia-supported: true
 loadbefore:
   - 'arilib'
-  - 'Vault'
 main: com.tty.Ari
 depend: ['arilib', 'Vault']
 softdepend: ['PlaceholderAPI']

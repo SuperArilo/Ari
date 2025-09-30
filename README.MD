@@ -4,7 +4,7 @@
 [![Java 17+](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/)
 [![Folia 1.21+](https://img.shields.io/badge/Folia-1.21%2B-brightgreen)](https://papermc.io/folia)
 [![PaperMC](https://img.shields.io/badge/PaperMC-1.21%2B-brightgreen)](https://papermc.io/)
-[![Vault Dependency](https://img.shields.io/badge/Vault-Required-blue)](https://github.com/MilkBowl/Vault)
+[![Vault Dependency](https://img.shields.io/badge/VaultUnlocked-Required-blue)](https://github.com/TheNewEconomy/VaultUnlocked)
 
 
 ✨ 一个高度兼容的Minecraft插件，完美支持 **PaperMC** 和 **Folia** 核心，兼容 1.21 至最新版本  
@@ -16,43 +16,53 @@
 | 🗺️ **GUI 系统** | 全功能可视化界面，支持自定义物品图标/名称/排序权重 |
 | 💾 **多存储**     | 支持 SQLite 和 MySQL 数据库存储    |
 | ⚙️ **深度定制**    | 所有功能均可通过配置文件高度自定义          |
-
 ## 🚀 功能列表
-### 传送系统
-| 功能         | 描述                            |
-|------------|-------------------------------|
-| 🏠 `Home`  | 多家园系统 + GUI管理，支持图标/名称/权重自定义   |
-| 🗺️ `Warp` | 地标系统 + GUI管理，支持传送权限/经济消耗/图标定制 |
-| ↩️ `Back`  | 传送点或死亡位置返回                    |
-| 📡 `Tpa`   | 玩家间传送请求                       |
-| 🧭 `Spawn` | 世界出生点传送                       |
-| 🎲 `Rtp`   | 随机安全传送                        |
-
-### 游戏工具
-| 功能               | 描述               |
-|------------------|------------------|
-| ⏳ `Time Control` | 实时调整游戏时间流速       |
-| 🌙 `Skip Night`  | 多人睡眠加速跳夜         |
-| 📋 `Tab`         | 完全自定义玩家Tab列表显示格式 |
+| 功能               | 描述                            |
+|------------------|-------------------------------|
+| 🏠 `Home`        | 多家园系统 + GUI管理，支持图标/名称/权重自定义   |
+| 🗺️ `Warp`       | 地标系统 + GUI管理，支持传送权限/经济消耗/图标定制 |
+| ↩️ `Back`        | 传送点或死亡位置返回                    |
+| 📡 `Tpa`         | 玩家间传送请求                       |
+| 🧭 `Spawn`       | 世界出生点传送                       |
+| 🎲 `Rtp`         | 随机安全传送                        |
+| ⏳ `时间控制`         | 实时调整游戏时间流速                    |
+| 🌙 `夜晚加速`        | 多人睡眠加速跳夜                      |
+| 📋 `Tab自定义`      | 完全自定义玩家Tab列表显示格式              |
+| 📃 `白名单功能(Zako)` | 自定义服务器白名单管理方式                 |
+| 📃 `物品属性修改`      | 可快捷修改物品名称和lore属性              |
+## 🗯️ 权限列表
+| 功能                      | 描述              |
+|-------------------------|-----------------|
+| `ari.command.home`      | 打开自己的家列表        |
+| `ari.command.sethome`   | 设置家位置           |
+| `ari.command.warp`      | 打开服务器公共传送点      |
+| `ari.command.setwarp`   | 设置公共传送点         |
+| `ari.command.back`      | 返回上一次传送位置       |
+| `ari.command.tpa`       | 传送到其他玩家         |
+| `ari.command.tpahere`   | 请求其他玩家传送到自己     |
+| `ari.command.tpaaccept` | 接受传送请求          |
+| `ari.command.tparefuse` | 拒绝传送请求          |
+| `ari.command.spawn`     | 传送至出生点          |
+| `ari.command.setspawn`  | 设置出生点           |
+| `ari.command.spawnlist` | 查看所有出生点列表       |
+| `ari.command.rtp`       | 随机传送            |
+| `ari.command.time`      | 控制时间流逝          |
+| `ari.command.itemname`  | 修改物品名称          |
+| `ari.command.itemlore`  | 修改物品描述          |
+| `ari.command.zako`      | 白名单设置           |
+| `ari.command.reload`    | 重载插件配置          |
+| `ari.count.home.<数量>`   | 设置玩家可拥有的最大家数量限制 |
+| `ari.keepinventory`     | 玩家死亡时保留背包内的物品   |
+| `ari.keepexperience`    | 玩家死亡时保留经验值和等级   |
 ## 🛠️ 安装指南
 
 ### 环境要求
 - Folia 1.21.x 服务器核心
 - Java 17 或更高版本
-- [Vault](https://github.com/MilkBowl/Vault) 经济系统
+- [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlocked) 前置插件
 
 ### 安装步骤
 1. 将插件放入 `plugins/` 目录
 2. 重启服务器
 3. 首次运行后编辑生成的 `plugins/Ari/config.yml`
 4. 配置经济系统（如需地标创建费用）
-
-## ❓ 常见问题
-```bash
-Q: 是否支持 Folia 的异步线程？
-A: ✅ 完全兼容 Folia 的线程模型，所有操作均线程安全
-```
-```bash
-Q: 如何自定义GUI布局？
-A: 编辑 /module/带有 gui 标志的 yml即可
-```

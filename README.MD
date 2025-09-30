@@ -52,6 +52,7 @@
 | `ari.command.zako`      | 白名单设置           |
 | `ari.command.reload`    | 重载插件配置          |
 | `ari.count.home.<数量>`   | 设置玩家可拥有的最大家数量限制 |
+| `ari.count.warp.<数量>`   | 设置地标的最大数量限制     |
 | `ari.keepinventory`     | 玩家死亡时保留背包内的物品   |
 | `ari.keepexperience`    | 玩家死亡时保留经验值和等级   |
 ## 🛠️ 安装指南

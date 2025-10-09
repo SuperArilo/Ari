@@ -134,8 +134,8 @@
     </dependencies>
     <repositories>
         <repository>
-            <id>codemc-creatorfromhell</id>
-            <url>https://repo.codemc.io/repository/creatorfromhell/</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <id>papermc</id>

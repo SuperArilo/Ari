@@ -4,7 +4,7 @@
 [![Java 17+](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/)
 [![Folia 1.21+](https://img.shields.io/badge/Folia-1.21%2B-brightgreen)](https://papermc.io/folia)
 [![PaperMC](https://img.shields.io/badge/PaperMC-1.21%2B-brightgreen)](https://papermc.io/)
-[![Vault Dependency](https://img.shields.io/badge/VaultUnlocked-Required-blue)](https://github.com/TheNewEconomy/VaultUnlocked)
+[![Vault Dependency](https://img.shields.io/badge/Vault-Required-blue)](https://github.com/MilkBowl/Vault)
 
 
 ✨ 一个高度兼容的Minecraft插件，完美支持 **PaperMC** 和 **Folia** 核心，兼容 1.21 至最新版本  
@@ -60,7 +60,7 @@
 ### 环境要求
 - Folia 1.21.x 服务器核心
 - Java 17 或更高版本
-- [VaultUnlocked](https://github.com/TheNewEconomy/VaultUnlocked) 前置插件
+- [Vault](https://github.com/MilkBowl/Vault) 前置插件
 
 ### 安装步骤
 1. 将插件放入 `plugins/` 目录

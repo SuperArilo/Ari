@@ -37,7 +37,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
         }
         switch (type) {
             case RTP -> {
-                if (this.quickCheck(commandSender, AriCommand.RTP)) break;
+                if (!this.quickCheck(commandSender, AriCommand.RTP)) break;
                 new CommandRtp(commandSender).rtp();
             }
             case RELOAD -> {

@@ -1,0 +1,71 @@
+name: Build-Jar
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '21'
+  MAVEN_VERSION: '3.9.5'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 设置 JDK 环境 ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: 设置 Maven
+        uses: stCarolas/setup-maven@v4
+        with:
+          maven-version: ${{ env.MAVEN_VERSION }}
+
+      - name: 构建 Maven
+        run: |
+          mvn clean package -DskipTests
+
+      - name: 查找构建结果 jar
+        run: |
+          mkdir -p build-artifacts
+          find . -name "*.jar" -path "*/target/*" ! -name "*-sources.jar" ! -name "*-javadoc.jar" ! -name "original-*.jar" | while read jar; do
+            cp "$jar" build-artifacts/
+          done
+
+      - name: 上传构建结果 jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-files
+          path: build-artifacts/
+          retention-days: 1
+
+  create-release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+
+    steps:
+      - name: 下载构建结果
+        uses: actions/download-artifact@v4
+        with:
+          name: jar-files
+          path: build-artifacts
+
+      - name: 创建 release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build-artifacts/*.jar
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

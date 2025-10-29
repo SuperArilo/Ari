@@ -2,8 +2,8 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Java 17+](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/)
-[![Folia 1.21+](https://img.shields.io/badge/Folia-1.21%2B-brightgreen)](https://papermc.io/folia)
-[![PaperMC](https://img.shields.io/badge/PaperMC-1.21%2B-brightgreen)](https://papermc.io/)
+[![Folia](https://img.shields.io/badge/Folia-1.21.3%2B-brightgreen)](https://papermc.io/folia)
+[![PaperMC](https://img.shields.io/badge/PaperMC-1.21.3%2B-brightgreen)](https://papermc.io/)
 [![Vault Dependency](https://img.shields.io/badge/Vault-Required-blue)](https://github.com/MilkBowl/Vault)
 
 

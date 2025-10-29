@@ -38,19 +38,6 @@ public enum SqlTable {
                 cost INTEGER default 0,
                 top_slot boolean NOT NULL DEFAULT 0);
              """),
-    Spawn_Location("""
-                CREATE TABLE IF NOT EXISTS %sspawn (
-                id INTEGER PRIMARY KEY %s,
-                spawn_id VARCHAR(128) NOT NULL,
-                spawn_name VARCHAR(128) NOT NULL,
-                world VARCHAR(128) NOT NULL,
-                location VARCHAR(128) NOT NULL,
-                show_material VARCHAR(128) NOT NULL,
-                create_by VARCHAR(128) NOT NULL,
-                create_time INTEGER NULL DEFAULT 0,
-                permission VARCHAR(128) default NULL,
-                top_slot boolean NOT NULL DEFAULT 0);
-            """),
     Whitelist("""
                 CREATE TABLE IF NOT EXISTS %swhitelist (
                 id INTEGER PRIMARY KEY %s,

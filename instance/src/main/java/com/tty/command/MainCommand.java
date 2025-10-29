@@ -87,15 +87,11 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             }
             case SPAWN -> {
                 if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
-                new CommandSpawn(commandSender).convey();
-            }
-            case SPAWNLIST -> {
-                if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
-                new CommandSpawn(commandSender).openList();
+                new CommandSpawn((Player) commandSender).convey();
             }
             case SETSPAWN -> {
                 if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
-                new CommandSpawn(commandSender).set(strings[1]);
+                new CommandSpawn((Player) commandSender).set();
             }
             case ITEMNAME -> {
                 if (!this.quickCheck(commandSender, AriCommand.ITEMNAME, strings.length, 2)) break;

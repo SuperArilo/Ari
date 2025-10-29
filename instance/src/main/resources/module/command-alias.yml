@@ -28,9 +28,6 @@ setwarp:
 spawn:
   enable: true
   tab-complete: false
-spawnlist:
-  enable: true
-  tab-complete: false
 setspawn:
   enable: true
   tab-complete: false

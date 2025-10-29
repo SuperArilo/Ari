@@ -14,9 +14,7 @@ public enum FilePath {
     WarpConfig("module/warp/setting.yml"),
     WarpEditor("module/warp/edit-warp-gui.yml"),
     FunctionConfig("module/function/setting.yml"),
-    SpawnConfig("module/spawn/setting.yml"),
-    SpawnList("module/spawn/spawn-gui.yml"),
-    SpawnEditor("module/spawn/edit-spawn-gui.yml");
+    SpawnConfig("module/spawn/setting.yml");
 
     private final String path;
 

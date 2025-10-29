@@ -5,12 +5,9 @@ import com.tty.entity.sql.ServerPlayer;
 import com.tty.entity.sql.WhitelistInstance;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.function.SpawnManager;
 import com.tty.function.Teleport;
 import com.tty.function.WhitelistManager;
-import com.tty.lib.dto.Page;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -68,12 +65,11 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         manager.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if (i == null || !player.hasPlayedBefore()) {
-                        if (Ari.instance.getConfig().getBoolean("server.spawn.first-join", false)) {
-                            new SpawnManager(true).getList(Page.create(1, 1))
-                                .thenAccept(list -> {
-                                    Location location = list.isEmpty() ? player.getWorld().getSpawnLocation(): FormatUtils.parseLocation(list.getFirst().getLocation());
-                                    Teleport.create(player, location, 0).teleport();
-                                });
+                        if (ConfigUtils.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false)) {
+                            Location value = ConfigUtils.getValue("main.location", FilePath.SpawnConfig, Location.class);
+                            if (value != null) {
+                                Teleport.create(player, value, 0).teleport();
+                            }
                         }
                         if(first) {
                             Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang), player));

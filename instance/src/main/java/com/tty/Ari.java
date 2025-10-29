@@ -13,8 +13,6 @@ import com.tty.listener.home.EditHomeListener;
 import com.tty.listener.home.HomeListListener;
 import com.tty.listener.player.*;
 import com.tty.listener.skip_sleep.PlayerSkipNight;
-import com.tty.listener.spawn.EditSpawnListener;
-import com.tty.listener.spawn.SpawnListListener;
 import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
@@ -98,8 +96,6 @@ public class Ari extends JavaPlugin {
         pluginManager.registerEvents(new PlayerListener(), this);
         pluginManager.registerEvents(new WarpListListener(GuiType.WARPLIST), this);
         pluginManager.registerEvents(new EditWarpListener(GuiType.WARPEDIT), this);
-        pluginManager.registerEvents(new SpawnListListener(GuiType.SPAWNLIST), this);
-        pluginManager.registerEvents(new EditSpawnListener(GuiType.SPAWNEDIT), this);
         pluginManager.registerEvents(new OnPlayerJoinAndLeaveListener(), this);
         pluginManager.registerEvents(new PlayerSkipNight(), this);
         pluginManager.registerEvents(new OnPluginReloadListener(), this);

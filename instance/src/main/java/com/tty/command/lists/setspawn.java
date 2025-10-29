@@ -16,9 +16,9 @@ public class setspawn extends BaseCommandCheck implements TabExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String @NotNull [] args) {
         if (!this.isTheInstructionCorrect(command, AriCommand.SETSPAWN)) return false;
-        if (this.quickCheck(sender, AriCommand.SETSPAWN, args.length, 1)) {
+        if (this.quickCheck(sender, AriCommand.SETSPAWN, args.length, 0)) {
             Player player = (Player) sender;
-            new CommandSpawn(player).set(args[0]);
+            new CommandSpawn(player).set();
         }
         return true;
     }

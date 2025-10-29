@@ -42,5 +42,3 @@ action:
     enable: true
     disable-block:
       - 'example'
-  lie:
-    enable: true

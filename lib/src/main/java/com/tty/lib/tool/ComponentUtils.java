@@ -8,7 +8,6 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,6 @@ import java.time.Duration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("deprecation")
 public class ComponentUtils {
 
     private static final Pattern GRADIENT_PATTERN = Pattern.compile("<#([A-Fa-f0-9]{6})>(.*?)</#([A-Fa-f0-9]{6})>");
@@ -60,8 +58,7 @@ public class ComponentUtils {
         if (player != null && Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             content = PlaceholderAPI.setPlaceholders(player, content);
         }
-        content = ChatColor.translateAlternateColorCodes('&', content);
-        Matcher matcher = GRADIENT_PATTERN.matcher(content);
+        Matcher matcher = GRADIENT_PATTERN.matcher(ColorConverterLegacy.convert(content));
         int lastEnd = 0;
         TextComponent.Builder builder = Component.text();
 

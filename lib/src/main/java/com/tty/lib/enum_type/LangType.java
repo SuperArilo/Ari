@@ -7,17 +7,19 @@ public enum LangType {
     TPASENDER("[TpaSender]"),
     TPAHERESENDER("[TpaHereSender]"),
     TPABESENDER("[TpaBeSender]"),
-    COSTED("[costed]"),
-    TIME("[time]"),
+    COSTED("[Costed]"),
+    TIME("[Time]"),
     DEATHLOCATION("[DeathLocation]"),
-    PERIOD("[period]"),
+    PERIOD("[Period]"),
     SLEEPPLAYERS("[SleepPlayers]"),
     SKIPNIGHTTICKINCREMENT("[SkipNightTickIncrement]"),
     SPAWNLOCATION("[SpawnLocation]"),
     SOURCEDISPLAYNAME("[SourceDisplayNane]"),
     CHATMESSAGE("[Message]"),
     RTPSEARCHCOUNT("[RtpSearchCount]"),
-    TELEPORTDELAY("[TeleportDelay]");
+    TELEPORTDELAY("[TeleportDelay]"),
+    PLAYERNAME("[PlayerName]");
+
     private final String type;
 
     LangType(String type) {

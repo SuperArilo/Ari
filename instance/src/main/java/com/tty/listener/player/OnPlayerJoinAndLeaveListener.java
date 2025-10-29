@@ -7,6 +7,7 @@ import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.function.Teleport;
 import com.tty.function.WhitelistManager;
+import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
@@ -72,7 +73,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             }
                         }
                         if(first) {
-                            Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang), player));
+                            Bukkit.broadcast(
+                                    ComponentUtils.text(
+                                            ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang)
+                                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
                         }
                         if (i == null) {
                             ServerPlayer serverPlayer = new ServerPlayer();
@@ -82,7 +86,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         }
                     } else {
                         if(login) {
-                            Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-login", FilePath.Lang), player));
+                            Bukkit.broadcast(
+                                    ComponentUtils.text(
+                                            ConfigUtils.getValue("server.message.on-login", FilePath.Lang)
+                                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
                         }
                     }
                 }).exceptionally(i -> {
@@ -95,7 +102,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
-            event.quitMessage(ComponentUtils.text(ConfigUtils.getValue("server.message.on-leave", FilePath.Lang), player));
+            event.quitMessage(
+                    ComponentUtils.text(
+                            ConfigUtils.getValue("server.message.on-leave", FilePath.Lang)
+                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
         }
         SavePlayerData(player, true, true);
     }

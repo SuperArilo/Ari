@@ -12,12 +12,12 @@ import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.WorldSaveEvent;
 
@@ -34,27 +34,27 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
      */
     public static final Map<UUID, Long> PLAYER_LOGIN_TIMES = new ConcurrentHashMap<>();
 
+    @EventHandler
+    public void whitelist(PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+        if (Ari.instance.getConfig().getBoolean("server.whitelist.enable", false) && !player.isOp()) {
+            WhitelistManager manager = new WhitelistManager(false);
+            try {
+                WhitelistInstance instance = manager.getInstance(player.getUniqueId().toString()).get(3, TimeUnit.SECONDS);
+                if (instance == null) {
+                    event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ComponentUtils.text(ConfigUtils.getValue("server.message.on-whitelist-login", FilePath.Lang)));
+                }
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                Log.error("whitelist error", e);
+                event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ComponentUtils.text(e.getMessage()));
+            }
+        }
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (Ari.instance.getConfig().getBoolean("server.whitelist.enable", false) && !player.isOp()) {
-            event.joinMessage(null);
-            WhitelistManager manager = new WhitelistManager(false);
-            try {
-                WhitelistInstance instance = manager.getInstance(player.getUniqueId().toString()).get(3, TimeUnit.SECONDS);
-                player.setGameMode(instance == null ? GameMode.SPECTATOR:GameMode.SURVIVAL);
-                if (instance == null) {
-                    Bukkit.broadcast(ComponentUtils.text(ConfigUtils.getValue("server.message.on-whitelist-login", FilePath.Lang), player));
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("server.message.tips-whitelist", FilePath.Lang)));
-                    return;
-                }
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                Log.error("whitelist error", e);
-                return;
-            }
-        }
         boolean first = Ari.instance.getConfig().getBoolean("server.message.on-first-login", false);
         boolean login = Ari.instance.getConfig().getBoolean("server.message.on-login", false);
 
@@ -65,8 +65,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         PLAYER_LOGIN_TIMES.put(player.getUniqueId(), System.currentTimeMillis());
         manager.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
+                    //表示此玩家是第一次进入服务器
                     if (i == null || !player.hasPlayedBefore()) {
-                        if (ConfigUtils.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false)) {
+                        if (ConfigUtils.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false) &&
+                                ConfigUtils.getValue("main.enable", FilePath.SpawnConfig, Boolean.class, false)) {
                             Location value = ConfigUtils.getValue("main.location", FilePath.SpawnConfig, Location.class);
                             if (value != null) {
                                 Teleport.create(player, value, 0).teleport();
@@ -78,12 +80,10 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                                             ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang)
                                                     .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
                         }
-                        if (i == null) {
-                            ServerPlayer serverPlayer = new ServerPlayer();
-                            serverPlayer.setPlayerName(player.getName());
-                            serverPlayer.setPlayerUUID(player.getUniqueId().toString());
-                            manager.createInstance(serverPlayer);
-                        }
+                        ServerPlayer serverPlayer = new ServerPlayer();
+                        serverPlayer.setPlayerName(player.getName());
+                        serverPlayer.setPlayerUUID(player.getUniqueId().toString());
+                        manager.createInstance(serverPlayer);
                     } else {
                         if(login) {
                             Bukkit.broadcast(

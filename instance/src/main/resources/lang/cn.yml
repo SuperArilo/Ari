@@ -123,7 +123,7 @@ server:
       daylight: '破晓时刻'
       wake_up: '起床时间'
   message:
-    on-whitelist-login: '&c杂鱼玩家 &6[PlayerName] &3正在浏览我们的服务器！'
+    on-whitelist-login: '&c您尚未在此服务器的白名单，请联系管理员添加！'
     tips-whitelist: '&a请联系管理员来添加白名单'
     on-first-login: '&a欢迎玩家 &6[PlayerName] &a加入我们的服务器！'
     on-login: '&7玩家 &6[PlayerName] &7加入了服务器！'

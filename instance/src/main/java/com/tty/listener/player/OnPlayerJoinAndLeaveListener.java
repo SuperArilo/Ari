@@ -78,6 +78,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         ServerPlayer serverPlayer = new ServerPlayer();
                         serverPlayer.setPlayerName(player.getName());
                         serverPlayer.setPlayerUUID(player.getUniqueId().toString());
+                        serverPlayer.setFirstLoginTime(System.currentTimeMillis());
                         manager.createInstance(serverPlayer);
                     } else {
                         if(login) {

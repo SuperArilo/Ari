@@ -9,7 +9,10 @@
         <version>1.0</version>
     </parent>
     <artifactId>ari</artifactId>
-
+    <version>${ari.version}</version>
+    <build>
+        <finalName>${artifactId}</finalName>
+    </build>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
@@ -19,7 +22,7 @@
         <dependency>
             <groupId>com.tty</groupId>
             <artifactId>arilib</artifactId>
-            <version>1.0</version>
+            <version>${lib.version}</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

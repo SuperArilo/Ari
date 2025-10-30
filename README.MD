@@ -44,7 +44,6 @@
 | `ari.command.tparefuse` | 拒绝传送请求          |
 | `ari.command.spawn`     | 传送至出生点          |
 | `ari.command.setspawn`  | 设置出生点           |
-| `ari.command.spawnlist` | 查看所有出生点列表       |
 | `ari.command.rtp`       | 随机传送            |
 | `ari.command.time`      | 控制时间流逝          |
 | `ari.command.itemname`  | 修改物品名称          |

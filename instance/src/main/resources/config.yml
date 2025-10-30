@@ -25,6 +25,8 @@ server:
     on-leave: true
   whitelist:
     enable: true
+  #tick
+  save-interval: 6000
 debug:
   enable: false
   overwrite-file: false

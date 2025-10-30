@@ -3,22 +3,19 @@ package com.tty.tool;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,8 +26,25 @@ public class ConfigUtils {
 
     protected static final Map<String, YamlConfiguration> CONFIGS = new ConcurrentHashMap<>();
 
+    /**
+     * 快捷访问 Lang
+     * @param key 在 lang 中对应的 key 路径
+     * @return 返回构建完成的 Component
+     */
     public static TextComponent t(String key) {
-        return ComponentUtils.text(ConfigUtils.getValue(key, FilePath.Lang));
+        return ComponentUtils.text(getValue(key, FilePath.Lang));
+    }
+
+    public static TextComponent t(String key, Player player) {
+        return ComponentUtils.text(getValue(key, FilePath.Lang), player);
+    }
+
+    public static TextComponent t(String key, String old, String rep_new) {
+        return ComponentUtils.text(getValue(key, FilePath.Lang).replace(old, rep_new));
+    }
+
+    public static TextComponent t(String key, String old, String rep_new, Player player) {
+        return ComponentUtils.text(getValue(key, FilePath.Lang).replace(old, rep_new), player);
     }
 
     /**
@@ -53,6 +67,14 @@ public class ConfigUtils {
         return getValue(keyPath, filePath, String.class, "null");
     }
 
+    /**
+     * 根据指定的文件和路径获取指定的对象
+     * @param keyPath key 路径
+     * @param filePath 文件路径
+     * @param tClass 类型
+     * @return 返回 T
+     * @param <T> 指定的类型
+     */
     public static <T> T getValue(String keyPath, FilePath filePath, Class<T> tClass) {
         if(checkPath(keyPath)) return null;
         YamlConfiguration configuration = checkConfiguration(filePath);
@@ -94,6 +116,12 @@ public class ConfigUtils {
         }
     }
 
+    /**
+     * 将特定对象写入指定的文件
+     * @param keyPath key路径
+     * @param filePath 文件路径
+     * @param value 写入的值
+     */
     public static void setValue(String keyPath, FilePath filePath, Object value) {
         YamlConfiguration configuration = checkConfiguration(filePath);
         if (configuration == null) throw new RuntimeException("Config file not found: " + filePath.name());
@@ -132,36 +160,6 @@ public class ConfigUtils {
             return null;
         }
         return configuration;
-    }
-
-    public static void setRtpWorldConfig() {
-
-        Map<String, Object> value = getValue(
-                "rtp.worlds",
-                FilePath.FunctionConfig,
-                new TypeToken<Map<String, Object>>(){}.getType(),
-                null);
-
-        if (value == null) {
-            value = new HashMap<>();
-            for (World world : Bukkit.getWorlds()) {
-                value.put(world.getName(), createWorldRtp());
-            }
-        } else {
-            for (World world : Bukkit.getWorlds()) {
-                if (value.containsKey(world.getName())) continue;
-                value.put(world.getName(), createWorldRtp());
-            }
-        }
-        setValue("rtp.worlds", FilePath.FunctionConfig, value);
-    }
-
-    private static Map<String, Object> createWorldRtp() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("enable", true);
-        map.put("min", 300);
-        map.put("max", 1500);
-        return map;
     }
 
     public static void setConfigs(Map<String, YamlConfiguration> configs) {

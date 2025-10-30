@@ -29,20 +29,17 @@ public class TeleportCheck {
      */
     public static void preCheckStatus(Player player, Player targetPlayer, AriCommand ariCommand) {
         if (checkHaveTeleportStatus(player, targetPlayer) != null) {
-            player.sendMessage(ComponentUtils.text(
-                    ConfigUtils.getValue(
-                            "function.tpa.again",
-                            FilePath.Lang).replace(LangType.TPABESENDER.getType(), targetPlayer.getName())));
+            player.sendMessage(ConfigUtils.t("function.tpa.again", LangType.TPABESENDER.getType(), targetPlayer.getName()));
             return;
         }
-        player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.send-message", FilePath.Lang)));
+        player.sendMessage(ConfigUtils.t("function.tpa.send-message"));
         addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
         String message = ConfigUtils.getValue("function.tpa." + (ariCommand.equals(AriCommand.TPA) ? "to-message":"here-message"), FilePath.Lang);
         targetPlayer.sendMessage(
                 ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), player.getName()))
                         .appendNewline()
                         .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                        .append(ComponentUtils.text(ConfigUtils.getValue("function.public.center", FilePath.Lang)))
+                        .append(ConfigUtils.t("function.public.center"))
                         .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.refuse", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
     }
     /**
@@ -57,7 +54,7 @@ public class TeleportCheck {
             addTeleportStatusTask(player, location, delay);
             return true;
         } else {
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.again", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("teleport.again"));
             return false;
         }
     }
@@ -124,16 +121,16 @@ public class TeleportCheck {
 
     public boolean preCheck(CommandSender sender, String targetPlayerName) {
         if(!(sender instanceof Player)) {
-            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.not-player", FilePath.Lang)));
+            sender.sendMessage(ConfigUtils.t("function.public.not-player"));
             return false;
         }
         if (targetPlayerName.equals(sender.getName())) {
-            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
+            sender.sendMessage(ConfigUtils.t("function.public.fail"));
             return false;
         }
         Player player = Ari.instance.getServer().getPlayerExact(targetPlayerName);
         if(player == null) {
-            sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.unable-player", FilePath.Lang)));
+            sender.sendMessage(ConfigUtils.t("teleport.unable-player"));
             return false;
         }
         return true;

@@ -70,7 +70,7 @@ public class Teleport {
             timerIndex.set(0);
         } else {
             timerIndex.set(delay);
-            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.ing", FilePath.Lang)));
+            this.player.sendMessage(ConfigUtils.t("teleport.ing"));
         }
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance,t -> {
             if (!this.status) {
@@ -88,7 +88,7 @@ public class Teleport {
             if (this.hasMoved(threadPlayer) || this.hasLostHealth(threadPlayer)) {
                 t.cancel();
                 this.aborted.run();
-                threadPlayer.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.break", FilePath.Lang)));
+                threadPlayer.sendMessage(ConfigUtils.t("teleport.break"));
                 return;
             }
 
@@ -122,7 +122,7 @@ public class Teleport {
                                 threadPlayer.playSound(Sound.sound(org.bukkit.Sound.ENTITY_ENDER_EYE_DEATH, SoundCategory.PLAYERS, 1.0f, 1.0f));
                             }
                             this.after.run();
-                            threadPlayer.sendMessage(ComponentUtils.text(ConfigUtils.getValue(p ? "teleport.success":"function.tpa.error", FilePath.Lang)));
+                            threadPlayer.sendMessage(ConfigUtils.t(p ? "teleport.success":"function.tpa.error"));
                         });
             });
         }, 0, 20);

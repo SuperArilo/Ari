@@ -63,13 +63,13 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
             }
             case DELETE -> warpManager.deleteInstance(warpEditor.currentWarp).thenAccept(i -> {
                 if (i) {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.warp.delete-success", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("function.warp.delete-success"));
                     Lib.Scheduler.run(Ari.instance, ab -> {
                         inventory.close();
                         new WarpList(player).open();
                     });
                 } else {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.warp.not-found", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("function.warp.not-found"));
                 }
             }).exceptionally(i -> {
                 Log.error("deleting warp error", i);
@@ -96,7 +96,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                 if (holder.getTask() == null) {
                     CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                         if (this.removeEditInstance(player) != null) {
-                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.timeout-cancel", FilePath.Lang)));
+                            player.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
                         }
                         holder.setTask(null);
                     }, 200L);
@@ -126,11 +126,11 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
             }
             case SAVE -> {
                 Log.debug("start saving warp id:" + warpEditor.currentWarp.getWarpId());
-                clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.ing", FilePath.Lang))));
+                clickMeta.lore(List.of(ConfigUtils.t("base.save.ing")));
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = warpManager.modify(warpEditor.currentWarp);
                 future.thenAccept(status -> {
-                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue(status ? "base.save.done":"base.save.error", FilePath.Lang))));
+                    clickMeta.lore(List.of(ConfigUtils.t(status ? "base.save.done":"base.save.error")));
                     clickItem.setItemMeta(clickMeta);
                     if(status) {
                         Lib.Scheduler.runAsyncDelayed(Ari.instance, e ->{
@@ -138,12 +138,12 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                             clickItem.setItemMeta(clickMeta);
                         }, 20L);
                     } else {
-                        clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.error", FilePath.Lang))));
+                        clickMeta.lore(List.of(ConfigUtils.t("base.save.error")));
                         clickItem.setItemMeta(clickMeta);
                     }
                 }).exceptionally(i -> {
                     Log.error("saving warp error", i);
-                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.error", FilePath.Lang))));
+                    clickMeta.lore(List.of(ConfigUtils.t("base.save.error")));
                     clickItem.setItemMeta(clickMeta);
                     return null;
                 });
@@ -170,26 +170,26 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         List<String> value = ConfigUtils.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("base.on-error"));
             return false;
         }
         WarpEditor warpEditor = (WarpEditor) onEdit.getHolder().getMeta();
         switch (onEdit.getType()) {
             case RENAME -> {
                 if(!FormatUtils.checkName(message) || value.contains(message) || !FormatUtils.checkName(message)) {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-error", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
                     return false;
                 }
                 if(message.length() > ConfigUtils.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15) &&
                         onEdit.getType().equals(FunctionType.RENAME)) {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-too-long", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
                     return false;
                 }
                 warpEditor.currentWarp.setWarpName(message);
             }
             case PERMISSION -> {
                 if(!FormatUtils.isValidPermissionNode(message)) {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.permission.permission-error", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("base.on-edit.permission.permission-error"));
                     return false;
                 }
                 warpEditor.currentWarp.setPermission(message);
@@ -199,7 +199,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     Double i = Double.parseDouble(message);
                     warpEditor.currentWarp.setCost(i);
                 } catch (NumberFormatException e) {
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.cost.format-error", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("base.on-edit.cost.format-error"));
                     return false;
                 }
             }

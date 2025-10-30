@@ -2,11 +2,9 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.entity.sql.WhitelistInstance;
-import com.tty.enumType.FilePath;
 import com.tty.function.WhitelistManager;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.CommandAction;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -29,7 +27,7 @@ public class CommandZako {
         try {
             a = CommandAction.valueOf(action.toUpperCase());
         } catch (Exception e) {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.input-error", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("base.on-edit.input-error"));
             return;
         }
 
@@ -51,34 +49,34 @@ public class CommandZako {
         switch (a) {
             case ADD -> manager.getInstance(uuid.toString()).thenAccept(i -> {
                if (i != null) {
-                   this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.zako.player-exist", FilePath.Lang)));
+                   this.sender.sendMessage(ConfigUtils.t("function.zako.player-exist"));
                    return;
                }
                 manager.createInstance(instance).thenAccept(status -> {
-                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.zako.add-" + (status ? "success":"failure"), FilePath.Lang)));
+                    this.sender.sendMessage(ConfigUtils.t("function.zako.add-" + (status ? "success":"failure")));
                     if (status) {
                         Lib.Scheduler.run(Ari.instance, n -> {
                             Player player = Bukkit.getPlayer(uuid.get());
                             if (player != null && player.isOnline()) {
-                                player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.zako.send-player", FilePath.Lang)));
+                                player.sendMessage(ConfigUtils.t("function.zako.send-player"));
                             }
                         });
                     }
                 }).exceptionally(n -> {
                     Log.error("add zako error", n);
-                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                    this.sender.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
             }).exceptionally(i -> {
                 Log.error("query zako error", i);
-                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                this.sender.sendMessage(ConfigUtils.t("base.on-error"));
                 return null;
             });
             case REMOVE -> manager.deleteInstance(instance).thenAccept(status ->
-                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.zako.remove-" + (status ? "success":"failure"), FilePath.Lang))))
+                this.sender.sendMessage(ConfigUtils.t("function.zako.remove-" + (status ? "success":"failure"))))
                 .exceptionally(i -> {
                     Log.error("remove zako error", i);
-                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                    this.sender.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
         }

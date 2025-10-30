@@ -22,13 +22,12 @@ public class CommandTime {
         try {
             period = TimePeriod.valueOf(timePeriod.toUpperCase());
         } catch (Exception e) {
-            String replace = ConfigUtils.getValue("server.time.not-exist-period", FilePath.Lang).replace(LangType.PERIOD.getType(), timePeriod);
-            this.player.sendMessage(ComponentUtils.text(replace));
+            this.player.sendMessage(ConfigUtils.t("server.time.not-exist-period", LangType.PERIOD.getType(), timePeriod));
             return;
         }
         World world = this.player.getWorld();
         if (!world.isBedWorks()) {
-            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("server.time.not-allowed-world", FilePath.Lang)));
+            this.player.sendMessage(ConfigUtils.t("server.time.not-allowed-world"));
             return;
         }
         TimeManager.build(world).timeSet(period.getStart());

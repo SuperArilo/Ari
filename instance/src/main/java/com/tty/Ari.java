@@ -1,10 +1,12 @@
 package com.tty;
 
+import com.tty.command.function.CommandRtp;
 import com.tty.enumType.AriCommand;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.task.PeriodicTask;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.listener.OnPluginReloadListener;
@@ -35,6 +37,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Collection;
 
+import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.SavePlayerData;
+
 
 public class Ari extends JavaPlugin {
 
@@ -42,6 +46,9 @@ public class Ari extends JavaPlugin {
     public static Boolean debug = false;
     public SQLInstance sqlInstance;
     public CommandAlias commandAlias;
+
+    public PeriodicTask playerSave;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -67,7 +74,19 @@ public class Ari extends JavaPlugin {
         this.sqlInstance = new SQLInstance();
         this.sqlInstance.start();
 
-        ConfigUtils.setRtpWorldConfig();
+        //初始化rtp
+        CommandRtp.setRtpWorldConfig();
+
+        //玩家信息保存
+        this.playerSave = new PeriodicTask(getConfig().getInt("server.save-interval"), 1L, this);
+        this.playerSave.addTask(() -> {
+            Log.debug("saving player data");
+            Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
+            for (Player onlinePlayer : onlinePlayers) {
+                SavePlayerData(onlinePlayer, true, false);
+            }
+        });
+        this.playerSave.start();
 
         this.printLogo();
     }
@@ -75,8 +94,9 @@ public class Ari extends JavaPlugin {
     public void onDisable() {
         Collection<? extends Player> onlinePlayers = Bukkit.getServer().getOnlinePlayers();
         for (Player player : onlinePlayers) {
-            OnPlayerJoinAndLeaveListener.SavePlayerData(player, false, true);
+            SavePlayerData(player, false, true);
         }
+        this.playerSave.stop();
         SQLInstance.close();
     }
 

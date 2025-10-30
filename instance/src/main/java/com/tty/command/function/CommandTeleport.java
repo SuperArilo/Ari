@@ -7,7 +7,6 @@ import com.tty.enumType.FilePath;
 import com.tty.command.check.TeleportCheck;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
 import com.tty.function.Teleport;
@@ -40,11 +39,11 @@ public class CommandTeleport extends TeleportCheck {
         Player player = Bukkit.getPlayerExact(this.playerName);
         TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender);
         if(status == null) {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.been-done", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("function.tpa.been-done"));
             return;
         }
         //请求成功，移除该请求
-        this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.agree", FilePath.Lang)));
+        this.sender.sendMessage(ConfigUtils.t("function.tpa.agree"));
         TeleportCheck.remove(player, null,TeleportType.PLAYER);
         Integer value = ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
         Teleport teleport = switch (status.getAriCommand()) {
@@ -55,7 +54,7 @@ public class CommandTeleport extends TeleportCheck {
         if (teleport != null) {
             teleport.teleport();
         } else {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.error", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("function.tpa.error"));
         }
     }
 
@@ -63,22 +62,17 @@ public class CommandTeleport extends TeleportCheck {
         if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
         if(player == null) {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.unable-player", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("teleport.unable-player"));
             return;
         }
         if (TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.been-done", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("function.tpa.been-done"));
         } else {
             if(TeleportCheck.remove(player, null,TeleportType.PLAYER)) {
-                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.tpa.refuse-success", FilePath.Lang)));
-
-                player.sendMessage(
-                        ComponentUtils.text(
-                                ConfigUtils.getValue(
-                                        "function.tpa.refused",
-                                        FilePath.Lang).replace(LangType.TPABESENDER.getType(), this.sender.getName())));
+                this.sender.sendMessage(ConfigUtils.t("function.tpa.refuse-success"));
+                player.sendMessage(ConfigUtils.t("function.tpa.refused", LangType.TPABESENDER.getType(), this.sender.getName()));
             } else {
-                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.break", FilePath.Lang)));
+                this.sender.sendMessage(ConfigUtils.t("function.public.break"));
             }
         }
     }

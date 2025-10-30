@@ -3,9 +3,7 @@ package com.tty.command.lists;
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandZako;
 import com.tty.enumType.AriCommand;
-import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.CommandAction;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.command.Command;
@@ -25,7 +23,7 @@ public class zako extends BaseCommandCheck implements TabExecutor {
         //需要单独判断
         if(!this.hasPermission(commandSender, AriCommand.ZAKO)) return true;
         if(strings.length != 2) {
-            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.public.fail", FilePath.Lang)));
+            commandSender.sendMessage(ConfigUtils.t("function.public.fail"));
             return true;
         }
         new CommandZako(commandSender).action(strings[0], strings[1]);

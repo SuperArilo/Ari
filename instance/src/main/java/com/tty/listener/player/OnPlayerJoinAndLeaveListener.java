@@ -19,9 +19,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.world.WorldSaveEvent;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -42,7 +40,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
             try {
                 WhitelistInstance instance = manager.getInstance(player.getUniqueId().toString()).get(3, TimeUnit.SECONDS);
                 if (instance == null) {
-                    event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ComponentUtils.text(ConfigUtils.getValue("server.message.on-whitelist-login", FilePath.Lang)));
+                    event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ConfigUtils.t("server.message.on-whitelist-login"));
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 Log.error("whitelist error", e);
@@ -75,10 +73,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             }
                         }
                         if(first) {
-                            Bukkit.broadcast(
-                                    ComponentUtils.text(
-                                            ConfigUtils.getValue("server.message.on-first-login", FilePath.Lang)
-                                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
+                            Bukkit.broadcast(ConfigUtils.t("server.message.on-first-login", LangType.PLAYERNAME.getType(), player.getName()));
                         }
                         ServerPlayer serverPlayer = new ServerPlayer();
                         serverPlayer.setPlayerName(player.getName());
@@ -86,10 +81,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         manager.createInstance(serverPlayer);
                     } else {
                         if(login) {
-                            Bukkit.broadcast(
-                                    ComponentUtils.text(
-                                            ConfigUtils.getValue("server.message.on-login", FilePath.Lang)
-                                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
+                            Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
                         }
                     }
                 }).exceptionally(i -> {
@@ -102,20 +94,9 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
-            event.quitMessage(
-                    ComponentUtils.text(
-                            ConfigUtils.getValue("server.message.on-leave", FilePath.Lang)
-                                    .replace(LangType.PLAYERNAME.getType(), player.getName()), player));
+            event.quitMessage(ConfigUtils.t("server.message.on-leave", LangType.PLAYERNAME.getType(), player.getName()));
         }
         SavePlayerData(player, true, true);
-    }
-
-    @EventHandler
-    public void onWorldSave(WorldSaveEvent event) {
-        Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
-        for (Player onlinePlayer : onlinePlayers) {
-            SavePlayerData(onlinePlayer, true, false);
-        }
     }
 
     /**

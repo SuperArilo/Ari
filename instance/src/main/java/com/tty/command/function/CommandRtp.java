@@ -18,6 +18,7 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -53,7 +54,7 @@ public class CommandRtp {
                 false)) return;
 
         if (!this.config.isEnable()) {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.rtp.world-disable", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("function.rtp.world-disable"));
             return;
         }
 
@@ -70,7 +71,7 @@ public class CommandRtp {
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
             if (this.count >= this.initCount) {
                 this.sender.clearTitle();
-                this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.rtp.search-failure", FilePath.Lang)));
+                this.sender.sendMessage(ConfigUtils.t("function.rtp.search-failure"));
                 i.cancel();
                 return;
             }
@@ -231,5 +232,35 @@ public class CommandRtp {
         if (!this.showSearchResult) return;
         String s = ConfigUtils.getValue("function.rtp.search-count-report", FilePath.Lang).replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
         this.sender.sendMessage(ComponentUtils.text(s + message));
+    }
+
+    private static Map<String, Object> createWorldRtp() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("enable", true);
+        map.put("min", 300);
+        map.put("max", 1500);
+        return map;
+    }
+
+    public static void setRtpWorldConfig() {
+
+        Map<String, Object> value = ConfigUtils.getValue(
+                "rtp.worlds",
+                FilePath.FunctionConfig,
+                new TypeToken<Map<String, Object>>(){}.getType(),
+                null);
+
+        if (value == null) {
+            value = new HashMap<>();
+            for (World world : Bukkit.getWorlds()) {
+                value.put(world.getName(), createWorldRtp());
+            }
+        } else {
+            for (World world : Bukkit.getWorlds()) {
+                if (value.containsKey(world.getName())) continue;
+                value.put(world.getName(), createWorldRtp());
+            }
+        }
+        ConfigUtils.setValue("rtp.worlds", FilePath.FunctionConfig, value);
     }
 }

@@ -65,13 +65,13 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             case DELETE -> //delete home
                     homeManager.deleteInstance(homeEditor.currentHome).thenAccept(i -> {
                         if (i) {
-                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.delete-success", FilePath.Lang)));
+                            player.sendMessage(ConfigUtils.t("function.home.delete-success"));
                             Lib.Scheduler.run(Ari.instance, j -> {
                                 inventory.close();
                                 new HomeList(player).open();
                             });
                         } else {
-                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.not-found", FilePath.Lang)));
+                            player.sendMessage(ConfigUtils.t("function.home.not-found"));
                         }
 
                     });
@@ -88,7 +88,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 if (holder.getTask() == null) {
                     CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
                         if (this.removeEditInstance(player) != null) {
-                            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.timeout-cancel", FilePath.Lang)));
+                            player.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
                         }
                         holder.setTask(null);
                     }, 200L);
@@ -131,11 +131,11 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                 });
             }
             case SAVE -> {
-                clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.ing", FilePath.Lang))));
+                clickMeta.lore(List.of(ConfigUtils.t("base.save.ing")));
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = homeManager.modify(homeEditor.currentHome);
                 future.thenAccept(status -> {
-                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue(status ? "base.save.done":"base.save.error", FilePath.Lang))));
+                    clickMeta.lore(List.of(ConfigUtils.t(status ? "base.save.done":"base.save.error")));
                     clickItem.setItemMeta(clickMeta);
                     Lib.Scheduler.runAsyncDelayed(Ari.instance, e -> {
                         clickMeta.lore(List.of());
@@ -143,9 +143,9 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                     }, 20);
                 }).exceptionally(i -> {
                     Log.error("save home error", i);
-                    clickMeta.lore(List.of(ComponentUtils.text(ConfigUtils.getValue("base.save.error", FilePath.Lang))));
+                    clickMeta.lore(List.of(ConfigUtils.t("base.save.error")));
                     clickItem.setItemMeta(clickMeta);
-                    player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                    player.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
             }
@@ -163,11 +163,11 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                         }.getType(),
                         List.of());
         if(!FormatUtils.checkName(message) || checkList.contains(message)) {
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-error", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
             return false;
         }
         if(message.length() > ConfigUtils.getValue("main.name-length", FilePath.HomeConfig, Integer.class, 15)) {
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.rename.name-too-long", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }
         HomeEditor editor = (HomeEditor) onEdit.getHolder().getMeta();

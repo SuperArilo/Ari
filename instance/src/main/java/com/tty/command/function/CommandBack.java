@@ -2,7 +2,6 @@ package com.tty.command.function;
 
 import com.tty.command.check.TeleportCheck;
 import com.tty.enumType.FilePath;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.function.Teleport;
 import org.bukkit.Location;
@@ -23,7 +22,7 @@ public class CommandBack {
         Player player = (Player) this.sender;
         Location beforeLocation = TELEPORT_LAST_LOCATION.get(player);
         if(beforeLocation == null) {
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("teleport.none-location", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("teleport.none-location"));
             return;
         }
        if(TeleportCheck.preCheckStatus(player, beforeLocation, 60L) || this.sender.isOp()) {

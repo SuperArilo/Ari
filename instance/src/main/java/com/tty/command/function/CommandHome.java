@@ -2,12 +2,10 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.entity.sql.ServerHome;
-import com.tty.enumType.FilePath;
 import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
 import com.tty.lib.dto.Page;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
@@ -35,11 +33,11 @@ public class CommandHome {
             homeManager.getList(Page.create(1, Integer.MAX_VALUE))
                 .thenAccept(serverHomes -> {
                     if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
-                        this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.exceeds", FilePath.Lang)));
+                        this.sender.sendMessage(ConfigUtils.t("function.home.exceeds"));
                         return;
                     }
                     if (serverHomes.stream().anyMatch(c -> c.getHomeId().equals(homeId))) {
-                        this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.exist", FilePath.Lang), player));
+                        this.sender.sendMessage(ConfigUtils.t("function.home.exist", player));
                         return;
                     }
 
@@ -53,20 +51,20 @@ public class CommandHome {
                         serverHome.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
 
                         homeManager.createInstance(serverHome)
-                                .thenAccept(status -> this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue(status ? "function.home.create-success":"base.save.on-error", FilePath.Lang), player)))
+                                .thenAccept(status -> this.sender.sendMessage(ConfigUtils.t(status ? "function.home.create-success":"base.save.on-error", player)))
                                 .exceptionally(i -> {
                                     Log.error("create home error", i);
-                                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                                    this.sender.sendMessage(ConfigUtils.t("base.on-error"));
                                     return null;
                                 });
                     });
                 }).exceptionally(i -> {
                     Log.error("create home error", i);
-                    this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-error", FilePath.Lang)));
+                    this.sender.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
         } else {
-            this.sender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.home.id-error", FilePath.Lang)));
+            this.sender.sendMessage(ConfigUtils.t("function.home.id-error"));
         }
     }
 

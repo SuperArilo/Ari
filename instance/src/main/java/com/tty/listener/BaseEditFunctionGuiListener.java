@@ -2,10 +2,8 @@ package com.tty.listener;
 
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.dto.OnEdit;
-import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.lib.enum_type.FunctionType;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
@@ -43,7 +41,7 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
             player.clearTitle();
             this.removeEditInstance(player);
-            player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.cancel", FilePath.Lang)));
+            player.sendMessage(ConfigUtils.t("base.on-edit.cancel"));
             return;
         }
         if (this.onTitleEditStatus(message, this.onPlayerEditInstance.get(player))) {

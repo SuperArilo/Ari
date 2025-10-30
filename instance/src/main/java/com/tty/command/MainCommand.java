@@ -4,10 +4,8 @@ import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
-import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.CommandAction;
 import com.tty.lib.enum_type.TimePeriod;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
@@ -32,7 +30,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
         try {
             type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
         } catch (Exception e) {
-            commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.unknown", FilePath.Lang)));
+            commandSender.sendMessage(ConfigUtils.t("function.unknown"));
             return true;
         }
         switch (type) {
@@ -42,7 +40,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             }
             case RELOAD -> {
                 if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
-                commandSender.sendMessage(ComponentUtils.text(ConfigUtils.getValue("function.reload.doing", FilePath.Lang)));
+                commandSender.sendMessage(ConfigUtils.t("function.reload.doing"));
                 Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
             }
             case TPA -> {

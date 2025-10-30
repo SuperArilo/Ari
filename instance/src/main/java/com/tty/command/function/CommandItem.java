@@ -1,6 +1,5 @@
 package com.tty.command.function;
 
-import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.CommandAction;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
@@ -34,7 +33,7 @@ public class CommandItem {
         try {
             a = CommandAction.valueOf(action.toUpperCase());
         } catch (Exception e) {
-            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.input-error", FilePath.Lang)));
+            this.player.sendMessage(ConfigUtils.t("base.on-edit.input-error"));
             return;
         }
         if (!this.beforeCheck()) return;
@@ -53,7 +52,7 @@ public class CommandItem {
                     }
                     lore.remove(index);
                 } catch (Exception e) {
-                    this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-edit.input-error", FilePath.Lang)));
+                    this.player.sendMessage(ConfigUtils.t("base.on-edit.input-error"));
                     return;
                 }
             }
@@ -64,7 +63,7 @@ public class CommandItem {
 
     private boolean beforeCheck() {
         if (this.itemStack == null || this.itemStack.isEmpty()) {
-            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.on-player.hand-no-item", FilePath.Lang)));
+            this.player.sendMessage(ConfigUtils.t("base.on-player.hand-no-item"));
             return false;
         }
         return true;

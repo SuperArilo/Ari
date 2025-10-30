@@ -5,7 +5,6 @@ import com.tty.Ari;
 import com.tty.dto.BaseAction;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.GameMode;
@@ -39,7 +38,7 @@ public class PlayerSit extends BaseAction {
         this.createEntity(location);
         //设置玩家转向
         this.action_player.setRotation(location.getYaw(), 0);
-        this.action_player.sendActionBar(ComponentUtils.text(ConfigUtils.getValue("function.sit.tips", FilePath.Lang)));
+        this.action_player.sendActionBar(ConfigUtils.t("function.sit.tips"));
 
         this.task = Lib.Scheduler.runAtEntityFixedRate(
                 Ari.instance,
@@ -78,7 +77,7 @@ public class PlayerSit extends BaseAction {
         if (blockData instanceof Stairs stairs) {
             //如果为倒放楼梯，不允许
             if (!this.checkTop() || stairs.getHalf().equals(Bisected.Half.TOP)) {
-                this.action_player.sendActionBar(ComponentUtils.text(ConfigUtils.getValue("function.sit.error-location", FilePath.Lang)));
+                this.action_player.sendActionBar(ConfigUtils.t("function.sit.error-location"));
                 return false;
             }
             return name.endsWith("_STAIRS");
@@ -86,7 +85,7 @@ public class PlayerSit extends BaseAction {
         //如果为半砖sit
         if (blockData instanceof Slab) {
             if (!this.checkTop()) {
-                this.action_player.sendActionBar(ComponentUtils.text(ConfigUtils.getValue("function.sit.error-location", FilePath.Lang)));
+                this.action_player.sendActionBar(ConfigUtils.t("function.sit.error-location"));
                 return false;
             }
             return name.endsWith("_SLAB");

@@ -1,8 +1,6 @@
 package com.tty.gui;
 
 import com.tty.entity.menu.BaseDataMenu;
-import com.tty.enumType.FilePath;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.entity.Player;
@@ -42,7 +40,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
     public void prev() {
         this.pageNum--;
         if(this.pageNum <= 0) {
-            this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-prev", FilePath.Lang)));
+            this.player.sendMessage(ConfigUtils.t("base.page-change.none-prev"));
             this.pageNum = 1;
             return;
         }
@@ -62,7 +60,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
         this.pageNum++;
         this.requestData().thenAccept(list -> {
             if (list.isEmpty()) {
-                this.player.sendMessage(ComponentUtils.text(ConfigUtils.getValue("base.page-change.none-next", FilePath.Lang)));
+                this.player.sendMessage(ConfigUtils.t("base.page-change.none-next"));
                 this.pageNum--;
             } else {
                 this.data = list;

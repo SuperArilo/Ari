@@ -10,7 +10,6 @@
     </parent>
 
     <artifactId>arilib</artifactId>
-    <version>${lib.version}</version>
     <build>
         <finalName>${project.artifactId}</finalName>
     </build>

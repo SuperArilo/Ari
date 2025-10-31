@@ -9,7 +9,6 @@
         <version>${revision}</version>
     </parent>
     <artifactId>ari</artifactId>
-    <version>${ari.version}</version>
     <build>
         <finalName>${project.artifactId}</finalName>
     </build>
@@ -21,8 +20,8 @@
     <dependencies>
         <dependency>
             <groupId>com.tty</groupId>
-            <artifactId>arilib</artifactId>
-            <version>${lib.version}</version>
+            <artifactId>base</artifactId>
+            <version>1.2</version>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

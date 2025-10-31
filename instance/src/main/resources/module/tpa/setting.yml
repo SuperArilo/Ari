@@ -1,3 +1,6 @@
 main:
   teleport:
+    # 秒
     delay: 3
+    # 秒
+    cooldown: 10

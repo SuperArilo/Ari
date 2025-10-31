@@ -33,7 +33,7 @@ public class TeleportCheck {
             return;
         }
         player.sendMessage(ConfigUtils.t("function.tpa.send-message"));
-        addTeleportStatusTask(player, targetPlayer, ariCommand, 200L);
+        addTeleportStatusTask(player, targetPlayer, ariCommand, ConfigUtils.getValue("main.teleport.cooldown", FilePath.TPA, Long.class, 10L) * 20);
         String message = ConfigUtils.getValue("function.tpa." + (ariCommand.equals(AriCommand.TPA) ? "to-message":"here-message"), FilePath.Lang);
         targetPlayer.sendMessage(
                 ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), player.getName()))

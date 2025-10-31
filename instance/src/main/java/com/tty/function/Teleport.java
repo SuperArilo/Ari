@@ -65,6 +65,7 @@ public class Teleport {
         if (this.before != null) {
             this.before.accept(this);
         }
+        if(!this.status) return this;
         AtomicInteger timerIndex = new AtomicInteger();
         if (this.player.isOp()) {
             timerIndex.set(0);

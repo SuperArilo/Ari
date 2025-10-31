@@ -64,48 +64,53 @@ public class WarpListListener extends BaseGuiListener {
                 ServerWarp instance = first.get();
                 boolean isOwner = UUID.fromString(instance.getCreateBy()).equals(player.getUniqueId());
                 ClickType eventClick = event.getClick();
-                if(eventClick.isLeftClick()) {
-                    String permission = instance.getPermission();
-                    if(permission != null && !permission.isEmpty()) {
-                        boolean hasPermission = PermissionUtils.hasPermission(player, permission);
-                        if (!hasPermission && !isOwner) {
-                            player.sendMessage(ConfigUtils.t("function.warp.no-permission-teleport"));
-                            return;
+                switch (eventClick) {
+                    case LEFT -> {
+                        String permission = instance.getPermission();
+                        if(permission != null && !permission.isEmpty()) {
+                            boolean hasPermission = PermissionUtils.hasPermission(player, permission);
+                            if (!hasPermission && !isOwner) {
+                                player.sendMessage(ConfigUtils.t("function.warp.no-permission-teleport"));
+                                return;
+                            }
                         }
-                    }
-                    Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
-                    Teleport.create(player,
-                                    targetLocation,
-                                    ConfigUtils.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
-                            .before(t -> {
-                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner && ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
-                                    player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
-                                    t.cancel();
-                                }
-                                if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
-                                    t.cancel();
-                                }
-                            })
-                            .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
-                            .teleport()
-                            .after(() -> {
-                                //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                if(!isOwner &&
-                                        !player.isOp() &&
-                                        ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
-                                        !EconomyUtils.isNull()) {
-                                    EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                    player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
-                                }
-                                TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
-                            });
-                    inventory.close();
-                } else if(eventClick.isRightClick()) {
-                    if(isOwner || player.isOp()) {
+                        Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
+                        Teleport.create(player,
+                                        targetLocation,
+                                        ConfigUtils.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
+                                .before(t -> {
+                                    if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner &&
+                                            ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
+                                        player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
+                                        t.cancel();
+                                        return;
+                                    }
+                                    if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
+                                        t.cancel();
+                                    }
+                                })
+                                .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
+                                .teleport()
+                                .after(() -> {
+                                    //判断是否是地标拥有者或者是不是op，如果是则不扣
+                                    if(!isOwner &&
+                                            !player.isOp() &&
+                                            ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
+                                            !EconomyUtils.isNull()) {
+                                        EconomyUtils.withdrawPlayer(player, instance.getCost());
+                                        player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
+                                    }
+                                    TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
+                                });
                         inventory.close();
-                        new WarpEditor(instance, player).open();
-                    } else {
-                        player.sendMessage(ConfigUtils.t("function.warp.no-permission-edit"));
+                    }
+                    case RIGHT -> {
+                        if(isOwner || player.isOp()) {
+                            inventory.close();
+                            new WarpEditor(instance, player).open();
+                        } else {
+                            player.sendMessage(ConfigUtils.t("function.warp.no-permission-edit"));
+                        }
                     }
                 }
             }

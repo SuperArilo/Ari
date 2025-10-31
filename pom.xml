@@ -21,8 +21,8 @@
         <folia.mc.version>1.21.4</folia.mc.version>
         <version.suffix>-R0.1-SNAPSHOT</version.suffix>
         <revision>1.0.0</revision>
-        <ari.version>1.1</ari.version>
-        <lib.version>1.1</lib.version>
+        <ari.version>1.2</ari.version>
+        <lib.version>1.2</lib.version>
     </properties>
     <build>
         <plugins>

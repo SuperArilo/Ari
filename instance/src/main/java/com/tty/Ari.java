@@ -78,7 +78,7 @@ public class Ari extends JavaPlugin {
         CommandRtp.setRtpWorldConfig();
 
         //玩家信息保存
-        this.playerSave = new PeriodicTask(getConfig().getInt("server.save-interval", 6000), 1L, this);
+        this.playerSave = new PeriodicTask(getConfig().getInt("server.save-interval", 300) * 20L, 1L, this);
         this.playerSave.addTask(() -> {
             Log.debug("saving player data");
             Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();

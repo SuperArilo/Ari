@@ -92,9 +92,9 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                         case COST -> {
                             Double cost = serverWarp.getCost();
                             if(cost == null || cost == 0) {
-                                yield line.replace(keyType.getKey(), "&afree");
+                                yield line.replace(keyType.getKey(), ConfigUtils.getValue("base.free", FilePath.Lang));
                             } else {
-                                yield line.replace(keyType.getKey(), cost.toString());
+                                yield line.replace(keyType.getKey(), cost + EconomyUtils.getNamePlural());
                             }
                         }
                         case TOP_SLOT ->

@@ -2,7 +2,7 @@ base:
   page-change:
     none-prev: '这已经是第一页了哦'
     none-next: '这已经是最后一页了哦'
-  on-error: '&2服务器执行过程发生错误，请联系管理员'
+  on-error: '&4服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&4否'
   free: '&a免费'

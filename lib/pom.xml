@@ -6,13 +6,13 @@
     <parent>
         <groupId>com.tty</groupId>
         <artifactId>base</artifactId>
-        <version>1.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>arilib</artifactId>
     <version>${lib.version}</version>
     <build>
-        <finalName>${artifactId}</finalName>
+        <finalName>${project.artifactId}</finalName>
     </build>
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

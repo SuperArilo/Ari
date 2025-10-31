@@ -5,6 +5,7 @@ base:
   on-error: '&2服务器执行过程发生错误，请联系管理员'
   yes_re: '&a是'
   no_re: '&4否'
+  free: '&a免费'
   status-not-allow: '&4当前状态不允许此操作！'
   on-edit:
     cancel: '已取消操作！'

@@ -7,7 +7,7 @@
 [![Vault Dependency](https://img.shields.io/badge/Vault-Required-blue)](https://github.com/MilkBowl/Vault)
 
 
-✨ 一个高度兼容的Minecraft插件，完美支持 **PaperMC** 和 **Folia** 核心，兼容 1.21 至最新版本  
+✨ 一个高度兼容的Minecraft插件，完美支持 **PaperMC** 和 **Folia** 核心，兼容 1.21.3+  
 📦 提供家园传送、地标系统、玩家交互等核心功能 + 实用游戏工具
 ## ✨ 核心特性
 | 功能             | 描述                         |

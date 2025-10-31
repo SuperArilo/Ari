@@ -54,13 +54,15 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
         List<String> rawLore = this.baseDataInstance.getDataItems().getLore();
         for (int i = 0; i < this.data.size(); i++) {
             ServerHome ph = this.data.get(i);
-            ItemStack itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if(itemMeta == null) {
+            ItemStack itemStack;
+            try {
+                itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
+            } catch (Exception e) {
                 Log.error("There is a problem with the homeID: [" + ph.getHomeId() + "] of the player: [" + this.player.getName() + "]");
                 Log.warning("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
                 continue;
             }
+            ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(ph.getLocation());

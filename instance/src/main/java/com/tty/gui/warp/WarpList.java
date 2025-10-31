@@ -49,13 +49,16 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
         List<String> rawLore = this.baseDataInstance.getDataItems().getLore();
         for (int i = 0;i < this.data.size();i++) {
             ServerWarp serverWarp = this.data.get(i);
-            ItemStack itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            if(itemMeta == null) {
+            ItemStack itemStack;
+            try {
+                itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
+            } catch (Exception e) {
                 Log.warning("There is a problem with the warpID: [" + serverWarp.getWarpId() + "] of the player: [" + this.player.getName() + "]");
-                Log.error("Skip the rendering warpId [" + serverWarp.getWarpId() + "] process...");
+                Log.error("Skip the rendering warpId [" + serverWarp.getWarpId() + "] process...", e);
+                this.player.sendMessage(ConfigUtils.t("base.on-error"));
                 continue;
             }
+            ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverWarp.getLocation());

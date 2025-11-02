@@ -1,6 +1,4 @@
 main:
-  permission: true
-  cost: true
   name-length: 12
   name-check:
     - 'fuck'

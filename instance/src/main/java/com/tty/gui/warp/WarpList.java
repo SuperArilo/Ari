@@ -33,6 +33,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
+    private final String baseYesRe = "base.yes_re";
+    private final String baseNoRe = "base.no_re";
+    private final String baseFree = ConfigUtils.getValue("base.free", FilePath.Lang);
+
     public WarpList(Player player) {
         super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpList.name()).saveToString(), BaseDataMenu.class), player);
     }
@@ -62,17 +66,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
             itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverWarp.getLocation());
-            rawLore.stream().filter(line -> {
-                for (IconKeyType keyType : IconKeyType.values()) {
-                    if(keyType == IconKeyType.PERMISSION && line.contains(keyType.getKey())) {
-                        return ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, false);
-                    }
-                    if(keyType == IconKeyType.COST && line.contains(keyType.getKey())) {
-                        return ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) && !EconomyUtils.isNull();
-                    }
-                }
-                return true;
-            }).map(line -> {
+            rawLore.forEach(line -> {
                 for (IconKeyType keyType : IconKeyType.values()) {
                     line = switch (keyType) {
                         case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
@@ -88,31 +82,31 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                                 name = onlinePlayer.getName();
                             } else {
                                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                                name = offlinePlayer.getName() != null ? offlinePlayer.getName() : "null";
+                                name = offlinePlayer.getName() != null ? offlinePlayer.getName() : "";
                             }
                             yield line.replace(keyType.getKey(), name);
                         }
                         case COST -> {
                             Double cost = serverWarp.getCost();
-                            if(cost == null || cost == 0) {
-                                yield line.replace(keyType.getKey(), ConfigUtils.getValue("base.free", FilePath.Lang));
+                            if(cost == null || Double.compare(cost, 0.0) == 0) {
+                                yield line.replace(keyType.getKey(), this.baseFree);
                             } else {
                                 yield line.replace(keyType.getKey(), cost + EconomyUtils.getNamePlural());
                             }
                         }
                         case TOP_SLOT ->
-                                line.replace(IconKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? "base.yes_re":"base.no_re");
+                                line.replace(IconKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? this.baseYesRe:this.baseNoRe);
                         case PERMISSION -> {
                             boolean hasPermission = serverWarp.getPermission() == null ||
                                     serverWarp.getPermission().isEmpty() ||
                                     PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), ConfigUtils.getValue(hasPermission ? "base.yes_re":"base.no_re", FilePath.Lang));
+                            yield line.replace(keyType.getKey(), ConfigUtils.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang));
                         }
                     };
                 }
-                return ComponentUtils.text(line, player);
-            }).forEach(textComponents::add);
+                textComponents.add(ComponentUtils.text(line, player));
+            });
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());

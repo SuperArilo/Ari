@@ -63,8 +63,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         PLAYER_LOGIN_TIMES.put(player.getUniqueId(), System.currentTimeMillis());
         manager.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
-                    //表示此玩家是第一次进入服务器
-                    if (i == null || !player.hasPlayedBefore()) {
+                    if(!player.hasPlayedBefore()) {
                         if (ConfigUtils.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false) &&
                                 ConfigUtils.getValue("main.enable", FilePath.SpawnConfig, Boolean.class, false)) {
                             Location value = ConfigUtils.getValue("main.location", FilePath.SpawnConfig, Location.class);
@@ -75,15 +74,16 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         if(first) {
                             Bukkit.broadcast(ConfigUtils.t("server.message.on-first-login", LangType.PLAYERNAME.getType(), player.getName()));
                         }
+                    }
+                    if(i == null) {
                         ServerPlayer serverPlayer = new ServerPlayer();
                         serverPlayer.setPlayerName(player.getName());
                         serverPlayer.setPlayerUUID(player.getUniqueId().toString());
                         serverPlayer.setFirstLoginTime(System.currentTimeMillis());
                         manager.createInstance(serverPlayer);
-                    } else {
-                        if(login) {
-                            Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
-                        }
+                    }
+                    if(login) {
+                        Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
                     }
                 }).exceptionally(i -> {
                    Log.error("get player data error", i);

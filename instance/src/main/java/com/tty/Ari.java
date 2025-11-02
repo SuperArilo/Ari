@@ -52,12 +52,14 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        reloadAllConfig();
-        Log.initLogger(this.getLogger(), debug);
+
     }
 
     @Override
     public void onEnable() {
+
+        reloadAllConfig();
+        Log.initLogger(this.getLogger(), debug);
 
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));

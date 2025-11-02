@@ -103,7 +103,6 @@ function:
     add-success: '&a白名单添加成功'
     add-failure: '&4添加失败，请查看控制台'
     player-exist: '&4添加失败，玩家已经存在'
-    send-player: '&a管理员已为你添加白名单，请退出服务器重进'
     remove-success: '&a白名单移除成功'
     remove-failure: '&4白名单移除失败，不存在或者存在错误'
   unknown: '&4未知指令，请重新输入'

@@ -52,21 +52,13 @@ public class CommandZako {
                    this.sender.sendMessage(ConfigUtils.t("function.zako.player-exist"));
                    return;
                }
-                manager.createInstance(instance).thenAccept(status -> {
-                    this.sender.sendMessage(ConfigUtils.t("function.zako.add-" + (status ? "success":"failure")));
-                    if (status) {
-                        Lib.Scheduler.run(Ari.instance, n -> {
-                            Player player = Bukkit.getPlayer(uuid.get());
-                            if (player != null && player.isOnline()) {
-                                player.sendMessage(ConfigUtils.t("function.zako.send-player"));
-                            }
+                manager.createInstance(instance).thenAccept(status ->
+                        this.sender.sendMessage(ConfigUtils.t("function.zako.add-" + (status ? "success":"failure"))))
+                        .exceptionally(n -> {
+                            Log.error("add zako error", n);
+                            this.sender.sendMessage(ConfigUtils.t("base.on-error"));
+                            return null;
                         });
-                    }
-                }).exceptionally(n -> {
-                    Log.error("add zako error", n);
-                    this.sender.sendMessage(ConfigUtils.t("base.on-error"));
-                    return null;
-                });
             }).exceptionally(i -> {
                 Log.error("query zako error", i);
                 this.sender.sendMessage(ConfigUtils.t("base.on-error"));

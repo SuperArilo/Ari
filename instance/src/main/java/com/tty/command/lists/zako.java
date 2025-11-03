@@ -3,7 +3,7 @@ package com.tty.command.lists;
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandZako;
 import com.tty.enumType.AriCommand;
-import com.tty.lib.enum_type.CommandAction;
+import com.tty.enumType.commands.Zako;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.command.Command;
@@ -34,7 +34,7 @@ public class zako extends BaseCommandCheck implements TabExecutor {
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
         if (strings.length != 1) return List.of();
         List<String> list = new ArrayList<>();
-        for (CommandAction value : CommandAction.values()) {
+        for (Zako value : Zako.values()) {
             list.add(value.getName());
         }
         return PublicFunctionUtils.filterByPrefix(list, strings[0]);

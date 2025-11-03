@@ -35,18 +35,25 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     @EventHandler
     public void whitelist(PlayerLoginEvent event) {
         Player player = event.getPlayer();
-        if (Ari.instance.getConfig().getBoolean("server.whitelist.enable", false) && !player.isOp()) {
-            WhitelistManager manager = new WhitelistManager(false);
-            try {
-                WhitelistInstance instance = manager.getInstance(player.getUniqueId().toString()).get(3, TimeUnit.SECONDS);
-                if (instance == null) {
-                    event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ConfigUtils.t("server.message.on-whitelist-login"));
-                }
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                Log.error("whitelist error", e);
-                event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ComponentUtils.text(e.getMessage()));
-            }
-        }
+        if(!Ari.instance.getConfig().getBoolean("server.whitelist.enable", false)) return;
+        WhitelistManager manager = new WhitelistManager(false);
+        manager.getInstance(player.getUniqueId().toString())
+                .thenAccept(instance -> {
+                    if (instance == null) {
+                        if(player.isOp()) {
+                            WhitelistInstance n = new WhitelistInstance();
+                            n.setAddTime(System.currentTimeMillis());
+                            n.setPlayerUUID(player.getUniqueId().toString());
+                            manager.createInstance(n);
+                        } else {
+                            event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ConfigUtils.t("server.message.on-whitelist-login"));
+                        }
+                    }
+                }).exceptionally(i -> {
+                    Log.error("whitelist error", i);
+                    event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ComponentUtils.text(i.getMessage()));
+                    return null;
+                });
     }
 
     @EventHandler

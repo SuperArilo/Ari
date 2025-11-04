@@ -78,7 +78,7 @@ public class TimeFormatUtils {
      * @return 格式化后的时间字符串
      */
     public static String format(long timestamp, String pattern) {
-        if (timestamp == 0) return "";
+        if (timestamp == 0) return "null";
         Instant instant = Instant.ofEpochMilli(timestamp);
         LocalDateTime dateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);

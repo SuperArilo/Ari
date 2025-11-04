@@ -6,6 +6,7 @@ base:
   yes_re: '&a是'
   no_re: '&4否'
   free: '&a免费'
+  no-record: '&4无记录'
   status-not-allow: '&4当前状态不允许此操作！'
   on-edit:
     cancel: '已取消操作！'

@@ -1,5 +1,6 @@
 package com.tty.command.function;
 
+import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.Teleport;
 import com.tty.lib.tool.Log;
@@ -18,18 +19,18 @@ public class CommandSpawn {
 
     public void set() {
         Location location = this.sender.getLocation();
-        ConfigUtils.setValue("main.location", FilePath.SpawnConfig, location);
+        Ari.C_INSTANCE.setValue(Ari.instance, "main.location", FilePath.SpawnConfig, location);
         this.sender.sendMessage(ConfigUtils.t("function.spawn.create-success"));
     }
 
     public void convey() {
-        Location value = ConfigUtils.getValue("main.location", FilePath.SpawnConfig, Location.class);
+        Location value = Ari.C_INSTANCE.getValue("main.location", FilePath.SpawnConfig, Location.class);
         if(value == null) {
             Log.debug("location null");
             this.sender.sendMessage(ConfigUtils.t("function.spawn.no-spawn"));
             return;
         }
-        Teleport.create(this.sender, value, ConfigUtils.getValue("main.teleport-delay", FilePath.SpawnConfig, Integer.class, 3)).teleport();
+        Teleport.create(this.sender, value, Ari.C_INSTANCE.getValue("main.teleport-delay", FilePath.SpawnConfig, Integer.class, 3)).teleport();
     }
 
 }

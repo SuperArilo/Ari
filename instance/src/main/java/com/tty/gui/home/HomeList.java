@@ -15,7 +15,6 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.tool.ConfigUtils;
 import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
@@ -38,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 public class HomeList extends BaseDataItemInventory<ServerHome> {
 
     public HomeList(Player player) {
-        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeList.name()).saveToString(), BaseDataMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HomeList.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override

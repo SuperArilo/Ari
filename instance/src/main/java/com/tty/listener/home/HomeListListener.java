@@ -12,7 +12,6 @@ import com.tty.function.Teleport;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.listener.BaseGuiListener;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -54,7 +53,7 @@ public class HomeListListener extends BaseGuiListener {
                     Teleport.create(
                             player,
                             FormatUtils.parseLocation(home.getLocation()),
-                            ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3)).teleport();
+                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3)).teleport();
                 } else if (click.equals(ClickType.RIGHT)) {
                     Lib.Scheduler.run(Ari.instance, p -> {
                         inventory.close();

@@ -35,10 +35,10 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     private final String baseYesRe = "base.yes_re";
     private final String baseNoRe = "base.no_re";
-    private final String baseFree = ConfigUtils.getValue("base.free", FilePath.Lang);
+    private final String baseFree = Ari.C_INSTANCE.getValue("base.free", FilePath.Lang);
 
     public WarpList(Player player) {
-        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.WarpList.name()).saveToString(), BaseDataMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.WarpList.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                                     serverWarp.getPermission().isEmpty() ||
                                     PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), ConfigUtils.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang));
+                            yield line.replace(keyType.getKey(), Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang));
                         }
                     };
                 }

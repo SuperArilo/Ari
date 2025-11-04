@@ -162,6 +162,6 @@ public class PlayerSit extends BaseAction {
     }
 
     private List<String> getDisableList() {
-        return ConfigUtils.getValue("action.sit.disable-block", FilePath.FunctionConfig, new TypeToken<List<String>>(){}.getType(), List.of());
+        return Ari.C_INSTANCE.getValue("action.sit.disable-block", FilePath.FunctionConfig, new TypeToken<List<String>>(){}.getType(), List.of());
     }
 }

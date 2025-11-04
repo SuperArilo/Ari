@@ -78,8 +78,8 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             case RENAME -> {
                 player.showTitle(
                         ComponentUtils.setPlayerTitle(
-                                ConfigUtils.getValue("base.on-edit.title", FilePath.Lang),
-                                ConfigUtils.getValue("base.on-edit.sub-title", FilePath.Lang),
+                                Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.Lang),
+                                Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.Lang),
                                 1000,
                                 10000 ,
                                 1000));
@@ -123,7 +123,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
-                                p.replace(IconKeyType.TOP_SLOT.getKey(), ConfigUtils.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))
+                                p.replace(IconKeyType.TOP_SLOT.getKey(), Ari.C_INSTANCE.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))
                         ).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
@@ -155,7 +155,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
     @Override
     public boolean onTitleEditStatus(String message, OnEdit onEdit) {
         Player player = onEdit.getHolder().getPlayer();
-        List<Object> checkList = ConfigUtils
+        List<Object> checkList = Ari.C_INSTANCE
                 .getValue(
                         "main.name-check",
                         FilePath.HomeConfig,
@@ -166,7 +166,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
             return false;
         }
-        if(message.length() > ConfigUtils.getValue("main.name-length", FilePath.HomeConfig, Integer.class, 15)) {
+        if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.HomeConfig, Integer.class, 15)) {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }

@@ -6,7 +6,9 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.task.PeriodicTask;
+import com.tty.lib.tool.ConfigInstance;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.listener.OnPluginReloadListener;
@@ -44,10 +46,12 @@ public class Ari extends JavaPlugin {
 
     public static Ari instance;
     public static Boolean debug = false;
+    public static ConfigInstance C_INSTANCE = new ConfigInstance();
     public SQLInstance sqlInstance;
     public CommandAlias commandAlias;
 
     public PeriodicTask playerSave;
+    public ConfigDataService dataService;
 
     @Override
     public void onLoad() {
@@ -63,6 +67,7 @@ public class Ari extends JavaPlugin {
 
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
+        PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
 
         this.registerCommands();
         this.registerListener();
@@ -100,6 +105,7 @@ public class Ari extends JavaPlugin {
         }
         this.playerSave.stop();
         SQLInstance.close();
+        C_INSTANCE.clearConfigs();
     }
 
     private void registerCommands() {
@@ -134,7 +140,7 @@ public class Ari extends JavaPlugin {
         loadConfigInMemory();
     }
     private static void loadConfigInMemory() {
-        ConfigUtils.clearConfigs();
+        C_INSTANCE.clearConfigs();
         FileConfiguration pluginConfig = Ari.instance.getConfig();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
@@ -147,7 +153,7 @@ public class Ari extends JavaPlugin {
             } else if (pluginConfig.getBoolean("debug.overwrite-file", false)) {
                 Ari.instance.saveResource(path, true);
             }
-            ConfigUtils.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));
+            C_INSTANCE.setConfig(filePath.name(), YamlConfiguration.loadConfiguration(file));
         }
     }
 

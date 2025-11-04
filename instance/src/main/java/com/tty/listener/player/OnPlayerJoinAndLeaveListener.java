@@ -71,9 +71,9 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         manager.getInstance(player.getUniqueId().toString())
                 .thenAccept(i -> {
                     if(!player.hasPlayedBefore()) {
-                        if (ConfigUtils.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false) &&
-                                ConfigUtils.getValue("main.enable", FilePath.SpawnConfig, Boolean.class, false)) {
-                            Location value = ConfigUtils.getValue("main.location", FilePath.SpawnConfig, Location.class);
+                        if (Ari.C_INSTANCE.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false) &&
+                                Ari.C_INSTANCE.getValue("main.enable", FilePath.SpawnConfig, Boolean.class, false)) {
+                            Location value = Ari.C_INSTANCE.getValue("main.location", FilePath.SpawnConfig, Location.class);
                             if (value != null) {
                                 Teleport.create(player, value, 0).teleport();
                             }

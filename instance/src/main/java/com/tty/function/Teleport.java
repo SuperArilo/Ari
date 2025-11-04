@@ -44,8 +44,8 @@ public class Teleport {
         this.targetLocation = targetLocation;
         this.delay = Math.max(delay, 0);
 
-        this.title = ConfigUtils.getValue("teleport.title.main", FilePath.Lang);
-        this.subTitle = ConfigUtils.getValue("teleport.title.sub-title", FilePath.Lang);
+        this.title = Ari.C_INSTANCE.getValue("teleport.title.main", FilePath.Lang);
+        this.subTitle = Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.Lang);
 
     }
     public Teleport aborted(Runnable runnable) {

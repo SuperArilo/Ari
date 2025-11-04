@@ -5,7 +5,6 @@ import com.tty.dto.BaseAction;
 import com.tty.dto.action.PlayerRide;
 import com.tty.dto.action.PlayerSit;
 import com.tty.enumType.FilePath;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -62,6 +61,6 @@ public class PlayerActionListener implements Listener {
         }
     }
     private boolean isEnable() {
-        return ConfigUtils.getValue("action.sit.enable", FilePath.FunctionConfig, Boolean.class, false);
+        return Ari.C_INSTANCE.getValue("action.sit.enable", FilePath.FunctionConfig, Boolean.class, false);
     }
 }

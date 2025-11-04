@@ -9,7 +9,6 @@ import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -47,7 +46,7 @@ public class SleepingWorld {
                         if (this.playerCondition(player.getWorld()) || !player.isSleeping() || !player.isDeeplySleeping()) continue;
                         Lib.Scheduler.runAtEntity(Ari.instance, player, b -> player.showTitle(
                                 ComponentUtils.setPlayerTitle(timeManager.tickToTime(i),
-                                        ConfigUtils.getValue("server.time.skip-to-night", FilePath.Lang),
+                                        Ari.C_INSTANCE.getValue("server.time.skip-to-night", FilePath.Lang),
                                         0L,
                                         1000L,
                                         1000L)), () -> {});
@@ -61,7 +60,7 @@ public class SleepingWorld {
     private void sendTipsActionBar() {
         for (Player player : this.world.getPlayers()) {
             if (!player.isSleeping()) {
-                String l = ConfigUtils.getValue("server.time.report-status", FilePath.Lang);
+                String l = Ari.C_INSTANCE.getValue("server.time.report-status", FilePath.Lang);
                 player.sendActionBar(
                         ComponentUtils.text(
                                 l.replace(LangType.SLEEPPLAYERS.getType(), String.valueOf(this.getSleepPlayers()))

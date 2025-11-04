@@ -9,7 +9,6 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -35,7 +34,7 @@ public class PlayerTabManager implements Listener {
 
 
     public PlayerTabManager() {
-        this.updateInterval = ConfigUtils.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
+        this.updateInterval = Ari.C_INSTANCE.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
         this.start();
     }
 
@@ -128,31 +127,31 @@ public class PlayerTabManager implements Listener {
      */
     private void buildLayout() {
         if (this.updateInterval == null) {
-            this.updateInterval = ConfigUtils.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
+            this.updateInterval = Ari.C_INSTANCE.getValue("tab.update-interval", FilePath.FunctionConfig, Integer.class, 1);
         }
         if(this.rawHeaders.isEmpty() || this.rawFooters.isEmpty()) {
             TypeToken<List<String>> typeToken = new TypeToken<>() {};
-            List<String> headerValue = ConfigUtils.getValue("tab.layout.header", FilePath.FunctionConfig, typeToken.getType(), List.of());
+            List<String> headerValue = Ari.C_INSTANCE.getValue("tab.layout.header", FilePath.FunctionConfig, typeToken.getType(), List.of());
             if (headerValue != null) {
                 this.rawHeaders.addAll(headerValue);
             }
-            List<String> footerValue = ConfigUtils.getValue("tab.layout.footer", FilePath.FunctionConfig, typeToken.getType(), List.of());
+            List<String> footerValue = Ari.C_INSTANCE.getValue("tab.layout.footer", FilePath.FunctionConfig, typeToken.getType(), List.of());
             if (footerValue != null) {
                 this.rawFooters.addAll(footerValue);
             }
         }
-        Map<String, TabGroupLine> lineMap = ConfigUtils.getValue("tab.groups", FilePath.FunctionConfig, new TypeToken<Map<String, TabGroupLine>>() {}.getType(), new HashMap<>());
+        Map<String, TabGroupLine> lineMap = Ari.C_INSTANCE.getValue("tab.groups", FilePath.FunctionConfig, new TypeToken<Map<String, TabGroupLine>>() {}.getType(), new HashMap<>());
         if (this.groupLineMap.isEmpty() && lineMap != null) {
             this.groupLineMap.putAll(lineMap);
         }
-        List<String> value = ConfigUtils.getValue("tab.slot", FilePath.FunctionConfig, new TypeToken<List<String>>() {}.getType(), List.of());
+        List<String> value = Ari.C_INSTANCE.getValue("tab.slot", FilePath.FunctionConfig, new TypeToken<List<String>>() {}.getType(), List.of());
         if (this.groupSequence.isEmpty() && value != null) {
             this.groupSequence.addAll(value);
         }
     }
 
     private boolean isEnable() {
-        return Boolean.TRUE.equals(ConfigUtils.getValue("tab.enable", FilePath.FunctionConfig, Boolean.class, false));
+        return Boolean.TRUE.equals(Ari.C_INSTANCE.getValue("tab.enable", FilePath.FunctionConfig, Boolean.class, false));
     }
 
     @EventHandler

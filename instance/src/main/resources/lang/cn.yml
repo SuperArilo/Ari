@@ -30,6 +30,7 @@ base:
   on-player:
     hand-no-item: '&4当前手上并没有物品'
     unable-player: '该玩家离线或者不存在！'
+    data-changed: "&2你的数据发生更变，请重新登录服务器!"
 teleport:
   title:
     main: '请不要移动...'
@@ -105,6 +106,8 @@ function:
     player-exist: '&4添加失败，玩家已经存在'
     remove-success: '&a白名单移除成功'
     remove-failure: '&4白名单移除失败，不存在或者存在错误'
+    not-exist: '&4查询失败，被查询的对象不存在'
+
   unknown: '&4未知指令，请重新输入'
 server:
   time:
@@ -129,5 +132,13 @@ server:
     on-login: '&7玩家 &6[PlayerName] &7加入了服务器！'
     on-leave: '&7玩家 &6[PlayerName] &7离开了服务器！'
     no-economy: '&4服务器未使用经济插件'
+  player:
+    info:
+      - "玩家 [PlayerName] 的信息"
+      - "第一次登录服务器时间: [FirstLoginServerTime]"
+      - "上次登录服务器的时间: [LastLoginServerTime]"
+      - "累计在线时间: [TotalOnServer]"
+      - "所在世界：[PlayerWorld]"
+      - "当前位置: [PlayerLocation]"
 debug:
   on-open: '调试模式开启'

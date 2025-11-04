@@ -76,10 +76,10 @@ public class WarpListListener extends BaseGuiListener {
                             Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
                             Teleport.create(player,
                                             targetLocation,
-                                            ConfigUtils.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
+                                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
                                     .before(t -> {
                                         if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner &&
-                                                ConfigUtils.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
+                                                Ari.C_INSTANCE.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
                                             player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
                                             t.cancel();
                                             return;
@@ -94,7 +94,7 @@ public class WarpListListener extends BaseGuiListener {
                                         //判断是否是地标拥有者或者是不是op，如果是则不扣
                                         if(!isOwner &&
                                                 !player.isOp() &&
-                                                ConfigUtils.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
+                                                Ari.C_INSTANCE.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
                                                 !EconomyUtils.isNull()) {
                                             EconomyUtils.withdrawPlayer(player, instance.getCost());
                                             player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));

@@ -1,5 +1,6 @@
 package com.tty.command.function;
 
+import com.tty.Ari;
 import com.tty.command.check.TeleportCheck;
 import com.tty.enumType.FilePath;
 import com.tty.tool.ConfigUtils;
@@ -29,7 +30,7 @@ public class CommandBack {
            Teleport.create(
                    player,
                    beforeLocation,
-                   ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3))
+                           Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3))
                    .teleport();
        }
     }

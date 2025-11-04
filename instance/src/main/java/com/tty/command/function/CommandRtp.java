@@ -25,9 +25,9 @@ import java.util.Map;
 public class CommandRtp {
 
     private final CommandSender sender;
-    private final int initCount = ConfigUtils.getValue("rtp.search-count", FilePath.FunctionConfig, Integer.class, 10);
+    private final int initCount = Ari.C_INSTANCE.getValue("rtp.search-count", FilePath.FunctionConfig, Integer.class, 10);
     private int count = 0;
-    private final boolean showSearchResult = ConfigUtils.getValue("rtp.show-search-result", FilePath.FunctionConfig, Boolean.class, false);
+    private final boolean showSearchResult = Ari.C_INSTANCE.getValue("rtp.show-search-result", FilePath.FunctionConfig, Boolean.class, false);
     private boolean isRunning = false;
     private boolean isDone = false;
     private final World world;
@@ -37,7 +37,7 @@ public class CommandRtp {
         this.sender = sender;
         this.world = ((Player) sender).getWorld();
 
-        Map<String, RtpConfig> value = ConfigUtils.getValue(
+        Map<String, RtpConfig> value = Ari.C_INSTANCE.getValue(
                 "rtp.worlds",
                 FilePath.FunctionConfig,
                 new TypeToken<Map<String, RtpConfig>>() {
@@ -47,7 +47,7 @@ public class CommandRtp {
     }
 
     public void rtp() {
-        if (this.config == null || !ConfigUtils.getValue(
+        if (this.config == null || !Ari.C_INSTANCE.getValue(
                 "rtp.enable",
                 FilePath.FunctionConfig,
                 Boolean.class,
@@ -65,7 +65,7 @@ public class CommandRtp {
         if (!TeleportCheck.preCheckStatus(
                 player,
                 null,
-                ConfigUtils.getValue("rtp.delay", FilePath.FunctionConfig, Integer.class, 3) * 20)
+                Ari.C_INSTANCE.getValue("rtp.delay", FilePath.FunctionConfig, Integer.class, 3) * 20)
         ) return;
 
         Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
@@ -163,7 +163,7 @@ public class CommandRtp {
         Material behind = block.getRelative(0, -1, 0).getType();
 
         if (!isSafeStandingBlock(feet)) {
-            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
+            this.sendSearchMessage(Ari.C_INSTANCE.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
             Log.debug("standing block illegal.");
             return false;
         }
@@ -171,18 +171,18 @@ public class CommandRtp {
         if (isSolid(body) || isSolid(head) ||
                 isDangerous(body) || isDangerous(head) ||
                 isDangerous(left) || isDangerous(right) || isDangerous(front) || isDangerous(behind)) {
-            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.dangerous-surroundings", FilePath.Lang));
+            this.sendSearchMessage(Ari.C_INSTANCE.getValue("function.rtp.tips-result.dangerous-surroundings", FilePath.Lang));
             Log.debug("the blocks around the player are illegal.");
             return false;
         }
 
         if (isDangerous(feet)) {
-            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.dangerous-feet-block", FilePath.Lang));
+            this.sendSearchMessage(Ari.C_INSTANCE.getValue("function.rtp.tips-result.dangerous-feet-block", FilePath.Lang));
             Log.debug("feet block is dangerous.");
             return false;
         }
         if (chunk.getBlock(chunkX, chunkY - 1, chunkZ).getType().isAir()) {
-            this.sendSearchMessage(ConfigUtils.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
+            this.sendSearchMessage(Ari.C_INSTANCE.getValue("function.rtp.tips-result.unstable-feet-position", FilePath.Lang));
             Log.debug("feet block illegal.");
             return false;
         }
@@ -213,14 +213,14 @@ public class CommandRtp {
     }
 
     private void sendCountTitle() {
-        String sub = ConfigUtils.getValue(
+        String sub = Ari.C_INSTANCE.getValue(
                 "function.rtp.title-search-count",
                 FilePath.Lang,
                 String.class,
                 "null");
         sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.initCount - this.count));
         Title title = ComponentUtils.setPlayerTitle(
-                ConfigUtils.getValue("function.rtp.title-searching", FilePath.Lang, String.class, "null"),
+                Ari.C_INSTANCE.getValue("function.rtp.title-searching", FilePath.Lang, String.class, "null"),
                 sub,
                 0,
                 1000L,
@@ -230,7 +230,7 @@ public class CommandRtp {
 
     private void sendSearchMessage(String message) {
         if (!this.showSearchResult) return;
-        String s = ConfigUtils.getValue("function.rtp.search-count-report", FilePath.Lang).replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
+        String s = Ari.C_INSTANCE.getValue("function.rtp.search-count-report", FilePath.Lang).replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(this.count));
         this.sender.sendMessage(ComponentUtils.text(s + message));
     }
 
@@ -244,7 +244,7 @@ public class CommandRtp {
 
     public static void setRtpWorldConfig() {
 
-        Map<String, Object> value = ConfigUtils.getValue(
+        Map<String, Object> value = Ari.C_INSTANCE.getValue(
                 "rtp.worlds",
                 FilePath.FunctionConfig,
                 new TypeToken<Map<String, Object>>(){}.getType(),
@@ -261,6 +261,6 @@ public class CommandRtp {
                 value.put(world.getName(), createWorldRtp());
             }
         }
-        ConfigUtils.setValue("rtp.worlds", FilePath.FunctionConfig, value);
+        Ari.C_INSTANCE.setValue(Ari.instance,"rtp.worlds", FilePath.FunctionConfig, value);
     }
 }

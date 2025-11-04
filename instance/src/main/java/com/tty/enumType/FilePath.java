@@ -1,9 +1,9 @@
 package com.tty.enumType;
 
-import lombok.Getter;
 
-@Getter
-public enum FilePath {
+import com.tty.lib.enum_type.FilePathEnum;
+
+public enum FilePath implements FilePathEnum {
     Lang("lang/[lang].yml"),
     TPA("module/tpa/setting.yml"),
     CommandAlias("module/command-alias.yml"),
@@ -22,4 +22,8 @@ public enum FilePath {
         this.path = path;
     }
 
+    @Override
+    public String getPath() {
+        return this.path;
+    }
 }

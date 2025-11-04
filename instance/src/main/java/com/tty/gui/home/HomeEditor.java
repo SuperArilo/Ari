@@ -1,5 +1,6 @@
 package com.tty.gui.home;
 
+import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.menu.BaseMenu;
 import com.tty.entity.menu.FunctionItems;
@@ -11,7 +12,6 @@ import com.tty.gui.BaseInventory;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -22,7 +22,7 @@ public class HomeEditor extends BaseInventory {
     public final ServerHome currentHome;
 
     public HomeEditor(ServerHome serverHome, Player player) {
-        super(FormatUtils.yamlConvertToObj(ConfigUtils.getObject(FilePath.HomeEditor.name()).saveToString(), BaseMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HomeEditor.name()).saveToString(), BaseMenu.class), player);
         this.currentHome = serverHome;
     }
 
@@ -54,7 +54,7 @@ public class HomeEditor extends BaseInventory {
                     }
                     case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
                             IconKeyType.TOP_SLOT.getKey(),
-                            ConfigUtils.getValue(
+                            Ari.C_INSTANCE.getValue(
                                     this.currentHome.isTopSlot() ? "base.yes_re":"base.no_re",
                                     FilePath.Lang))).toList());
                 }

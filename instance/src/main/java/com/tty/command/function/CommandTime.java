@@ -1,5 +1,6 @@
 package com.tty.command.function;
 
+import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.TimeManager;
 import com.tty.lib.enum_type.LangType;
@@ -31,12 +32,12 @@ public class CommandTime {
             return;
         }
         TimeManager.build(world).timeSet(period.getStart());
-        String value = ConfigUtils.getValue("server.time.tips", FilePath.Lang);
+        String value = Ari.C_INSTANCE.getValue("server.time.tips", FilePath.Lang);
         if (value == null) {
             this.player.sendMessage("no content " + timePeriod + "in lang");
             return;
         }
-        value = value.replace(LangType.TIME.getType(), ConfigUtils.getValue("server.time.name." + period.getDescription(), FilePath.Lang));
+        value = value.replace(LangType.TIME.getType(), Ari.C_INSTANCE.getValue("server.time.name." + period.getDescription(), FilePath.Lang));
         this.player.sendMessage(ComponentUtils.text(value));
     }
 }

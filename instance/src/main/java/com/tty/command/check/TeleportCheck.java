@@ -33,14 +33,14 @@ public class TeleportCheck {
             return;
         }
         player.sendMessage(ConfigUtils.t("function.tpa.send-message"));
-        addTeleportStatusTask(player, targetPlayer, ariCommand, ConfigUtils.getValue("main.teleport.cooldown", FilePath.TPA, Long.class, 10L) * 20);
-        String message = ConfigUtils.getValue("function.tpa." + (ariCommand.equals(AriCommand.TPA) ? "to-message":"here-message"), FilePath.Lang);
+        addTeleportStatusTask(player, targetPlayer, ariCommand, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.TPA, Long.class, 10L) * 20);
+        String message = Ari.C_INSTANCE.getValue("function.tpa." + (ariCommand.equals(AriCommand.TPA) ? "to-message":"here-message"), FilePath.Lang);
         targetPlayer.sendMessage(
                 ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), player.getName()))
                         .appendNewline()
-                        .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
+                        .append(ComponentUtils.setClickEventText(Ari.C_INSTANCE.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
                         .append(ConfigUtils.t("function.public.center"))
-                        .append(ComponentUtils.setClickEventText(ConfigUtils.getValue("function.public.refuse", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
+                        .append(ComponentUtils.setClickEventText(Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
     }
     /**
      * 检查被传送玩家是否已经发起过传送请求

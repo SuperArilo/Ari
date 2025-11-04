@@ -1,12 +1,12 @@
 package com.tty.listener.player;
 
 import com.google.gson.reflect.TypeToken;
+import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.entity.Player;
@@ -42,7 +42,7 @@ public class CustomChatFormantListener implements Listener {
     }
 
     private Map<String, String> set() {
-        return ConfigUtils
+        return Ari.C_INSTANCE
                 .getValue(
                         "chat.groups-pattern",
                         FilePath.FunctionConfig,
@@ -65,6 +65,6 @@ public class CustomChatFormantListener implements Listener {
     }
 
     private boolean isEnable() {
-        return ConfigUtils.getValue("chat.enable", FilePath.FunctionConfig, Boolean.class, false);
+        return Ari.C_INSTANCE.getValue("chat.enable", FilePath.FunctionConfig, Boolean.class, false);
     }
 }

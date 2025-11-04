@@ -45,7 +45,7 @@ public class CommandTeleport extends TeleportCheck {
         //请求成功，移除该请求
         this.sender.sendMessage(ConfigUtils.t("function.tpa.agree"));
         TeleportCheck.remove(player, null,TeleportType.PLAYER);
-        Integer value = ConfigUtils.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
+        Integer value = Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
         Teleport teleport = switch (status.getAriCommand()) {
             case TPA -> Teleport.create(player, ((Player) this.sender).getLocation(), value);
             case TPAHERE -> Teleport.create((Player) this.sender, Objects.requireNonNull(player).getLocation(), value);

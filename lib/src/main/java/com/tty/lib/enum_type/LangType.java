@@ -2,8 +2,7 @@ package com.tty.lib.enum_type;
 
 import lombok.Getter;
 
-@Getter
-public enum LangType {
+public enum LangType implements LangTypeEnum {
     TPASENDER("[TpaSender]"),
     TPAHERESENDER("[TpaHereSender]"),
     TPABESENDER("[TpaBeSender]"),
@@ -18,7 +17,12 @@ public enum LangType {
     CHATMESSAGE("[Message]"),
     RTPSEARCHCOUNT("[RtpSearchCount]"),
     TELEPORTDELAY("[TeleportDelay]"),
-    PLAYERNAME("[PlayerName]");
+    PLAYERNAME("[PlayerName]"),
+    FIRSTLOGINSERVERTIME("[FirstLoginServerTime]"),
+    LASTLOGINSERVERTIME("[LastLoginServerTime]"),
+    TOTALONSERVER("[TotalOnServer]"),
+    PLAYERWORLD("[PlayerWorld]"),
+    PLAYERLOCATION("[PlayerLocation]");
 
     private final String type;
 
@@ -26,4 +30,8 @@ public enum LangType {
         this.type = type;
     }
 
+    @Override
+    public String getType() {
+        return this.type;
+    }
 }

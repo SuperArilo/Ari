@@ -86,8 +86,8 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                 }
                 player.showTitle(
                         ComponentUtils.setPlayerTitle(
-                                ConfigUtils.getValue("base.on-edit.title", FilePath.Lang),
-                                ConfigUtils.getValue("base.on-edit.sub-title", FilePath.Lang),
+                                Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.Lang),
+                                Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.Lang),
                                 1000,
                                 10000 ,
                                 1000));
@@ -155,7 +155,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
                                 p.replace(IconKeyType.TOP_SLOT.getKey(),
-                                        ConfigUtils.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))).toList();
+                                        Ari.C_INSTANCE.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
                     }
@@ -167,7 +167,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
     @Override
     public boolean onTitleEditStatus(String message, OnEdit onEdit) {
         Player player = onEdit.getHolder().getPlayer();
-        List<String> value = ConfigUtils.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType(), List.of());
+        List<String> value = Ari.C_INSTANCE.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(ConfigUtils.t("base.on-error"));
@@ -180,7 +180,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
                     return false;
                 }
-                if(message.length() > ConfigUtils.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15) &&
+                if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15) &&
                         onEdit.getType().equals(FunctionType.RENAME)) {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
                     return false;

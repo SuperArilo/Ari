@@ -1,7 +1,5 @@
 package com.tty.lib.enum_type;
 
-import lombok.Getter;
-
 public enum LangType implements LangTypeEnum {
     TPASENDER("[TpaSender]"),
     TPAHERESENDER("[TpaHereSender]"),

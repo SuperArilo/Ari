@@ -22,6 +22,7 @@
             <groupId>com.tty</groupId>
             <artifactId>arilib</artifactId>
             <version>${revision}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.zaxxer</groupId>

@@ -2,8 +2,6 @@ name: ari
 version: '${project.version}'
 author: Arilo007
 folia-supported: true
-loadbefore:
-  - 'arilib'
 main: com.tty.Ari
 depend: ['arilib', 'Vault']
 softdepend: ['PlaceholderAPI']

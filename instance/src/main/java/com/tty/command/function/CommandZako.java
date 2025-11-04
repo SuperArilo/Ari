@@ -2,6 +2,7 @@ package com.tty.command.function;
 
 import com.tty.Ari;
 import com.tty.entity.sql.WhitelistInstance;
+import com.tty.enumType.FilePath;
 import com.tty.enumType.commands.Zako;
 import com.tty.function.PlayerManager;
 import com.tty.function.WhitelistManager;
@@ -43,7 +44,12 @@ public class CommandZako {
             Log.debug("zako is not a uuid: " + uuid.get());
         }
         if (uuid.get() == null) {
-            uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
+            try {
+                uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
+            } catch (Exception e) {
+                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.Lang));
+                return;
+            }
         }
 
         switch (a) {
@@ -79,7 +85,10 @@ public class CommandZako {
                     }
                     return manager.deleteInstance(instance);
                 }).thenAccept(status -> {
-                    Objects.requireNonNull(Bukkit.getPlayer(uuid.get())).kick(ConfigUtils.t("base.on-player.data-changed"));
+                    Player player = Bukkit.getPlayer(uuid.get());
+                    if(player != null) {
+                       player.kick(ConfigUtils.t("base.on-player.data-changed"));
+                    }
                     this.sender.sendMessage(ConfigUtils.t("function.zako.remove-" + (status ? "success":"failure")));
                 }).exceptionally(i -> {
                     Log.error("remove zako error", i);

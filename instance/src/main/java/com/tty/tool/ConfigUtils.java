@@ -39,16 +39,15 @@ public class ConfigUtils {
         List<String> value = Ari.C_INSTANCE.getValue(key, FilePath.Lang, new TypeToken<List<String>>() {
         }.getType(), List.of());
         TextComponent.Builder builder = Component.text();
-        for (Map.Entry<LangType, String> entry : map.entrySet()) {
-            String type = entry.getKey().getType();
-            TextComponent.Builder text = Component.text();
-            value.forEach(line -> {
+        value.forEach(line -> {
+            for (Map.Entry<LangType, String> entry : map.entrySet()) {
+                String type = entry.getKey().getType();
                 if (line.contains(type)) {
-                    text.append(ComponentUtils.text(line.replace(type, entry.getValue())));
+                    builder.append(ComponentUtils.text(line.replace(type, entry.getValue())))
+                            .appendNewline();
                 }
-            });
-            builder.append(text).appendNewline();
-        }
+            }
+        });
         return builder.build();
     }
 

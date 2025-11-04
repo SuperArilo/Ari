@@ -4,6 +4,7 @@ import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.*;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.commands.Zako;
 import com.tty.lib.enum_type.CommandAction;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.PublicFunctionUtils;
@@ -167,12 +168,37 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     }
                     return PublicFunctionUtils.filterByPrefix(list, strings[1]);
                 }
-                case ITEMLORE, ZAKO -> {
+                case ITEMLORE -> {
                     List<String> list = new ArrayList<>();
                     for (CommandAction value : CommandAction.values()) {
                         list.add(value.getName());
                     }
                     return PublicFunctionUtils.filterByPrefix(list, strings[1]);
+                }
+                case ZAKO -> {
+                    List<String> list = new ArrayList<>();
+                    for (Zako value : Zako.values()) {
+                        list.add(value.getName());
+                    }
+                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
+                }
+            }
+        } else if (strings.length == 3) {
+            AriCommand c;
+            try {
+                c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
+            } catch (Exception e) {
+                return List.of();
+            }
+            switch (c) {
+                case ZAKO -> {
+                    List<String> list = new ArrayList<>();
+                    if(strings[1].equals(Zako.INFO.getName())) {
+                        for (Player player : Bukkit.getOnlinePlayers()) {
+                            list.add(player.getName());
+                        }
+                        return PublicFunctionUtils.filterByPrefix(list, strings[2]);
+                    }
                 }
             }
         }

@@ -134,11 +134,11 @@ server:
     no-economy: '&4服务器未使用经济插件'
   player:
     info:
-      - "玩家 [PlayerName] 的信息"
-      - "第一次登录服务器时间: [FirstLoginServerTime]"
-      - "上次登录服务器的时间: [LastLoginServerTime]"
-      - "累计在线时间: [TotalOnServer]"
-      - "所在世界：[PlayerWorld]"
+      - "玩家 &6[PlayerName] &f的信息"
+      - "第一次登录服务器时间: &6[FirstLoginServerTime]"
+      - "上次登录服务器的时间: &6[LastLoginServerTime]"
+      - "累计在线时间: &6[TotalOnServer]"
+      - "所在世界：&8[PlayerWorld]"
       - "当前位置: [PlayerLocation]"
 debug:
   on-open: '调试模式开启'

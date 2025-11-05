@@ -19,6 +19,7 @@ public class OnPluginReloadListener implements Listener {
         }
         Ari.instance.commandAlias.reloadAllAlias();
         CommandRtp.setRtpWorldConfig();
+        Ari.instance.playerSave.reload();
         event.getSender().sendMessage(ConfigUtils.t("function.reload.success"));
     }
 

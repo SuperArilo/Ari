@@ -6,6 +6,7 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.enum_type.PeriodicTaskEnum;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.task.PeriodicTask;
 import com.tty.lib.tool.ConfigInstance;
@@ -85,7 +86,10 @@ public class Ari extends JavaPlugin {
         CommandRtp.setRtpWorldConfig();
 
         //玩家信息保存
-        this.playerSave = new PeriodicTask(getConfig().getInt("server.save-interval", 300) * 20L, 1L, this);
+        this.playerSave = new PeriodicTask(
+                PeriodicTaskEnum.PLAYER_SAVE,
+                getConfig().getInt("server.save-interval", 300) * 20L,
+                1L, this);
         this.playerSave.addTask(() -> {
             Log.debug("saving player data");
             Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();

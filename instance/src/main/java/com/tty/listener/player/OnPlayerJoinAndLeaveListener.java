@@ -37,8 +37,9 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         Player player = event.getPlayer();
         if(!Ari.instance.getConfig().getBoolean("server.whitelist.enable", false)) return;
         WhitelistManager manager = new WhitelistManager(false);
+        PlayerManager playerManager = new PlayerManager(true);
         manager.getInstance(player.getUniqueId().toString())
-                .thenAccept(instance -> {
+                .thenCompose(instance -> {
                     if (instance == null) {
                         if(player.isOp()) {
                             WhitelistInstance n = new WhitelistInstance();
@@ -48,7 +49,17 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         } else {
                             event.disallow(PlayerLoginEvent.Result.KICK_WHITELIST, ConfigUtils.t("server.message.on-whitelist-login"));
                         }
+                        return CompletableFuture.completedFuture(null);
+                    } else {
+                        return playerManager.getInstance(instance.getPlayerUUID());
                     }
+                })
+                .thenAccept(instance -> {
+                    if (instance == null) return;
+                    if (instance.getPlayerName().equals(player.getName())) return;
+                    Log.debug("whitelist: layer changed name!");
+                    instance.setPlayerName(player.getName());
+                    playerManager.modify(instance);
                 }).exceptionally(i -> {
                     Log.error("whitelist error", i);
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ComponentUtils.text(i.getMessage()));

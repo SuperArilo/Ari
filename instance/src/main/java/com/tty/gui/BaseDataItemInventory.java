@@ -21,15 +21,11 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
         super(baseDataInstance, player);
         this.baseDataInstance = baseDataInstance;
         this.pageSize = baseDataInstance.getDataItems().getSlot().size();
-        CompletableFuture<List<T>> future = this.requestData();
-        if (future == null) return;
-        future.thenAccept(list -> {
-            long l = System.currentTimeMillis();
+        this.requestData().thenAccept(list -> {
             this.data = list;
             this.renderDataItem();
-            Log.debug("render gui time: " + (System.currentTimeMillis() - l) + "ms");
         }).exceptionally(i -> {
-            Log.error("request data error", i);
+            Log.error(this.holder.getType().name() + ": request data error!", i);
             return null;
         });
     }
@@ -48,7 +44,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
             this.data = list;
             this.renderDataItem();
         }).exceptionally(i -> {
-            Log.error("request data error", i);
+            Log.error(this.holder.getType().name() + ": request data error!", i);
             return null;
         });
     }
@@ -67,7 +63,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
                 this.renderDataItem();
             }
         }).exceptionally(i -> {
-            Log.error("request data error", i);
+            Log.error(this.holder.getType().name() + ": request data error!", i);
             return null;
         });
     }
@@ -80,16 +76,17 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
     protected abstract Map<Integer, ItemStack> getRenderItem();
 
     private void renderDataItem() {
+        long l = System.currentTimeMillis();
         Map<Integer, ItemStack> renderItem = this.getRenderItem();
         if (renderItem == null || renderItem.isEmpty()) return;
 
         for (Integer index : this.baseDataInstance.getDataItems().getSlot()) {
             this.clearItem(index);
+            if(renderItem.size() != index + 1) {
+                this.setItem(index, renderItem.get(index));
+            }
         }
-        renderItem.forEach((k, v) -> {
-            if (v == null) return;
-            this.setItem(k, v);
-        });
+        Log.debug(this.holder.getType().name() + ": render data items: " + (System.currentTimeMillis() - l) + "ms");
     }
 
 }

@@ -7,6 +7,7 @@ import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -26,6 +27,7 @@ public abstract class BaseInventory {
     public final BaseMenu baseInstance;
     protected final Player player;
     private Inventory inventory;
+    public CustomInventoryHolder holder;
 
     private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
 
@@ -35,7 +37,8 @@ public abstract class BaseInventory {
     }
 
     public void open() {
-        this.inventory = Bukkit.createInventory(this.createHolder(), this.baseInstance.getRow() * 9, ComponentUtils.text(this.baseInstance.getTitle(), player));
+        this.holder = this.createHolder();
+        this.inventory = Bukkit.createInventory(this.holder, this.baseInstance.getRow() * 9, ComponentUtils.text(this.baseInstance.getTitle(), player));
         this.player.openInventory(this.inventory);
         this.renderMasks();
         this.renderFunctionItems();
@@ -46,6 +49,7 @@ public abstract class BaseInventory {
     protected abstract Map<String, FunctionItems> getFunctionItems();
 
     private void renderMasks() {
+        long l = System.currentTimeMillis();
         Mask mask = this.getMasks();
         if (mask == null) {
             mask = this.baseInstance.getMask();
@@ -60,9 +64,11 @@ public abstract class BaseInventory {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
+        Log.debug(this.holder.getType().name() + ": render masks: " + (System.currentTimeMillis() - l) + "ms");
     }
 
     private void renderFunctionItems() {
+        long l = System.currentTimeMillis();
         Map<String, FunctionItems> functionItems = this.getFunctionItems();
         if (functionItems == null || functionItems.isEmpty()) {
             functionItems = this.baseInstance.getFunctionItems();
@@ -78,6 +84,7 @@ public abstract class BaseInventory {
                 this.inventory.setItem(integer, o);
             }
         });
+        Log.debug(this.holder.getType().name() + ": render function items: " + (System.currentTimeMillis() - l) + "ms");
     }
 
     protected abstract CustomInventoryHolder createHolder();

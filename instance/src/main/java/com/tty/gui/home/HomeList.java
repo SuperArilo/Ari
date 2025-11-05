@@ -61,24 +61,30 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
                 Log.warning("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
                 continue;
             }
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
+
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(ph.getLocation());
             rawLore.forEach(line -> {
-                String replacedLine = line;
+                StringBuilder sb = new StringBuilder(line);
                 for (IconKeyType keyType : IconKeyType.values()) {
-                    replacedLine = switch (keyType) {
-                        case ID -> replacedLine.replace(keyType.getKey(), ph.getHomeId());
-                        case X -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
-                        case Y -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
-                        case Z -> replacedLine.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
-                        case WORLDNAME -> replacedLine.replace(keyType.getKey(), location.getWorld().getName());
-                        default -> replacedLine;
+                    String replacedLine = switch (keyType) {
+                        case ID -> ph.getHomeId();
+                        case X -> FormatUtils.formatTwoDecimalPlaces(location.getX());
+                        case Y -> FormatUtils.formatTwoDecimalPlaces(location.getY());
+                        case Z -> FormatUtils.formatTwoDecimalPlaces(location.getZ());
+                        case WORLDNAME -> location.getWorld().getName();
+                        default -> "";
                     };
+                    int index;
+                    while ((index = sb.indexOf(keyType.getKey())) != -1) {
+                        sb.replace(index, index + keyType.getKey().length(), replacedLine);
+                    }
                 }
-                textComponents.add(ComponentUtils.text(replacedLine));
+                textComponents.add(ComponentUtils.text(sb.toString()));
             });
+
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING, ph.getHomeId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());

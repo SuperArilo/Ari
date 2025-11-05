@@ -62,51 +62,50 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                 this.player.sendMessage(ConfigUtils.t("base.on-error"));
                 continue;
             }
-            ItemMeta itemMeta = itemStack.getItemMeta();
-            itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverWarp.getLocation());
+
+            UUID uuid = UUID.fromString(serverWarp.getCreateBy());
+            String playName;
+            Player onlinePlayer = Bukkit.getPlayer(uuid);
+            if (onlinePlayer != null) {
+                playName = onlinePlayer.getName();
+            } else {
+                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
+                playName = offlinePlayer.getName() != null ? offlinePlayer.getName() : "";
+            }
+
+            boolean hasPermission = serverWarp.getPermission() == null ||
+                    serverWarp.getPermission().isEmpty() ||
+                    PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
+                    UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
+
             rawLore.forEach(line -> {
+                StringBuilder sb = new StringBuilder(line);
                 for (IconKeyType keyType : IconKeyType.values()) {
-                    line = switch (keyType) {
-                        case ID -> line.replace(keyType.getKey(), serverWarp.getWarpId());
-                        case X -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
-                        case Y -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
-                        case Z -> line.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
-                        case WORLDNAME -> line.replace(keyType.getKey(), location.getWorld().getName());
-                        case PLAYERNAME -> {
-                            UUID uuid = UUID.fromString(serverWarp.getCreateBy());
-                            String name;
-                            Player onlinePlayer = Bukkit.getPlayer(uuid);
-                            if (onlinePlayer != null) {
-                                name = onlinePlayer.getName();
-                            } else {
-                                OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(uuid);
-                                name = offlinePlayer.getName() != null ? offlinePlayer.getName() : "";
-                            }
-                            yield line.replace(keyType.getKey(), name);
-                        }
+                    String replacement = switch (keyType) {
+                        case ID -> serverWarp.getWarpId();
+                        case X -> FormatUtils.formatTwoDecimalPlaces(location.getX());
+                        case Y -> FormatUtils.formatTwoDecimalPlaces(location.getY());
+                        case Z -> FormatUtils.formatTwoDecimalPlaces(location.getZ());
+                        case WORLDNAME -> location.getWorld().getName();
+                        case PLAYERNAME -> playName;
                         case COST -> {
                             Double cost = serverWarp.getCost();
-                            if(cost == null || Double.compare(cost, 0.0) == 0) {
-                                yield line.replace(keyType.getKey(), this.baseFree);
-                            } else {
-                                yield line.replace(keyType.getKey(), cost + EconomyUtils.getNamePlural());
-                            }
+                            yield cost == null || cost == 0 ? baseFree : cost + EconomyUtils.getNamePlural();
                         }
-                        case TOP_SLOT ->
-                                line.replace(IconKeyType.TOP_SLOT.getKey(), serverWarp.isTopSlot() ? this.baseYesRe:this.baseNoRe);
-                        case PERMISSION -> {
-                            boolean hasPermission = serverWarp.getPermission() == null ||
-                                    serverWarp.getPermission().isEmpty() ||
-                                    PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
-                                    UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
-                            yield line.replace(keyType.getKey(), Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang));
-                        }
+                        case TOP_SLOT -> serverWarp.isTopSlot() ? this.baseYesRe:this.baseNoRe;
+                        case PERMISSION -> Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang);
                     };
+                    int index;
+                    while ((index = sb.indexOf(keyType.getKey())) != -1) {
+                        sb.replace(index, index + keyType.getKey().length(), replacement);
+                    }
                 }
-                textComponents.add(ComponentUtils.text(line, player));
+                textComponents.add(ComponentUtils.text(sb.toString(), player));
             });
+            ItemMeta itemMeta = itemStack.getItemMeta();
+            itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             itemMeta.lore(textComponents);
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "warp_id"), PersistentDataType.STRING, serverWarp.getWarpId());
             itemMeta.getPersistentDataContainer().set(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING, FunctionType.DATA.name());

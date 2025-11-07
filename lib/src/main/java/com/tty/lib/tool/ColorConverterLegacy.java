@@ -1,7 +1,6 @@
 package com.tty.lib.tool;
 
 import lombok.Getter;
-import org.bukkit.ChatColor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,9 +49,9 @@ public class ColorConverterLegacy {
     }
 
     /**
-     * 高性能版本：提前检查是否包含颜色代码
-     * @param content 包含 § 或 & 颜色代码的原始文本
-     * @return 转换为16进制格式的文本
+     * 改进版本：支持 &21919810 这种情况
+     * @param content 含有颜色代码的文本
+     * @return 转换后的带十六进制颜色标签的文本
      */
     public static String convert(String content) {
         if (content == null || content.isEmpty()) {
@@ -66,12 +65,16 @@ public class ColorConverterLegacy {
             return content;
         }
 
-        String normalized;
+        // Step 1️⃣：先替换 & 为 §
         if (hasAmpersand) {
-            normalized = ChatColor.translateAlternateColorCodes('&', content);
-        } else {
-            normalized = content;
+            content = content.replaceAll("(?i)&([0-9a-f])", "§$1");
         }
+
+        // Step 2️⃣：修复颜色码紧挨着字符或数字的情况
+        // 在颜色码后如果直接跟字母或数字，自动插入空格
+        content = content.replaceAll("(?i)§([0-9a-f])(?=[A-Za-z0-9])", "§$1");
+
+        String normalized = content;
 
         if (normalized.indexOf('§') < 0) {
             return normalized;
@@ -87,19 +90,19 @@ public class ColorConverterLegacy {
                 char colorCode = normalized.charAt(i + 1);
                 MinecraftColor color = MinecraftColor.getByCode(colorCode);
                 if (color != null) {
+                    // 输出之前累积的文字
                     if (!currentText.isEmpty()) {
                         appendColoredText(result, currentText, currentColor);
                         currentText = new StringBuilder();
                     }
                     currentColor = color.getHex();
-                    i++;
-                } else {
-                    currentText.append(c);
+                    i++; // 跳过颜色码字符
+                    continue;
                 }
-            } else {
-                currentText.append(c);
             }
+            currentText.append(c);
         }
+
         appendColoredText(result, currentText, currentColor);
 
         return result.toString();
@@ -110,7 +113,8 @@ public class ColorConverterLegacy {
 
         if (color != null) {
             result.append("<").append(color).append(">")
-                    .append(text).append("</").append(color).append(">");
+                    .append(text)
+                    .append("</").append(color).append(">");
         } else {
             result.append(text);
         }

@@ -135,6 +135,7 @@ public class Ari extends JavaPlugin {
         pluginManager.registerEvents(new CustomChatFormantListener(), this);
         pluginManager.registerEvents(new PlayerActionListener(), this);
         pluginManager.registerEvents(new KeepInventoryAndExperience(), this);
+        pluginManager.registerEvents(new CustomPlayerDeathListener(), this);
     }
 
     public static void reloadAllConfig() {

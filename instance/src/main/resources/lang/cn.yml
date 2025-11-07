@@ -108,7 +108,6 @@ function:
     remove-success: '&a白名单移除成功'
     remove-failure: '&4白名单移除失败，不存在或者存在错误'
     not-exist: '&4查询失败，被查询的对象不存在'
-
   unknown: '&4未知指令，请重新输入'
 server:
   time:
@@ -141,5 +140,46 @@ server:
       - "累计在线时间: &6[TotalOnServer]"
       - "所在世界：&8[PlayerWorld]"
       - "当前位置: [PlayerLocation]"
+  # 以下不支持十六进制颜色
+  custom-death:
+    running-away:
+      - ' &7试图逃离 &2[Killer]&7 时'
+      - ' &7与 &2[Killer]&7 战斗时'
+    player:
+      air:
+        - '&2[Victim] &7死于 &2[Killer]'
+        - '&2[Victim] &7死于 &2[Killer] &7强大的手下'
+        - '&2[Victim] &7被 &2[Killer] &7一拳打死'
+      item:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7杀死了'
+      projectile:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+    mob:
+      air:
+        - '&2[Victim] &7被 &2[Killer]&7 杀死了'
+      item:
+        - '&2[Victim] &7被 &2[Killer]&7 用 &2[Killer_Item]&7 杀死了'
+      projectile:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+    falling-blocks:
+      anvil:
+        - '&2[Victim] &7被坠落的铁砧压扁了'
+        - '&2[Victim] &7被铁砧碾碎'
+        - '&2[Victim] &7用头撞击铁砧'
+        - '&2[Victim] &7尝试亲吻铁砧'
+    block:
+      cactus:
+        - '&2[Victim] &7被戳死了'
+        - '&2[Victim] &7试图 曰 仙人掌被反杀'
+      magma_block:
+        - '&2[Victim] &7发现了地板是熔岩做的'
+      sweet_berry_bush:
+        - '&2[Victim] &7被甜浆果丛刺死了'
+      lava:
+        - '&2[Victim] &7试图在熔岩里游泳'
+      pointed_dripstone:
+        - '&2[Victim] &7被石笋刺穿了'
+
+
 debug:
   on-open: '调试模式开启'

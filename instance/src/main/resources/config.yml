@@ -15,6 +15,7 @@ data:
   connection-timeout: 5000
   keepalive-time: 0
 server:
+  custom-death: false
   skip-night:
     enable: true
     tick-increment: 5

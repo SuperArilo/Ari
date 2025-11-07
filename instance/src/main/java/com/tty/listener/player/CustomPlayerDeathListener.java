@@ -1,0 +1,97 @@
+package com.tty.listener.player;
+
+import com.tty.Ari;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.lib.tool.FormatUtils;
+import com.tty.lib.tool.Log;
+import com.tty.lib.tool.RandomGeneratorUtils;
+import com.tty.tool.PlayerDeathInfoCollector;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByBlockEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+public class CustomPlayerDeathListener implements Listener {
+
+    @EventHandler
+    public void onDeath(PlayerDeathEvent event){
+        if (Ari.instance.getConfig().getBoolean("server.custom.death", false)) return;
+        PlayerDeathInfoCollector.DeathInfo collect = PlayerDeathInfoCollector.collect(event);
+        Component textComponent = Component.empty();
+        String BASE_PREFIX = "server.custom-death.";
+        switch (collect.deathCause) {
+            case ENTITY_ATTACK, ENTITY_EXPLOSION, ENTITY_SWEEP_ATTACK, PROJECTILE, POISON -> {
+                StringBuilder sb = new StringBuilder();
+                if (collect.killer instanceof Player) {
+                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player." + (collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
+                } else {
+                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "mob." + (collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
+                }
+                if(RandomGeneratorUtils.get(0, 1) == 0) {
+                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "running-away"));
+                }
+                textComponent = this.build(collect, sb.toString());
+            }
+            case CONTACT, FALLING_BLOCK, LAVA -> {
+                Material material = null;
+                String key = "";
+                if (collect.event instanceof EntityDamageByBlockEvent damageByBlockEvent) {
+                    Block block = damageByBlockEvent.getDamager();
+                    if (block == null) {
+                        Log.error("can not find contact block");
+                    } else {
+                        key = "block";
+                        material = block.getType();
+                    }
+                } else if(collect.event instanceof EntityDamageByEntityEvent damageByEntityEvent) {
+                    if(damageByEntityEvent.getDamager() instanceof FallingBlock fallingBlock) {
+                        material = fallingBlock.getBlockData().getMaterial();
+                        key = "falling-blocks";
+                    } else {
+                        Log.error("can not find falling block");
+                    }
+                }
+                if(material == null) {
+                    Log.error("custom-death: can not find material data");
+                    return;
+                }
+                textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + key + "." + material.name().toLowerCase()));
+            }
+        }
+        event.deathMessage(textComponent);
+    }
+
+    private Component build(PlayerDeathInfoCollector.DeathInfo deathInfo, String string) {
+        Component compTemplate = LegacyComponentSerializer.legacyAmpersand().deserialize(string);
+        List<String> strings = FormatUtils.extractLangPlaceholders(string);
+        Map<LangType, Component> replacementMap = new EnumMap<>(LangType.class);
+        strings.forEach(i -> {
+            LangType langType = LangType.fromType(i);
+            switch (langType) {
+                case KILLER -> {
+                    String name = deathInfo.killer.getName();
+                    replacementMap.put(langType, Component.text((deathInfo.killer instanceof Player) ? name: Ari.instance.dataService.getValue("entity." + name.toLowerCase())));
+                }
+                case VICTIM -> replacementMap.put(langType, Component.text(deathInfo.victim.getName()));
+                case KILLER_ITEM -> replacementMap.put(langType, ComponentUtils.setHoverItem(deathInfo.weapon));
+            }
+        });
+        for (Map.Entry<LangType, Component> entry : replacementMap.entrySet()) {
+            compTemplate = compTemplate.replaceText(builder -> builder.matchLiteral(entry.getKey().getType()).replacement(entry.getValue()));
+        }
+        return compTemplate;
+    }
+
+}

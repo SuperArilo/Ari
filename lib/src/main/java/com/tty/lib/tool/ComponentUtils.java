@@ -4,11 +4,14 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
@@ -52,6 +55,18 @@ public class ComponentUtils {
 
     public static TextComponent setClickEventText(String content, ClickEvent.Action action, String actionText) {
         return text(content).clickEvent(ClickEvent.clickEvent(action, actionText));
+    }
+
+    public static TextComponent setHoverText(String content, String showText) {
+        return text(content).hoverEvent(HoverEvent.showText(text(showText)));
+    }
+
+    public static Component setHoverItem(ItemStack itemStack) {
+        return itemStack.displayName().hoverEvent(itemStack.asHoverEvent(showItem -> showItem));
+    }
+
+    public static Component setEntityText(Entity entity) {
+        return Component.text(entity.getName()).hoverEvent(entity.asHoverEvent());
     }
 
     protected static TextComponent renderComponent(String content, Player player) {

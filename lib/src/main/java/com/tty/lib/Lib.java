@@ -22,6 +22,7 @@ public class Lib extends JavaPlugin {
     public static Boolean DEBUG = false;
     public static Scheduler Scheduler = ServerPlatform.isFolia() ? new FoliaScheduler():new BukkitScheduler();
     public static ConfigInstance C_INSTANCE = new ConfigInstance();
+    public static ConfigDataService CONFIG_DATA_SERVICE;
 
     @Override
     public void onLoad() {
@@ -45,7 +46,8 @@ public class Lib extends JavaPlugin {
 
     private void registerServices () {
         ServicesManager servicesManager = Bukkit.getServicesManager();
-        servicesManager.register(ConfigDataService.class, new ConfigDataServiceImpl(), this, ServicePriority.Normal);
+        CONFIG_DATA_SERVICE = new ConfigDataServiceImpl();
+        servicesManager.register(ConfigDataService.class, CONFIG_DATA_SERVICE, this, ServicePriority.Normal);
     }
 
     public static void reloadAllConfig() {

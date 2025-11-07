@@ -9,12 +9,15 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-
+import com.tty.lib.enum_type.LangType;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FormatUtils {
 
@@ -24,6 +27,7 @@ public class FormatUtils {
     private static final String ID_NAME_REGEX = "^[a-zA-Z0-9_]+$";
     private static final String NAME_REGEX = "^[a-zA-Z0-9\\u4e00-\\u9fa5]+$";
     private static final String PERMISSION_NODE_REGEX = "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$";
+    private static final Pattern PLACEHOLDER_PATTERN = Pattern.compile("\\[(\\w+)]");
 
     /**
      * 格式化数字保留两位小数
@@ -68,6 +72,7 @@ public class FormatUtils {
      * @return 返回String
      */
     public static String componentToString(Component component) {
+        if (component == null) return "";
         if(component instanceof TextComponent) {
             return ((TextComponent) component).content();
         }
@@ -211,4 +216,16 @@ public class FormatUtils {
         }
     }
 
+    /**
+     * 提取文本中所有匹配 LangType 枚举的占位符
+     * 只返回枚举名称，不包含其他文本
+     */
+    public static List<String> extractLangPlaceholders(String text) {
+        List<String> result = new ArrayList<>();
+        Matcher matcher = PLACEHOLDER_PATTERN.matcher(text);
+        while (matcher.find()) {
+            result.add(matcher.group(0));
+        }
+        return result;
+    }
 }

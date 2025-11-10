@@ -62,6 +62,7 @@ public class ComponentUtils {
     }
 
     public static Component setHoverItem(ItemStack itemStack) {
+        if (itemStack == null) return Component.empty();
         return itemStack.displayName().hoverEvent(itemStack.asHoverEvent(showItem -> showItem));
     }
 

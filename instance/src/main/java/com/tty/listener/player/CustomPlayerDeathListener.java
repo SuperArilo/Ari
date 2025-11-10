@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,22 +30,27 @@ public class CustomPlayerDeathListener implements Listener {
     public void onDeath(PlayerDeathEvent event){
         if (Ari.instance.getConfig().getBoolean("server.custom.death", false)) return;
         PlayerDeathInfoCollector.DeathInfo collect = PlayerDeathInfoCollector.collect(event);
+        Log.debug(collect.toString());
         Component textComponent = Component.empty();
         String BASE_PREFIX = "server.custom-death.";
         switch (collect.deathCause) {
             case ENTITY_ATTACK, ENTITY_EXPLOSION, ENTITY_SWEEP_ATTACK, PROJECTILE, POISON -> {
                 StringBuilder sb = new StringBuilder();
                 if (collect.killer instanceof Player) {
-                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player." + (collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
+                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player." + (collect.weapon == null || collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
                 } else {
-                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "mob." + (collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
+                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "mob." + (collect.weapon == null || collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
                 }
-                if(RandomGeneratorUtils.get(0, 1) == 0) {
+                //增加 running away
+                if(collect.killer instanceof Damageable damageable &&
+                        damageable.getHealth() < damageable.getMaxHealth() &&
+                        RandomGeneratorUtils.get(0, 1) == 0) {
                     sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "running-away"));
                 }
+
                 textComponent = this.build(collect, sb.toString());
             }
-            case CONTACT, FALLING_BLOCK, LAVA -> {
+            case CONTACT, FALLING_BLOCK, LAVA, HOT_FLOOR -> {
                 Material material = null;
                 String key = "";
                 if (collect.event instanceof EntityDamageByBlockEvent damageByBlockEvent) {
@@ -69,6 +75,16 @@ public class CustomPlayerDeathListener implements Listener {
                 }
                 textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + key + "." + material.name().toLowerCase()));
             }
+            case FALL -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.fall"));
+            case FIRE, FIRE_TICK -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.fire"));
+            case LIGHTNING -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.lightning"));
+            case SUFFOCATION -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.suffocation"));
+            case DROWNING -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.drowning"));
+            case FREEZE -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.freeze"));
+            case SUICIDE -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.suicide"));
+            case VOID -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.void"));
+            case WITHER -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.wither"));
+            case FLY_INTO_WALL -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.fly_into_wall"));
         }
         event.deathMessage(textComponent);
     }
@@ -82,7 +98,9 @@ public class CustomPlayerDeathListener implements Listener {
             switch (langType) {
                 case KILLER -> {
                     String name = deathInfo.killer.getName();
-                    replacementMap.put(langType, Component.text((deathInfo.killer instanceof Player) ? name: Ari.instance.dataService.getValue("entity." + name.toLowerCase())));
+                    replacementMap.put(langType, Component.text((deathInfo.killer instanceof Player) ?
+                            name:
+                            Ari.instance.dataService.getValue("entity." + FormatUtils.toSnakeCase(name))));
                 }
                 case VICTIM -> replacementMap.put(langType, Component.text(deathInfo.victim.getName()));
                 case KILLER_ITEM -> replacementMap.put(langType, ComponentUtils.setHoverItem(deathInfo.weapon));

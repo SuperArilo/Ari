@@ -154,6 +154,32 @@ server:
         - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7杀死了'
       projectile:
         - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+      fall:
+        - '&2[Victim] &7落地过猛'
+        - '&2[Victim] &7从高处摔了下来'
+        - '&2[Victim] &7坠机了, &4Man!'
+      fire:
+        - '&2[Victim] &7浴火焚身'
+        - '&2[Victim] &7被烧死了'
+      lightning:
+        - '&2[Victim] &7被闪电击中'
+        - '&2[Victim] &7渡劫失败'
+      suffocation:
+        - '&2[Victim] &7在墙里窒息而亡'
+      drowning:
+        - '&2[Victim] &7淹死了'
+      freeze:
+        - '&2[Victim] &7被冻死了'
+      suicide:
+        - '&2[Victim] &7结束了自己的生命'
+      void:
+        - '&2[Victim] &7掉出了这个世界'
+        - '&2[Victim] &7去往了二刺螈'
+      wither:
+        - '&2[Victim] &7凋零了'
+      fly_into_wall:
+        - '&2[Victim] &7感受到了动能'
+        - '&2[Victim] &7学会了什么是动量守恒'
     mob:
       air:
         - '&2[Victim] &7被 &2[Killer]&7 杀死了'

@@ -9,7 +9,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
-import com.tty.lib.enum_type.LangType;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -227,5 +226,35 @@ public class FormatUtils {
             result.add(matcher.group(0));
         }
         return result;
+    }
+
+    /**
+     * 将任意字符串转换为 snake_case（例如 "Ender Dragon Egg" -> "ender_dragon_egg"）
+     */
+    public static String toSnakeCase(String input) {
+        if (input == null || input.isEmpty()) {
+            return input;
+        }
+        StringBuilder sb = new StringBuilder();
+        boolean prevUnderscore = false;
+
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (Character.isLetterOrDigit(c)) {
+                sb.append(Character.toLowerCase(c));
+                prevUnderscore = false;
+            } else {
+                if (!prevUnderscore && !sb.isEmpty()) {
+                    sb.append('_');
+                    prevUnderscore = true;
+                }
+            }
+        }
+        int len = sb.length();
+        if (len > 0 && sb.charAt(len - 1) == '_') {
+            sb.setLength(len - 1);
+        }
+
+        return sb.toString();
     }
 }

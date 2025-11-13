@@ -97,10 +97,8 @@ public class CustomPlayerDeathListener implements Listener {
             LangType langType = LangType.fromType(i);
             switch (langType) {
                 case KILLER -> {
-                    String name = deathInfo.killer.getName();
-                    replacementMap.put(langType, Component.text((deathInfo.killer instanceof Player) ?
-                            name:
-                            Ari.instance.dataService.getValue("entity." + FormatUtils.toSnakeCase(name))));
+                    Component name = deathInfo.killer.name();
+                    replacementMap.put(langType, name);
                 }
                 case VICTIM -> replacementMap.put(langType, Component.text(deathInfo.victim.getName()));
                 case KILLER_ITEM -> replacementMap.put(langType, ComponentUtils.setHoverItem(deathInfo.weapon));

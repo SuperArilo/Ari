@@ -6,6 +6,7 @@ import com.tty.enumType.AriCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +25,7 @@ public class tparefuse extends BaseCommandCheck implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
-        if(!command.getName().equalsIgnoreCase(AriCommand.TPAREFUSE.getShow())) return List.of();
-        return new CommandTeleport(commandSender, strings[0]).getHasRequestPlayers(AriCommand.TPAREFUSE);
+        if (!this.isTheInstructionCorrect(command, AriCommand.TPAREFUSE)) return List.of();
+        return CommandTeleport.getHasRequestPlayers((Player) commandSender, AriCommand.TPAREFUSE);
     }
 }

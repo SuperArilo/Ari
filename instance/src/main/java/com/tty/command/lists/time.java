@@ -27,7 +27,6 @@ public class time extends BaseCommandCheck implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
-        if(!command.getName().equalsIgnoreCase(AriCommand.TIME.getShow())) return List.of();
         List<String> list = new ArrayList<>();
         for (TimePeriod timePeriod : TimePeriod.values()) {
             list.add(timePeriod.getDescription());

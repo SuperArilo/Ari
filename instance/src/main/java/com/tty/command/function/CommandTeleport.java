@@ -82,11 +82,11 @@ public class CommandTeleport extends TeleportCheck {
         TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
-    public List<String> getOnlinePlayers(AriCommand ariCommand) {
-        if (this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
+    public static List<String> getOnlinePlayers(Player player, AriCommand ariCommand) {
+        if (PermissionUtils.hasPermission(player, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
-                if(this.sender.getName().equals(e.getName())) return;
+                if(player.getName().equals(e.getName())) return;
                 players.add(e.getName());
             });
             return players;
@@ -94,12 +94,12 @@ public class CommandTeleport extends TeleportCheck {
         return List.of();
     }
 
-    public List<String> getHasRequestPlayers(AriCommand ariCommand) {
-        if(this.sender instanceof Player && PermissionUtils.hasPermission(this.sender, ariCommand.getPermission())) {
+    public static List<String> getHasRequestPlayers(Player player, AriCommand ariCommand) {
+        if(PermissionUtils.hasPermission(player, ariCommand.getPermission())) {
             List<String> players = new ArrayList<>();
             Server server = Ari.instance.getServer();
             TeleportCheck.TELEPORT_STATUS.stream().filter(obj ->
-                            obj.getBePlayerUUID().equals(((Player) this.sender).getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
+                            obj.getBePlayerUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
                     .forEach(e -> {
                         Player p = server.getPlayer(e.getPlayUUID());
                         if (p != null) {

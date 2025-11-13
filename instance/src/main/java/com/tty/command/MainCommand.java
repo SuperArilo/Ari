@@ -113,91 +113,79 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
-        if(!(command.getName().equalsIgnoreCase(AriCommand.ARI.getShow()))) return List.of();
+        if(!this.isTheInstructionCorrect(command, AriCommand.ARI)) return List.of();
+        List<String> returnList = new ArrayList<>();
         //返回所有具有权限的指令给玩家
-        if (strings[0].isEmpty()) {
-            List<String> commandList = new ArrayList<>();
-            for (AriCommand type : AriCommand.values()) {
-                if (type.getShow() == null || type.equals(AriCommand.ARI)) continue;
-                if (type.getPermission() == null) {
-                    commandList.add(type.getShow());
-                    continue;
-                }
-                if(PermissionUtils.hasPermission(commandSender, type.getPermission())) {
-                    commandList.add(type.getShow());
-                }
-            }
-            return PublicFunctionUtils.filterByPrefix(commandList, strings[0]);
-        } else if (strings.length == 1) {
-            List<String> st = new ArrayList<>();
-            for (AriCommand type : AriCommand.values()) {
-                if (type.getShow() == null || type.equals(AriCommand.ARI)) continue;
-                if (type.getPermission() == null) {
-                    st.add(type.getShow());
-                    continue;
-                }
-                if (PermissionUtils.hasPermission(commandSender, type.getPermission()) && type.getShow().contains(strings[0])) {
-                    st.add(type.getShow());
-                }
-            }
-            return PublicFunctionUtils.filterByPrefix(st, strings[0]);
-        } else if (strings.length == 2) {
-            AriCommand c;
-            try {
-                c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
-            } catch (Exception e) {
-                return List.of();
-            }
-            switch (c) {
-                case TPA -> {
-                    return new CommandTeleport(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPA);
-                }
-                case TPAHERE -> {
-                    return new CommandTeleport(commandSender, strings[1]).getOnlinePlayers(AriCommand.TPAHERE);
-                }
-                case TPAACCEPT -> {
-                    return new CommandTeleport(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAACCEPT);
-                }
-                case TPAREFUSE -> {
-                    return new CommandTeleport(commandSender, strings[1]).getHasRequestPlayers(AriCommand.TPAREFUSE);
-                }
-                case TIME -> {
-                    List<String> list = new ArrayList<>();
-                    for (TimePeriod timePeriod : TimePeriod.values()) {
-                        list.add(timePeriod.getDescription());
+        switch (strings.length) {
+            //二级子指令
+            case 1 -> {
+                for (AriCommand type : AriCommand.values()) {
+                    if (type.getShow() == null || type.equals(AriCommand.ARI)) continue;
+                    if (type.getPermission() == null) {
+                        returnList.add(type.getShow());
+                        continue;
                     }
-                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
-                }
-                case ITEMLORE -> {
-                    List<String> list = new ArrayList<>();
-                    for (CommandAction value : CommandAction.values()) {
-                        list.add(value.getName());
+                    if (PermissionUtils.hasPermission(commandSender, type.getPermission()) && type.getShow().contains(strings[0])) {
+                        returnList.add(type.getShow());
                     }
-                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
                 }
-                case ZAKO -> {
-                    List<String> list = new ArrayList<>();
-                    for (Zako value : Zako.values()) {
-                        list.add(value.getName());
+                return PublicFunctionUtils.filterByPrefix(returnList, strings[0]);
+            }
+            case 2 -> {
+                AriCommand c;
+                try {
+                    c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
+                } catch (Exception e) {
+                    return List.of();
+                }
+                switch (c) {
+                    case TPA -> {
+                        return CommandTeleport.getOnlinePlayers((Player) commandSender, AriCommand.TPA);
                     }
-                    return PublicFunctionUtils.filterByPrefix(list, strings[1]);
-                }
-            }
-        } else if (strings.length == 3) {
-            AriCommand c;
-            try {
-                c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
-            } catch (Exception e) {
-                return List.of();
-            }
-            switch (c) {
-                case ZAKO -> {
-                    List<String> list = new ArrayList<>();
-                    if(strings[1].equals(Zako.INFO.getName())) {
-                        for (Player player : Bukkit.getOnlinePlayers()) {
-                            list.add(player.getName());
+                    case TPAHERE -> {
+                        return CommandTeleport.getOnlinePlayers((Player) commandSender, AriCommand.TPAHERE);
+                    }
+                    case TPAACCEPT -> {
+                        return CommandTeleport.getHasRequestPlayers((Player) commandSender, AriCommand.TPAACCEPT);
+                    }
+                    case TPAREFUSE -> {
+                        return CommandTeleport.getHasRequestPlayers((Player) commandSender, AriCommand.TPAREFUSE);
+                    }
+                    case TIME -> {
+                        for (TimePeriod timePeriod : TimePeriod.values()) {
+                            returnList.add(timePeriod.getDescription());
                         }
-                        return PublicFunctionUtils.filterByPrefix(list, strings[2]);
+                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                    }
+                    case ITEMLORE -> {
+                        for (CommandAction value : CommandAction.values()) {
+                            returnList.add(value.getName());
+                        }
+                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                    }
+                    case ZAKO -> {
+                        for (Zako value : Zako.values()) {
+                            returnList.add(value.getName());
+                        }
+                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                    }
+                }
+            }
+            case 3 -> {
+                AriCommand c;
+                try {
+                    c = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
+                } catch (Exception e) {
+                    return List.of();
+                }
+                switch (c) {
+                    case ZAKO -> {
+                        if(strings[1].equals(Zako.INFO.getName())) {
+                            for (Player player : Bukkit.getOnlinePlayers()) {
+                                returnList.add(player.getName());
+                            }
+                            return PublicFunctionUtils.filterByPrefix(returnList, strings[2]);
+                        }
                     }
                 }
             }

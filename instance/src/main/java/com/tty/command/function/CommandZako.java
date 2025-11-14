@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class CommandZako {
+public class CommandZako implements CommandTabsList {
 
     private final CommandSender sender;
 
@@ -126,4 +126,23 @@ public class CommandZako {
         }
     }
 
+    @Override
+    public List<String> getTabs(int line) {
+        List<String> list = new ArrayList<>();
+        switch (line) {
+            //zako
+            case 1 -> {
+                for (Zako value : Zako.values()) {
+                    list.add(value.getName());
+                }
+            }
+            //zako info
+            case 2 -> {
+                for (Player player : Bukkit.getOnlinePlayers()) {
+                    list.add(player.getName());
+                }
+            }
+        }
+        return list;
+    }
 }

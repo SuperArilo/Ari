@@ -11,7 +11,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommandItem {
+public class CommandItem implements CommandTabsList {
 
     private final Player player;
     private final ItemStack itemStack;
@@ -69,4 +69,16 @@ public class CommandItem {
         return true;
     }
 
+    @Override
+    public List<String> getTabs(int line) {
+        List<String> list = new ArrayList<>();
+        switch (line) {
+            case 1 -> {
+                for (CommandAction value : CommandAction.values()) {
+                    list.add(value.getName());
+                }
+            }
+        }
+        return list;
+    }
 }

@@ -36,7 +36,7 @@ time:
   tab-complete: true
 rtp:
   enable: true
-  tab-complete: false
+  tab-complete: true
 itemname:
   enable: true
   tab-complete: false

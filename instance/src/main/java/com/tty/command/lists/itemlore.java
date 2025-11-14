@@ -3,7 +3,6 @@ package com.tty.command.lists;
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandItem;
 import com.tty.enumType.AriCommand;
-import com.tty.lib.enum_type.CommandAction;
 import com.tty.lib.tool.PublicFunctionUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class itemlore extends BaseCommandCheck implements TabExecutor {
@@ -28,11 +26,7 @@ public class itemlore extends BaseCommandCheck implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String @NotNull [] strings) {
-        if (strings.length != 1) return List.of();
-        List<String> list = new ArrayList<>();
-        for (CommandAction value : CommandAction.values()) {
-            list.add(value.getName());
-        }
-        return PublicFunctionUtils.filterByPrefix(list, strings[0]);
+        Player player = (Player) commandSender;
+        return PublicFunctionUtils.filterByPrefix(new CommandItem(player, player.getInventory().getItemInMainHand()).getTabs(1), strings[0]);
     }
 }

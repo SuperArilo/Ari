@@ -8,36 +8,33 @@ import com.tty.command.check.TeleportCheck;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.tool.ConfigUtils;
-import com.tty.tool.PermissionUtils;
 import com.tty.function.Teleport;
 import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class CommandTeleport extends TeleportCheck {
+public class CommandTeleport extends TeleportCheck implements CommandTabsList {
 
-    private final CommandSender sender;
+    private final Player sender;
     private final String playerName;
 
-    public CommandTeleport(CommandSender sender, String playerName) {
+    public CommandTeleport(Player sender, String playerName) {
         this.sender = sender;
         this.playerName = playerName;
     }
 
     public void tpa() {
         if(!this.preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
+        TeleportCheck.preCheckStatus(this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPA);
     }
 
     public void tpaaccept() {
         if(!this.preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
-        TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender);
+        TeleportStatus status = TeleportCheck.checkHaveTeleportStatus(player, this.sender);
         if(status == null) {
             this.sender.sendMessage(ConfigUtils.t("function.tpa.been-done"));
             return;
@@ -47,8 +44,8 @@ public class CommandTeleport extends TeleportCheck {
         TeleportCheck.remove(player, null,TeleportType.PLAYER);
         Integer value = Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
         Teleport teleport = switch (status.getAriCommand()) {
-            case TPA -> Teleport.create(player, ((Player) this.sender).getLocation(), value);
-            case TPAHERE -> Teleport.create((Player) this.sender, Objects.requireNonNull(player).getLocation(), value);
+            case TPA -> Teleport.create(player, this.sender.getLocation(), value);
+            case TPAHERE -> Teleport.create(this.sender, Objects.requireNonNull(player).getLocation(), value);
             default -> null;
         };
         if (teleport != null) {
@@ -65,7 +62,7 @@ public class CommandTeleport extends TeleportCheck {
             this.sender.sendMessage(ConfigUtils.t("teleport.unable-player"));
             return;
         }
-        if (TeleportCheck.checkHaveTeleportStatus(player, (Player) this.sender) == null) {
+        if (TeleportCheck.checkHaveTeleportStatus(player, this.sender) == null) {
             this.sender.sendMessage(ConfigUtils.t("function.tpa.been-done"));
         } else {
             if(TeleportCheck.remove(player, null,TeleportType.PLAYER)) {
@@ -79,36 +76,28 @@ public class CommandTeleport extends TeleportCheck {
 
     public void tpahere() {
         if(!preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.preCheckStatus((Player) this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
+        TeleportCheck.preCheckStatus(this.sender, Bukkit.getPlayerExact(this.playerName), AriCommand.TPAHERE);
     }
 
-    public static List<String> getOnlinePlayers(Player player, AriCommand ariCommand) {
-        if (PermissionUtils.hasPermission(player, ariCommand.getPermission())) {
-            List<String> players = new ArrayList<>();
-            Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
-                if(player.getName().equals(e.getName())) return;
+    @Override
+    public List<String> getTabs(int line) {
+        List<String> players = new ArrayList<>();
+        switch (line) {
+            //tpa tpahere
+            case 1 -> Ari.instance.getServer().getOnlinePlayers().forEach(e -> {
+                if(this.sender.getName().equals(e.getName())) return;
                 players.add(e.getName());
             });
-            return players;
-        }
-        return List.of();
-    }
-
-    public static List<String> getHasRequestPlayers(Player player, AriCommand ariCommand) {
-        if(PermissionUtils.hasPermission(player, ariCommand.getPermission())) {
-            List<String> players = new ArrayList<>();
-            Server server = Ari.instance.getServer();
-            TeleportCheck.TELEPORT_STATUS.stream().filter(obj ->
-                            obj.getBePlayerUUID().equals(player.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
+            //tpaaccept tparefuse
+            case 2 -> TeleportCheck.TELEPORT_STATUS.stream().filter(obj ->
+                            obj.getBePlayerUUID().equals(this.sender.getUniqueId()) && obj.getType().equals(TeleportType.PLAYER))
                     .forEach(e -> {
-                        Player p = server.getPlayer(e.getPlayUUID());
+                        Player p = Ari.instance.getServer().getPlayer(e.getPlayUUID());
                         if (p != null) {
                             players.add(p.getName());
                         }
                     });
-            return players;
         }
-        return List.of();
+        return players;
     }
-
 }

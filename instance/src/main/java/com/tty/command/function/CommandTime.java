@@ -10,7 +10,10 @@ import com.tty.tool.ConfigUtils;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-public class CommandTime {
+import java.util.ArrayList;
+import java.util.List;
+
+public class CommandTime implements CommandTabsList {
 
     private final Player player;
 
@@ -39,5 +42,18 @@ public class CommandTime {
         }
         value = value.replace(LangType.TIME.getType(), Ari.C_INSTANCE.getValue("server.time.name." + period.getDescription(), FilePath.Lang));
         this.player.sendMessage(ComponentUtils.text(value));
+    }
+
+    @Override
+    public List<String> getTabs(int line) {
+        List<String> list = new ArrayList<>();
+        switch (line) {
+            case 1 -> {
+                for (TimePeriod timePeriod : TimePeriod.values()) {
+                    list.add(timePeriod.getDescription());
+                }
+            }
+        }
+        return list;
     }
 }

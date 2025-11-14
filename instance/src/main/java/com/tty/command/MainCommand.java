@@ -2,11 +2,11 @@ package com.tty.command;
 
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.*;
+import com.tty.command.lists.rtp;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.AriCommand;
+import com.tty.enumType.commands.Rtp;
 import com.tty.enumType.commands.Zako;
-import com.tty.lib.enum_type.CommandAction;
-import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.PermissionUtils;
@@ -26,7 +26,6 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s,  String @NotNull [] strings) {
         if (!this.isTheInstructionCorrect(command, AriCommand.ARI)) return false;
         if (strings.length == 0) return false;
-
         AriCommand type;
         try {
             type = AriCommand.valueOf(strings[0].toUpperCase(Locale.ROOT));
@@ -34,80 +33,88 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
             commandSender.sendMessage(ConfigUtils.t("function.unknown"));
             return true;
         }
-        switch (type) {
-            case RTP -> {
-                if (!this.quickCheck(commandSender, AriCommand.RTP)) break;
-                new CommandRtp(commandSender).rtp();
+        switch (strings.length) {
+            case 1 -> {
+                switch (type) {
+                    case RTP -> {
+                        if (!this.quickCheck(commandSender, AriCommand.RTP)) break;
+                        Player player = (Player) commandSender;
+                        CommandRtp commandRtp = new CommandRtp(player);
+                        rtp.RTP_LIST.put(player, commandRtp);
+                        commandRtp.rtp();
+                    }
+                    case RELOAD -> {
+                        if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
+                        commandSender.sendMessage(ConfigUtils.t("function.reload.doing"));
+                        Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
+                    }
+                    case HOME -> {
+                        if (!this.quickCheck(commandSender, AriCommand.HOME)) break;
+                        new CommandHome(commandSender).home();
+                    }
+                    case BACK -> {
+                        if(!this.quickCheck(commandSender, AriCommand.BACK)) break;
+                        new CommandBack(commandSender).startDo();
+                    }
+                    case WARP -> {
+                        if (!this.quickCheck(commandSender, AriCommand.WARP)) break;
+                        new CommandWarp(commandSender).warp();
+                    }
+                    case SPAWN -> {
+                        if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
+                        new CommandSpawn((Player) commandSender).convey();
+                    }
+                    case SETSPAWN -> {
+                        if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 1)) break;
+                        new CommandSpawn((Player) commandSender).set();
+                    }
+                }
             }
-            case RELOAD -> {
-                if(!this.hasPermission(commandSender, AriCommand.RELOAD)) return true;
-                commandSender.sendMessage(ConfigUtils.t("function.reload.doing"));
-                Bukkit.getPluginManager().callEvent(new CustomPluginReloadEvent(commandSender));
+            case 2 -> {
+                switch (type) {
+                    case RTP -> {
+                        Player player = (Player) commandSender;
+                        if (strings[1].equals(Rtp.CANCEL.getName())) {
+                            CommandRtp commandRtp = rtp.RTP_LIST.get(player);
+                            if (commandRtp == null) {
+                                commandSender.sendMessage(ConfigUtils.t("function.rtp.no-rtp"));
+                                return true;
+                            } else {
+                                commandRtp.cancelRtp();
+                            }
+                        } else {
+                            commandSender.sendMessage(ConfigUtils.t("function.public.fail"));
+                        }
+                    }
+                    case TPA -> new CommandTeleport((Player) commandSender, strings[1]).tpa();
+                    case TPAACCEPT -> new CommandTeleport((Player) commandSender, strings[1]).tpaaccept();
+                    case TPAHERE -> new CommandTeleport((Player) commandSender, strings[1]).tpahere();
+                    case TPAREFUSE -> new CommandTeleport((Player) commandSender, strings[1]).tparefuse();
+                    case SETHOME -> new CommandHome(commandSender).setHome(strings[1]);
+                    case SETWARP -> new CommandWarp(commandSender).setWarp(strings[1]);
+                    case TIME -> new CommandTime((Player) commandSender).control(strings[1]);
+                    case ITEMNAME -> {
+                        Player player = (Player) commandSender;
+                        new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[1]);
+                    }
+                }
             }
-            case TPA -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPA, strings.length, 2)) break;
-                new CommandTeleport(commandSender, strings[1]).tpa();
-            }
-            case TPAACCEPT -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAACCEPT, strings.length, 2)) break;
-                new CommandTeleport(commandSender, strings[1]).tpaaccept();
-            }
-            case TPAHERE -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAHERE, strings.length, 2)) break;
-                new CommandTeleport(commandSender, strings[1]).tpahere();
-            }
-            case TPAREFUSE -> {
-                if (!this.quickCheck(commandSender, AriCommand.TPAREFUSE, strings.length, 2)) break;
-                new CommandTeleport(commandSender, strings[1]).tparefuse();
-            }
-            case HOME -> {
-                if (!this.quickCheck(commandSender, AriCommand.HOME)) break;
-                new CommandHome(commandSender).home();
-            }
-            case SETHOME -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETHOME, strings.length, 2)) break;
-                new CommandHome(commandSender).setHome(strings[1]);
-            }
-            case BACK -> {
-                if(!this.quickCheck(commandSender, AriCommand.BACK)) break;
-                new CommandBack(commandSender).startDo();
-            }
-            case WARP -> {
-                if (!this.quickCheck(commandSender, AriCommand.WARP)) break;
-                new CommandWarp(commandSender).warp();
-            }
-            case SETWARP -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETWARP, strings.length, 2)) break;
-                new CommandWarp(commandSender).setWarp(strings[1]);
-            }
-            case TIME -> {
-                if (!this.quickCheck(commandSender, AriCommand.TIME, strings.length, 2)) break;
-                new CommandTime((Player) commandSender).control(strings[1]);
-            }
-            case SPAWN -> {
-                if (!this.quickCheck(commandSender, AriCommand.SPAWN)) break;
-                new CommandSpawn((Player) commandSender).convey();
-            }
-            case SETSPAWN -> {
-                if (!this.quickCheck(commandSender, AriCommand.SETSPAWN, strings.length, 2)) break;
-                new CommandSpawn((Player) commandSender).set();
-            }
-            case ITEMNAME -> {
-                if (!this.quickCheck(commandSender, AriCommand.ITEMNAME, strings.length, 2)) break;
-                Player player = (Player) commandSender;
-                new CommandItem(player, player.getInventory().getItemInMainHand()).changeName(strings[1]);
-            }
-            case ITEMLORE -> {
-                if (!this.quickCheck(commandSender, AriCommand.ITEMLORE, strings.length, 3)) break;
-                Player player = (Player) commandSender;
-                new CommandItem(player, player.getInventory().getItemInMainHand()).changeLore(strings[1], strings[2]);
-            }
-            case ZAKO -> {
-                if (!this.quickCheck(commandSender, AriCommand.ZAKO, strings.length, 3)) break;
-                Player player = (Player) commandSender;
-                new CommandZako(player).action(strings[1], strings[2]);
+            case 3 -> {
+                switch (type) {
+                    case ZAKO -> {
+                        Player player = (Player) commandSender;
+                        new CommandZako(player).action(strings[1], strings[2]);
+                    }
+                    case ITEMLORE -> {
+                        Player player = (Player) commandSender;
+                        new CommandItem(player, player.getInventory().getItemInMainHand()).changeLore(strings[1], strings[2]);
+                    }
+
+                }
             }
         }
+
+
         return true;
     }
 
@@ -139,35 +146,24 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                     return List.of();
                 }
                 switch (c) {
-                    case TPA -> {
-                        return CommandTeleport.getOnlinePlayers((Player) commandSender, AriCommand.TPA);
+                    case TPA, TPAHERE -> {
+                        return PublicFunctionUtils.filterByPrefix(new CommandTeleport((Player) commandSender, strings[1]).getTabs(1), strings[1]);
                     }
-                    case TPAHERE -> {
-                        return CommandTeleport.getOnlinePlayers((Player) commandSender, AriCommand.TPAHERE);
-                    }
-                    case TPAACCEPT -> {
-                        return CommandTeleport.getHasRequestPlayers((Player) commandSender, AriCommand.TPAACCEPT);
-                    }
-                    case TPAREFUSE -> {
-                        return CommandTeleport.getHasRequestPlayers((Player) commandSender, AriCommand.TPAREFUSE);
+                    case TPAACCEPT, TPAREFUSE -> {
+                        return PublicFunctionUtils.filterByPrefix(new CommandTeleport((Player) commandSender, strings[1]).getTabs(2), strings[1]);
                     }
                     case TIME -> {
-                        for (TimePeriod timePeriod : TimePeriod.values()) {
-                            returnList.add(timePeriod.getDescription());
-                        }
-                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                        return PublicFunctionUtils.filterByPrefix(new CommandTime((Player) commandSender).getTabs(1), strings[1]);
                     }
                     case ITEMLORE -> {
-                        for (CommandAction value : CommandAction.values()) {
-                            returnList.add(value.getName());
-                        }
-                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                        Player player = (Player) commandSender;
+                        return PublicFunctionUtils.filterByPrefix(new CommandItem(player, player.getInventory().getItemInMainHand()).getTabs(1), strings[1]);
                     }
                     case ZAKO -> {
-                        for (Zako value : Zako.values()) {
-                            returnList.add(value.getName());
-                        }
-                        return PublicFunctionUtils.filterByPrefix(returnList, strings[1]);
+                        return PublicFunctionUtils.filterByPrefix(new CommandZako(commandSender).getTabs(1), strings[1]);
+                    }
+                    case RTP -> {
+                        return PublicFunctionUtils.filterByPrefix(new CommandRtp((Player) commandSender).getTabs(1), strings[1]);
                     }
                 }
             }
@@ -181,10 +177,7 @@ public class MainCommand extends BaseCommandCheck implements TabExecutor {
                 switch (c) {
                     case ZAKO -> {
                         if(strings[1].equals(Zako.INFO.getName())) {
-                            for (Player player : Bukkit.getOnlinePlayers()) {
-                                returnList.add(player.getName());
-                            }
-                            return PublicFunctionUtils.filterByPrefix(returnList, strings[2]);
+                            return PublicFunctionUtils.filterByPrefix(new CommandZako(commandSender).getTabs(2), strings[2]);
                         }
                     }
                 }

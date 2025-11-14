@@ -3,7 +3,6 @@ package com.tty.command.lists;
 import com.tty.command.check.BaseCommandCheck;
 import com.tty.command.function.CommandTime;
 import com.tty.enumType.AriCommand;
-import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.PublicFunctionUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,7 +11,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class time extends BaseCommandCheck implements TabExecutor {
@@ -27,10 +25,9 @@ public class time extends BaseCommandCheck implements TabExecutor {
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, String @NotNull [] strings) {
-        List<String> list = new ArrayList<>();
-        for (TimePeriod timePeriod : TimePeriod.values()) {
-            list.add(timePeriod.getDescription());
+        if (strings.length == 1) {
+            return PublicFunctionUtils.filterByPrefix(new CommandTime((Player) commandSender).getTabs(1), strings[0]);
         }
-        return PublicFunctionUtils.filterByPrefix(list, strings[0]);
+        return List.of();
     }
 }

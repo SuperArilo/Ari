@@ -78,8 +78,12 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         if (first || login) {
             event.joinMessage(null);
         }
-        PLAYER_LOGIN_TIMES.put(player.getUniqueId(), System.currentTimeMillis());
+
+        long nowLoginTime = System.currentTimeMillis();
+
+        PLAYER_LOGIN_TIMES.put(player.getUniqueId(), nowLoginTime);
         manager.getInstance(player.getUniqueId().toString())
+
                 .thenAccept(i -> {
                     if(!player.hasPlayedBefore()) {
                         if (Ari.C_INSTANCE.getValue("main.first-join", FilePath.SpawnConfig, Boolean.class, false) &&
@@ -99,6 +103,9 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         serverPlayer.setPlayerUUID(player.getUniqueId().toString());
                         serverPlayer.setFirstLoginTime(System.currentTimeMillis());
                         manager.createInstance(serverPlayer);
+                    } else {
+                        i.setLastLoginOffTime(nowLoginTime);
+                        manager.modify(i);
                     }
                     if(login) {
                         Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
@@ -129,20 +136,18 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         PlayerManager playerManager = new PlayerManager(asyncMode);
         playerManager.setExecutionMode(asyncMode);
         String uuid = player.getUniqueId().toString();
-        long currentTime = System.currentTimeMillis();
         Long loginTime = PLAYER_LOGIN_TIMES.get(player.getUniqueId());
         if (loginTime == null) {
             Log.warning("No login time recorded for player: " + player.getName());
             return;
         }
-        long onlineDuration = currentTime - loginTime;
+        long onlineDuration = System.currentTimeMillis() - loginTime;
         playerManager.getInstance(uuid)
                 .thenCompose(serverPlayer -> {
                     if (serverPlayer == null) {
                         Log.error("Player data not found: " + uuid);
                         return CompletableFuture.completedFuture(false);
                     }
-                    serverPlayer.setLastLoginOffTime(currentTime);
                     serverPlayer.setTotalOnlineTime(serverPlayer.getTotalOnlineTime() + onlineDuration);
                     return playerManager.modify(serverPlayer);
                 })

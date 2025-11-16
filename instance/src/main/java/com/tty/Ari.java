@@ -40,6 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Collection;
 
+import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.PLAYER_LOGIN_TIMES;
 import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.SavePlayerData;
 
 
@@ -95,6 +96,7 @@ public class Ari extends JavaPlugin {
             Collection<? extends Player> onlinePlayers = Ari.instance.getServer().getOnlinePlayers();
             for (Player onlinePlayer : onlinePlayers) {
                 SavePlayerData(onlinePlayer, true, false);
+                PLAYER_LOGIN_TIMES.put(onlinePlayer.getUniqueId(), System.currentTimeMillis());
             }
         });
         this.playerSave.start();

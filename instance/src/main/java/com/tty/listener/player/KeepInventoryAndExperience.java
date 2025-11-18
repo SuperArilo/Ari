@@ -1,6 +1,6 @@
 package com.tty.listener.player;
 
-import com.tty.tool.PermissionUtils;
+import com.tty.lib.tool.PermissionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

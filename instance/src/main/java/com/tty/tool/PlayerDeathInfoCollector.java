@@ -84,7 +84,7 @@ public class PlayerDeathInfoCollector {
 
             // 玩家攻击
             if (damager instanceof Player playerDamager) {
-                info.weapon = Optional.of(playerDamager.getEquipment())
+                info.weapon = Optional.ofNullable(playerDamager.getEquipment())
                         .map(EntityEquipment::getItemInMainHand)
                         .orElse(null);
             }

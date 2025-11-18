@@ -6,6 +6,13 @@ base:
     hour: '时'
     minute: "分钟"
     second: "秒"
+  permission:
+    no-permission: '&4你当前没有权限来执行此命令'
+    whitelist-no-permission: '&4你没有权限执行，请联系管理员添加白名单'
+function:
+  public:
+    not-player: '这个指令只能在游戏里使用！'
+    fail: '指令缺少集合或者输入不正确！'
 entity:
   acacia_boat: 金合欢木船
   acacia_chest_boat: 金合欢木运输船

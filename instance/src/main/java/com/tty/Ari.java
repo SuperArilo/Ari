@@ -1,7 +1,6 @@
 package com.tty;
 
-import com.tty.command.function.CommandRtp;
-import com.tty.enumType.AriCommand;
+import com.tty.commands.function.CommandRtp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
@@ -11,6 +10,7 @@ import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.task.PeriodicTask;
 import com.tty.lib.tool.ConfigInstance;
 import com.tty.lib.tool.Log;
+import com.tty.lib.tool.PermissionUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
@@ -28,8 +28,6 @@ import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -48,7 +46,7 @@ public class Ari extends JavaPlugin {
 
     public static Ari instance;
     public static Boolean debug = false;
-    public static ConfigInstance C_INSTANCE = new ConfigInstance();
+    public static final ConfigInstance C_INSTANCE = new ConfigInstance();
     public SQLInstance sqlInstance;
     public CommandAlias commandAlias;
 
@@ -71,10 +69,10 @@ public class Ari extends JavaPlugin {
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
         PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
 
-        this.registerCommands();
         this.registerListener();
 
         this.commandAlias = new CommandAlias();
+        this.commandAlias.registerAlias();
 
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -114,14 +112,6 @@ public class Ari extends JavaPlugin {
         C_INSTANCE.clearConfigs();
     }
 
-    private void registerCommands() {
-        PluginCommand pluginCommand = this.getCommand(AriCommand.ARI.getShow());
-        TabExecutor commandClass = AriCommand.ARI.getCommandClass();
-        if (pluginCommand != null) {
-            pluginCommand.setExecutor(commandClass);
-            pluginCommand.setTabCompleter(commandClass);
-        }
-    }
     private void registerListener() {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(new HomeListListener(GuiType.HOMELIST), this);

@@ -18,7 +18,7 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.EconomyUtils;
-import com.tty.tool.PermissionUtils;
+import com.tty.lib.tool.PermissionUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;

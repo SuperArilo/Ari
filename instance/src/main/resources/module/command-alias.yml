@@ -1,3 +1,6 @@
+ari:
+  enable: true
+  tab-complete: true
 tpa:
   enable: true
   tab-complete: true

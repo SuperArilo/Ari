@@ -9,7 +9,7 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.tool.PermissionUtils;
+import com.tty.lib.tool.PermissionUtils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.JoinConfiguration;

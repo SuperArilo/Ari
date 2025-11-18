@@ -1,7 +1,7 @@
 package com.tty.listener;
 
 import com.tty.Ari;
-import com.tty.command.function.CommandRtp;
+import com.tty.commands.function.CommandRtp;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;

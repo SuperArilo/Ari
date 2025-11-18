@@ -4,7 +4,5 @@ public enum GuiType {
     HOMELIST,
     HOMEEDIT,
     WARPLIST,
-    WARPEDIT,
-    SPAWNLIST,
-    SPAWNEDIT
+    WARPEDIT
 }

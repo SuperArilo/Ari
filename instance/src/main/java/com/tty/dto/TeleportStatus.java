@@ -1,6 +1,5 @@
 package com.tty.dto;
 
-import com.tty.enumType.AriCommand;
 import com.tty.lib.enum_type.TeleportType;
 import lombok.Data;
 import org.bukkit.Location;
@@ -13,24 +12,24 @@ public class TeleportStatus {
     private UUID bePlayerUUID;
     private Location location;
     private TeleportType type;
-    private AriCommand ariCommand;
+    private String commandString;
 
 
-    public static TeleportStatus build(UUID playUUID, UUID bePlayerUUID, TeleportType type, AriCommand ariCommand) {
+    public static TeleportStatus build(UUID playUUID, UUID bePlayerUUID, TeleportType type, String commandString) {
         TeleportStatus status = new TeleportStatus();
         status.setPlayUUID(playUUID);
         status.setBePlayerUUID(bePlayerUUID);
         status.setType(type);
-        status.setAriCommand(ariCommand);
+        status.setCommandString(commandString);
         return status;
     }
 
-    public static TeleportStatus build(UUID playUUID, Location location, TeleportType type, AriCommand ariCommand) {
+    public static TeleportStatus build(UUID playUUID, Location location, TeleportType type, String commandString) {
         TeleportStatus status = new TeleportStatus();
         status.setPlayUUID(playUUID);
         status.setLocation(location);
         status.setType(type);
-        status.setAriCommand(ariCommand);
+        status.setCommandString(commandString);
         return status;
     }
 }

@@ -23,16 +23,6 @@ public class PublicFunctionUtils {
             runnable.run();
         }
     }
-    public static List<String> filterByPrefix(List<String> list, String prefix) {
-        if (prefix == null || prefix.isEmpty()) {
-            return new ArrayList<>(list);
-        }
-        String lowerPrefix = prefix.toLowerCase();
-        return list.stream()
-                .filter(Objects::nonNull)
-                .filter(s -> s.toLowerCase().startsWith(lowerPrefix))
-                .toList();
-    }
 
     public static <K, V> Map<K, V> deepCopyBySerialization(Map<K, V> original) {
         if (original.isEmpty()) {
@@ -62,18 +52,6 @@ public class PublicFunctionUtils {
             return Material.DIRT;
         }
         return material;
-    }
-    /**
-     * 检查材质是否是 ItemStack
-     * @param itemStack 被检查的item
-     * @return 返回一个正确的item
-     */
-    public static ItemStack checkIsItemStack(ItemStack itemStack) {
-        if (itemStack == null) {
-            itemStack = new ItemStack(Material.DIRT);
-            itemStack.setItemMeta(itemStack.getItemMeta());
-        }
-        return itemStack;
     }
 
 }

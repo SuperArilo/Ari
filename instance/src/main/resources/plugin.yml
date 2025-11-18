@@ -6,12 +6,3 @@ main: com.tty.Ari
 depend: ['arilib', 'Vault']
 softdepend: ['PlaceholderAPI']
 api-version: 1.21
-commands:
-  ari:
-    usage: '插件主要指令'
-permissions:
-  ari.*:
-    description: "授予对基本命令的访问权限"
-    default: true
-    children:
-      ari.command: false

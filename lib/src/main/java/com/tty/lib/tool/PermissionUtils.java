@@ -55,6 +55,7 @@ public class PermissionUtils {
      * @return 布尔值
      */
     public static boolean hasPermission(CommandSender sender, String permission) {
+        if (permission.isEmpty()) return true;
         return isNull() ? sender.hasPermission(permission):PERMISSION.has(sender, permission);
     }
 

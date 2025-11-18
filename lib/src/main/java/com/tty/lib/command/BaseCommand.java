@@ -33,30 +33,50 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
 
     @Override
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
-        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(this. name());
-        builder.requires(ctx -> this.permission() == null || ctx.getSender().hasPermission(this.permission()));
-        builder.executes(this::baseExecute);
-        RequiredArgumentBuilder<CommandSourceStack, T> argNode = RequiredArgumentBuilder.<CommandSourceStack, T>argument("args", type)
-            .requires(ctx -> this.permission() == null || ctx.getSender().hasPermission(this.permission()))
-            .executes(this::baseExecute)
-            .suggests((ctx, b) -> {
-                String input = ctx.getInput();
-                String[] args = input.split(" ");
-                String currentLower = input.endsWith(" ") ? "" : args[args.length - 1].toLowerCase();
-                for (String suggestion : this.tabSuggestions(ctx.getSource().getSender(), args)) {
-                    if (currentLower.isEmpty() || suggestion.toLowerCase().startsWith(currentLower)) {
-                        b.suggest(suggestion);
-                    }
-                }
-                return b.buildFuture();
-            });
-        builder.then(argNode);
-        for (SuperHandsomeCommand sub : this.getSubCommands()) {
-            LiteralCommandNode<CommandSourceStack> brigadier = sub.toBrigadier();
+        LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(this.name());
+        RequiredArgumentBuilder<CommandSourceStack, T> argNode = RequiredArgumentBuilder.argument("args", type);
 
-            builder.then(brigadier.createBuilder());
+        if (this.name().equals("ari")) {
+            argNode
+               .executes(this::baseExecute)
+               .suggests((ctx, b) -> {
+                    for (SuperHandsomeCommand subCommand : this.getSubCommands()) {
+                        if (PermissionUtils.hasPermission(ctx.getSource().getSender(), subCommand.getPermission())) {
+                            b.suggest(subCommand.getName());
+                        }
+                    }
+                    return b.buildFuture();
+                });
+        } else {
+            argNode.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()))
+                .executes(this::baseExecute)
+                .suggests((ctx, b) -> {
+                    String input = ctx.getInput();
+                    String[] args = input.split(" ");
+                    String currentLower = input.endsWith(" ") ? "" : args[args.length - 1].toLowerCase();
+                    for (String suggestion : this.tabSuggestions(ctx.getSource().getSender(), args)) {
+                        if (currentLower.isEmpty() || suggestion.toLowerCase().startsWith(currentLower)) {
+                            b.suggest(suggestion);
+                        }
+                    }
+                    return b.buildFuture();
+                });
         }
+        builder.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
+        builder.executes(this::baseExecute);
+
+        builder.then(argNode);
         return builder.build();
+    }
+
+    @Override
+    public String getName() {
+        return this.name();
+    }
+
+    @Override
+    public String getPermission() {
+        return this.permission();
     }
 
     public abstract void execute(CommandSender sender, String[] args);

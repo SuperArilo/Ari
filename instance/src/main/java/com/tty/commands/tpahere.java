@@ -1,9 +1,10 @@
 package com.tty.commands;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.commands.function.CommandTeleport;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -11,10 +12,10 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class tpahere extends BaseCommand<String> {
+public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     public tpahere() {
-        super(false, StringArgumentType.string());
+        super(false, ArgumentTypes.player());
     }
 
     @Override

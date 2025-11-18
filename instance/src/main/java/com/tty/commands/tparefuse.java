@@ -1,12 +1,13 @@
 package com.tty.commands;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.commands.check.TeleportCheck;
 import com.tty.commands.function.CommandTeleport;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.TeleportType;
+import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
+import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -14,10 +15,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class tparefuse extends BaseCommand<String> {
+public class tparefuse extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     public tparefuse() {
-        super(false, StringArgumentType.string());
+        super(false, ArgumentTypes.player());
     }
 
     @Override

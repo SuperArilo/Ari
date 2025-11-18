@@ -37,12 +37,11 @@ public class ari extends BaseCommand<String> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        return List.of("11414");
+        return List.of();
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-
     }
 
     @Override
@@ -52,6 +51,6 @@ public class ari extends BaseCommand<String> {
 
     @Override
     public String permission() {
-        return null;
+        return "";
     }
 }

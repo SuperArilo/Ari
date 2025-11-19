@@ -1,4 +1,4 @@
-package com.tty.tool;
+package com.tty.lib.tool;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;

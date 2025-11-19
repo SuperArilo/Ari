@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.*;
+import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -51,6 +52,19 @@ public class PublicFunctionUtils {
             return Material.DIRT;
         }
         return material;
+    }
+
+    /**
+     * 随机得到指定范围内的随机数
+     * @param min 最小值
+     * @param max 最大值
+     * @return 随机数
+     */
+    public static int randomGenerator(int min, int max) {
+        if (min > max) {
+            throw new IllegalArgumentException("The maximum value must be greater than the minimum value");
+        }
+        return new SecureRandom().nextInt(max - min + 1) + min;
     }
 
 }

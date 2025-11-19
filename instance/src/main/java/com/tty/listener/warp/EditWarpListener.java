@@ -18,7 +18,7 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
 import com.tty.tool.ConfigUtils;
-import com.tty.tool.EconomyUtils;
+import com.tty.lib.tool.EconomyUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;

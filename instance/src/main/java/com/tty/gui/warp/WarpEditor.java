@@ -12,7 +12,7 @@ import com.tty.gui.BaseInventory;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
-import com.tty.tool.EconomyUtils;
+import com.tty.lib.tool.EconomyUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

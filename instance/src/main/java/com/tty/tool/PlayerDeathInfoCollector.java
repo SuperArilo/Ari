@@ -3,6 +3,7 @@ package com.tty.tool;
 import com.google.common.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
+import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.lib.tool.RandomGeneratorUtils;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -105,7 +106,7 @@ public class PlayerDeathInfoCollector {
         if (size == 0) {
             return "";
         }
-        int i = RandomGeneratorUtils.get(0, many.size());
+        int i = PublicFunctionUtils.randomGenerator(0, many.size());
         if(i == many.size() && i != 0) {
             i--;
         }

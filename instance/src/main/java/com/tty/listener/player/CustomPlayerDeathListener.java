@@ -2,17 +2,16 @@ package com.tty.listener.player;
 
 import com.tty.Ari;
 import com.tty.lib.enum_type.LangType;
-import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
-import com.tty.lib.tool.RandomGeneratorUtils;
+import com.tty.lib.tool.*;
 import com.tty.tool.PlayerDeathInfoCollector;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.FallingBlock;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -42,10 +41,11 @@ public class CustomPlayerDeathListener implements Listener {
                     sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "mob." + (collect.weapon == null || collect.weapon.isEmpty() ? "air":collect.isProjectile ? "projectile" : "item")));
                 }
                 //增加 running away
-                if(collect.killer instanceof Damageable damageable &&
-                        damageable.getHealth() < damageable.getMaxHealth() &&
-                        RandomGeneratorUtils.get(0, 1) == 0) {
-                    sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "running-away"));
+                if(collect.killer instanceof LivingEntity livingEntity && PublicFunctionUtils.randomGenerator(0, 1) == 0) {
+                    AttributeInstance max_health = livingEntity.getAttribute(Attribute.MAX_HEALTH);
+                    if(max_health != null && livingEntity.getHealth() < max_health.getValue()) {
+                        sb.append(PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "running-away"));
+                    }
                 }
 
                 textComponent = this.build(collect, sb.toString());

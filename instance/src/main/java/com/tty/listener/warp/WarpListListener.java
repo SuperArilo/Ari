@@ -13,6 +13,7 @@ import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
+import com.tty.lib.tool.EconomyUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;

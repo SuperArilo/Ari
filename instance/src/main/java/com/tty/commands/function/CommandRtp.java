@@ -10,10 +10,7 @@ import com.tty.function.Teleport;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.task.CancellableTask;
-import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
-import com.tty.lib.tool.RandomGeneratorUtils;
-import com.tty.lib.tool.SearchSafeLocation;
+import com.tty.lib.tool.*;
 import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
@@ -97,8 +94,8 @@ public class CommandRtp {
         if(this.isDone) return;
         this.sendCountTitle();
 
-        int x = (int) Math.min(RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
-        int z = (int) Math.min(RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
+        int x = (int) Math.min(PublicFunctionUtils.randomGenerator((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
+        int z = (int) Math.min(PublicFunctionUtils.randomGenerator((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());
 
         SearchSafeLocation searchSafeLocation = new SearchSafeLocation(Ari.instance, this.world, x, z);
 

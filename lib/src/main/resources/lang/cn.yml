@@ -8,7 +8,6 @@ base:
     second: "秒"
   permission:
     no-permission: '&4你当前没有权限来执行此命令'
-    whitelist-no-permission: '&4你没有权限执行，请联系管理员添加白名单'
 function:
   public:
     not-player: '这个指令只能在游戏里使用！'

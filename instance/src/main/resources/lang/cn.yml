@@ -25,9 +25,6 @@ base:
     done: '&a保存成功'
     ing: '&7保存中...'
     error: '&4保存失败，请联系管理员'
-  permission:
-    no-permission: '&4你当前没有权限来执行此命令'
-    whitelist-no-permission: '&4你没有权限执行，请联系管理员添加白名单'
   on-player:
     hand-no-item: '&4当前手上并没有物品'
     unable-player: '该玩家离线或者不存在！'

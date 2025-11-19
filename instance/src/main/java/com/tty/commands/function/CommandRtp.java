@@ -94,7 +94,7 @@ public class CommandRtp {
     }
 
     private void search() {
-
+        if(this.isDone) return;
         this.sendCountTitle();
 
         int x = (int) Math.min(RandomGeneratorUtils.get((int) this.config.getMin(), (int) this.config.getMax()), this.world.getWorldBorder().getMaxSize());

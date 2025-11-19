@@ -2,7 +2,6 @@ package com.tty.lib.command;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.tty.lib.tool.LibConfigUtils;
@@ -34,21 +33,11 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(this.name());
-        RequiredArgumentBuilder<CommandSourceStack, T> argNode = RequiredArgumentBuilder.argument("args", type);
-
-        if (this.name().equals("ari")) {
-            argNode
-               .executes(this::baseExecute)
-               .suggests((ctx, b) -> {
-                    for (SuperHandsomeCommand subCommand : this.getSubCommands()) {
-                        if (PermissionUtils.hasPermission(ctx.getSource().getSender(), subCommand.getPermission())) {
-                            b.suggest(subCommand.getName());
-                        }
-                    }
-                    return b.buildFuture();
-                });
-        } else {
-            argNode.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()))
+        builder.requires(Commands.restricted(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission())));
+        builder.executes(this::baseExecute);
+        if(this.getSubCommands().isEmpty()) {
+            var nodeArgs = Commands.argument("args", type)
+                .requires(Commands.restricted(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission())))
                 .executes(this::baseExecute)
                 .suggests((ctx, b) -> {
                     String input = ctx.getInput();
@@ -61,22 +50,13 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
                     }
                     return b.buildFuture();
                 });
+            builder.then(nodeArgs);
+        } else {
+            for (SuperHandsomeCommand subCommand : this.getSubCommands()) {
+                builder.then(subCommand.toBrigadier());
+            }
         }
-        builder.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
-        builder.executes(this::baseExecute);
-
-        builder.then(argNode);
         return builder.build();
-    }
-
-    @Override
-    public String getName() {
-        return this.name();
-    }
-
-    @Override
-    public String getPermission() {
-        return this.permission();
     }
 
     public abstract void execute(CommandSender sender, String[] args);

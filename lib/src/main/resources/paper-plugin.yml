@@ -4,7 +4,7 @@ main: com.tty.lib.Lib
 api-version: '1.21'
 authors:
   - Arilo007
-folia-supported: true;
+folia-supported: true
 dependencies:
   server:
     ari:

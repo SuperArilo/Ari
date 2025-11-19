@@ -3,7 +3,6 @@ package com.tty.commands.function;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.commands.check.TeleportCheck;
-import com.tty.commands.rtp;
 import com.tty.dto.rtp.RtpConfig;
 import com.tty.enumType.FilePath;
 import com.tty.function.Teleport;
@@ -17,6 +16,8 @@ import org.bukkit.*;
 import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.tty.commands.rtp.RTP_LIST;
 
 
 public class CommandRtp {
@@ -34,38 +35,18 @@ public class CommandRtp {
         this.sender = sender;
         this.world = sender.getWorld();
 
-        Map<String, RtpConfig> value = Ari.C_INSTANCE.getValue(
-                "rtp.worlds",
-                FilePath.FunctionConfig,
-                new TypeToken<Map<String, RtpConfig>>() {
-                }.getType(),
-                null);
+        Map<String, RtpConfig> value = Ari.C_INSTANCE.getValue("rtp.worlds", FilePath.FunctionConfig, new TypeToken<Map<String, RtpConfig>>() {}.getType(), null);
         this.config = value.get(this.world.getName());
     }
 
     public void rtp() {
-        if (this.config == null || !Ari.C_INSTANCE.getValue(
-                "rtp.enable",
-                FilePath.FunctionConfig,
-                Boolean.class,
-                false)) return;
 
-        if (!this.config.isEnable()) {
-            this.sender.sendMessage(ConfigUtils.t("function.rtp.world-disable"));
-            return;
-        }
-
-        if (!(sender instanceof Player player)) return;
-
-        if ((player.isSleeping() || player.isDeeplySleeping() || player.isFlying()) && !this.sender.isOp()) return;
-
-        if (!TeleportCheck.preCheckStatus(
-                player,
-                null,
-                Ari.C_INSTANCE.getValue("rtp.delay", FilePath.FunctionConfig, Integer.class, 3) * 20)
-        ) return;
-
+        if (!this.preRtpCheck()) return;
+        RTP_LIST.put(this.sender, this);
         this.task = Lib.Scheduler.runAsyncAtFixedRate(Ari.instance, i -> {
+            if(!this.playerStatusCheck()) {
+                this.cancelRtp();
+            }
             if (this.count >= this.initCount) {
                 this.sender.clearTitle();
                 this.sender.sendMessage(ConfigUtils.t("function.rtp.search-failure"));
@@ -85,9 +66,12 @@ public class CommandRtp {
         this.isDone = true;
         if(this.task == null) return;
         this.task.cancel();
-        rtp.RTP_LIST.remove(this.sender);
-        this.sender.clearTitle();
-        this.sender.sendMessage(ConfigUtils.t("function.rtp.rtp-cancel"));
+        RTP_LIST.remove(this.sender);
+        Log.debug("RTP: rtp list: " + RTP_LIST.size());
+        if(this.sender.isOnline()) {
+            this.sender.clearTitle();
+            this.sender.sendMessage(ConfigUtils.t("function.rtp.rtp-cancel"));
+        }
     }
 
     private void search() {
@@ -100,17 +84,47 @@ public class CommandRtp {
         SearchSafeLocation searchSafeLocation = new SearchSafeLocation(Ari.instance, this.world, x, z);
 
         searchSafeLocation.search().thenAccept(location -> {
-            if (location == null) {
-                return;
-            }
-            this.isDone = true;
-            this.count = 0;
-            this.sender.clearTitle();
-            Lib.Scheduler.runAtEntity(Ari.instance, this.sender, b -> Teleport.create(this.sender, location, 0).teleport(), () -> Log.error("teleport error on " + this.sender.getName()));
+            if (location == null) return;
+            Lib.Scheduler.runAtEntity(Ari.instance,
+                    this.sender,
+                    b -> Teleport.create(this.sender, location, 0)
+                            .before(i -> this.isDone = true).teleport(),
+                    () -> Log.error("teleport error on " + this.sender.getName()));
         }).exceptionally(i -> {
             Log.error("search error", i);
             return null;
         });
+    }
+
+    private boolean preRtpCheck() {
+        if (this.config == null || !Ari.C_INSTANCE.getValue("rtp.enable", FilePath.FunctionConfig, Boolean.class, false)) return false;
+
+        if (!this.config.isEnable()) {
+            this.sender.sendMessage(ConfigUtils.t("function.rtp.world-disable"));
+            return false;
+        }
+
+        if (!this.playerStatusCheck()) {
+            return false;
+        }
+
+        return TeleportCheck.preCheckStatus(
+                this.sender,
+                null,
+                Ari.C_INSTANCE.getValue("rtp.delay", FilePath.FunctionConfig, Integer.class, 3) * 20);
+    }
+
+    /**
+     * 检查玩家当前状态动作是否满足
+     * @return true 满足
+     */
+    private boolean playerStatusCheck() {
+        if (!this.sender.isOnline()) return false;
+        if (this.sender.isSleeping() || this.sender.isDeeplySleeping()) return false;
+        if (this.sender.isFlying() || this.sender.isGliding()) return false;
+        if (this.sender.isInsideVehicle()) return false;
+
+        return this.sender.getGameMode() != GameMode.SPECTATOR;
     }
 
     private void sendCountTitle() {
@@ -126,7 +140,7 @@ public class CommandRtp {
                 0,
                 1000L,
                 1000L);
-        this.sender.showTitle(title);
+        if (sender.isOnline()) sender.showTitle(title);
     }
 
     private static Map<String, Object> createWorldRtp() {

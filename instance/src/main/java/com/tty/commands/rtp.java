@@ -8,14 +8,15 @@ import com.tty.lib.command.SuperHandsomeCommand;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.WeakHashMap;
 
 
 public class rtp extends BaseCommand<String> {
 
-    public static final Map<Player, CommandRtp> RTP_LIST = new ConcurrentHashMap<>();
+    public static final Map<Player, CommandRtp> RTP_LIST = Collections.synchronizedMap(new WeakHashMap<>());
 
     public rtp() {
         super(false, StringArgumentType.string(), 1);
@@ -35,7 +36,6 @@ public class rtp extends BaseCommand<String> {
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         CommandRtp commandRtp = new CommandRtp(player);
-        RTP_LIST.put(player, commandRtp);
         commandRtp.rtp();
     }
 

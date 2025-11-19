@@ -20,7 +20,7 @@
         <paper.mc.version>1.21.10</paper.mc.version>
         <folia.mc.version>1.21.8</folia.mc.version>
         <version.suffix>-R0.1-SNAPSHOT</version.suffix>
-        <revision>1.6.1</revision>
+        <revision>1.7</revision>
     </properties>
     <build>
         <plugins>

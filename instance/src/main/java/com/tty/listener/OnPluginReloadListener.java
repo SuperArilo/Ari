@@ -13,11 +13,10 @@ public class OnPluginReloadListener implements Listener {
     @EventHandler
     public void pluginReload(CustomPluginReloadEvent event) {
         Ari.reloadAllConfig();
-        Log.initLogger(Ari.instance.getLogger(), Ari.debug);
-        if (Ari.debug) {
+        Log.initLogger(Ari.instance.getLogger(), Ari.DEBUG);
+        if (Ari.DEBUG) {
             Ari.instance.sqlInstance.reconnect();
         }
-        Ari.instance.commandAlias.reloadAllAlias();
         CommandRtp.setRtpWorldConfig();
         Ari.instance.playerSave.reload();
         event.getSender().sendMessage(ConfigUtils.t("function.reload.success"));

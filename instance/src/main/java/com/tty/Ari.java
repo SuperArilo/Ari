@@ -1,10 +1,13 @@
 package com.tty;
 
+import com.google.gson.reflect.TypeToken;
 import com.tty.commands.function.CommandRtp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
 import com.tty.lib.ServerPlatform;
+import com.tty.lib.command.CommandRegister;
+import com.tty.lib.dto.AliasItem;
 import com.tty.lib.enum_type.PeriodicTaskEnum;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.task.PeriodicTask;
@@ -34,6 +37,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.Map;
 
 import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.PLAYER_LOGIN_TIMES;
 import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.SavePlayerData;
@@ -42,10 +46,9 @@ import static com.tty.listener.player.OnPlayerJoinAndLeaveListener.SavePlayerDat
 public class Ari extends JavaPlugin {
 
     public static Ari instance;
-    public static Boolean debug = false;
+    public static Boolean DEBUG = false;
     public static final ConfigInstance C_INSTANCE = new ConfigInstance();
     public SQLInstance sqlInstance;
-    public CommandAlias commandAlias;
 
     public PeriodicTask playerSave;
     public ConfigDataService dataService;
@@ -60,16 +63,14 @@ public class Ari extends JavaPlugin {
     public void onEnable() {
 
         reloadAllConfig();
-        Log.initLogger(this.getLogger(), debug);
+        Log.initLogger(Ari.instance.getLogger(), DEBUG);
 
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
         PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
 
         this.registerListener();
-
-        this.commandAlias = new CommandAlias();
-        this.commandAlias.registerAlias();
+        CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.CommandAlias.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
 
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -133,7 +134,7 @@ public class Ari extends JavaPlugin {
     public static void reloadAllConfig() {
         Ari.instance.saveDefaultConfig();
         Ari.instance.reloadConfig();
-        debug = Ari.instance.getConfig().getBoolean("debug.enable", false);
+        DEBUG = Ari.instance.getConfig().getBoolean("debug.enable", false);
         loadConfigInMemory();
     }
     private static void loadConfigInMemory() {
@@ -166,8 +167,8 @@ public class Ari extends JavaPlugin {
         }
         String ariArt =
                 "        _   \n" +
-                "  |    /_\\  " + d + "\n" +
-                "  |___/   \\ Running on " + Bukkit.getName() + " " + Bukkit.getServer().getVersion();
+                        "  |    /_\\  " + d + "\n" +
+                        "  |___/   \\ Running on " + Bukkit.getName() + " " + Bukkit.getServer().getVersion();
         ConsoleCommandSender console = Bukkit.getConsoleSender();
         for (String string : ariArt.split("\n")) {
             console.sendMessage(string);

@@ -1,4 +1,4 @@
-package com.tty.dto;
+package com.tty.lib.dto;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;

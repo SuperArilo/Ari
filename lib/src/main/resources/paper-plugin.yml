@@ -1,0 +1,13 @@
+name: arilib
+version: '${project.version}'
+main: com.tty.lib.Lib
+api-version: '1.21'
+authors:
+  - Arilo007
+folia-supported: true;
+dependencies:
+  server:
+    ari:
+      load: AFTER
+      required: false
+      join-classpath: true

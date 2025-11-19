@@ -17,7 +17,7 @@ import java.util.List;
 public class ItemLoreAdd extends BaseCommand<String> {
 
     public ItemLoreAdd(boolean allowConsole) {
-        super(allowConsole, StringArgumentType.string());
+        super(allowConsole, StringArgumentType.string(), 3);
     }
 
     @Override

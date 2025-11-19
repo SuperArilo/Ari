@@ -16,7 +16,7 @@ import static com.tty.commands.rtp.RTP_LIST;
 public class RtpCancel extends BaseCommand<String> {
 
     public RtpCancel(boolean allowConsole, ArgumentType<String> type) {
-        super(allowConsole, type);
+        super(allowConsole, type, 2);
     }
 
     @Override

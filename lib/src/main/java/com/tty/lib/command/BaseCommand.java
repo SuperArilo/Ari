@@ -20,10 +20,12 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
 
     private final boolean allowConsole;
     private final ArgumentType<T> type;
+    private final int correctArgsLength;
 
-    protected BaseCommand(boolean allowConsole, ArgumentType<T> type) {
+    protected BaseCommand(boolean allowConsole, ArgumentType<T> type, int correctArgsLength) {
         this.allowConsole = allowConsole;
         this.type = type;
+        this.correctArgsLength = correctArgsLength;
     }
 
     public abstract List<SuperHandsomeCommand> getSubCommands();
@@ -75,7 +77,13 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
             sender.sendMessage(LibConfigUtils.t("base.permission.no-permission"));
             return SINGLE_SUCCESS;
         }
-        this.execute(sender, ctx.getInput().replace("ari ", "").split(" "));
+        String input = ctx.getInput().replace("ari ", "").trim();
+        String[] args = input.isEmpty() ? new String[0] : input.split(" ");
+        if (args.length != this.correctArgsLength) {
+            sender.sendMessage(LibConfigUtils.t("function.public.fail"));
+            return SINGLE_SUCCESS;
+        }
+        this.execute(sender, args);
         return SINGLE_SUCCESS;
     }
 }

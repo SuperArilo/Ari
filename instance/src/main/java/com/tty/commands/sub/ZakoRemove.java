@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ZakoRemove extends BaseCommand<String> {
 
     public ZakoRemove(boolean allowConsole, ArgumentType<String> type) {
-        super(allowConsole, type);
+        super(allowConsole, type, 3);
     }
 
     @Override

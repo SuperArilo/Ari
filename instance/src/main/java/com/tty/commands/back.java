@@ -19,7 +19,7 @@ import static com.tty.listener.teleport.RecordLastLocationListener.TELEPORT_LAST
 public class back extends BaseCommand<String> {
 
     public back() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 1);
     }
 
     @Override

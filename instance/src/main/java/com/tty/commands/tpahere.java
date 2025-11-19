@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     public tpahere() {
-        super(false, ArgumentTypes.player());
+        super(false, ArgumentTypes.player(), 2);
     }
 
     @Override

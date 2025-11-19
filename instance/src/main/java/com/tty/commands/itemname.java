@@ -15,7 +15,7 @@ import java.util.List;
 public class itemname extends BaseCommand<String> {
 
     public itemname() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 2);
     }
 
     @Override

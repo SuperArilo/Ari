@@ -12,7 +12,7 @@ import java.util.List;
 public class home extends BaseCommand<String> {
 
     public home() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 1);
     }
 
     @Override

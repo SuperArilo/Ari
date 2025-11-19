@@ -12,7 +12,7 @@ import java.util.List;
 public class itemlore extends BaseCommand<String> {
 
     public itemlore() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 2);
     }
 
     @Override

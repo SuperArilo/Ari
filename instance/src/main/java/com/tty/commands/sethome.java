@@ -22,7 +22,7 @@ import java.util.List;
 public class sethome extends BaseCommand<String> {
 
     public sethome() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 2);
     }
 
     @Override

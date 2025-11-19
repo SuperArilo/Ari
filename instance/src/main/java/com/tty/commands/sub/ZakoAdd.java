@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ZakoAdd extends BaseCommand<String> {
 
     public ZakoAdd(boolean allowConsole, ArgumentType<String> type) {
-        super(allowConsole, type);
+        super(allowConsole, type, 3);
     }
 
     @Override

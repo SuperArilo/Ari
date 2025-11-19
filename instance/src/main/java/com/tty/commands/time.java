@@ -20,7 +20,7 @@ import java.util.List;
 public class time extends BaseCommand<String> {
 
     public time() {
-        super(false, StringArgumentType.word());
+        super(false, StringArgumentType.word(), 2);
     }
 
     @Override

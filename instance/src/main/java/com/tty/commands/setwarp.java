@@ -21,7 +21,7 @@ import java.util.List;
 public class setwarp extends BaseCommand<String> {
 
     public setwarp() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 2);
     }
 
     @Override

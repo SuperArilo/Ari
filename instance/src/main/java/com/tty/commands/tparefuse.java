@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 public class tparefuse extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     public tparefuse() {
-        super(false, ArgumentTypes.player());
+        super(false, ArgumentTypes.player(), 2);
     }
 
     @Override

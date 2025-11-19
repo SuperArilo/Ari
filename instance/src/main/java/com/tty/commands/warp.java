@@ -12,7 +12,7 @@ import java.util.List;
 public class warp extends BaseCommand<String> {
 
     public warp() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 1);
     }
 
     @Override

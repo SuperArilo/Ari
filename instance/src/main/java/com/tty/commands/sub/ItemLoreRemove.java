@@ -16,7 +16,7 @@ import java.util.List;
 public class ItemLoreRemove extends BaseCommand<Integer> {
 
     public ItemLoreRemove(boolean allowConsole) {
-        super(allowConsole, IntegerArgumentType.integer());
+        super(allowConsole, IntegerArgumentType.integer(), 3);
     }
 
     @Override

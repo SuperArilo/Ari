@@ -13,7 +13,7 @@ import java.util.List;
 public class zako extends BaseCommand<String> {
 
     public zako() {
-        super(true, StringArgumentType.string());
+        super(true, StringArgumentType.string(), 2);
     }
 
     @Override

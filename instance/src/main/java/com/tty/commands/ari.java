@@ -10,7 +10,7 @@ import java.util.List;
 public class ari extends BaseCommand<String> {
 
     public ari() {
-        super(true, StringArgumentType.word());
+        super(true, StringArgumentType.word(), 2);
     }
 
     @Override

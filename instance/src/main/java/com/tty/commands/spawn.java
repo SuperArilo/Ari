@@ -17,7 +17,7 @@ import java.util.List;
 public class spawn extends BaseCommand<String> {
 
     public spawn() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 1);
     }
 
     @Override

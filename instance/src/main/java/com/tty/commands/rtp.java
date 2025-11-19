@@ -18,7 +18,7 @@ public class rtp extends BaseCommand<String> {
     public static final Map<Player, CommandRtp> RTP_LIST = new ConcurrentHashMap<>();
 
     public rtp() {
-        super(false, StringArgumentType.string());
+        super(false, StringArgumentType.string(), 1);
     }
 
     @Override

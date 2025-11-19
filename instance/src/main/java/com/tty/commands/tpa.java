@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class tpa extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     public tpa() {
-        super(false, ArgumentTypes.player());
+        super(false, ArgumentTypes.player(), 2);
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.tty.tool;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
-import com.tty.commands.*;
 import com.tty.dto.AliasItem;
 import com.tty.enumType.FilePath;
 import com.tty.lib.command.SuperHandsomeCommand;
@@ -26,11 +25,10 @@ public class CommandAlias {
     }
 
     public void registerAlias() {
-        Log.debug("----------register command ----------");
+        Log.debug("----------register commands ----------");
         long start = System.currentTimeMillis();
         Ari.instance.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
             Commands commands = event.registrar();
-            commands.register(new ari().toBrigadier());
             this.alias.forEach((k, v) -> {
                 if (!v.isEnable()) return;
                 Class<?> executorClass;
@@ -48,10 +46,11 @@ public class CommandAlias {
                     return;
                 }
                 if (executorInstance instanceof SuperHandsomeCommand cmd) {
-                    commands.register(cmd.toBrigadier());
+                    commands.register(cmd.toBrigadier(), v.getUsage());
+                    Log.debug("register command: " + k);
                 }
             });
-            Log.debug("register alias time: " + (System.currentTimeMillis() - start) + "ms");
+            Log.debug("register commands time: " + (System.currentTimeMillis() - start) + "ms");
         });
     }
 

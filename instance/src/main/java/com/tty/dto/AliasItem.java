@@ -7,6 +7,6 @@ import lombok.Data;
 public class AliasItem {
     @SerializedName("enable")
     private boolean enable;
-    @SerializedName("tab-complete")
-    private boolean tabComplete;
+    @SerializedName("usage")
+    private String usage;
 }

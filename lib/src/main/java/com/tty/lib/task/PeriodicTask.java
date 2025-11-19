@@ -31,6 +31,7 @@ public class PeriodicTask {
     private CancellableTask cancellableTask;
 
     public void start() {
+        Log.debug("Player Save Task: start: " + this.rate + " tick");
         this.cancellableTask = Lib.Scheduler.runAsyncAtFixedRate(this.plugin, (i) -> this.execute(), c, rate);
     }
 

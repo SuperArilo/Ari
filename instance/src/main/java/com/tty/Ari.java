@@ -53,7 +53,7 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-
+        this.printLogo();
     }
 
     @Override
@@ -94,9 +94,8 @@ public class Ari extends JavaPlugin {
                 PLAYER_LOGIN_TIMES.put(onlinePlayer.getUniqueId(), System.currentTimeMillis());
             }
         });
-        this.playerSave.start();
 
-        this.printLogo();
+        this.playerSave.start();
     }
     @Override
     public void onDisable() {
@@ -104,7 +103,11 @@ public class Ari extends JavaPlugin {
         for (Player player : onlinePlayers) {
             SavePlayerData(player, false, true);
         }
-        this.playerSave.stop();
+
+        if (this.playerSave != null) {
+            this.playerSave.stop();
+        }
+
         SQLInstance.close();
         C_INSTANCE.clearConfigs();
     }

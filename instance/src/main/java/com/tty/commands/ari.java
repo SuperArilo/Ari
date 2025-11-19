@@ -1,6 +1,7 @@
 package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.tty.commands.sub.Reload;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import org.bukkit.command.CommandSender;
@@ -31,7 +32,8 @@ public class ari extends BaseCommand<String> {
             new tpahere(),
             new tparefuse(),
             new warp(),
-            new zako()
+            new zako(),
+            new Reload(true, StringArgumentType.word(),  1)
         );
     }
 

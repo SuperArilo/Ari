@@ -35,11 +35,11 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
     @Override
     public LiteralCommandNode<CommandSourceStack> toBrigadier() {
         LiteralArgumentBuilder<CommandSourceStack> builder = Commands.literal(this.name());
-        builder.requires(Commands.restricted(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission())));
+        builder.requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()));
         builder.executes(this::baseExecute);
         if(this.getSubCommands().isEmpty()) {
             var nodeArgs = Commands.argument("args", type)
-                .requires(Commands.restricted(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission())))
+                .requires(ctx -> PermissionUtils.hasPermission(ctx.getSender(), this.permission()))
                 .executes(this::baseExecute)
                 .suggests((ctx, b) -> {
                     String input = ctx.getInput();

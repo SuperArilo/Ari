@@ -1,22 +1,17 @@
-package com.tty.commands.sub;
+package com.tty.commands.sub.zako;
 
 import com.mojang.brigadier.arguments.ArgumentType;
-import com.tty.Ari;
 import com.tty.entity.sql.WhitelistInstance;
-import com.tty.enumType.FilePath;
 import com.tty.function.WhitelistManager;
-import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class ZakoAdd extends BaseCommand<String> {
+public class ZakoAdd extends ZakoBase<String> {
 
     public ZakoAdd(boolean allowConsole, ArgumentType<String> type) {
         super(allowConsole, type, 3);
@@ -35,20 +30,9 @@ public class ZakoAdd extends BaseCommand<String> {
     @Override
     public void execute(CommandSender sender, String[] args) {
         String value = args[2];
-        AtomicReference<UUID> uuid = new AtomicReference<>(null);
-        try {
-            uuid.set(UUID.fromString(value));
-        } catch (Exception e) {
-            Log.debug("zako is not a uuid: " + uuid.get());
-        }
-        if (uuid.get() == null) {
-            try {
-                uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
-            } catch (Exception e) {
-                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.Lang));
-                return;
-            }
-        }
+        UUID uuid = this.parseUUID(value);
+        if (uuid == null) return;
+
         WhitelistInstance instance = new WhitelistInstance();
         instance.setPlayerUUID(uuid.toString());
         instance.setAddTime(System.currentTimeMillis());

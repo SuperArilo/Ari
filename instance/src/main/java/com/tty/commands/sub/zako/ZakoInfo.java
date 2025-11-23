@@ -1,10 +1,9 @@
-package com.tty.commands.sub;
+package com.tty.commands.sub.zako;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.ConfigDataService;
@@ -20,9 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class ZakoInfo extends BaseCommand<String> {
+public class ZakoInfo extends ZakoBase<String> {
 
     public ZakoInfo(boolean allowConsole, ArgumentType<String> type) {
         super(allowConsole, type, 3);
@@ -41,23 +39,11 @@ public class ZakoInfo extends BaseCommand<String> {
     @Override
     public void execute(CommandSender sender, String[] args) {
         String value = args[2];
-        AtomicReference<UUID> uuid = new AtomicReference<>(null);
-        try {
-            uuid.set(UUID.fromString(value));
-        } catch (Exception e) {
-            Log.debug("zako is not a uuid: " + uuid.get());
-        }
-        if (uuid.get() == null) {
-            try {
-                uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
-            } catch (Exception e) {
-                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.Lang));
-                return;
-            }
-        }
+        UUID uuid = this.parseUUID(value);
+        if (uuid == null) return;
 
         PlayerManager manager = new PlayerManager(true);
-        manager.getInstance(uuid.get().toString())
+        manager.getInstance(uuid.toString())
             .thenAccept(instance -> {
                 if(instance == null) {
                     sender.sendMessage(ConfigUtils.t("function.zako.not-exist"));

@@ -1,9 +1,9 @@
 package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.tty.commands.sub.ZakoAdd;
-import com.tty.commands.sub.ZakoInfo;
-import com.tty.commands.sub.ZakoRemove;
+import com.tty.commands.sub.zako.ZakoAdd;
+import com.tty.commands.sub.zako.ZakoInfo;
+import com.tty.commands.sub.zako.ZakoRemove;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import org.bukkit.command.CommandSender;

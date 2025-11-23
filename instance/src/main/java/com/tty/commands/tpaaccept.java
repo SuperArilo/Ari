@@ -3,9 +3,12 @@ package com.tty.commands;
 import com.tty.Ari;
 import com.tty.commands.check.TeleportCheck;
 import com.tty.commands.function.CommandTeleport;
+import com.tty.entity.state.State;
+import com.tty.entity.state.teleport.PlayerToPlayerState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.TeleportType;
+import com.tty.tool.ConfigUtils;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.command.CommandSender;
@@ -40,7 +43,19 @@ public class tpaaccept extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        new CommandTeleport((Player) sender, args[1]).tpaaccept();
+        Player player = (Player) sender;
+        Player target = Ari.instance.getServer().getPlayerExact(args[1]);
+
+        PlayerToPlayerState anElse = (PlayerToPlayerState) Ari.instance.preTeleportStateMachine
+                .getStates(target)
+                .stream()
+                .filter(i -> i instanceof PlayerToPlayerState state && state.getTarget().equals(player)).findFirst().orElse(null);
+
+        if (anElse == null) {
+            player.sendMessage(ConfigUtils.t("function.tpa.been-done"));
+            return;
+        }
+        player.sendMessage(ConfigUtils.t("function.tpa.agree"));
     }
 
     @Override

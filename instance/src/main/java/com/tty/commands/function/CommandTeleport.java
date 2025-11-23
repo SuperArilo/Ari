@@ -22,12 +22,7 @@ public class CommandTeleport extends TeleportCheck  {
         this.sender = sender;
         this.playerName = playerName;
     }
-
-    public void tpa() {
-        if(!preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.preCheckStatus(this.sender, Bukkit.getPlayerExact(this.playerName), "tpa");
-    }
-
+    
     public void tpaaccept() {
         if(!preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);

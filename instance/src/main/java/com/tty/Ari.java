@@ -22,6 +22,7 @@ import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
+import com.tty.states.PreTeleportStateMachine;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.milkbowl.vault.economy.Economy;
@@ -53,6 +54,8 @@ public class Ari extends JavaPlugin {
     public PeriodicTask playerSave;
     public ConfigDataService dataService;
 
+    public PreTeleportStateMachine preTeleportStateMachine;
+
     @Override
     public void onLoad() {
         instance = this;
@@ -68,6 +71,8 @@ public class Ari extends JavaPlugin {
         PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
         PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
+
+        this.registerStateMachine();
 
         this.registerListener();
         CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.CommandAlias.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
@@ -111,6 +116,10 @@ public class Ari extends JavaPlugin {
 
         SQLInstance.close();
         C_INSTANCE.clearConfigs();
+    }
+
+    private void registerStateMachine() {
+        this.preTeleportStateMachine = new PreTeleportStateMachine(10L, 1L, true, this);
     }
 
     private void registerListener() {

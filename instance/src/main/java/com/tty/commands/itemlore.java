@@ -1,8 +1,8 @@
 package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
-import com.tty.commands.sub.ItemLoreAdd;
-import com.tty.commands.sub.ItemLoreRemove;
+import com.tty.commands.sub.itemlore.ItemLoreAdd;
+import com.tty.commands.sub.itemlore.ItemLoreRemove;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import org.bukkit.command.CommandSender;

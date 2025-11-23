@@ -25,7 +25,7 @@ public class itemname extends BaseCommand<String> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        return List.of("<name (string)>");
+        return List.of("<\"name\" (string)>");
     }
 
     @Override

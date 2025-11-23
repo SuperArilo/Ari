@@ -27,7 +27,7 @@ public class ItemLoreAdd extends BaseCommand<String> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        return List.of("<row (string)>");
+        return List.of("<\"content\" (string)>");
     }
 
     @Override

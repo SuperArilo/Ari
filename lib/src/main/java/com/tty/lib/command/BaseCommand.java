@@ -83,7 +83,15 @@ public abstract class BaseCommand<T> implements SuperHandsomeCommand {
             sender.sendMessage(LibConfigUtils.t("function.public.fail"));
             return SINGLE_SUCCESS;
         }
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (arg.startsWith("\"") && arg.endsWith("\"") && arg.length() >= 2) {
+                args[i] = arg.substring(1, arg.length() - 1);
+            }
+        }
         this.execute(sender, args);
+
         return SINGLE_SUCCESS;
     }
+
 }

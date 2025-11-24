@@ -23,6 +23,7 @@ import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
 import com.tty.states.PreTeleportStateMachine;
+import com.tty.states.TeleportingStateMachine;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.milkbowl.vault.economy.Economy;
@@ -55,6 +56,7 @@ public class Ari extends JavaPlugin {
     public ConfigDataService dataService;
 
     public PreTeleportStateMachine preTeleportStateMachine;
+    public TeleportingStateMachine teleportingStateMachine;
 
     @Override
     public void onLoad() {
@@ -119,7 +121,8 @@ public class Ari extends JavaPlugin {
     }
 
     private void registerStateMachine() {
-        this.preTeleportStateMachine = new PreTeleportStateMachine(10L, 1L, true, this);
+        this.preTeleportStateMachine = new PreTeleportStateMachine(20L, 1L, true, this);
+        this.teleportingStateMachine = new TeleportingStateMachine(20L, 1L, true, this);
     }
 
     private void registerListener() {

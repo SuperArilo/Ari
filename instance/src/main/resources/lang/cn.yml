@@ -33,13 +33,13 @@ teleport:
   title:
     main: '请不要移动...'
     sub-title: '&6[TeleportDelay]'
-  ing: '传送过程中！请不要移动...'
   success: '传送成功！'
   break: '&4传送过程中被阻断或者取消'
   unable-player: '该玩家离线或者不存在！'
   cooling: '传送冷却中...'
   none-location: '没有上一个保存的位置'
   costed: '本次传送花费了 [Costed]'
+  has-teleport: '你有一个传送正在进行中'
   again: '你已经发起过传送请求了，请等待一段时间再重试。'
   tips-back: '&b上次死亡的地点: [DeathLocation] &7/back返回或者点击此消息'
 function:

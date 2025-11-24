@@ -2,9 +2,8 @@ package com.tty.commands;
 
 import com.tty.Ari;
 import com.tty.commands.check.TeleportCheck;
-import com.tty.commands.function.CommandTeleport;
-import com.tty.entity.state.State;
 import com.tty.entity.state.teleport.PlayerToPlayerState;
+import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.TeleportType;
@@ -55,7 +54,19 @@ public class tpaaccept extends BaseCommand<PlayerSelectorArgumentResolver> {
             player.sendMessage(ConfigUtils.t("function.tpa.been-done"));
             return;
         }
+
         player.sendMessage(ConfigUtils.t("function.tpa.agree"));
+
+        Integer value = Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
+
+        PlayerToPlayerState state;
+        if (anElse.getCommand().equals("tpa")) {
+            state = new PlayerToPlayerState(target, player, value, "tpa");
+        } else {
+            state = new PlayerToPlayerState(player, target, value, "tpahere");
+        }
+
+        Ari.instance.teleportingStateMachine.addState(state);
     }
 
     @Override

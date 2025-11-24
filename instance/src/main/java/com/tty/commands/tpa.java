@@ -37,7 +37,7 @@ public class tpa extends BaseCommand<PlayerSelectorArgumentResolver> {
         Player owner = (Player) sender;
         Player player = Ari.instance.getServer().getPlayerExact(args[1]);
 
-        Ari.instance.preTeleportStateMachine.addState(new PlayerToPlayerState(owner, player, 10, "tpa"));
+        Ari.instance.preTeleportStateMachine.addState(new PlayerToPlayerState(owner, player, 10, this.name()));
     }
 
     @Override

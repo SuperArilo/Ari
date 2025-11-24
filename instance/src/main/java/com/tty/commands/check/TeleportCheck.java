@@ -2,13 +2,9 @@ package com.tty.commands.check;
 
 import com.tty.Ari;
 import com.tty.dto.TeleportStatus;
-import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
-import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TeleportType;
-import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,26 +17,6 @@ public class TeleportCheck {
 
     public static final List<TeleportStatus> TELEPORT_STATUS = new ArrayList<>();
 
-    /**
-     * 检查是否已经向目标玩家发送过传送请求
-     * @param player 被传送玩家
-     * @param targetPlayer 目标玩家
-     */
-    public static void preCheckStatus(Player player, Player targetPlayer, String commandString) {
-        if (checkHaveTeleportStatus(player, targetPlayer) != null) {
-            player.sendMessage(ConfigUtils.t("function.tpa.again", LangType.TPABESENDER.getType(), targetPlayer.getName()));
-            return;
-        }
-        player.sendMessage(ConfigUtils.t("function.tpa.send-message"));
-        addTeleportStatusTask(player, targetPlayer, commandString, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.TPA, Long.class, 10L) * 20);
-        String message = Ari.C_INSTANCE.getValue("function.tpa." + (commandString.equals("tpa") ? "to-message":"here-message"), FilePath.Lang);
-        targetPlayer.sendMessage(
-                ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), player.getName()))
-                        .appendNewline()
-                        .append(ComponentUtils.setClickEventText(Ari.C_INSTANCE.getValue("function.public.agree", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tpaaccept " + player.getName()))
-                        .append(ConfigUtils.t("function.public.center"))
-                        .append(ComponentUtils.setClickEventText(Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.Lang), ClickEvent.Action.RUN_COMMAND, "/ari tparefuse " + player.getName())));
-    }
     /**
      * 检查被传送玩家是否已经发起过传送请求
      * @param player 被传送玩家
@@ -88,17 +64,7 @@ public class TeleportCheck {
                 .findFirst()
                 .orElse(null);
     }
-    /**
-     * 添加玩家传送到玩家的状态
-     * @param player       被传送玩家
-     * @param targetPlayer 接收玩家
-     * @param delay 传送冷却
-     */
-    private static void addTeleportStatusTask(Player player, Player targetPlayer, String commandString, long delay) {
-        TeleportStatus build = TeleportStatus.build(player.getUniqueId(), targetPlayer.getUniqueId(), TeleportType.PLAYER, commandString);
-        TELEPORT_STATUS.add(build);
-        Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> remove(player, null,TeleportType.PLAYER), delay);
-    }
+
     /**
      * 添加玩家传送到玩家的状态
      * @param player 被传送玩家

@@ -38,6 +38,10 @@ public class PreTeleportStateMachine extends StateMachine {
             return false;
         }
 
+        if (!Ari.instance.teleportingStateMachine.getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
+            return false;
+        }
         // 检查是否存在相同目标的状态（排除自己）
         boolean hasDuplicate = this.getStates(owner).stream()
                 .filter(i -> i instanceof PlayerToPlayerState)
@@ -64,7 +68,7 @@ public class PreTeleportStateMachine extends StateMachine {
 
     @Override
     public void addState(State state) {
-        if (!condition(state)) return;
+        if (!this.condition(state)) return;
 
         super.addState(state);
 

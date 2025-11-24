@@ -1,6 +1,7 @@
 package com.tty.commands;
 
-import com.tty.commands.function.CommandTeleport;
+import com.tty.Ari;
+import com.tty.entity.state.teleport.PlayerToPlayerState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
@@ -33,7 +34,10 @@ public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        new CommandTeleport((Player) sender, args[1]).tpahere();
+        Player owner = (Player) sender;
+        Player player = Ari.instance.getServer().getPlayerExact(args[1]);
+
+        Ari.instance.preTeleportStateMachine.addState(new PlayerToPlayerState(player, owner, 10, this.name()));
     }
 
     @Override

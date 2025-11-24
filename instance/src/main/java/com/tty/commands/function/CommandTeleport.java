@@ -22,7 +22,7 @@ public class CommandTeleport extends TeleportCheck  {
         this.sender = sender;
         this.playerName = playerName;
     }
-    
+
     public void tpaaccept() {
         if(!preCheck(this.sender, this.playerName)) return;
         Player player = Bukkit.getPlayerExact(this.playerName);
@@ -67,10 +67,4 @@ public class CommandTeleport extends TeleportCheck  {
             }
         }
     }
-
-    public void tpahere() {
-        if(!preCheck(this.sender, this.playerName)) return;
-        TeleportCheck.preCheckStatus(this.sender, Bukkit.getPlayerExact(this.playerName), "tpahere");
-    }
-
 }

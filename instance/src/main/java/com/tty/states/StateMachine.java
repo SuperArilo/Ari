@@ -5,12 +5,11 @@ import com.tty.lib.Lib;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.Log;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class StateMachine {
@@ -53,20 +52,22 @@ public abstract class StateMachine {
     private void execute(CancellableTask task) {
         if (STATE_LIST.isEmpty()) return;
 
-        Iterator<State> iterator = this.STATE_LIST.iterator();
-        Log.debug("STATE_LIST: " + this.STATE_LIST.size());
-        while (iterator.hasNext()) {
-            State state = iterator.next();
-            if (!condition(state)) {
-                iterator.remove();
-                onFail(state);
-            } else {
-                state.increment();
-                if (state.isDone()) {
-                    iterator.remove();
-                    onSuccess(state);
+        List<State> toRemove = new ArrayList<>();
+        synchronized (STATE_LIST) {
+            for (State state : STATE_LIST) {
+                if (!condition(state)) {
+                    toRemove.add(state);
+                    onFail(state);
+                } else {
+                    state.increment();
+                    if (state.isDone()) {
+                        toRemove.add(state);
+                        onSuccess(state);
+                    }
                 }
             }
+            STATE_LIST.removeAll(toRemove);
+            Log.debug("STATE_LIST: " + this.STATE_LIST.size());
         }
     }
 
@@ -80,7 +81,7 @@ public abstract class StateMachine {
         this.STATE_LIST.add(state);
     }
 
-    public List<State> getStates(Player owner) {
+    public List<State> getStates(Entity owner) {
         return this.STATE_LIST.stream().filter(i -> i.getOwner().equals(owner)).toList();
     }
 

@@ -3,15 +3,16 @@ package com.tty.listener.home;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
-import com.tty.enumType.FilePath;
+import com.tty.entity.state.teleport.EntityToLocationState;
 import com.tty.enumType.GuiType;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
-import com.tty.function.Teleport;
 import com.tty.lib.enum_type.FunctionType;
+import com.tty.enumType.TeleportType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.listener.BaseGuiListener;
+import com.tty.states.TeleportStateMachine;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -50,10 +51,13 @@ public class HomeListListener extends BaseGuiListener {
                 ServerHome home = first.get();
                 ClickType click = event.getClick();
                 if (click.equals(ClickType.LEFT)) {
-                    Teleport.create(
-                            player,
-                            FormatUtils.parseLocation(home.getLocation()),
-                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3)).teleport();
+                    Ari.instance.stateMachineManager
+                            .get(TeleportStateMachine.class)
+                            .addState(new EntityToLocationState(
+                                    player,
+                                    TeleportType.getDelayTime(TeleportType.HOME),
+                                    FormatUtils.parseLocation(home.getLocation()),
+                                    TeleportType.HOME));
                 } else if (click.equals(ClickType.RIGHT)) {
                     Lib.Scheduler.run(Ari.instance, p -> {
                         inventory.close();

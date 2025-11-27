@@ -2,19 +2,18 @@ package com.tty.entity.state.teleport;
 
 import com.tty.entity.state.State;
 import lombok.Getter;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
-public class PlayerToPlayerState extends State {
+public class PreEntityToEntityState extends State {
 
     @Getter
-    private final Player target;
+    private final Entity target;
     @Getter
     private final String command;
 
-    public PlayerToPlayerState(Player owner, Player target, int max_count, String command) {
+    public PreEntityToEntityState(Entity owner, Entity target, int max_count, String command) {
         super(owner, max_count);
         this.target = target;
         this.command = command;
     }
-
 }

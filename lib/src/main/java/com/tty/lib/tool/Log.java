@@ -1,48 +1,64 @@
 package com.tty.lib.tool;
 
-
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Log {
 
     private static boolean DEBUG;
+    private static volatile Logger logger;
+    private static final String PREFIX_DEBUG = "[DEBUG] ";
 
-    private static final AtomicReference<Logger> LOGGER = new AtomicReference<>();
-    private static final String st = "[DEBUG] ";
-    public static void info(String s) {
-        getLogger().info(s);
+    public static void initLogger(Logger log, boolean debugEnabled) {
+        logger = log;
+        DEBUG = debugEnabled;
     }
-    public static void warning(String s) {
-        getLogger().warning(s);
+
+    public static void info(String msg) {
+        logger.info(format(msg));
     }
-    public static void error(String s) {
-        getLogger().log(Level.SEVERE, s);
+
+    public static void warning(String msg) {
+        logger.warning(format(msg));
     }
-    public static void error(String s, Throwable throwable) {
-        getLogger().log(Level.SEVERE, s, throwable);
+
+    public static void error(String msg) {
+        logger.severe(format(msg));
     }
-    public static void debug(Level level, String s) {
-        if(DEBUG) {
-            getLogger().log(level, st + s);
+
+    public static void error(String msg, Throwable throwable) {
+        logger.log(Level.SEVERE, format(msg), throwable);
+    }
+
+    public static void debug(String msg) {
+        if (DEBUG) {
+            logger.info(PREFIX_DEBUG + format(msg));
         }
     }
-    public static void debug(Level level, String s, Throwable throwable) {
-        if(DEBUG) {
-            getLogger().log(level,st + s, throwable);
+
+    public static void debug(Level level, String msg) {
+        if (DEBUG) {
+            logger.log(level, PREFIX_DEBUG + format(msg));
         }
     }
-    public static void debug(String s) {
-        if(DEBUG) {
-            getLogger().log(Level.INFO, st + s);
+
+    public static void debug(Level level, String msg, Throwable throwable) {
+        if (DEBUG) {
+            logger.log(level, PREFIX_DEBUG + format(msg), throwable);
         }
     }
-    public static void initLogger(Logger logger, boolean d) {
-        LOGGER.set(logger);
-        DEBUG = d;
+
+    private static String format(String msg) {
+        return "[" + getCallerClassName() + "] " + msg;
     }
-    private static Logger getLogger() {
-        return LOGGER.get();
+
+    private static String getCallerClassName() {
+        StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+        if (stack.length > 4) {
+            String full = stack[4].getClassName();
+            int lastDot = full.lastIndexOf('.');
+            return lastDot == -1 ? full : full.substring(lastDot + 1);
+        }
+        return "Unknown";
     }
 }

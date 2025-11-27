@@ -1,19 +1,19 @@
 package com.tty.commands;
 
 import com.tty.Ari;
-import com.tty.entity.state.teleport.PlayerToPlayerState;
-import com.tty.lib.command.BaseCommand;
+import com.tty.commands.sub.tpa.TpaBase;
+import com.tty.entity.state.teleport.PreEntityToEntityState;
+import com.tty.enumType.TeleportType;
 import com.tty.lib.command.SuperHandsomeCommand;
+import com.tty.states.PreTeleportStateMachine;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
+public class tpahere extends TpaBase<PlayerSelectorArgumentResolver> {
 
     public tpahere() {
         super(false, ArgumentTypes.player(), 2);
@@ -26,10 +26,7 @@ public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        return Bukkit.getOnlinePlayers().stream()
-                .map(Player::getName)
-                .filter(name -> !name.equals(sender.getName()))
-                .collect(Collectors.toList());
+        return this.getOnlinePlayers(sender);
     }
 
     @Override
@@ -37,7 +34,13 @@ public class tpahere extends BaseCommand<PlayerSelectorArgumentResolver> {
         Player owner = (Player) sender;
         Player player = Ari.instance.getServer().getPlayerExact(args[1]);
 
-        Ari.instance.preTeleportStateMachine.addState(new PlayerToPlayerState(player, owner, 10, this.name()));
+        Ari.instance.stateMachineManager
+                .get(PreTeleportStateMachine.class)
+                .addState(new PreEntityToEntityState(
+                        owner,
+                        player,
+                        TeleportType.getCoolDownTime(TeleportType.TPA),
+                        this.name()));
     }
 
     @Override

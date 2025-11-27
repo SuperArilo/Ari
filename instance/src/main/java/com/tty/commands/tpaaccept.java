@@ -1,12 +1,12 @@
 package com.tty.commands;
 
 import com.tty.Ari;
-import com.tty.commands.check.TeleportCheck;
-import com.tty.entity.state.teleport.PlayerToPlayerState;
-import com.tty.enumType.FilePath;
-import com.tty.lib.command.BaseCommand;
+import com.tty.commands.sub.tpa.TpaBase;
+import com.tty.entity.state.teleport.EntityToEntityState;
+import com.tty.entity.state.teleport.PreEntityToEntityState;
+import com.tty.enumType.TeleportType;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.lib.enum_type.TeleportType;
+import com.tty.states.TeleportStateMachine;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
@@ -14,10 +14,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class tpaaccept extends BaseCommand<PlayerSelectorArgumentResolver> {
+public class tpaaccept extends TpaBase<PlayerSelectorArgumentResolver> {
 
     public tpaaccept() {
         super(false, ArgumentTypes.player(), 2);
@@ -30,14 +28,7 @@ public class tpaaccept extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        return TeleportCheck.TELEPORT_STATUS.stream()
-                .filter(obj -> obj.getBePlayerUUID().equals(player.getUniqueId())
-                        && obj.getType().equals(TeleportType.PLAYER))
-                .map(e -> Ari.instance.getServer().getPlayer(e.getPlayUUID()))
-                .filter(Objects::nonNull)
-                .map(Player::getName)
-                .collect(Collectors.toList());
+        return this.getResponseList(sender);
     }
 
     @Override
@@ -45,28 +36,21 @@ public class tpaaccept extends BaseCommand<PlayerSelectorArgumentResolver> {
         Player player = (Player) sender;
         Player target = Ari.instance.getServer().getPlayerExact(args[1]);
 
-        PlayerToPlayerState anElse = (PlayerToPlayerState) Ari.instance.preTeleportStateMachine
-                .getStates(target)
-                .stream()
-                .filter(i -> i instanceof PlayerToPlayerState state && state.getTarget().equals(player)).findFirst().orElse(null);
+        PreEntityToEntityState anElse = this.checkAfterResponse(player, target);
+        if (anElse == null) return;
 
-        if (anElse == null) {
-            player.sendMessage(ConfigUtils.t("function.tpa.been-done"));
-            return;
-        }
-
-        player.sendMessage(ConfigUtils.t("function.tpa.agree"));
-
-        Integer value = Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3);
-
-        PlayerToPlayerState state;
+        assert target != null;
+        int value = TeleportType.getDelayTime(TeleportType.TPA);
+        EntityToEntityState state;
         if (anElse.getCommand().equals("tpa")) {
-            state = new PlayerToPlayerState(target, player, value, "tpa");
+            state = new EntityToEntityState(target, player, value, "tpa");
         } else {
-            state = new PlayerToPlayerState(player, target, value, "tpahere");
+            state = new EntityToEntityState(player, target, value, "tpahere");
         }
 
-        Ari.instance.teleportingStateMachine.addState(state);
+        //添加传送请求
+        Ari.instance.stateMachineManager.get(TeleportStateMachine.class).addState(state);
+        player.sendMessage(ConfigUtils.t("function.tpa.agree"));
     }
 
     @Override

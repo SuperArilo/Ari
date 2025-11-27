@@ -38,6 +38,7 @@ public class Teleporting {
         this.aborted = runnable;
         return this;
     }
+
     public Teleporting before(Consumer<Teleporting> consumer) {
         this.before = consumer;
         return this;
@@ -47,15 +48,15 @@ public class Teleporting {
         this.after = runnable;
     }
 
-    public void teleport() {
+    public Teleporting teleport() {
         if (this.before != null) {
             this.before.accept(this);
         }
         if (!this.status) {
             this.aborted.run();
-            return;
+            return this;
         }
-        Lib.Scheduler.runAtRegionLater(Ari.instance, this.targetLocation, i -> {
+        Lib.Scheduler.runAtRegion(Ari.instance, this.targetLocation, i -> {
             for (int y = 0;y <= this.targetLocation.getWorld().getMaxHeight();y++) {
                 if (this.targetLocation.clone().add(0, y, 0).getBlock().isEmpty()) {
                     this.targetLocation.add(0, y, 0);
@@ -74,7 +75,8 @@ public class Teleporting {
                         this.after.run();
                         this.entity.sendMessage(ConfigUtils.t(p ? "teleport.success":"function.tpa.error"));
                     });
-        }, 20L);
+        });
+        return this;
     }
 
     public void cancel() {

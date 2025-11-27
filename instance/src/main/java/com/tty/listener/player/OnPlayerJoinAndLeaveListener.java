@@ -5,7 +5,7 @@ import com.tty.entity.sql.ServerPlayer;
 import com.tty.entity.sql.WhitelistInstance;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
-import com.tty.function.Teleport;
+import com.tty.function.Teleporting;
 import com.tty.function.WhitelistManager;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
@@ -90,7 +90,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                                 Ari.C_INSTANCE.getValue("main.enable", FilePath.SpawnConfig, Boolean.class, false)) {
                             Location value = Ari.C_INSTANCE.getValue("main.location", FilePath.SpawnConfig, Location.class);
                             if (value != null) {
-                                Teleport.create(player, value, 0).teleport();
+                                Teleporting.create(player, value).teleport();
                             }
                         }
                         if(first) {

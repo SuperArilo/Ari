@@ -2,11 +2,11 @@ package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
-import com.tty.commands.check.TeleportCheck;
-import com.tty.enumType.FilePath;
-import com.tty.function.Teleport;
+import com.tty.entity.state.teleport.EntityToLocationState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
+import com.tty.enumType.TeleportType;
+import com.tty.states.TeleportStateMachine;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -40,13 +40,14 @@ public class back extends BaseCommand<String> {
             player.sendMessage(ConfigUtils.t("teleport.none-location"));
             return;
         }
-        if(TeleportCheck.preCheckStatus(player, beforeLocation, 60L) || sender.isOp()) {
-            Teleport.create(
-                            player,
-                            beforeLocation,
-                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA, Integer.class, 3))
-                    .teleport();
-        }
+
+        Ari.instance.stateMachineManager
+                .get(TeleportStateMachine.class)
+                .addState(new EntityToLocationState(
+                        player,
+                        TeleportType.getDelayTime(TeleportType.BACK),
+                        beforeLocation,
+                        TeleportType.BACK));
     }
 
     @Override

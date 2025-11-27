@@ -1,7 +1,6 @@
 package com.tty;
 
 import com.google.gson.reflect.TypeToken;
-import com.tty.commands.function.CommandRtp;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
@@ -22,8 +21,7 @@ import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
-import com.tty.states.PreTeleportStateMachine;
-import com.tty.states.TeleportingStateMachine;
+import com.tty.states.*;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.milkbowl.vault.economy.Economy;
@@ -55,8 +53,7 @@ public class Ari extends JavaPlugin {
     public PeriodicTask playerSave;
     public ConfigDataService dataService;
 
-    public PreTeleportStateMachine preTeleportStateMachine;
-    public TeleportingStateMachine teleportingStateMachine;
+    public StateMachineManager stateMachineManager;
 
     @Override
     public void onLoad() {
@@ -74,7 +71,8 @@ public class Ari extends JavaPlugin {
         PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
         PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
 
-        this.registerStateMachine();
+        this.stateMachineManager = new StateMachineManager(this);
+        this.stateMachineManager.initDefaultStateMachines();
 
         this.registerListener();
         CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.CommandAlias.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
@@ -87,7 +85,7 @@ public class Ari extends JavaPlugin {
         this.sqlInstance.start();
 
         //初始化rtp
-        CommandRtp.setRtpWorldConfig();
+        RandomTpStateMachine.setRtpWorldConfig();
 
         //玩家信息保存
         this.playerSave = new PeriodicTask(
@@ -118,11 +116,7 @@ public class Ari extends JavaPlugin {
 
         SQLInstance.close();
         C_INSTANCE.clearConfigs();
-    }
-
-    private void registerStateMachine() {
-        this.preTeleportStateMachine = new PreTeleportStateMachine(20L, 1L, true, this);
-        this.teleportingStateMachine = new TeleportingStateMachine(20L, 1L, true, this);
+        this.stateMachineManager.forEach(StateMachine::abort);
     }
 
     private void registerListener() {

@@ -10,40 +10,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.CompletableFuture;
 
-public class SearchSafeLocation {
+public record SearchSafeLocation(JavaPlugin plugin) {
 
-    private final JavaPlugin plugin;
-    private final World world;
-    private final int x;
-    private final int z;
-
-    public SearchSafeLocation(JavaPlugin plugin, World world, int x, int z) {
-        this.plugin = plugin;
-        this.world = world;
-        this.x = x;
-        this.z = z;
-    }
-
-    public CompletableFuture<Location> search() {
+    public CompletableFuture<Location> search(World world, int x, int z) {
         CompletableFuture<Location> future = new CompletableFuture<>();
         final long l = System.currentTimeMillis();
 
-        int chunkX = this.x >> 4;
-        int chunkZ = this.z >> 4;
-        int relativeX = this.x & 0xF;
-        int relativeZ = this.z & 0xF;
+        int chunkX = x >> 4;
+        int chunkZ = z >> 4;
+        int relativeX = x & 0xF;
+        int relativeZ = z & 0xF;
 
-        boolean isNether = this.world.getEnvironment().equals(World.Environment.NETHER);
+        boolean isNether = world.getEnvironment().equals(World.Environment.NETHER);
 
-        this.world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
+        world.getChunkAtAsync(chunkX, chunkZ).thenAccept(chunk -> {
             int highestBlockYAt = isNether ?
-                    this.getHighestBlockYAtNether(chunk, relativeX, relativeZ):
+                    this.getHighestBlockYAtNether(world, chunk, relativeX, relativeZ) :
                     chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
-            Lib.Scheduler.runAtRegion(plugin, this.world, chunkX, chunkZ, i -> {
+            Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
                 if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
                     Log.debug("random location " + x + ", " + highestBlockYAt + ", " + z);
-                    Location targetLocation = new Location(this.world, x + 0.5, highestBlockYAt + 1, z + 0.5);
-                    if(!future.isDone()) {
+                    Location targetLocation = new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5);
+                    if (!future.isDone()) {
                         future.complete(targetLocation);
                     }
                     Log.debug("search time: " + (System.currentTimeMillis() - l) + "ms");
@@ -54,17 +42,17 @@ public class SearchSafeLocation {
         }).exceptionally(i -> {
             Log.error("SearchSafeLocation: search error", i);
             future.completeExceptionally(i);
-           return null;
+            return null;
         });
         return future;
     }
 
     //下界特殊处理
-    private int getHighestBlockYAtNether(Chunk chunk, int chunkX, int chunkZ) {
-        final int minHeight = this.world.getMinHeight();
+    private int getHighestBlockYAtNether(World world, Chunk chunk, int chunkX, int chunkZ) {
+        final int minHeight = world.getMinHeight();
 
         int value = 0;
-        for (int y = 80;y >= minHeight;y--) {
+        for (int y = 80; y >= minHeight; y--) {
             Block block = chunk.getBlock(chunkX, y, chunkZ);
             if (block.isLiquid()) break;
             if (block.isEmpty() || block.isPassable()) continue;

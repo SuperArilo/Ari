@@ -1,12 +1,12 @@
 package com.tty.entity.state;
 
 import lombok.Data;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 
 @Data
 public class State {
 
-    private Player owner;
+    private Entity owner;
     /**
      * 基础计数
      */
@@ -16,7 +16,7 @@ public class State {
      */
     private int max_count;
 
-    public State(Player owner, int max_count) {
+    public State(Entity owner, int max_count) {
         this.owner = owner;
         this.max_count = max_count;
     }

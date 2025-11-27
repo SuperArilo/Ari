@@ -5,7 +5,6 @@ import com.tty.lib.enum_type.FilePathEnum;
 
 public enum FilePath implements FilePathEnum {
     Lang("lang/[lang].yml"),
-    TPA("module/tpa/setting.yml"),
     CommandAlias("module/command-alias.yml"),
     HomeList("module/home/home-gui.yml"),
     HomeConfig("module/home/setting.yml"),

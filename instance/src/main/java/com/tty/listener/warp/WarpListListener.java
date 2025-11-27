@@ -2,22 +2,22 @@ package com.tty.listener.warp;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
+import com.tty.entity.state.teleport.EntityToLocationCallbackState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
-import com.tty.commands.check.TeleportCheck;
-import com.tty.function.Teleport;
 import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
-import com.tty.lib.enum_type.TeleportType;
+import com.tty.enumType.TeleportType;
 import com.tty.lib.tool.EconomyUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;
 import com.tty.listener.BaseGuiListener;
+import com.tty.states.TeleportStateMachine;
 import com.tty.tool.*;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -67,42 +67,40 @@ public class WarpListListener extends BaseGuiListener {
                     ClickType eventClick = event.getClick();
                     switch (eventClick) {
                         case LEFT -> {
-                            String permission = instance.getPermission();
-                            if(permission != null && !permission.isEmpty()) {
-                                boolean hasPermission = PermissionUtils.hasPermission(player, permission);
-                                if (!hasPermission && !isOwner) {
-                                    player.sendMessage(ConfigUtils.t("function.warp.no-permission-teleport"));
-                                    return;
-                                }
-                            }
                             Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
-                            Teleport.create(player,
+                            Ari.instance.stateMachineManager
+                                    .get(TeleportStateMachine.class)
+                                    .addState(new EntityToLocationCallbackState(
+                                            player,
+                                            TeleportType.getDelayTime(TeleportType.WARP),
                                             targetLocation,
-                                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.WarpConfig, Integer.class, 3))
-                                    .before(t -> {
-                                        if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner &&
-                                                Ari.C_INSTANCE.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
-                                            player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
-                                            t.cancel();
-                                            return;
-                                        }
-                                        if(!TeleportCheck.preCheckStatus(player, targetLocation, 200L)) {
-                                            t.cancel();
-                                        }
-                                    })
-                                    .aborted(() -> TeleportCheck.remove(player, targetLocation,TeleportType.POINT))
-                                    .teleport()
-                                    .after(() -> {
-                                        //判断是否是地标拥有者或者是不是op，如果是则不扣
-                                        if(!isOwner &&
-                                                !player.isOp() &&
-                                                Ari.C_INSTANCE.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
-                                                !EconomyUtils.isNull()) {
-                                            EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                            player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
-                                        }
-                                        TeleportCheck.remove(player, targetLocation, TeleportType.POINT);
-                                    });
+                                            () -> {
+                                                String permission = instance.getPermission();
+                                                if(permission != null && !permission.isEmpty()) {
+                                                    boolean hasPermission = PermissionUtils.hasPermission(player, permission);
+                                                    if (!hasPermission && !isOwner) {
+                                                        player.sendMessage(ConfigUtils.t("function.warp.no-permission-teleport"));
+                                                        return false;
+                                                    }
+                                                }
+                                                if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner &&
+                                                        Ari.C_INSTANCE.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
+                                                    player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
+                                                    return false;
+                                                }
+                                                return true;
+                                            },
+                                            () -> {
+                                                //判断是否是地标拥有者或者是不是op，如果是则不扣
+                                                if(!isOwner &&
+                                                        !player.isOp() &&
+                                                        Ari.C_INSTANCE.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
+                                                        !EconomyUtils.isNull()) {
+                                                    EconomyUtils.withdrawPlayer(player, instance.getCost());
+                                                    player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
+                                                }
+                                            },
+                                            TeleportType.WARP));
                             Lib.Scheduler.run(Ari.instance, i -> inventory.close());
                         }
                         case RIGHT -> {

@@ -1,6 +1,6 @@
 package com.tty.dto;
 
-import com.tty.lib.enum_type.TeleportType;
+import com.tty.enumType.TeleportType;
 import lombok.Data;
 import org.bukkit.Location;
 

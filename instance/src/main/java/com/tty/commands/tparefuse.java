@@ -1,21 +1,18 @@
 package com.tty.commands;
 
-import com.tty.Ari;
-import com.tty.commands.check.TeleportCheck;
-import com.tty.commands.function.CommandTeleport;
-import com.tty.lib.command.BaseCommand;
+import com.tty.commands.sub.tpa.TpaBase;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.lib.enum_type.TeleportType;
+import com.tty.lib.enum_type.LangType;
+import com.tty.tool.ConfigUtils;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
-public class tparefuse extends BaseCommand<PlayerSelectorArgumentResolver> {
+public class tparefuse extends TpaBase<PlayerSelectorArgumentResolver> {
 
     public tparefuse() {
         super(false, ArgumentTypes.player(), 2);
@@ -28,19 +25,18 @@ public class tparefuse extends BaseCommand<PlayerSelectorArgumentResolver> {
 
     @Override
     public List<String> tabSuggestions(CommandSender sender, String[] args) {
-        Player player = (Player) sender;
-        return TeleportCheck.TELEPORT_STATUS.stream()
-                .filter(obj -> obj.getBePlayerUUID().equals(player.getUniqueId())
-                        && obj.getType().equals(TeleportType.PLAYER))
-                .map(e -> Ari.instance.getServer().getPlayer(e.getPlayUUID()))
-                .filter(Objects::nonNull)
-                .map(Player::getName)
-                .collect(Collectors.toList());
+        return this.getResponseList(sender);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        new CommandTeleport((Player) sender, args[1]).tparefuse();
+        Player player = (Player) sender;
+        Player target = Bukkit.getPlayerExact(args[1]);
+        if (this.checkAfterResponse(player, target) != null) {
+            sender.sendMessage(ConfigUtils.t("function.tpa.refuse-success"));
+            assert target != null;
+            target.sendMessage(ConfigUtils.t("function.tpa.refused", LangType.TPABESENDER.getType(), sender.getName()));
+        }
     }
 
     @Override

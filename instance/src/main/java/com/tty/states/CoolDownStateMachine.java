@@ -1,0 +1,52 @@
+package com.tty.states;
+
+import com.tty.entity.state.State;
+import com.tty.entity.state.teleport.CooldownState;
+import com.tty.lib.tool.Log;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+
+public class CoolDownStateMachine extends StateMachine {
+
+
+    public CoolDownStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+        super(rate, c, isAsync, javaPlugin);
+    }
+
+    @Override
+    protected boolean canAddState(State state) {
+        return true;
+    }
+
+    @Override
+    public boolean condition(State state) {
+        if (state.getOwner() instanceof Player p && !p.isOp()) {
+            Log.debug("entity " + state.getOwner().getName() + " teleport cd time is cooling down");
+            return !state.isDone();
+        }
+        return false;
+    }
+
+    @Override
+    public void abortAddState(State state) {
+
+    }
+
+    @Override
+    public void passAddState(State state) {
+
+    }
+
+    @Override
+    public void onEarlyExit(State state) {
+        Log.debug("entity " + state.getOwner().getName() + " cd time has ended");
+    }
+
+    @Override
+    public void onFinished(State state) {
+        if (state instanceof CooldownState cdState) {
+            Log.debug("entity " + cdState.getOwner().getName() + " cd time has ended");
+        }
+    }
+}

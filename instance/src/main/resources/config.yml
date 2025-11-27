@@ -28,22 +28,7 @@ server:
     enable: true
   #秒
   save-interval: 300 # 5分钟
-  teleport:
-    tpa:
-      delay: 3
-      cooldown: 10
-    back:
-      delay: 3
-      cooldown: 10
-    home:
-      delay: 3
-      cooldown: 10
-    rtp:
-      delay: 3
-      cooldown: 10
-    warp:
-      delay: 3
-      cooldown: 10
+
 debug:
   enable: false
   overwrite-file: false

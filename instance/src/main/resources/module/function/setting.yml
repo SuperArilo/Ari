@@ -33,7 +33,6 @@ chat:
     _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
 rtp:
   enable: true
-  delay: 3
   search-count: 10
   worlds:
 action:
@@ -41,3 +40,19 @@ action:
     enable: true
     disable-block:
       - 'example'
+teleport:
+  tpa:
+    delay: 3
+    cooldown: 10
+  back:
+    delay: 3
+    cooldown: 10
+  home:
+    delay: 3
+    cooldown: 10
+  rtp:
+    delay: 3
+    cooldown: 10
+  warp:
+    delay: 3
+    cooldown: 10

@@ -19,10 +19,10 @@ public enum TeleportType {
     }
 
     public static int getCoolDownTime(TeleportType type) {
-        return Ari.instance.getConfig().getInt("server.teleport." + type.getKey() + ".cooldown", 10);
+        return Ari.C_INSTANCE.getValue("teleport." + type.getKey() + ".cooldown", FilePath.FunctionConfig, Integer.class);
     }
 
     public static int getDelayTime(TeleportType type) {
-        return Ari.instance.getConfig().getInt("server.teleport." + type.getKey() + ".delay", 3);
+        return Ari.C_INSTANCE.getValue("teleport." + type.getKey() + ".delay", FilePath.FunctionConfig, Integer.class);
     }
 }

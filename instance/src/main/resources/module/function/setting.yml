@@ -56,3 +56,6 @@ teleport:
   warp:
     delay: 3
     cooldown: 10
+  spawn:
+    delay: 3
+    cooldown: 10

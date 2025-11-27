@@ -129,7 +129,7 @@ public class TeleportStateMachine extends StateMachine {
                 targetName = targetLocation.toString();
                 afterAction = () -> handleTeleportAfter(owner, targetName,
                         () -> this.removeEntityInitData(owner),
-                        () -> machine.addState(new EntityToLocationState(owner, TeleportType.getCoolDownTime(toLocationState.getType()), targetLocation, toLocationState.getType()))
+                        () -> machine.addState(new CooldownState(owner, TeleportType.getCoolDownTime(toLocationState.getType()), toLocationState.getType()))
                 );
             }
             case EntityToLocationCallbackState callbackState -> {
@@ -139,7 +139,7 @@ public class TeleportStateMachine extends StateMachine {
                     callbackState.executeCallback();
                     handleTeleportAfter(owner, targetName,
                             () -> this.removeEntityInitData(owner),
-                            () -> machine.addState(new EntityToLocationState(owner, TeleportType.getCoolDownTime(callbackState.getType()), targetLocation, callbackState.getType()))
+                            () -> machine.addState(new CooldownState(owner, TeleportType.getCoolDownTime(callbackState.getType()), callbackState.getType()))
                     );
                 };
             }

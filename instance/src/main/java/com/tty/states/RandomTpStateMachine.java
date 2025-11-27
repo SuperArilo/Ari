@@ -16,7 +16,6 @@ import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -119,15 +118,15 @@ public class RandomTpStateMachine extends StateMachine {
         int x = (int) Math.min(PublicFunctionUtils.randomGenerator((int) rtpConfig.getMin(), (int) rtpConfig.getMax()), world.getWorldBorder().getMaxSize());
         int z = (int) Math.min(PublicFunctionUtils.randomGenerator((int) rtpConfig.getMin(), (int) rtpConfig.getMax()), world.getWorldBorder().getMaxSize());
 
-        try {
-            Location location = this.searchSafeLocation.search(world, x, z).get(1, TimeUnit.SECONDS);
-            if (location == null) return true;
-            state.setTrueLocation(location);
-            return false;
-        } catch (Exception e) {
-            state.getOwner().sendMessage(ConfigUtils.t("function.rtp.abort-search"));
-            return true;
+        if (state.getTrueLocation() == null) {
+            this.searchSafeLocation.search(world, x, z)
+                    .orTimeout(1, TimeUnit.SECONDS)
+                    .whenComplete((location, ex) -> {
+                        if (location == null)  return;
+                        state.setTrueLocation(location);
+                    });
         }
+        return state.getTrueLocation() == null;
     }
 
     private void sendCountTitle(Player player, RandomTpState state) {

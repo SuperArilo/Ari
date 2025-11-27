@@ -28,7 +28,7 @@ public class StateMachineManager {
         this.registerStateMachine(new PreTeleportStateMachine(20L, 1L, true, this.plugin));
         this.registerStateMachine(new TeleportStateMachine(20L, 1L, true, this.plugin));
         this.registerStateMachine(new CoolDownStateMachine(20L, 1L, true, this.plugin));
-        this.registerStateMachine(new RandomTpStateMachine(20L, 1L, false, this.plugin));
+        this.registerStateMachine(new RandomTpStateMachine(20L, 1L, true, this.plugin));
     }
 
     /**

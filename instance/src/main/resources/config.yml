@@ -45,5 +45,5 @@ server:
       delay: 3
       cooldown: 10
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false

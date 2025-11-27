@@ -3,6 +3,7 @@ package com.tty.states;
 import com.tty.entity.state.State;
 import com.tty.entity.state.teleport.CooldownState;
 import com.tty.lib.tool.Log;
+import com.tty.lib.tool.PermissionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -21,7 +22,10 @@ public class CoolDownStateMachine extends StateMachine {
 
     @Override
     public boolean condition(State state) {
-        if (state.getOwner() instanceof Player p && !p.isOp()) {
+        if (state instanceof CooldownState s && state.getOwner() instanceof Player p && !p.isOp()) {
+            if (PermissionUtils.hasPermission(p, "ari.cooldown." + s.getType().getKey())) {
+                return false;
+            }
             Log.debug("entity " + state.getOwner().getName() + " teleport cd time is cooling down");
             return !state.isDone();
         }

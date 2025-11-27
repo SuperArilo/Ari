@@ -40,7 +40,6 @@ public abstract class StateMachine {
         this.c = c;
         this.isAsync = isAsync;
         this.plugin = javaPlugin;
-        this.task = this.createTask(rate, c, isAsync, javaPlugin);
     }
 
     private CancellableTask createTask(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {

@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.commands.sub.RtpCancel;
 import com.tty.entity.state.teleport.RandomTpState;
+import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.states.RandomTpStateMachine;
@@ -32,7 +33,12 @@ public class rtp extends BaseCommand<String> {
     @Override
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        Ari.instance.stateMachineManager.get(RandomTpStateMachine.class).addState(new RandomTpState(player, player.getWorld()));
+        Ari.instance.stateMachineManager
+                .get(RandomTpStateMachine.class)
+                .addState(new RandomTpState(
+                        player,
+                        Ari.C_INSTANCE.getValue("rtp.search-count", FilePath.FunctionConfig, Integer.class, 10),
+                        player.getWorld()));
     }
 
     @Override

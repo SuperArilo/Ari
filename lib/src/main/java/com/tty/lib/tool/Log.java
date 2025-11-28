@@ -26,13 +26,27 @@ public class Log {
         logger.severe(format(msg));
     }
 
+    public static void error(String msg, Object ...arg) {
+        logger.severe(String.format(msg, arg));
+    }
+
     public static void error(String msg, Throwable throwable) {
         logger.log(Level.SEVERE, format(msg), throwable);
+    }
+
+    public static void error(String content, Throwable throwable, Object ...args) {
+        logger.log(Level.SEVERE, format(String.format(content, args)), throwable);
     }
 
     public static void debug(String msg) {
         if (DEBUG) {
             logger.info(PREFIX_DEBUG + format(msg));
+        }
+    }
+
+    public static void debug(String content, Object ...args) {
+        if (DEBUG) {
+            logger.info(String.format(content, args));
         }
     }
 

@@ -5,7 +5,7 @@ import com.tty.commands.sub.tpa.TpaBase;
 import com.tty.entity.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.PreTeleportStateMachine;
+import com.tty.states.teleport.PreTeleportStateServiceImpl;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import org.bukkit.command.CommandSender;
@@ -35,7 +35,7 @@ public class tpahere extends TpaBase<PlayerSelectorArgumentResolver> {
         Player player = Ari.instance.getServer().getPlayerExact(args[1]);
 
         Ari.instance.stateMachineManager
-                .get(PreTeleportStateMachine.class)
+                .get(PreTeleportStateServiceImpl.class)
                 .addState(new PreEntityToEntityState(
                         owner,
                         player,

@@ -1,11 +1,12 @@
-package com.tty.states;
+package com.tty.states.action;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.entity.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
+import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.GameMode;
@@ -28,9 +29,9 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class PlayerSitActionStateMachine extends StateMachine {
+public class PlayerSitActionStateServiceImpl extends StateServiceImpl {
 
-    public PlayerSitActionStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PlayerSitActionStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 

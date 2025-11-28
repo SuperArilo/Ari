@@ -1,7 +1,7 @@
-package com.tty.states;
+package com.tty.states.teleport;
 
 import com.tty.Ari;
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.entity.state.teleport.CooldownState;
 import com.tty.entity.state.teleport.EntityToEntityState;
 import com.tty.entity.state.teleport.EntityToLocationCallbackState;
@@ -10,8 +10,10 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.TeleportType;
 import com.tty.function.Teleporting;
 import com.tty.lib.enum_type.LangType;
+import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
+import com.tty.states.CoolDownStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -21,12 +23,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-public class TeleportStateMachine extends StateMachine {
+public class TeleportStateServiceImpl extends StateServiceImpl {
 
     private final Map<UUID, Double> initHealthMap = new HashMap<>();
     private final Map<UUID, Location> initLocationMap = new HashMap<>();
 
-    public TeleportStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public TeleportStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -73,12 +75,12 @@ public class TeleportStateMachine extends StateMachine {
     protected boolean canAddState(State state) {
         Entity owner = state.getOwner();
         //判断当前实体是否在传送冷却中
-        if (!Ari.instance.stateMachineManager.get(CoolDownStateMachine.class).getStates(owner).isEmpty()) {
+        if (!Ari.instance.stateMachineManager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.cooling"));
             return false;
         }
 
-        if(!Ari.instance.stateMachineManager.get(TeleportStateMachine.class).getStates(owner).isEmpty()) {
+        if(!Ari.instance.stateMachineManager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }
@@ -110,7 +112,7 @@ public class TeleportStateMachine extends StateMachine {
     protected void onFinished(State state) {
         Entity owner = state.getOwner();
         owner.clearTitle();
-        CoolDownStateMachine machine = Ari.instance.stateMachineManager.get(CoolDownStateMachine.class);
+        CoolDownStateServiceImpl machine = Ari.instance.stateMachineManager.get(CoolDownStateServiceImpl.class);
 
         Location targetLocation;
         String targetName;

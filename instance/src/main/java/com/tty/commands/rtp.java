@@ -7,7 +7,7 @@ import com.tty.entity.state.teleport.RandomTpState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.RandomTpStateMachine;
+import com.tty.states.teleport.RandomTpStateServiceImpl;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,7 +34,7 @@ public class rtp extends BaseCommand<String> {
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         Ari.instance.stateMachineManager
-                .get(RandomTpStateMachine.class)
+                .get(RandomTpStateServiceImpl.class)
                 .addState(new RandomTpState(
                         player,
                         Ari.C_INSTANCE.getValue("rtp.search-count", FilePath.FunctionConfig, Integer.class, 10),

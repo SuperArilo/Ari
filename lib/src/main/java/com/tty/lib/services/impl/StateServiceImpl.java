@@ -1,7 +1,8 @@
-package com.tty.states;
+package com.tty.lib.services.impl;
 
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.lib.Lib;
+import com.tty.lib.services.StateService;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.Log;
 import lombok.Getter;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class StateMachine {
+public abstract class StateServiceImpl implements StateService {
 
     private final JavaPlugin plugin;
     /**
@@ -35,7 +36,7 @@ public abstract class StateMachine {
     @Getter
     private final List<State> STATE_LIST = Collections.synchronizedList(new ArrayList<>());
 
-    public StateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public StateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         this.rate = rate;
         this.c = c;
         this.isAsync = isAsync;
@@ -44,13 +45,14 @@ public abstract class StateMachine {
 
     private CancellableTask createTask(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         if (isAsync) {
-            return Lib.Scheduler.runAsyncAtFixedRate(javaPlugin, this::execute, c, rate);
+            return Lib.Scheduler.runAsyncAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
         } else {
-            return Lib.Scheduler.runAtFixedRate(javaPlugin, this::execute, c, rate);
+            return Lib.Scheduler.runAtFixedRate(javaPlugin, i -> this.execute(), c, rate);
         }
     }
 
-    private void execute(CancellableTask task) {
+    @Override
+    public void execute() {
         if (STATE_LIST.isEmpty()) {
             this.abort();
             return;
@@ -71,7 +73,7 @@ public abstract class StateMachine {
             }, () -> Log.error("Failed to run state for " + state));
         }
     }
-
+    @Override
     public void abort() {
         if (this.task != null) {
             this.task.cancel();
@@ -79,7 +81,7 @@ public abstract class StateMachine {
             Log.debug("state machine abort");
         }
     }
-
+    @Override
     public void addState(State state) {
         synchronized (this.STATE_LIST) {
             if (!this.canAddState(state)) {
@@ -94,7 +96,7 @@ public abstract class StateMachine {
             }
         }
     }
-
+    @Override
     public List<State> getStates(Entity owner) {
         synchronized (STATE_LIST) {
             return STATE_LIST.stream()
@@ -102,7 +104,7 @@ public abstract class StateMachine {
                     .toList();
         }
     }
-
+    @Override
     public boolean removeState(State state) {
         synchronized (STATE_LIST) {
             return STATE_LIST.remove(state);

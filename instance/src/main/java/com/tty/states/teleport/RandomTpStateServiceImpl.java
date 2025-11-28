@@ -1,18 +1,21 @@
-package com.tty.states;
+package com.tty.states.teleport;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.rtp.RtpConfig;
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.entity.state.teleport.EntityToLocationState;
 import com.tty.entity.state.teleport.RandomTpState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.enum_type.LangType;
+import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.lib.tool.SearchSafeLocation;
+import com.tty.states.CoolDownStateServiceImpl;
 import com.tty.tool.ConfigUtils;
+import com.tty.tool.StateMachineManager;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -25,11 +28,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class RandomTpStateMachine extends StateMachine {
+public class RandomTpStateServiceImpl extends StateServiceImpl {
 
     private final SearchSafeLocation searchSafeLocation = new SearchSafeLocation(Ari.instance);
 
-    public RandomTpStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public RandomTpStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -47,15 +50,15 @@ public class RandomTpStateMachine extends StateMachine {
                 StateMachineManager manager = Ari.instance.stateMachineManager;
 
                 //判断当前实体是否在传送冷却中
-                if (!manager.get(CoolDownStateMachine.class).getStates(owner).isEmpty()) {
+                if (!manager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
                     owner.sendMessage(ConfigUtils.t("teleport.cooling"));
                     return false;
                 }
 
                 //判断当前发起玩家是否在传送状态中
-                if (!manager.get(TeleportStateMachine.class).getStates(owner).isEmpty() ||
+                if (!manager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty() ||
                     !this.getStates(owner).isEmpty() ||
-                    !manager.get(PreTeleportStateMachine.class).getStates(owner).isEmpty()) {
+                    !manager.get(PreTeleportStateServiceImpl.class).getStates(owner).isEmpty()) {
                     owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
                     return false;
                 }
@@ -105,7 +108,7 @@ public class RandomTpStateMachine extends StateMachine {
         owner.sendMessage(ConfigUtils.t("function.rtp.location-found"));
         if (state instanceof RandomTpState s) {
             Ari.instance.stateMachineManager
-                    .get(TeleportStateMachine.class)
+                    .get(TeleportStateServiceImpl.class)
                     .addState(new EntityToLocationState(
                             owner,
                             TeleportType.getDelayTime(TeleportType.RTP),

@@ -4,8 +4,8 @@ import com.tty.Ari;
 import com.tty.entity.state.action.PlayerRideActionState;
 import com.tty.entity.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
-import com.tty.states.PlayerRideActionStateMachine;
-import com.tty.states.PlayerSitActionStateMachine;
+import com.tty.states.action.PlayerRideActionStateServiceImpl;
+import com.tty.states.action.PlayerSitActionStateServiceImpl;
 import org.bukkit.GameMode;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -34,7 +34,7 @@ public class PlayerActionListener implements Listener {
         if (player.getVehicle() != null) return;
 
         Ari.instance.stateMachineManager
-                .get(PlayerSitActionStateMachine.class)
+                .get(PlayerSitActionStateServiceImpl.class)
                 .addState(new PlayerSitActionState(player, clickedBlock));
     }
     //玩家相互骑乘
@@ -50,7 +50,7 @@ public class PlayerActionListener implements Listener {
         if(!(event.getRightClicked() instanceof Player clickedPlayer)) return;
 
         Ari.instance.stateMachineManager
-                .get(PlayerRideActionStateMachine.class)
+                .get(PlayerRideActionStateServiceImpl.class)
                 .addState(new PlayerRideActionState(player, clickedPlayer));
     }
     private boolean isEnable() {

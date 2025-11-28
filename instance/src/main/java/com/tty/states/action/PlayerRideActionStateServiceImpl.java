@@ -1,9 +1,10 @@
-package com.tty.states;
+package com.tty.states.action;
 
 import com.tty.Ari;
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.entity.state.action.PlayerRideActionState;
 import com.tty.lib.Lib;
+import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.Log;
 import lombok.SneakyThrows;
 import org.bukkit.entity.AreaEffectCloud;
@@ -15,9 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 
-public class PlayerRideActionStateMachine extends StateMachine {
+public class PlayerRideActionStateServiceImpl extends StateServiceImpl {
 
-    public PlayerRideActionStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PlayerRideActionStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 

@@ -1,21 +1,24 @@
-package com.tty.states;
+package com.tty.states.teleport;
 
 import com.tty.Ari;
-import com.tty.entity.state.State;
+import com.tty.lib.dto.State;
 import com.tty.entity.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
+import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.Log;
+import com.tty.states.CoolDownStateServiceImpl;
 import com.tty.tool.ConfigUtils;
+import com.tty.tool.StateMachineManager;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PreTeleportStateMachine extends StateMachine {
+public class PreTeleportStateServiceImpl extends StateServiceImpl {
 
-    public PreTeleportStateMachine(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PreTeleportStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -102,7 +105,7 @@ public class PreTeleportStateMachine extends StateMachine {
         Entity target = toPlayerState.getTarget();
         StateMachineManager manager = Ari.instance.stateMachineManager;
         //判断当前实体是否在传送冷却中
-        if (!manager.get(CoolDownStateMachine.class).getStates(owner).isEmpty()) {
+        if (!manager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.cooling"));
             return false;
         }
@@ -114,8 +117,8 @@ public class PreTeleportStateMachine extends StateMachine {
         }
 
         //判断当前发起玩家是否在传送状态中或者是否正在进行 rtp 传送
-        if (!manager.get(TeleportStateMachine.class).getStates(owner).isEmpty() ||
-                !manager.get(RandomTpStateMachine.class).getStates(owner).isEmpty()) {
+        if (!manager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty() ||
+                !manager.get(RandomTpStateServiceImpl.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }

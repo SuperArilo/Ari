@@ -6,7 +6,7 @@ import com.tty.commands.sub.tpa.TpaBase;
 import com.tty.entity.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.PreTeleportStateMachine;
+import com.tty.states.teleport.PreTeleportStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
@@ -40,7 +40,7 @@ public class tpa extends TpaBase<PlayerSelectorArgumentResolver> {
             return;
         }
         Ari.instance.stateMachineManager
-                .get(PreTeleportStateMachine.class)
+                .get(PreTeleportStateServiceImpl.class)
                 .addState(new PreEntityToEntityState(
                         owner,
                         player,

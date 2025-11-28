@@ -1,6 +1,6 @@
 package com.tty.entity.state.action;
 
-import com.tty.entity.state.PlayerActionState;
+import com.tty.lib.dto.PlayerActionState;
 import lombok.Getter;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;

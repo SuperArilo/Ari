@@ -17,7 +17,7 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;
 import com.tty.listener.BaseGuiListener;
-import com.tty.states.TeleportStateMachine;
+import com.tty.states.teleport.TeleportStateServiceImpl;
 import com.tty.tool.*;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -69,7 +69,7 @@ public class WarpListListener extends BaseGuiListener {
                         case LEFT -> {
                             Location targetLocation = FormatUtils.parseLocation(instance.getLocation());
                             Ari.instance.stateMachineManager
-                                    .get(TeleportStateMachine.class)
+                                    .get(TeleportStateServiceImpl.class)
                                     .addState(new EntityToLocationCallbackState(
                                             player,
                                             TeleportType.getDelayTime(TeleportType.WARP),

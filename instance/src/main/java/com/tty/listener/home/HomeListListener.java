@@ -12,7 +12,7 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.listener.BaseGuiListener;
-import com.tty.states.TeleportStateMachine;
+import com.tty.states.teleport.TeleportStateServiceImpl;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -52,7 +52,7 @@ public class HomeListListener extends BaseGuiListener {
                 ClickType click = event.getClick();
                 if (click.equals(ClickType.LEFT)) {
                     Ari.instance.stateMachineManager
-                            .get(TeleportStateMachine.class)
+                            .get(TeleportStateServiceImpl.class)
                             .addState(new EntityToLocationState(
                                     player,
                                     TeleportType.getDelayTime(TeleportType.HOME),

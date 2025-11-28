@@ -2,8 +2,8 @@ package com.tty.commands.sub.tpa;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
-import com.tty.entity.state.teleport.EntityToEntityState;
-import com.tty.entity.state.teleport.PreEntityToEntityState;
+import com.tty.dto.state.teleport.EntityToEntityState;
+import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.enumType.TeleportType;
 import com.tty.states.teleport.PreTeleportStateServiceImpl;

@@ -3,7 +3,7 @@ package com.tty.states.action;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.lib.dto.State;
-import com.tty.entity.state.action.PlayerSitActionState;
+import com.tty.dto.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.services.impl.StateServiceImpl;

@@ -10,5 +10,6 @@ public interface StateService {
     void abort();
     void addState(State state);
     List<State> getStates(Entity owner);
+    boolean hasState(Entity owner);
     boolean removeState(State state);
 }

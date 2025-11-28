@@ -2,10 +2,10 @@ package com.tty.states.teleport;
 
 import com.tty.Ari;
 import com.tty.lib.dto.State;
-import com.tty.entity.state.teleport.CooldownState;
-import com.tty.entity.state.teleport.EntityToEntityState;
-import com.tty.entity.state.teleport.EntityToLocationCallbackState;
-import com.tty.entity.state.teleport.EntityToLocationState;
+import com.tty.dto.state.teleport.CooldownState;
+import com.tty.dto.state.teleport.EntityToEntityState;
+import com.tty.dto.state.teleport.EntityToLocationCallbackState;
+import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.TeleportType;
 import com.tty.function.Teleporting;

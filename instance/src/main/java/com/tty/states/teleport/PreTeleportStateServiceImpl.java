@@ -2,7 +2,7 @@ package com.tty.states.teleport;
 
 import com.tty.Ari;
 import com.tty.lib.dto.State;
-import com.tty.entity.state.teleport.PreEntityToEntityState;
+import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.impl.StateServiceImpl;

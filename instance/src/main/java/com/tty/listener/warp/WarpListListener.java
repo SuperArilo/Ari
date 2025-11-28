@@ -2,7 +2,7 @@ package com.tty.listener.warp;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.entity.state.teleport.EntityToLocationCallbackState;
+import com.tty.dto.state.teleport.EntityToLocationCallbackState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;

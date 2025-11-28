@@ -1,4 +1,4 @@
-package com.tty.entity.state.teleport;
+package com.tty.dto.state.teleport;
 
 import com.tty.lib.dto.State;
 import com.tty.enumType.TeleportType;

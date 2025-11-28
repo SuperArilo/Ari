@@ -1,8 +1,8 @@
 package com.tty.listener.player;
 
 import com.tty.Ari;
-import com.tty.entity.state.action.PlayerRideActionState;
-import com.tty.entity.state.action.PlayerSitActionState;
+import com.tty.dto.state.action.PlayerRideActionState;
+import com.tty.dto.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.states.action.PlayerRideActionStateServiceImpl;
 import com.tty.states.action.PlayerSitActionStateServiceImpl;

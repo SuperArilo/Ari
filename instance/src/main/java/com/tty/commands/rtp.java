@@ -3,7 +3,7 @@ package com.tty.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.commands.sub.RtpCancel;
-import com.tty.entity.state.teleport.RandomTpState;
+import com.tty.dto.state.teleport.RandomTpState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;

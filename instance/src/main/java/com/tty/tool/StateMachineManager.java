@@ -38,6 +38,7 @@ public class StateMachineManager {
         this.registerStateMachine(new RandomTpStateServiceImpl(20L, 1L, true, this.plugin));
         this.registerStateMachine(new PlayerSitActionStateServiceImpl(20L, 1L, false, this.plugin));
         this.registerStateMachine(new PlayerRideActionStateServiceImpl(20L, 1L, false, this.plugin));
+        this.registerStateMachine(new GuiEditStateServiceImpl(20L,1L, true, this.plugin));
     }
 
     /**

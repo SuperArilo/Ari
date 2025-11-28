@@ -2,8 +2,8 @@ package com.tty.commands;
 
 import com.tty.Ari;
 import com.tty.commands.sub.tpa.TpaBase;
-import com.tty.entity.state.teleport.EntityToEntityState;
-import com.tty.entity.state.teleport.PreEntityToEntityState;
+import com.tty.dto.state.teleport.EntityToEntityState;
+import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.states.teleport.TeleportStateServiceImpl;

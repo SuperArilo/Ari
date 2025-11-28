@@ -97,6 +97,10 @@ public abstract class StateServiceImpl implements StateService {
         }
     }
     @Override
+    public boolean hasState(Entity owner) {
+        return this.getStates(owner).isEmpty();
+    }
+    @Override
     public List<State> getStates(Entity owner) {
         synchronized (STATE_LIST) {
             return STATE_LIST.stream()

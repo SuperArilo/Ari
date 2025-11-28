@@ -2,7 +2,7 @@ package com.tty.states.action;
 
 import com.tty.Ari;
 import com.tty.lib.dto.State;
-import com.tty.entity.state.action.PlayerRideActionState;
+import com.tty.dto.state.action.PlayerRideActionState;
 import com.tty.lib.Lib;
 import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.Log;

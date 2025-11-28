@@ -1,4 +1,4 @@
-package com.tty.entity.state.action;
+package com.tty.dto.state.action;
 
 import com.tty.lib.dto.PlayerActionState;
 import lombok.Getter;

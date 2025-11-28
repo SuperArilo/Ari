@@ -2,7 +2,7 @@ package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
-import com.tty.entity.state.teleport.EntityToLocationState;
+import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.enumType.TeleportType;

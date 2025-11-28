@@ -1,7 +1,7 @@
 package com.tty.states;
 
 import com.tty.lib.dto.State;
-import com.tty.entity.state.teleport.CooldownState;
+import com.tty.dto.state.teleport.CooldownState;
 import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;

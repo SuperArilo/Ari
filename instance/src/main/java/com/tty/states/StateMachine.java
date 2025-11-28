@@ -51,27 +51,26 @@ public abstract class StateMachine {
     }
 
     private void execute(CancellableTask task) {
-        synchronized (this.STATE_LIST) {
-            if (STATE_LIST.isEmpty()) {
-                this.abort();
-                return;
-            }
-            List<State> toRemove = new ArrayList<>();
-            for (State state : this.STATE_LIST) {
-                if (!condition(state)) {
-                    toRemove.add(state);
+        if (STATE_LIST.isEmpty()) {
+            this.abort();
+            return;
+        }
+        for (State state : new ArrayList<>(STATE_LIST)) {
+            Entity entity = state.getOwner();
+            Lib.Scheduler.runAtEntity(plugin, entity, e -> {
+                this.condition(state);
+                if (state.isOver()) {
+                    STATE_LIST.remove(state);
                     this.onEarlyExit(state);
                 } else if (state.isDone()) {
-                    toRemove.add(state);
+                    STATE_LIST.remove(state);
                     this.onFinished(state);
                 } else {
                     state.increment();
                 }
-            }
-            this.STATE_LIST.removeAll(toRemove);
+            }, () -> Log.error("Failed to run state for " + state));
         }
     }
-
 
     public void abort() {
         if (this.task != null) {
@@ -118,33 +117,33 @@ public abstract class StateMachine {
 
     /**
      * 在给定计数下的条件检查
+     *
      * @param state 当前检查的状态
-     * @return true 检查通过进入下一次检查，反之直接结束
      */
-    public abstract boolean condition(State state);
+    protected abstract void condition(State state);
 
     /**
      * 终止当前的状态添加
      * @param state 添加的状态
      */
-    public abstract void abortAddState(State state);
+    protected abstract void abortAddState(State state);
 
     /**
      * 当前的状态可添加
      * @param state 添加成功的状态
      */
-    public abstract void passAddState(State state);
+    protected abstract void passAddState(State state);
 
     /**
      * 提前结束检查的回调方法
      * @param state 检查失败的状态
      */
-    public abstract void onEarlyExit(State state);
+    protected abstract void onEarlyExit(State state);
 
     /**
      * 计数完成后正常结束
      * @param state 检查通过的状态
      */
-    public abstract void onFinished(State state);
+    protected abstract void onFinished(State state);
 
 }

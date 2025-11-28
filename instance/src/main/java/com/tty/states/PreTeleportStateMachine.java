@@ -20,39 +20,42 @@ public class PreTeleportStateMachine extends StateMachine {
     }
 
     @Override
-    public boolean condition(State state) {
-        if (!(state instanceof PreEntityToEntityState toPlayerState)) return false;
+    protected void condition(State state) {
+        if (!(state instanceof PreEntityToEntityState toPlayerState)) {
+            state.setOver(true);
+            return;
+        }
 
         Entity owner = toPlayerState.getOwner();
         Entity target = toPlayerState.getTarget();
 
         // 基本合法性检查
-        if (target instanceof Player p && !p.isOnline()) return false;
+        if (target instanceof Player p && !p.isOnline()) {
+            state.setOver(true);
+            return;
+        }
 
         if (target == null) {
             owner.sendMessage(ConfigUtils.t("teleport.unable-player"));
-            return false;
+            state.setOver(true);
+            return;
         }
 
         if (target.getName().equals(owner.getName())) {
             owner.sendMessage(ConfigUtils.t("function.public.fail"));
-            return false;
+            state.setOver(true);
+            return;
         }
 
         Log.debug("checking player " + owner.getName() + " -> " + target.getName() + " request");
-        return true;
     }
 
     @Override
-    public void abortAddState(State state) {
-        if (!(state instanceof PreEntityToEntityState toPlayerState)) return;
-        Entity owner = toPlayerState.getOwner();
-        Entity target = toPlayerState.getTarget();
-        owner.sendMessage(ConfigUtils.t("function.tpa.again", LangType.TPABESENDER.getType(), target.getName()));
+    protected void abortAddState(State state) {
     }
 
     @Override
-    public void passAddState(State state) {
+    protected void passAddState(State state) {
         if (state instanceof PreEntityToEntityState toEntityState) {
             Entity owner = toEntityState.getOwner();
             Entity target = toEntityState.getTarget();
@@ -81,11 +84,11 @@ public class PreTeleportStateMachine extends StateMachine {
     }
 
     @Override
-    public void onEarlyExit(State state) {
+    protected void onEarlyExit(State state) {
     }
 
     @Override
-    public void onFinished(State state) {
+    protected void onFinished(State state) {
         if (state instanceof PreEntityToEntityState preEntityToEntityState) {
             Log.debug("player " + preEntityToEntityState.getOwner().getName() + " send to " + preEntityToEntityState.getTarget().getName() + " teleport request expired");
         }
@@ -97,23 +100,26 @@ public class PreTeleportStateMachine extends StateMachine {
         if (!(state instanceof PreEntityToEntityState toPlayerState)) return false;
         Entity owner = toPlayerState.getOwner();
         Entity target = toPlayerState.getTarget();
-
+        StateMachineManager manager = Ari.instance.stateMachineManager;
         //判断当前实体是否在传送冷却中
-        if (!Ari.instance.stateMachineManager.get(CoolDownStateMachine.class).getStates(owner).isEmpty()) {
+        if (!manager.get(CoolDownStateMachine.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.cooling"));
             return false;
         }
 
-        //判断当前发起玩家是否在传送状态中
-        if (!Ari.instance.stateMachineManager.get(TeleportStateMachine.class).getStates(owner).isEmpty()) {
+        //检查是否已经发过请求了
+        if (!this.getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("function.tpa.again", LangType.TPABESENDER.getType(), target.getName()));
+            return false;
+        }
+
+        //判断当前发起玩家是否在传送状态中或者是否正在进行 rtp 传送
+        if (!manager.get(TeleportStateMachine.class).getStates(owner).isEmpty() ||
+                !manager.get(RandomTpStateMachine.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }
 
-        // 检查是否存在相同目标的状态（排除自己）
-        return this.getStates(owner).stream()
-                .filter(i -> i instanceof PreEntityToEntityState)
-                .filter(i -> i != state)
-                .noneMatch(i -> ((PreEntityToEntityState)i).getTarget().equals(target));
+        return true;
     }
 }

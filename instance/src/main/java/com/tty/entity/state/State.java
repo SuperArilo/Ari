@@ -16,6 +16,8 @@ public class State {
      */
     private int max_count;
 
+    private boolean isOver = false;
+
     public State(Entity owner, int max_count) {
         this.owner = owner;
         this.max_count = max_count;

@@ -31,26 +31,29 @@ public class TeleportStateMachine extends StateMachine {
     }
 
     @Override
-    public boolean condition(State state) {
+    protected void condition(State state) {
         Entity owner = state.getOwner();
         this.addEntityInitData(owner);
 
         if (owner instanceof Player player && !player.isOnline()) {
-            return false;
+            state.setOver(true);
+            return;
         }
 
         if (state instanceof EntityToEntityState entityToEntityState) {
             Entity target = entityToEntityState.getTarget();
             if (target instanceof Player targetPlayer && !targetPlayer.isOnline()) {
                 owner.sendMessage(ConfigUtils.t("teleport.break"));
-                return false;
+                state.setOver(true);
+                return;
             }
         }
 
         if (owner instanceof Damageable damageable) {
             if (this.hasMoved(owner) || this.hasLostHealth(damageable)) {
                 owner.sendMessage(ConfigUtils.t("teleport.break"));
-                return false;
+                state.setOver(true);
+                return;
             }
         }
 
@@ -63,7 +66,6 @@ public class TeleportStateMachine extends StateMachine {
                 200
         ));
         Log.debug("checking entity " + owner.getName() + " teleporting");
-        return true;
     }
 
 
@@ -89,23 +91,23 @@ public class TeleportStateMachine extends StateMachine {
     }
 
     @Override
-    public void abortAddState(State state) {
+    protected void abortAddState(State state) {
 
     }
 
     @Override
-    public void passAddState(State state) {
+    protected void passAddState(State state) {
 
     }
 
     @Override
-    public void onEarlyExit(State state) {
+    protected void onEarlyExit(State state) {
         Entity owner = state.getOwner();
         this.removeEntityInitData(owner);
     }
 
     @Override
-    public void onFinished(State state) {
+    protected void onFinished(State state) {
         Entity owner = state.getOwner();
         owner.clearTitle();
         CoolDownStateMachine machine = Ari.instance.stateMachineManager.get(CoolDownStateMachine.class);

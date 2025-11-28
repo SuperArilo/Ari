@@ -82,8 +82,9 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
                 || owner.isFlying()
                 || owner.isGliding()
                 || owner.isInsideVehicle()
-                || (!owner.isOp() && owner.getGameMode() != GameMode.SURVIVAL)) {
-            s.setOver(true);
+                || owner.getGameMode() == GameMode.SPECTATOR) {
+            owner.sendMessage(ConfigUtils.t("teleport.break"));
+            this.abort();
             return;
         }
 
@@ -137,6 +138,7 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
                     .whenComplete((location, ex) -> {
                         if (location == null)  return;
                         state.setTrueLocation(location);
+                        state.setOver(true);
                     });
         }
     }

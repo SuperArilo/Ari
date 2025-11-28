@@ -16,6 +16,7 @@ data:
   keepalive-time: 0
 server:
   custom-death: false
+  gui-edit-timeout: 10 #秒
   skip-night:
     enable: true
     tick-increment: 5

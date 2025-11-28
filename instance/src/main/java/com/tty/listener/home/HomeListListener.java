@@ -3,7 +3,7 @@ package com.tty.listener.home;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
-import com.tty.entity.state.teleport.EntityToLocationState;
+import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.GuiType;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;

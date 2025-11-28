@@ -3,7 +3,7 @@ package com.tty.listener.home;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.dto.OnEdit;
+import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
@@ -12,11 +12,11 @@ import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
-import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
+import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
@@ -76,24 +76,13 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
 
                     });
             case RENAME -> {
-                player.showTitle(
-                        ComponentUtils.setPlayerTitle(
-                                Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.Lang),
-                                Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.Lang),
-                                1000,
-                                10000 ,
-                                1000));
+                Ari.instance.stateMachineManager
+                        .get(GuiEditStateServiceImpl.class)
+                        .addState(new PlayerEditGuiState(
+                                player,
+                                holder,
+                                type));
                 inventory.close();
-                this.addEditInstance(player, OnEdit.build(holder, type));
-                if (holder.getTask() == null) {
-                    CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
-                        if (this.removeEditInstance(player) != null) {
-                            player.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
-                        }
-                        holder.setTask(null);
-                    }, 200L);
-                    holder.setTask(cancellableTask);
-                }
             }
             case LOCATION -> {
                 //reset LOCATION
@@ -153,8 +142,9 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
     }
 
     @Override
-    public boolean onTitleEditStatus(String message, OnEdit onEdit) {
-        Player player = onEdit.getHolder().getPlayer();
+    public boolean onTitleEditStatus(String message, PlayerEditGuiState state) {
+        CustomInventoryHolder holder = state.getHolder();
+        Player player = holder.getPlayer();
         List<Object> checkList = Ari.C_INSTANCE
                 .getValue(
                         "main.name-check",
@@ -170,9 +160,10 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }
-        HomeEditor editor = (HomeEditor) onEdit.getHolder().getMeta();
+        HomeEditor editor = (HomeEditor) holder.getMeta();
         editor.currentHome.setHomeName(message);
         Lib.Scheduler.runAtEntity(Ari.instance, player, p -> editor.open(), () -> {});
         return true;
     }
+
 }

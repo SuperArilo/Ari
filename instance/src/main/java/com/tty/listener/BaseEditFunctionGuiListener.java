@@ -1,73 +1,66 @@
 package com.tty.listener;
 
-import com.tty.dto.CustomInventoryHolder;
-import com.tty.dto.OnEdit;
+import com.tty.Ari;
+import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.enumType.GuiType;
+import com.tty.lib.dto.State;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
+import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
-
-    private final Map<Player, OnEdit> onPlayerEditInstance = new ConcurrentHashMap<>();
 
     protected BaseEditFunctionGuiListener(GuiType guiType) {
         super(guiType);
     }
 
     @Override
-    public void passClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() instanceof CustomInventoryHolder holder) {
-            this.removeEditInstance(holder.getPlayer());
-        }
-    }
+    public void passClick(InventoryClickEvent event) {}
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
-        if (this.onPlayerEditInstance.isEmpty()) return;
+        GuiEditStateServiceImpl stateService = Ari.instance.stateMachineManager.get(GuiEditStateServiceImpl.class);
         Player player = event.getPlayer();
-        if (!this.onPlayerEditInstance.containsKey(player)) return;
+        if (stateService.getSTATE_LIST().isEmpty()) return;
+        if (stateService.hasState(player)) return;
+        List<State> states = stateService.getStates(player);
+        if (states.isEmpty()) {
+            Log.error("player %s on edit status error, states is empty");
+            return;
+        }
+        PlayerEditGuiState first = (PlayerEditGuiState) states.getFirst();
+        if (!first.getHolder().getType().equals(this.guiType)) return;
         event.setCancelled(true);
         String message = FormatUtils.componentToString(event.message());
+
+        //玩家手动输入 cancel 取消操作
         if (FunctionType.CANCEL.name().equals(message.toUpperCase())) {
+            first.setOver(true);
             player.clearTitle();
-            this.removeEditInstance(player);
             player.sendMessage(ConfigUtils.t("base.on-edit.cancel"));
             return;
         }
-        if (this.onTitleEditStatus(message, this.onPlayerEditInstance.get(player))) {
-            this.removeEditInstance(player);
+
+        //玩家输入内容检查通过
+        if (this.onTitleEditStatus(message, first)) {
             player.clearTitle();
-            Log.debug("player: [" + player.getName() + "] " + this.guiType.name() +  " status removed");
-            Log.debug("onPlayerEditInstance size: " + this.onPlayerEditInstance.size());
+            first.setOver(true);
         }
     }
 
-    @EventHandler
-    public void onPlayerLeave(PlayerQuitEvent event) {
-        this.removeEditInstance(event.getPlayer());
-    }
-
-    public abstract boolean onTitleEditStatus(String message, OnEdit onEdit);
-
-    protected void addEditInstance(Player player, OnEdit onEdit) {
-        this.onPlayerEditInstance.put(player, onEdit);
-    }
-    protected OnEdit removeEditInstance(Player player) {
-        OnEdit onEdit = this.onPlayerEditInstance.remove(player);
-        if (onEdit == null) return null;
-        CustomInventoryHolder holder = onEdit.getHolder();
-        holder.getTask().cancel();
-        holder.setTask(null);
-        return onEdit;
-    }
+    /**
+     * 检查玩家的输入内容
+     * @param message 玩家的输入内容
+     * @param state 玩家的输入状态类
+     * @return true 检查通过，反之
+     */
+    public abstract boolean onTitleEditStatus(String message, PlayerEditGuiState state);
 }

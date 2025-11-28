@@ -3,7 +3,7 @@ package com.tty.listener.warp;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.dto.OnEdit;
+import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;
@@ -12,11 +12,11 @@ import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
-import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
+import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import com.tty.lib.tool.EconomyUtils;
 import net.kyori.adventure.text.TextComponent;
@@ -84,24 +84,9 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     warpEditor.currentWarp.setPermission(null);
                     return;
                 }
-                player.showTitle(
-                        ComponentUtils.setPlayerTitle(
-                                Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.Lang),
-                                Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.Lang),
-                                1000,
-                                10000 ,
-                                1000));
                 inventory.close();
-                this.addEditInstance(player, OnEdit.build(holder, FunctionType.valueOf(type.name())));
-                if (holder.getTask() == null) {
-                    CancellableTask cancellableTask = Lib.Scheduler.runAsyncDelayed(Ari.instance, i -> {
-                        if (this.removeEditInstance(player) != null) {
-                            player.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
-                        }
-                        holder.setTask(null);
-                    }, 200L);
-                    holder.setTask(cancellableTask);
-                }
+                Ari.instance.stateMachineManager.get(GuiEditStateServiceImpl.class)
+                        .addState(new PlayerEditGuiState(player, holder, type));
             }
             case LOCATION -> {
                 Location newLocation = player.getLocation();
@@ -165,23 +150,24 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
     }
 
     @Override
-    public boolean onTitleEditStatus(String message, OnEdit onEdit) {
-        Player player = onEdit.getHolder().getPlayer();
+    public boolean onTitleEditStatus(String message, PlayerEditGuiState state) {
+        CustomInventoryHolder holder = state.getHolder();
+        FunctionType type = state.getFunctionType();
+        Player player = holder.getPlayer();
         List<String> value = Ari.C_INSTANCE.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(ConfigUtils.t("base.on-error"));
             return false;
         }
-        WarpEditor warpEditor = (WarpEditor) onEdit.getHolder().getMeta();
-        switch (onEdit.getType()) {
+        WarpEditor warpEditor = (WarpEditor) holder.getMeta();
+        switch (type) {
             case RENAME -> {
                 if(!FormatUtils.checkName(message) || value.contains(message) || !FormatUtils.checkName(message)) {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
                     return false;
                 }
-                if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15) &&
-                        onEdit.getType().equals(FunctionType.RENAME)) {
+                if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15)) {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
                     return false;
                 }
@@ -207,4 +193,5 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         Lib.Scheduler.runAtEntity(Ari.instance, player, i -> warpEditor.open(), () -> {});
         return true;
     }
+
 }

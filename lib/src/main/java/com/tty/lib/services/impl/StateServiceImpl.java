@@ -77,6 +77,7 @@ public abstract class StateServiceImpl implements StateService {
     public void abort() {
         if (this.task != null) {
             this.task.cancel();
+            this.STATE_LIST.clear();
             this.task = null;
             Log.debug("state machine abort");
         }

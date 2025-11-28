@@ -4,5 +4,3 @@ main:
   name-length: 12
   name-check:
     - 'fuck'
-  teleport:
-    delay: 3

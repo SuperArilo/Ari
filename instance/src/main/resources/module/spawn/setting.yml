@@ -1,4 +1,3 @@
 main:
   enable: true
   first-join: true
-  teleport-delay: 3

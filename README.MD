@@ -63,7 +63,5 @@
 - [Vault](https://github.com/MilkBowl/Vault) 前置插件
 
 ### 安装步骤
-1. 将插件放入 `plugins/` 目录
+1. 将插件和前置Lib放入 `plugins/` 目录
 2. 重启服务器
-3. 首次运行后编辑生成的 `plugins/Ari/config.yml`
-4. 配置经济系统（如需地标创建费用）

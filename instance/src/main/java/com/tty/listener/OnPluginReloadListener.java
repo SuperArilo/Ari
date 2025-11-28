@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.lib.tool.Log;
 import com.tty.states.RandomTpStateMachine;
+import com.tty.states.StateMachine;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,6 +19,7 @@ public class OnPluginReloadListener implements Listener {
             Ari.instance.sqlInstance.reconnect();
         }
         RandomTpStateMachine.setRtpWorldConfig();
+        Ari.instance.stateMachineManager.forEach(StateMachine::abort);
         Ari.instance.playerSave.reload();
         event.getSender().sendMessage(ConfigUtils.t("function.reload.success"));
     }

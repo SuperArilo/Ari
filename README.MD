@@ -54,6 +54,7 @@
 | `ari.count.warp.<数量>`   | 设置地标的最大数量限制     |
 | `ari.keepinventory`     | 玩家死亡时保留背包内的物品   |
 | `ari.keepexperience`    | 玩家死亡时保留经验值和等级   |
+| `ari.cooldown.<传送类型>`   | 指定某种传送类型没有CD时间  |
 ## 🛠️ 安装指南
 
 ### 环境要求

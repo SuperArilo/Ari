@@ -1,11 +1,11 @@
 package com.tty.lib;
 
+import com.tty.lib.tool.PublicFunctionUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
 
-import java.util.Random;
 
 public class Log {
 
@@ -17,7 +17,6 @@ public class Log {
             NamedTextColor.GOLD, NamedTextColor.LIGHT_PURPLE, NamedTextColor.RED,
             NamedTextColor.DARK_AQUA, NamedTextColor.DARK_GREEN, NamedTextColor.DARK_RED
     };
-    private static final Random RANDOM = new Random();
 
     public static void init(ComponentLogger logger, boolean isDebug) {
         LOGGER = logger;
@@ -49,7 +48,7 @@ public class Log {
     }
 
     private static NamedTextColor getRandomColor() {
-        return RANDOM_COLORS[RANDOM.nextInt(RANDOM_COLORS.length)];
+        return RANDOM_COLORS[PublicFunctionUtils.randomGenerator(0, RANDOM_COLORS.length)];
     }
 
     public static void info(String msg, Object... args) {

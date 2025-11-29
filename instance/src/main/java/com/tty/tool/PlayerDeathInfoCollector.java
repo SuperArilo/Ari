@@ -99,7 +99,7 @@ public class PlayerDeathInfoCollector {
     }
 
     public static String getRandomOfList(String keyPath) {
-        List<String> many = Ari.C_INSTANCE.getValue(keyPath, FilePath.Lang, new TypeToken<List<String>>() {
+        List<String> many = Ari.C_INSTANCE.getValue(keyPath, FilePath.LANG, new TypeToken<List<String>>() {
         }.getType(), List.of());
         int size = many.size();
         if (size == 0) {

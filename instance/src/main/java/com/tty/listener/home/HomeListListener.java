@@ -4,6 +4,7 @@ import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.sql.ServerHome;
 import com.tty.dto.state.teleport.EntityToLocationState;
+import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
@@ -55,7 +56,7 @@ public class HomeListListener extends BaseGuiListener {
                             .get(TeleportStateServiceImpl.class)
                             .addState(new EntityToLocationState(
                                     player,
-                                    TeleportType.getDelayTime(TeleportType.HOME),
+                                    Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.HOME_CONFIG, Integer.class, 3),
                                     FormatUtils.parseLocation(home.getLocation()),
                                     TeleportType.HOME));
                 } else if (click.equals(ClickType.RIGHT)) {

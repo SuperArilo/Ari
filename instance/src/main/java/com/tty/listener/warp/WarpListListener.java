@@ -60,7 +60,7 @@ public class WarpListListener extends BaseGuiListener {
                 //从数据库查询最新的
                 new WarpManager(true).getInstance(warpId).thenAccept((instance) -> {
                     if (instance == null) {
-                        Log.error("can't find warpId: " + warpId);
+                        Log.error("can't find warpId: %s", warpId);
                         return;
                     }
                     boolean isOwner = UUID.fromString(instance.getCreateBy()).equals(player.getUniqueId());
@@ -72,7 +72,7 @@ public class WarpListListener extends BaseGuiListener {
                                     .get(TeleportStateServiceImpl.class)
                                     .addState(new EntityToLocationCallbackState(
                                             player,
-                                            TeleportType.getDelayTime(TeleportType.WARP),
+                                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.WARP_CONFIG, Integer.class, 3),
                                             targetLocation,
                                             () -> {
                                                 String permission = instance.getPermission();
@@ -84,7 +84,7 @@ public class WarpListListener extends BaseGuiListener {
                                                     }
                                                 }
                                                 if(!EconomyUtils.hasEnoughBalance(player, instance.getCost()) && !isOwner &&
-                                                        Ari.C_INSTANCE.getValue("main.permission", FilePath.WarpConfig, Boolean.class, true)) {
+                                                        Ari.C_INSTANCE.getValue("main.permission", FilePath.WARP_CONFIG, Boolean.class, true)) {
                                                     player.sendMessage(ConfigUtils.t("function.warp.not-enough-money"));
                                                     return false;
                                                 }
@@ -94,14 +94,14 @@ public class WarpListListener extends BaseGuiListener {
                                                 //判断是否是地标拥有者或者是不是op，如果是则不扣
                                                 if(!isOwner &&
                                                         !player.isOp() &&
-                                                        Ari.C_INSTANCE.getValue("main.cost", FilePath.WarpConfig, Boolean.class, false) &&
+                                                        Ari.C_INSTANCE.getValue("main.cost", FilePath.WARP_CONFIG, Boolean.class, false) &&
                                                         !EconomyUtils.isNull()) {
                                                     EconomyUtils.withdrawPlayer(player, instance.getCost());
                                                     player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
                                                 }
                                             },
                                             TeleportType.WARP));
-                            Lib.Scheduler.run(Ari.instance, i -> inventory.close());
+                            Lib.Scheduler.runAtEntity(Ari.instance, player, i -> inventory.close(), null);
                         }
                         case RIGHT -> {
                             if(isOwner || player.isOp()) {

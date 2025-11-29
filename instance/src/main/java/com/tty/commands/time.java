@@ -54,12 +54,12 @@ public class time extends BaseCommand<String> {
             return;
         }
         TimeManager.build(world).timeSet(period.getStart());
-        String value = Ari.C_INSTANCE.getValue("server.time.tips", FilePath.Lang);
+        String value = Ari.C_INSTANCE.getValue("server.time.tips", FilePath.LANG);
         if (value == null) {
             player.sendMessage("no content " + timePeriod + "in lang");
             return;
         }
-        value = value.replace(LangType.TIME.getType(), Ari.C_INSTANCE.getValue("server.time.name." + period.getDescription(), FilePath.Lang));
+        value = value.replace(LangType.TIME.getType(), Ari.C_INSTANCE.getValue("server.time.name." + period.getDescription(), FilePath.LANG));
         player.sendMessage(ComponentUtils.text(value));
     }
 

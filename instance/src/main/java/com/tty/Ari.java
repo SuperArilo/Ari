@@ -76,7 +76,7 @@ public class Ari extends JavaPlugin {
         this.stateMachineManager.initDefaultStateMachines();
 
         this.registerListener();
-        CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.CommandAlias.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
+        CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.COMMAND_ALIAS.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
 
         //PAPI
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
@@ -149,7 +149,7 @@ public class Ari extends JavaPlugin {
         FileConfiguration pluginConfig = Ari.instance.getConfig();
         for (FilePath filePath : FilePath.values()) {
             String path = filePath.getPath();
-            if(filePath.equals(FilePath.Lang)) {
+            if(filePath.equals(FilePath.LANG)) {
                 path = path.replace("[lang]", Ari.instance.getConfig().getString("lang", "cn"));
             }
             File file = new File(Ari.instance.getDataFolder(), path);

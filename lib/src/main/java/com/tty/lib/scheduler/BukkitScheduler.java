@@ -28,6 +28,7 @@ public class BukkitScheduler implements Scheduler {
             try {
                 task.accept(new WrapperScheduledTask<>(atomicReference.get()));
             } catch (Exception e) {
+                if (errorCallback == null) return;
                 errorCallback.run();
             }
         });
@@ -42,6 +43,7 @@ public class BukkitScheduler implements Scheduler {
             try {
                 task.accept(atomicReference.get());
             } catch (Exception e) {
+                if (errorCallback == null) return;
                 errorCallback.run();
             }
         }, delay, rate);

@@ -59,8 +59,8 @@ public class ZakoInfo extends ZakoBase<String> {
                 map.put(LangType.LASTLOGINSERVERTIME, TimeFormatUtils.format(instance.getLastLoginOffTime(), PATTERN_DATETIME));
                 map.put(LangType.TOTALONSERVER, TimeFormatUtils.format(instance.getTotalOnlineTime()));
                 Player player = Bukkit.getPlayer(UUID.fromString(instance.getPlayerUUID()));
-                map.put(LangType.PLAYERWORLD, player == null ? Ari.C_INSTANCE.getValue("base.no-record", FilePath.Lang):player.getWorld().getName());
-                map.put(LangType.PLAYERLOCATION, player == null ? Ari.C_INSTANCE.getValue("base.no-record", FilePath.Lang): FormatUtils.XYZText(player.getX(), player.getY(), player.getZ()));
+                map.put(LangType.PLAYERWORLD, player == null ? Ari.C_INSTANCE.getValue("base.no-record", FilePath.LANG):player.getWorld().getName());
+                map.put(LangType.PLAYERLOCATION, player == null ? Ari.C_INSTANCE.getValue("base.no-record", FilePath.LANG): FormatUtils.XYZText(player.getX(), player.getY(), player.getZ()));
 
                 sender.sendMessage(ConfigUtils.ts("server.player.info", map));
             }).exceptionally(i -> {

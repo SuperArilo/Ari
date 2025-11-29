@@ -6,6 +6,8 @@ base:
     hour: '时'
     minute: "分钟"
     second: "秒"
+  command:
+    disabled: "&c当前指令已经被禁用！"
   permission:
     no-permission: '&4你当前没有权限来执行此命令'
 function:

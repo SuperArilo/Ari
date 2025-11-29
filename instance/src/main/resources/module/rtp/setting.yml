@@ -1,6 +1,7 @@
 main:
   enable: true
-  first-join: true
+  search-count: 10
   teleport:
     delay: 3
     cooldown: 10
+  worlds:

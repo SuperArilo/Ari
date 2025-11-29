@@ -3,6 +3,7 @@ package com.tty.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.entity.sql.ServerWarp;
+import com.tty.enumType.FilePath;
 import com.tty.function.WarpManager;
 import com.tty.lib.Lib;
 import com.tty.lib.command.BaseCommand;
@@ -36,8 +37,11 @@ public class setwarp extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.WARP_CONFIG.name()))) return;
+
         String warpId = args[1];
         Player player = (Player) sender;
+
         if(FormatUtils.checkIdName(warpId)) {
             WarpManager warpManager = new WarpManager(true);
             warpManager.getCountByPlayer(player.getUniqueId().toString())

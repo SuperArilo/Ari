@@ -1,9 +1,12 @@
 package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.tty.Ari;
+import com.tty.enumType.FilePath;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -27,6 +30,8 @@ public class warp extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.WARP_CONFIG.name()))) return;
+
         new WarpList((Player) sender).open();
     }
 

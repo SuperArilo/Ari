@@ -45,7 +45,7 @@ public class CustomChatFormantListener implements Listener {
         return Ari.C_INSTANCE
                 .getValue(
                         "chat.groups-pattern",
-                        FilePath.FunctionConfig,
+                        FilePath.FUNCTION_CONFIG,
                         new TypeToken<Map<String, String>>(){}.getType(),
                         new HashMap<>());
     }
@@ -65,6 +65,6 @@ public class CustomChatFormantListener implements Listener {
     }
 
     private boolean isEnable() {
-        return Ari.C_INSTANCE.getValue("chat.enable", FilePath.FunctionConfig, Boolean.class, false);
+        return Ari.C_INSTANCE.getValue("chat.enable", FilePath.FUNCTION_CONFIG, Boolean.class, false);
     }
 }

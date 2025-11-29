@@ -46,7 +46,7 @@ public class SleepingWorld {
                         if (this.playerCondition(player.getWorld()) || !player.isSleeping() || !player.isDeeplySleeping()) continue;
                         Lib.Scheduler.runAtEntity(Ari.instance, player, b -> player.showTitle(
                                 ComponentUtils.setPlayerTitle(timeManager.tickToTime(i),
-                                        Ari.C_INSTANCE.getValue("server.time.skip-to-night", FilePath.Lang),
+                                        Ari.C_INSTANCE.getValue("server.time.skip-to-night", FilePath.LANG),
                                         0L,
                                         1000L,
                                         1000L)), () -> {});
@@ -60,7 +60,7 @@ public class SleepingWorld {
     private void sendTipsActionBar() {
         for (Player player : this.world.getPlayers()) {
             if (!player.isSleeping()) {
-                String l = Ari.C_INSTANCE.getValue("server.time.report-status", FilePath.Lang);
+                String l = Ari.C_INSTANCE.getValue("server.time.report-status", FilePath.LANG);
                 player.sendActionBar(
                         ComponentUtils.text(
                                 l.replace(LangType.SLEEPPLAYERS.getType(), String.valueOf(this.getSleepPlayers()))

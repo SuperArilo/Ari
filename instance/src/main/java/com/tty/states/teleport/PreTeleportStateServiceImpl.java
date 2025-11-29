@@ -67,19 +67,19 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
 
             String message = Ari.C_INSTANCE.getValue(
                     "function.tpa." + (toEntityState.getCommand().equals("tpa") ? "to-message" : "here-message"),
-                    FilePath.Lang
+                    FilePath.LANG
             );
 
             target.sendMessage(
                     ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), owner.getName()))
                             .appendNewline()
                             .append(ComponentUtils.setClickEventText(
-                                    Ari.C_INSTANCE.getValue("function.public.agree", FilePath.Lang),
+                                    Ari.C_INSTANCE.getValue("function.public.agree", FilePath.LANG),
                                     ClickEvent.Action.RUN_COMMAND,
                                     "/ari tpaaccept " + owner.getName()))
                             .append(ConfigUtils.t("function.public.center"))
                             .append(ComponentUtils.setClickEventText(
-                                    Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.Lang),
+                                    Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.LANG),
                                     ClickEvent.Action.RUN_COMMAND,
                                     "/ari tparefuse " + owner.getName()))
             );

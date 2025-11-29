@@ -3,6 +3,7 @@ package com.tty.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.entity.sql.ServerHome;
+import com.tty.enumType.FilePath;
 import com.tty.function.HomeManager;
 import com.tty.lib.Lib;
 import com.tty.lib.command.BaseCommand;
@@ -37,6 +38,8 @@ public class sethome extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.HOME_CONFIG.name()))) return;
+
         String homeId = args[1];
         if(FormatUtils.checkIdName(homeId)) {
             Player player = (Player) sender;

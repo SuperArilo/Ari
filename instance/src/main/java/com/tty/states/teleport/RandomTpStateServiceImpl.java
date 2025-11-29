@@ -41,30 +41,27 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
         Entity owner = state.getOwner();
         if (state instanceof RandomTpState s) {
             RtpConfig rtpConfig = this.rtpConfig(s.getWorld().getName());
-            if (rtpConfig != null && Ari.C_INSTANCE.getValue("rtp.enable", FilePath.FunctionConfig, Boolean.class, false)) {
-                if (!rtpConfig.isEnable()) {
-                    s.getOwner().sendMessage(ConfigUtils.t("function.rtp.world-disable"));
-                    return false;
-                }
+            if (rtpConfig == null || !rtpConfig.isEnable()) {
+                s.getOwner().sendMessage(ConfigUtils.t("function.rtp.world-disable"));
+                return false;
+            }
+            StateMachineManager manager = Ari.instance.stateMachineManager;
 
-                StateMachineManager manager = Ari.instance.stateMachineManager;
+            //判断当前实体是否在传送冷却中
+            if (!manager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
+                owner.sendMessage(ConfigUtils.t("teleport.cooling"));
+                return false;
+            }
 
-                //判断当前实体是否在传送冷却中
-                if (!manager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
-                    owner.sendMessage(ConfigUtils.t("teleport.cooling"));
-                    return false;
-                }
-
-                //判断当前发起玩家是否在传送状态中
-                if (!manager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty() ||
+            //判断当前发起玩家是否在传送状态中
+            if (!manager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty() ||
                     !this.getStates(owner).isEmpty() ||
                     !manager.get(PreTeleportStateServiceImpl.class).getStates(owner).isEmpty()) {
-                    owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
-                    return false;
-                }
-
-                return true;
+                owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
+                return false;
             }
+
+            return true;
         }
         return false;
     }
@@ -112,7 +109,7 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
                     .get(TeleportStateServiceImpl.class)
                     .addState(new EntityToLocationState(
                             owner,
-                            TeleportType.getDelayTime(TeleportType.RTP),
+                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.RTP_CONFIG, Integer.class, 3),
                             s.getTrueLocation(),
                             TeleportType.RTP));
         }
@@ -146,12 +143,12 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
     private void sendCountTitle(Player player, RandomTpState state) {
         String sub = Ari.C_INSTANCE.getValue(
                 "function.rtp.title-search-count",
-                FilePath.Lang,
+                FilePath.LANG,
                 String.class,
                 "null");
         sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(state.getMax_count() - state.getCount()));
         Title title = ComponentUtils.setPlayerTitle(
-                Ari.C_INSTANCE.getValue("function.rtp.title-searching", FilePath.Lang, String.class, "null"),
+                Ari.C_INSTANCE.getValue("function.rtp.title-searching", FilePath.LANG, String.class, "null"),
                 sub,
                 0,
                 1000L,
@@ -160,7 +157,7 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
     }
 
     private RtpConfig rtpConfig(String worldName) {
-        Map<String, RtpConfig> value = Ari.C_INSTANCE.getValue("rtp.worlds", FilePath.FunctionConfig, new TypeToken<Map<String, RtpConfig>>() {}.getType(), null);
+        Map<String, RtpConfig> value = Ari.C_INSTANCE.getValue("main.worlds", FilePath.RTP_CONFIG, new TypeToken<Map<String, RtpConfig>>() {}.getType(), null);
         return value.get(worldName);
     }
 
@@ -175,8 +172,8 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
     public static void setRtpWorldConfig() {
 
         Map<String, Object> value = Ari.C_INSTANCE.getValue(
-                "rtp.worlds",
-                FilePath.FunctionConfig,
+                "main.worlds",
+                FilePath.RTP_CONFIG,
                 new TypeToken<Map<String, Object>>(){}.getType(),
                 null);
 
@@ -191,6 +188,6 @@ public class RandomTpStateServiceImpl extends StateServiceImpl {
                 value.put(world.getName(), createWorldRtp());
             }
         }
-        Ari.C_INSTANCE.setValue(Ari.instance,"rtp.worlds", FilePath.FunctionConfig, value);
+        Ari.C_INSTANCE.setValue(Ari.instance,"main.worlds", FilePath.RTP_CONFIG, value);
     }
 }

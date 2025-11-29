@@ -140,7 +140,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
                                 p.replace(IconKeyType.TOP_SLOT.getKey(),
-                                        Ari.C_INSTANCE.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))).toList();
+                                        Ari.C_INSTANCE.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.LANG)))).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
                     }
@@ -154,7 +154,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         CustomInventoryHolder holder = state.getHolder();
         FunctionType type = state.getFunctionType();
         Player player = holder.getPlayer();
-        List<String> value = Ari.C_INSTANCE.getValue("main.name-check", FilePath.WarpConfig, new TypeToken<List<String>>(){}.getType(), List.of());
+        List<String> value = Ari.C_INSTANCE.getValue("main.name-check", FilePath.WARP_CONFIG, new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(ConfigUtils.t("base.on-error"));
@@ -167,7 +167,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
                     return false;
                 }
-                if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.WarpConfig, new TypeToken<Integer>(){}.getType(), 15)) {
+                if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.WARP_CONFIG, new TypeToken<Integer>(){}.getType(), 15)) {
                     player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
                     return false;
                 }

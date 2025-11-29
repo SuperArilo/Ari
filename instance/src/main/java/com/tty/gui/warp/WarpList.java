@@ -35,10 +35,10 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     private final String baseYesRe = "base.yes_re";
     private final String baseNoRe = "base.no_re";
-    private final String baseFree = Ari.C_INSTANCE.getValue("base.free", FilePath.Lang);
+    private final String baseFree = Ari.C_INSTANCE.getValue("base.free", FilePath.LANG);
 
     public WarpList(Player player) {
-        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.WarpList.name()).saveToString(), BaseDataMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.WARP_LIST_GUI.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                             yield cost == null || cost == 0 ? baseFree : cost + EconomyUtils.getNamePlural();
                         }
                         case TOP_SLOT -> serverWarp.isTopSlot() ? this.baseYesRe:this.baseNoRe;
-                        case PERMISSION -> Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.Lang);
+                        case PERMISSION -> Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.LANG);
                     };
                     int index;
                     while ((index = sb.indexOf(keyType.getKey())) != -1) {

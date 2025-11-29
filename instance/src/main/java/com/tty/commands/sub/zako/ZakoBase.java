@@ -36,7 +36,7 @@ public abstract class ZakoBase<T> extends BaseCommand<T> {
             try {
                 uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
             } catch (Exception e) {
-                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.Lang));
+                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.LANG));
                 return null;
             }
         }

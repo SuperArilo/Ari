@@ -37,7 +37,7 @@ import java.util.concurrent.CompletableFuture;
 public class HomeList extends BaseDataItemInventory<ServerHome> {
 
     public HomeList(Player player) {
-        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HomeList.name()).saveToString(), BaseDataMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HOME_LIST_GUI.name()).saveToString(), BaseDataMenu.class), player);
     }
 
     @Override

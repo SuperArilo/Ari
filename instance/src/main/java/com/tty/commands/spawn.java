@@ -34,8 +34,11 @@ public class spawn extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.SPAWN_CONFIG.name()))) return;
+
         Player player = (Player) sender;
-        Location value = Ari.C_INSTANCE.getValue("main.location", FilePath.SpawnConfig, Location.class);
+
+        Location value = Ari.C_INSTANCE.getValue("main.location", FilePath.SPAWN_CONFIG, Location.class);
         if(value == null) {
             Log.debug("location null");
             player.sendMessage(ConfigUtils.t("function.spawn.no-spawn"));
@@ -45,7 +48,7 @@ public class spawn extends BaseCommand<String> {
                 .get(TeleportStateServiceImpl.class)
                 .addState(new EntityToLocationState(
                         player,
-                        TeleportType.getDelayTime(TeleportType.SPAWN),
+                        Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.SPAWN_CONFIG, Integer.class, 3),
                         value,
                         TeleportType.SPAWN));
     }

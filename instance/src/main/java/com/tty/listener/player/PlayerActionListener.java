@@ -54,6 +54,6 @@ public class PlayerActionListener implements Listener {
                 .addState(new PlayerRideActionState(player, clickedPlayer));
     }
     private boolean isEnable() {
-        return Ari.C_INSTANCE.getValue("action.sit.enable", FilePath.FunctionConfig, Boolean.class, false);
+        return Ari.C_INSTANCE.getValue("action.sit.enable", FilePath.FUNCTION_CONFIG, Boolean.class, false);
     }
 }

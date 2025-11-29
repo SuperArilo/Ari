@@ -1,6 +1,8 @@
 package com.tty.commands;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.tty.Ari;
+import com.tty.enumType.FilePath;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
@@ -28,6 +30,8 @@ public class home extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.HOME_CONFIG.name()))) return;
+
         new HomeList((Player) sender).open();
     }
 

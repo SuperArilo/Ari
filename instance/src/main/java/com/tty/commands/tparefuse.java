@@ -1,6 +1,8 @@
 package com.tty.commands;
 
+import com.tty.Ari;
 import com.tty.commands.sub.tpa.TpaBase;
+import com.tty.enumType.FilePath;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.LangType;
 import com.tty.tool.ConfigUtils;
@@ -30,6 +32,8 @@ public class tparefuse extends TpaBase<PlayerSelectorArgumentResolver> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.TPA_CONFIG.name()))) return;
+
         Player player = (Player) sender;
         Player target = Bukkit.getPlayerExact(args[1]);
         if (this.checkAfterResponse(player, target) != null) {

@@ -9,7 +9,9 @@ import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -17,6 +19,15 @@ import static com.mojang.brigadier.Command.SINGLE_SUCCESS;
 
 @SuppressWarnings("SameReturnValue")
 public abstract class BaseCommand<T> implements SuperHandsomeCommand {
+
+    @Override
+    public boolean isDisabledInGame(CommandSender sender, @NonNull YamlConfiguration configuration) {
+        boolean b = configuration.getBoolean("main.enable", true);
+        if (!b) {
+            sender.sendMessage(LibConfigUtils.t("base.command.disabled"));
+        }
+        return b;
+    }
 
     private final boolean allowConsole;
     private final ArgumentType<T> type;

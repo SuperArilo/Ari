@@ -112,7 +112,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
                         List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
-                                p.replace(IconKeyType.TOP_SLOT.getKey(), Ari.C_INSTANCE.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.Lang)))
+                                p.replace(IconKeyType.TOP_SLOT.getKey(), Ari.C_INSTANCE.getValue(homeEditor.currentHome.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.LANG)))
                         ).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
@@ -148,7 +148,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
         List<Object> checkList = Ari.C_INSTANCE
                 .getValue(
                         "main.name-check",
-                        FilePath.HomeConfig,
+                        FilePath.HOME_CONFIG,
                         new TypeToken<List<String>>() {
                         }.getType(),
                         List.of());
@@ -156,7 +156,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-error"));
             return false;
         }
-        if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.HomeConfig, Integer.class, 15)) {
+        if(message.length() > Ari.C_INSTANCE.getValue("main.name-length", FilePath.HOME_CONFIG, Integer.class, 15)) {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }

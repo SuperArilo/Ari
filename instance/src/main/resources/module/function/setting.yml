@@ -31,31 +31,8 @@ chat:
     admin: '<<#EEEE00>管理员</#EEEE00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
     default: '<<#00AA00>玩家</#00AA00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
     _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
-rtp:
-  enable: true
-  search-count: 10
-  worlds:
 action:
   sit:
     enable: true
     disable-block:
       - 'example'
-teleport:
-  tpa:
-    delay: 3
-    cooldown: 10
-  back:
-    delay: 3
-    cooldown: 10
-  home:
-    delay: 3
-    cooldown: 10
-  rtp:
-    delay: 3
-    cooldown: 10
-  warp:
-    delay: 3
-    cooldown: 10
-  spawn:
-    delay: 3
-    cooldown: 10

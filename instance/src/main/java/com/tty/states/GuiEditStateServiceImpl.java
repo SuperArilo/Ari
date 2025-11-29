@@ -46,8 +46,8 @@ public class GuiEditStateServiceImpl extends StateServiceImpl {
         int i = Ari.instance.getConfig().getInt("server.gui-edit-timeout", 10);
         owner.showTitle(
                 ComponentUtils.setPlayerTitle(
-                        Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.Lang),
-                        Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.Lang),
+                        Ari.C_INSTANCE.getValue("base.on-edit.title", FilePath.LANG),
+                        Ari.C_INSTANCE.getValue("base.on-edit.sub-title", FilePath.LANG),
                         1000,
                         i * 1000L,
                         1000));

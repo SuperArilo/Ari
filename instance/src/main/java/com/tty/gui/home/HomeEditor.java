@@ -22,7 +22,7 @@ public class HomeEditor extends BaseInventory {
     public final ServerHome currentHome;
 
     public HomeEditor(ServerHome serverHome, Player player) {
-        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HomeEditor.name()).saveToString(), BaseMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.HOME_EDIT_GUI.name()).saveToString(), BaseMenu.class), player);
         this.currentHome = serverHome;
     }
 
@@ -56,7 +56,7 @@ public class HomeEditor extends BaseInventory {
                             IconKeyType.TOP_SLOT.getKey(),
                             Ari.C_INSTANCE.getValue(
                                     this.currentHome.isTopSlot() ? "base.yes_re":"base.no_re",
-                                    FilePath.Lang))).toList());
+                                    FilePath.LANG))).toList());
                 }
             }
         }

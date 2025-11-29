@@ -2,22 +2,32 @@ package com.tty.enumType;
 
 
 import com.tty.lib.enum_type.FilePathEnum;
+import com.tty.lib.tool.Log;
+import lombok.Getter;
+
+import java.util.Arrays;
 
 public enum FilePath implements FilePathEnum {
-    Lang("lang/[lang].yml"),
-    CommandAlias("module/command-alias.yml"),
-    HomeList("module/home/home-gui.yml"),
-    HomeConfig("module/home/setting.yml"),
-    HomeEditor("module/home/edit-home-gui.yml"),
-    WarpList("module/warp/warp-gui.yml"),
-    WarpConfig("module/warp/setting.yml"),
-    WarpEditor("module/warp/edit-warp-gui.yml"),
-    FunctionConfig("module/function/setting.yml"),
-    SpawnConfig("module/spawn/setting.yml");
+    LANG("lang", "lang/[lang].yml"),
+    COMMAND_ALIAS("command-alias", "module/command-alias.yml"),
+    TPA_CONFIG("tpa", "module/tpa/setting.yml"),
+    BACK_CONFIG("back", "module/back/setting.yml"),
+    RTP_CONFIG("rtp", "module/rtp/setting.yml"),
+    HOME_LIST_GUI("home-gui", "module/home/home-gui.yml"),
+    HOME_CONFIG("home", "module/home/setting.yml"),
+    HOME_EDIT_GUI("home-edit-gui", "module/home/home-edit-gui.yml"),
+    WARP_LIST_GUI("warp-gui", "module/warp/warp-gui.yml"),
+    WARP_CONFIG("warp", "module/warp/setting.yml"),
+    WARP_EDIT_GUI("warp-edit-gui", "module/warp/warp-edit-gui.yml"),
+    FUNCTION_CONFIG("function", "module/function/setting.yml"),
+    SPAWN_CONFIG("spawn", "module/spawn/setting.yml");
 
+    @Getter
+    private final String nickName;
     private final String path;
 
-    FilePath(String path) {
+    FilePath(String nickName, String path) {
+        this.nickName = nickName;
         this.path = path;
     }
 
@@ -25,4 +35,16 @@ public enum FilePath implements FilePathEnum {
     public String getPath() {
         return this.path;
     }
+
+    public static FilePath get(TeleportType type) {
+        FilePath filePath;
+        try {
+            filePath = Arrays.stream(FilePath.values()).filter(i -> i.nickName.equals(type.getKey())).findFirst().orElse(null);
+        } catch (Exception e) {
+            Log.debug("type %s is not in FilePath", type.getKey());
+            filePath = null;
+        }
+        return filePath;
+    }
+
 }

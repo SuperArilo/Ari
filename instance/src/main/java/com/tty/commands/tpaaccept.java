@@ -4,7 +4,7 @@ import com.tty.Ari;
 import com.tty.commands.sub.tpa.TpaBase;
 import com.tty.dto.state.teleport.EntityToEntityState;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
-import com.tty.enumType.TeleportType;
+import com.tty.enumType.FilePath;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.states.teleport.TeleportStateServiceImpl;
 import com.tty.tool.ConfigUtils;
@@ -33,6 +33,8 @@ public class tpaaccept extends TpaBase<PlayerSelectorArgumentResolver> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.TPA_CONFIG.name()))) return;
+
         Player player = (Player) sender;
         Player target = Ari.instance.getServer().getPlayerExact(args[1]);
 
@@ -40,7 +42,7 @@ public class tpaaccept extends TpaBase<PlayerSelectorArgumentResolver> {
         if (anElse == null) return;
 
         assert target != null;
-        int value = TeleportType.getDelayTime(TeleportType.TPA);
+        int value = Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA_CONFIG, Integer.class, 3);
         EntityToEntityState state;
         if (anElse.getCommand().equals("tpa")) {
             state = new EntityToEntityState(target, player, value, "tpa");

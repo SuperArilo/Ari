@@ -7,7 +7,6 @@ import com.tty.dto.state.teleport.EntityToEntityState;
 import com.tty.dto.state.teleport.EntityToLocationCallbackState;
 import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.TeleportType;
 import com.tty.function.Teleporting;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.impl.StateServiceImpl;
@@ -60,8 +59,8 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
         }
 
         owner.showTitle(ComponentUtils.setPlayerTitle(
-                Ari.C_INSTANCE.getValue("teleport.title.main", FilePath.Lang),
-                Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.Lang)
+                Ari.C_INSTANCE.getValue("teleport.title.main", FilePath.LANG),
+                Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.LANG)
                         .replace(LangType.TELEPORTDELAY.getType(), String.valueOf(state.getMax_count() - state.getCount())),
                 200,
                 1000,
@@ -124,7 +123,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
                 targetName = toEntityState.getTarget().getName();
                 afterAction = () -> handleTeleportAfter(owner, targetName,
                         () -> this.removeEntityInitData(owner),
-                        () -> machine.addState(new CooldownState(owner, TeleportType.getCoolDownTime(toEntityState.getType()), toEntityState.getType()))
+                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toEntityState.getType()), Integer.class, 10), toEntityState.getType()))
                 );
             }
             case EntityToLocationState toLocationState -> {
@@ -133,7 +132,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
                 targetName = targetLocation.toString();
                 afterAction = () -> handleTeleportAfter(owner, targetName,
                         () -> this.removeEntityInitData(owner),
-                        () -> machine.addState(new CooldownState(owner, TeleportType.getCoolDownTime(toLocationState.getType()), toLocationState.getType()))
+                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toLocationState.getType()), Integer.class, 10), toLocationState.getType()))
                 );
             }
             case EntityToLocationCallbackState callbackState -> {
@@ -143,7 +142,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
                     callbackState.executeCallback();
                     handleTeleportAfter(owner, targetName,
                             () -> this.removeEntityInitData(owner),
-                            () -> machine.addState(new CooldownState(owner, TeleportType.getCoolDownTime(callbackState.getType()), callbackState.getType()))
+                            () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(callbackState.getType()), Integer.class, 10), callbackState.getType()))
                     );
                 };
             }

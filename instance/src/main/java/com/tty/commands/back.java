@@ -3,6 +3,7 @@ package com.tty.commands;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.tty.Ari;
 import com.tty.dto.state.teleport.EntityToLocationState;
+import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.enumType.TeleportType;
@@ -34,6 +35,8 @@ public class back extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.BACK_CONFIG.name()))) return;
+
         Player player = (Player) sender;
         Location beforeLocation = TELEPORT_LAST_LOCATION.get(player);
         if(beforeLocation == null) {
@@ -45,7 +48,7 @@ public class back extends BaseCommand<String> {
                 .get(TeleportStateServiceImpl.class)
                 .addState(new EntityToLocationState(
                         player,
-                        TeleportType.getDelayTime(TeleportType.BACK),
+                        Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.BACK_CONFIG, Integer.class, 3),
                         beforeLocation,
                         TeleportType.BACK));
     }

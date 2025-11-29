@@ -23,7 +23,7 @@ public class WarpEditor extends BaseInventory {
     public final ServerWarp currentWarp;
 
     public WarpEditor(ServerWarp serverWarp, Player player) {
-        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.WarpEditor.name()).saveToString(), BaseMenu.class), player);
+        super(FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.WARP_EDIT_GUI.name()).saveToString(), BaseMenu.class), player);
         this.currentWarp = serverWarp;
     }
 
@@ -59,7 +59,7 @@ public class WarpEditor extends BaseInventory {
                     }
                     case COST -> {
                         if (EconomyUtils.isNull()) {
-                            item.setName(Ari.C_INSTANCE.getValue("server.message.no-economy", FilePath.Lang));
+                            item.setName(Ari.C_INSTANCE.getValue("server.message.no-economy", FilePath.LANG));
                             item.setMaterial("barrier");
                         } else {
                             Double cost = this.currentWarp.getCost();
@@ -70,7 +70,7 @@ public class WarpEditor extends BaseInventory {
                             IconKeyType.TOP_SLOT.getKey(),
                             Ari.C_INSTANCE.getValue(
                                     this.currentWarp.isTopSlot() ? "base.yes_re":"base.no_re",
-                                    FilePath.Lang))).toList());
+                                    FilePath.LANG))).toList());
                 }
             }
         }

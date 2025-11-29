@@ -30,9 +30,11 @@ public class setspawn extends BaseCommand<String> {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!this.isDisabledInGame(sender, Ari.C_INSTANCE.getObject(FilePath.SPAWN_CONFIG.name()))) return;
+
         Player player = (Player) sender;
         Location location = player.getLocation();
-        Ari.C_INSTANCE.setValue(Ari.instance, "main.location", FilePath.SpawnConfig, location);
+        Ari.C_INSTANCE.setValue(Ari.instance, "main.location", FilePath.SPAWN_CONFIG, location);
         player.sendMessage(ConfigUtils.t("function.spawn.create-success"));
     }
 

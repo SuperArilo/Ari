@@ -10,12 +10,12 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.HomeManager;
 import com.tty.gui.BaseDataItemInventory;
+import com.tty.lib.Log;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -57,8 +57,8 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
             try {
                 itemStack = new ItemStack(Material.valueOf(ph.getShowMaterial().toUpperCase()));
             } catch (Exception e) {
-                Log.error("There is a problem with the homeID: [" + ph.getHomeId() + "] of the player: [" + this.player.getName() + "]");
-                Log.warning("Skip the rendering homeId [" + ph.getHomeId() + "] process...");
+                Log.error("There is a problem with the homeID: [%s] of the player: [%s]", ph.getHomeId(), this.player.getName());
+                Log.warn("Skip the rendering homeId [%s] process...", ph.getHomeId());
                 continue;
             }
 

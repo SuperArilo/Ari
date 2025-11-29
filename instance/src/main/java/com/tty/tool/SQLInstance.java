@@ -1,10 +1,9 @@
 package com.tty.tool;
 
-
 import com.tty.Ari;
 import com.tty.enumType.SqlTable;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.SQLType;
-import com.tty.lib.tool.Log;
 import com.zaxxer.hikari.HikariDataSource;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.sql2o.Connection;
@@ -13,7 +12,6 @@ import org.sql2o.Sql2o;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
 
 public class SQLInstance {
 
@@ -21,14 +19,14 @@ public class SQLInstance {
     public static Sql2o SESSION_FACTORY;
 
     public void start() {
-        Log.debug(Level.INFO, "Start connecting");
+        Log.debug("Start connecting");
         try {
             sqlType = SQLType.valueOf(Ari.instance.getConfig().getString("data.storage-type", "null").toUpperCase());
         } catch (Exception e) {
-            Log.warning("storage-type is null, Running sqlite mode");
+            Log.warn("storage-type is null, Running sqlite mode");
             sqlType = SQLType.SQLITE;
         }
-        Log.debug(Level.INFO, "The database type is " + sqlType.getType());
+        Log.debug("The database type is %s", sqlType.getType());
         switch (sqlType) {
             case MYSQL -> this.createMysql();
             case SQLITE -> this.createSQLite();
@@ -39,12 +37,12 @@ public class SQLInstance {
                 connection.createQuery(value.getSql()).executeUpdate();
             }
         } catch (Exception e) {
-            Log.error("sql error", e);
+            Log.error(e, "sql error");
         }
 
     }
     public void reconnect() {
-        Log.debug(Level.INFO, "Connection is closing...");
+        Log.debug("Connection is closing...");
         close();
         this.start();
     }
@@ -99,9 +97,9 @@ public class SQLInstance {
     public static void close() {
         try {
             SQLInstance.SESSION_FACTORY.getConnectionSource().getConnection().close();
-            Log.debug(Level.INFO, "Connection closed successfully");
+            Log.debug("Connection closed successfully");
         } catch (SQLException e) {
-            Log.error("close sql connection error", e);
+            Log.error(e, "close sql connection error");
         }
         SQLInstance.SESSION_FACTORY = null;
     }

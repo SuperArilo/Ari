@@ -1,8 +1,8 @@
 package com.tty.lib.task;
 
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.PeriodicTaskEnum;
-import com.tty.lib.tool.Log;
 import lombok.Setter;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -31,14 +31,14 @@ public class PeriodicTask {
     private CancellableTask cancellableTask;
 
     public void start() {
-        Log.debug("Player Save Task: start: " + this.rate + " tick");
+        Log.debug("Player Save Task: start: %s tick", this.rate);
         this.cancellableTask = Lib.Scheduler.runAsyncAtFixedRate(this.plugin, (i) -> this.execute(), c, rate);
     }
 
     public void stop() {
         if(this.cancellableTask == null) return;
         this.cancellableTask.cancel();
-        Log.debug("stop all periodic task: " + this.periodicTaskEnum.getName());
+        Log.debug("stop all periodic task: %s", this.periodicTaskEnum.getName());
         this.cancellableTask = null;
     }
 

@@ -1,8 +1,8 @@
 package com.tty.enumType;
 
 
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FilePathEnum;
-import com.tty.lib.tool.Log;
 import lombok.Getter;
 
 import java.util.Arrays;

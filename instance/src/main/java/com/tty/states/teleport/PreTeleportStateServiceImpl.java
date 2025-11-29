@@ -1,13 +1,13 @@
 package com.tty.states.teleport;
 
 import com.tty.Ari;
+import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import com.tty.states.CoolDownStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.StateMachineManager;
@@ -50,7 +50,7 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
             return;
         }
 
-        Log.debug("checking player " + owner.getName() + " -> " + target.getName() + " request");
+        Log.debug("checking player %s -> %s request", owner.getName(), target.getName());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
     @Override
     protected void onFinished(State state) {
         if (state instanceof PreEntityToEntityState preEntityToEntityState) {
-            Log.debug("player " + preEntityToEntityState.getOwner().getName() + " send to " + preEntityToEntityState.getTarget().getName() + " teleport request expired");
+            Log.debug("player %s send to %s teleport request expired",  preEntityToEntityState.getOwner().getName(), preEntityToEntityState.getTarget().getName());
         }
 
     }

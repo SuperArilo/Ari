@@ -10,11 +10,11 @@ import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
 import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
@@ -131,7 +131,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                         clickItem.setItemMeta(clickMeta);
                     }, 20);
                 }).exceptionally(i -> {
-                    Log.error("save home error", i);
+                    Log.error(i, "save home error");
                     clickMeta.lore(List.of(ConfigUtils.t("base.save.error")));
                     clickItem.setItemMeta(clickMeta);
                     player.sendMessage(ConfigUtils.t("base.on-error"));

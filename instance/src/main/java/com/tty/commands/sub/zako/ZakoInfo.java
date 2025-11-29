@@ -4,11 +4,11 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
+import com.tty.lib.Log;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.lib.tool.TimeFormatUtils;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -64,7 +64,7 @@ public class ZakoInfo extends ZakoBase<String> {
 
                 sender.sendMessage(ConfigUtils.ts("server.player.info", map));
             }).exceptionally(i -> {
-                Log.error("error", i);
+                Log.error(i, "error");
                 return null;
             });
     }

@@ -9,12 +9,12 @@ import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.enumType.TeleportType;
 import com.tty.lib.tool.EconomyUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;
 import com.tty.listener.BaseGuiListener;
 import com.tty.states.teleport.TeleportStateServiceImpl;
@@ -115,7 +115,7 @@ public class WarpListListener extends BaseGuiListener {
                         }
                     }
                 }).exceptionally(i -> {
-                   Log.error("error", i);
+                   Log.error(i, "error");
                    return null;
                 });
             }

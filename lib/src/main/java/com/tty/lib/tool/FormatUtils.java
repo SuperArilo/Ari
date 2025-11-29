@@ -1,5 +1,6 @@
 package com.tty.lib.tool;
 import com.google.gson.Gson;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -14,7 +15,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -210,7 +210,7 @@ public class FormatUtils {
             type = FunctionType.valueOf(rawType.toUpperCase());
             return type;
         } catch (Exception e) {
-            Log.debug(Level.INFO, "Function type error", e);
+            Log.debug(e, "Function type %s error", rawType);
             return null;
         }
     }

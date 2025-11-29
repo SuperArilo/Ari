@@ -2,12 +2,12 @@ package com.tty.states.action;
 
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
+import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.dto.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
 import com.tty.lib.services.impl.StateServiceImpl;
-import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -89,7 +89,7 @@ public class PlayerSitActionStateServiceImpl extends StateServiceImpl {
                 owner.isOnline() &&
                 owner.isInsideVehicle();
         if (b) {
-            Log.debug(String.format("player %s is sitting now.", owner.getName()));
+            Log.debug("player %s is sitting now.", owner.getName());
         } else {
             state.setOver(true);
         }

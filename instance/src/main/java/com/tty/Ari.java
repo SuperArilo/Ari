@@ -4,6 +4,7 @@ import com.google.gson.reflect.TypeToken;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.PlayerTabManager;
+import com.tty.lib.Log;
 import com.tty.lib.ServerPlatform;
 import com.tty.lib.command.CommandRegister;
 import com.tty.lib.dto.AliasItem;
@@ -28,7 +29,6 @@ import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -59,18 +59,19 @@ public class Ari extends JavaPlugin {
     @Override
     public void onLoad() {
         instance = this;
-        this.printLogo();
     }
 
     @Override
     public void onEnable() {
 
         reloadAllConfig();
-        Log.initLogger(Ari.instance.getLogger(), DEBUG);
+        Log.init(this.getComponentLogger(), DEBUG);
 
-        PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Economy may not be available!"));
-        PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warning("Failed to load plugin: Vault, Permission use server default!"));
-        PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warning("Failed to load data service"));
+        this.printLogo();
+
+        PublicFunctionUtils.loadPlugin("Vault", Economy.class, EconomyUtils::setInstance, () -> Log.warn("Failed to load plugin: Vault, Economy may not be available!"));
+        PublicFunctionUtils.loadPlugin("Vault", Permission.class, PermissionUtils::setInstance, () -> Log.warn("Failed to load plugin: Vault, Permission use server default!"));
+        PublicFunctionUtils.loadPlugin("arilib", ConfigDataService.class, i -> this.dataService = i, () -> Log.warn("Failed to load data service"));
 
         this.stateMachineManager = new StateMachineManager(this);
         this.stateMachineManager.initDefaultStateMachines();
@@ -164,22 +165,20 @@ public class Ari extends JavaPlugin {
 
 
     private void printLogo() {
-        String d;
+        String pluginInfo;
         if (ServerPlatform.isFolia()) {
             PluginMeta pluginMeta = Ari.instance.getPluginMeta();
-            d = pluginMeta.getName() + " " + pluginMeta.getVersion();
+            pluginInfo = pluginMeta.getName() + " " + pluginMeta.getVersion();
         } else {
             PluginDescriptionFile description = Ari.instance.getDescription();
-            d = description.getName() + " " + description.getVersion();
+            pluginInfo = description.getName() + " " + description.getVersion();
         }
-        String ariArt =
-                "        _   \n" +
-                        "  |    /_\\  " + d + "\n" +
-                        "  |___/   \\ Running on " + Bukkit.getName() + " " + Bukkit.getServer().getVersion();
-        ConsoleCommandSender console = Bukkit.getConsoleSender();
-        for (String string : ariArt.split("\n")) {
-            console.sendMessage(string);
-        }
-        console.sendMessage("");
+        String bukkitName = Bukkit.getName();
+        String bukkitVersion = Bukkit.getServer().getVersion();
+        Log.info("");
+        Log.info("        _   ");
+        Log.info("  |    /_\\  %s", pluginInfo);
+        Log.info("  |___/   \\ Running on %s %s", bukkitName, bukkitVersion);
+        Log.info("");
     }
 }

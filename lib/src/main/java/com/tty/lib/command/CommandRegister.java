@@ -1,7 +1,7 @@
 package com.tty.lib.command;
 
+import com.tty.lib.Log;
 import com.tty.lib.dto.AliasItem;
-import com.tty.lib.tool.Log;
 import io.papermc.paper.command.brigadier.Commands;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,22 +21,22 @@ public class CommandRegister {
                 try {
                     executorClass = Class.forName(packagePath + "." + k);
                 } catch (ClassNotFoundException e) {
-                    Log.error("Error while constructing instruction. " + k + " class not found!", e);
+                    Log.error(e, "Error while constructing instruction. %s class not found!", k);
                     return;
                 }
                 Object executorInstance;
                 try {
                     executorInstance = executorClass.getDeclaredConstructor().newInstance();
                 } catch (Exception e) {
-                    Log.error("Error while constructing executor for instruction: " + k, e);
+                    Log.error(e, "Error while constructing executor for instruction: %s", k);
                     return;
                 }
                 if (executorInstance instanceof SuperHandsomeCommand cmd) {
                     commands.register(cmd.toBrigadier(), v.getUsage());
-                    Log.debug((v.isEnable() ? "":"un" ) + "register command: " + k);
+                    Log.debug((v.isEnable() ? "":"un" ) + "register command: %s", k);
                 }
             });
-            Log.debug("register commands time: " + (System.currentTimeMillis() - start) + "ms");
+            Log.debug("register commands time: %sms", (System.currentTimeMillis() - start));
         });
     }
 

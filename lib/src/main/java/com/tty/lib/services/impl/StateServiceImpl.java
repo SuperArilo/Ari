@@ -1,10 +1,10 @@
 package com.tty.lib.services.impl;
 
+import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.lib.Lib;
 import com.tty.lib.services.StateService;
 import com.tty.lib.task.CancellableTask;
-import com.tty.lib.tool.Log;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -70,7 +70,7 @@ public abstract class StateServiceImpl implements StateService {
                 } else {
                     state.increment();
                 }
-            }, () -> Log.error("Failed to run state for " + state));
+            }, null);
         }
     }
     @Override
@@ -79,7 +79,7 @@ public abstract class StateServiceImpl implements StateService {
             this.task.cancel();
             this.STATE_LIST.clear();
             this.task = null;
-            Log.debug("state machine abort");
+            Log.debug("state service abort");
         }
     }
     @Override
@@ -93,7 +93,7 @@ public abstract class StateServiceImpl implements StateService {
             this.passAddState(state);
             if (task == null) {
                 this.task = createTask(rate, c, isAsync, this.plugin);
-                Log.debug("create state machine");
+                Log.debug("create state service");
             }
         }
     }

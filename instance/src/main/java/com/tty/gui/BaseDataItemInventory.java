@@ -1,7 +1,7 @@
 package com.tty.gui;
 
 import com.tty.entity.menu.BaseDataMenu;
-import com.tty.lib.tool.Log;
+import com.tty.lib.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +25,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
             this.data = list;
             this.renderDataItem();
         }).exceptionally(i -> {
-            Log.error(this.holder.getType().name() + ": request data error!", i);
+            Log.error(i, "%s: request data error!", this.holder.getType().name());
             return null;
         });
     }
@@ -44,7 +44,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
             this.data = list;
             this.renderDataItem();
         }).exceptionally(i -> {
-            Log.error(this.holder.getType().name() + ": request data error!", i);
+            Log.error(i, "%s: request data error!", this.holder.getType().name());
             return null;
         });
     }
@@ -63,7 +63,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
                 this.renderDataItem();
             }
         }).exceptionally(i -> {
-            Log.error(this.holder.getType().name() + ": request data error!", i);
+            Log.error( i, "%s: request data error!", this.holder.getType().name());
             return null;
         });
     }
@@ -86,7 +86,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
                 this.setItem(index, renderItem.get(index));
             }
         }
-        Log.debug(this.holder.getType().name() + ": render data items: " + (System.currentTimeMillis() - l) + "ms");
+        Log.debug("%s: render data items: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
     }
 
 }

@@ -5,9 +5,9 @@ import com.tty.dto.CustomInventoryHolder;
 import com.tty.entity.menu.BaseMenu;
 import com.tty.entity.menu.FunctionItems;
 import com.tty.entity.menu.Mask;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -64,7 +64,7 @@ public abstract class BaseInventory {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
-        Log.debug(this.holder.getType().name() + ": render masks: " + (System.currentTimeMillis() - l) + "ms");
+        Log.debug("%S: render masks: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
     }
 
     private void renderFunctionItems() {
@@ -84,7 +84,7 @@ public abstract class BaseInventory {
                 this.inventory.setItem(integer, o);
             }
         });
-        Log.debug(this.holder.getType().name() + ": render function items: " + (System.currentTimeMillis() - l) + "ms");
+        Log.debug("%s: render function items: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
     }
 
     protected abstract CustomInventoryHolder createHolder();

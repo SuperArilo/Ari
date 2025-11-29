@@ -3,8 +3,8 @@ package com.tty.commands.sub.zako;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
 import com.tty.enumType.FilePath;
+import com.tty.lib.Log;
 import com.tty.lib.command.BaseCommand;
-import com.tty.lib.tool.Log;
 import org.bukkit.Bukkit;
 
 import java.util.UUID;
@@ -28,7 +28,7 @@ public abstract class ZakoBase<T> extends BaseCommand<T> {
         try {
             uuid.set(UUID.fromString(value));
         } catch (Exception e) {
-            Log.debug("zako is not a uuid: " + value);
+            Log.debug(e, "zako is not a uuid: %s", value);
         }
 
         // 如果不是 UUID，则尝试通过玩家名获取
@@ -36,7 +36,7 @@ public abstract class ZakoBase<T> extends BaseCommand<T> {
             try {
                 uuid.set(Bukkit.getOfflinePlayer(value).getUniqueId());
             } catch (Exception e) {
-                Log.error(Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.LANG));
+                Log.error(e, Ari.C_INSTANCE.getValue("function.zako.not-exist", FilePath.LANG));
                 return null;
             }
         }

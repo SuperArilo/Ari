@@ -1,6 +1,7 @@
 package com.tty.states.teleport;
 
 import com.tty.Ari;
+import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.dto.state.teleport.CooldownState;
 import com.tty.dto.state.teleport.EntityToEntityState;
@@ -11,7 +12,6 @@ import com.tty.function.Teleporting;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import com.tty.states.CoolDownStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
@@ -66,7 +66,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
                 1000,
                 200
         ));
-        Log.debug("checking entity " + owner.getName() + " teleporting");
+        Log.debug("checking entity %s teleporting", owner.getName());
     }
 
 
@@ -190,7 +190,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
     private void handleTeleportAfter(Entity owner, String targetDesc, Runnable removeInit, Runnable addState) {
         removeInit.run();
         addState.run();
-        Log.debug(String.format("Entity %s teleport to %s success", owner.getName(), targetDesc));
+        Log.debug("Entity %s teleport to %s success", owner.getName(), targetDesc);
     }
 
 }

@@ -6,7 +6,6 @@ import com.tty.lib.scheduler.FoliaScheduler;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.services.impl.ConfigDataServiceImpl;
 import com.tty.lib.tool.ConfigInstance;
-import com.tty.lib.tool.Log;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,7 +27,7 @@ public class Lib extends JavaPlugin {
     public void onLoad() {
         instance = this;
         reloadAllConfig();
-        Log.initLogger(this.getLogger(), DEBUG);
+        Log.init(this.getComponentLogger(), DEBUG);
 
         this.registerServices();
     }

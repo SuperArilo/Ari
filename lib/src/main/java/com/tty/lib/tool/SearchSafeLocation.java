@@ -1,6 +1,7 @@
 package com.tty.lib.tool;
 
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -29,18 +30,18 @@ public record SearchSafeLocation(JavaPlugin plugin) {
                     chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
             Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
                 if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
-                    Log.debug("random location " + x + ", " + highestBlockYAt + ", " + z);
+                    Log.debug("random location x: %s, y: %s, z: %s", x, highestBlockYAt, z);
                     Location targetLocation = new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5);
                     if (!future.isDone()) {
                         future.complete(targetLocation);
                     }
-                    Log.debug("search time: " + (System.currentTimeMillis() - l) + "ms");
+                    Log.debug("search time: %sms", (System.currentTimeMillis() - l));
                 } else {
                     future.complete(null);
                 }
             });
         }).exceptionally(i -> {
-            Log.error("SearchSafeLocation: search error", i);
+            Log.error("search error", i);
             future.completeExceptionally(i);
             return null;
         });

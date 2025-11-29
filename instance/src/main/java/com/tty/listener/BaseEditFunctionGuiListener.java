@@ -3,10 +3,10 @@ package com.tty.listener;
 import com.tty.Ari;
 import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.enumType.GuiType;
+import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -33,7 +33,7 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
         if (stateService.hasState(player)) return;
         List<State> states = stateService.getStates(player);
         if (states.isEmpty()) {
-            Log.error("player %s on edit status error, states is empty");
+            Log.error("player %s on edit status error, states is empty", player.getName());
             return;
         }
         PlayerEditGuiState first = (PlayerEditGuiState) states.getFirst();

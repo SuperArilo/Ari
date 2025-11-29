@@ -6,10 +6,10 @@ import com.tty.entity.sql.ServerWarp;
 import com.tty.enumType.FilePath;
 import com.tty.function.WarpManager;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
@@ -66,13 +66,13 @@ public class setwarp extends BaseCommand<String> {
                         warpManager.createInstance(serverWarp)
                                 .thenAccept(i -> player.sendMessage(ConfigUtils.t(i ? "function.warp.create-success":"base.save.on-error")))
                                 .exceptionally(i -> {
-                                    Log.error("create warp error", i);
+                                    Log.error(i, "create warp error");
                                     player.sendMessage(ConfigUtils.t("base.save.on-error"));
                                     return null;
                                 });
                     });
                 }).exceptionally(i -> {
-                    Log.error("create warp error", i);
+                    Log.error(i, "create warp error");
                     player.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });

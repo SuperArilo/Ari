@@ -2,7 +2,7 @@ package com.tty.listener;
 
 import com.tty.Ari;
 import com.tty.dto.event.CustomPluginReloadEvent;
-import com.tty.lib.tool.Log;
+import com.tty.lib.Log;
 import com.tty.states.teleport.RandomTpStateServiceImpl;
 import com.tty.lib.services.impl.StateServiceImpl;
 import com.tty.tool.ConfigUtils;
@@ -14,7 +14,7 @@ public class OnPluginReloadListener implements Listener {
     @EventHandler
     public void pluginReload(CustomPluginReloadEvent event) {
         Ari.reloadAllConfig();
-        Log.initLogger(Ari.instance.getLogger(), Ari.DEBUG);
+        Log.init(Ari.instance.getComponentLogger(), Ari.DEBUG);
         if (Ari.DEBUG) {
             Ari.instance.sqlInstance.reconnect();
         }

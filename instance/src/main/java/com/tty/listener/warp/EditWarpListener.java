@@ -10,11 +10,11 @@ import com.tty.function.WarpManager;
 import com.tty.gui.warp.WarpEditor;
 import com.tty.gui.warp.WarpList;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.listener.BaseEditFunctionGuiListener;
 import com.tty.states.GuiEditStateServiceImpl;
 import com.tty.tool.ConfigUtils;
@@ -72,7 +72,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                     player.sendMessage(ConfigUtils.t("function.warp.not-found"));
                 }
             }).exceptionally(i -> {
-                Log.error("deleting warp error", i);
+                Log.error(i, "deleting warp error");
                 return null;
             });
             case RENAME, COST, PERMISSION -> {
@@ -110,7 +110,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                 warpEditor.currentWarp.setShowMaterial(current.name());
             }
             case SAVE -> {
-                Log.debug("start saving warp id:" + warpEditor.currentWarp.getWarpId());
+                Log.debug("start saving warp id: %s", warpEditor.currentWarp.getWarpId());
                 clickMeta.lore(List.of(ConfigUtils.t("base.save.ing")));
                 clickItem.setItemMeta(clickMeta);
                 CompletableFuture<Boolean> future = warpManager.modify(warpEditor.currentWarp);
@@ -127,7 +127,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                         clickItem.setItemMeta(clickMeta);
                     }
                 }).exceptionally(i -> {
-                    Log.error("saving warp error", i);
+                    Log.error(i, "saving warp error");
                     clickMeta.lore(List.of(ConfigUtils.t("base.save.error")));
                     clickItem.setItemMeta(clickMeta);
                     return null;

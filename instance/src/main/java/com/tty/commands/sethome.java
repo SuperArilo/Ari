@@ -6,11 +6,11 @@ import com.tty.entity.sql.ServerHome;
 import com.tty.enumType.FilePath;
 import com.tty.function.HomeManager;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.lib.dto.Page;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.lib.tool.PermissionUtils;
 import com.tty.lib.tool.PublicFunctionUtils;
 import com.tty.tool.ConfigUtils;
@@ -66,13 +66,13 @@ public class sethome extends BaseCommand<String> {
                         homeManager.createInstance(serverHome)
                                 .thenAccept(status -> sender.sendMessage(ConfigUtils.t(status ? "function.home.create-success":"base.save.on-error", player)))
                                 .exceptionally(i -> {
-                                    Log.error("create home error", i);
+                                    Log.error(i, "create home error");
                                     sender.sendMessage(ConfigUtils.t("base.on-error"));
                                     return null;
                                 });
                     });
                 }).exceptionally(i -> {
-                    Log.error("create home error", i);
+                    Log.error(i, "create home error");
                     sender.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });

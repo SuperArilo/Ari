@@ -7,9 +7,9 @@ import com.tty.enumType.FilePath;
 import com.tty.function.PlayerManager;
 import com.tty.function.Teleporting;
 import com.tty.function.WhitelistManager;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -57,11 +57,11 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                 .thenAccept(instance -> {
                     if (instance == null) return;
                     if (instance.getPlayerName().equals(player.getName())) return;
-                    Log.debug("whitelist: layer changed name!");
+                    Log.debug("layer changed name. old: %s, new: %s", instance.getPlayerName(), player.getName());
                     instance.setPlayerName(player.getName());
                     playerManager.modify(instance);
                 }).exceptionally(i -> {
-                    Log.error("whitelist error", i);
+                    Log.error(i, "whitelist error");
                     event.disallow(PlayerLoginEvent.Result.KICK_OTHER, ComponentUtils.text(i.getMessage()));
                     return null;
                 });
@@ -111,7 +111,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
                     }
                 }).exceptionally(i -> {
-                   Log.error("get player data error", i);
+                   Log.error(i, "get player data error");
                    return null;
                 });
     }
@@ -138,14 +138,14 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
         String uuid = player.getUniqueId().toString();
         Long loginTime = PLAYER_LOGIN_TIMES.get(player.getUniqueId());
         if (loginTime == null) {
-            Log.warning("No login time recorded for player: " + player.getName());
+            Log.warn("No login time recorded for player: %s", player.getName());
             return;
         }
         long onlineDuration = System.currentTimeMillis() - loginTime;
         playerManager.getInstance(uuid)
                 .thenCompose(serverPlayer -> {
                     if (serverPlayer == null) {
-                        Log.error("Player data not found: " + uuid);
+                        Log.error("Player data not found: %s", uuid);
                         return CompletableFuture.completedFuture(false);
                     }
                     serverPlayer.setTotalOnlineTime(serverPlayer.getTotalOnlineTime() + onlineDuration);
@@ -153,16 +153,16 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                 })
                 .thenAccept(success -> {
                     if (success) {
-                        Log.debug("Saved player data: " + player.getName());
+                        Log.debug("Saved player data: %s", player.getName());
                         if (needRemove) {
                             PLAYER_LOGIN_TIMES.remove(player.getUniqueId());
                         }
                     } else {
-                        Log.error("Failed to save player data: " + player.getName());
+                        Log.error("Failed to save player data: %s", player.getName());
                     }
                 })
                 .exceptionally(ex -> {
-                    Log.error("Error saving player data for " + player.getName(), ex);
+                    Log.error(ex, "Error saving player data for %s", player.getName());
                     return null;
                 })
                 .whenComplete((result, ex) -> playerManager.setExecutionMode(playerManager.isAsync));

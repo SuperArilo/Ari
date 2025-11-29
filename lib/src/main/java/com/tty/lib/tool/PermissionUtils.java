@@ -1,5 +1,6 @@
 package com.tty.lib.tool;
 
+import com.tty.lib.Log;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -79,7 +80,7 @@ public class PermissionUtils {
             }
         }
         if (initValue == 0 && firstErrorPermission != null) {
-            Log.error("player " + player.getName() + " permission format error: " + firstErrorPermission);
+            Log.error("player %s permission format error: ", player.getName(), firstErrorPermission);
         }
         return initValue;
     }

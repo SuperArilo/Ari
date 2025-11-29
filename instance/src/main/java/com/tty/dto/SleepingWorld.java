@@ -4,11 +4,11 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.function.TimeManager;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.Log;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
@@ -84,7 +84,7 @@ public class SleepingWorld {
             //已经睡下的人
             long sleepers = this.getSleepPlayers();
             long worldTime = world.getTime();
-            Log.debug("world time :" + world.getTime() + " abs: " + TimePeriod.WAKE_UP.getEnd());
+            Log.debug("world time: %s abs: %s", world.getTime(), TimePeriod.WAKE_UP.getEnd());
             if ((worldTime >= TimePeriod.WAKE_UP.getEnd() ||
                     (worldTime > 0 && worldTime < TimePeriod.SUNRISE.getEnd())) ||
                     (world.isThundering() || world.hasStorm()) &&

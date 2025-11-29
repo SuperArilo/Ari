@@ -10,12 +10,12 @@ import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
 import com.tty.function.WarpManager;
 import com.tty.gui.BaseDataItemInventory;
+import com.tty.lib.Log;
 import com.tty.lib.dto.Page;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.lib.tool.Log;
 import com.tty.tool.ConfigUtils;
 import com.tty.lib.tool.EconomyUtils;
 import com.tty.lib.tool.PermissionUtils;
@@ -57,8 +57,8 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
             try {
                 itemStack = new ItemStack(Material.valueOf(serverWarp.getShowMaterial().toUpperCase()));
             } catch (Exception e) {
-                Log.warning("There is a problem with the warpID: [" + serverWarp.getWarpId() + "] of the player: [" + this.player.getName() + "]");
-                Log.error("Skip the rendering warpId [" + serverWarp.getWarpId() + "] process...", e);
+                Log.warn("There is a problem with the warpID: [%s] of the player: [%s]", serverWarp.getWarpId(), this.player.getName());
+                Log.error(e, "Skip the rendering warpId [%s] process...", serverWarp.getWarpId());
                 this.player.sendMessage(ConfigUtils.t("base.on-error"));
                 continue;
             }

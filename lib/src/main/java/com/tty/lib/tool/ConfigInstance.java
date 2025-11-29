@@ -3,6 +3,7 @@ package com.tty.lib.tool;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FilePathEnum;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.MemorySection;
@@ -62,7 +63,7 @@ public class ConfigInstance {
 
         Object value = fileConfiguration.get(keyPath);
         if (value == null) {
-            Log.error("Value not found for path: " + keyPath + " in file: " + filePath.name());
+            Log.error("Value not found for path: %s in file: %s", keyPath, filePath.name());
             return defaultValue;
         }
         if (value instanceof MemorySection) {
@@ -76,7 +77,7 @@ public class ConfigInstance {
         try {
             return gson.fromJson(gson.toJsonTree(value), type);
         } catch (JsonSyntaxException e) {
-            Log.error("Failed to convert value at path: " + keyPath + " in file: " + filePath.name() + " to type: " + type.getTypeName(), e);
+            Log.error(e, "Failed to convert value at path: %s in file: %s to type: %s", keyPath, filePath.name(), type.getTypeName());
             return defaultValue;
         }
     }
@@ -99,7 +100,7 @@ public class ConfigInstance {
     private  boolean checkPath(String path) {
         boolean empty = path.isEmpty();
         if (empty) {
-            Log.error("file path is empty");
+            Log.error("file path %s is empty", path);
         }
         return empty;
     }
@@ -131,7 +132,7 @@ public class ConfigInstance {
     private <T extends Enum<T> & FilePathEnum> YamlConfiguration checkConfiguration(T filePath) {
         YamlConfiguration configuration = this.getObject((filePath.name()));
         if (configuration == null) {
-            Log.error("Config file not found: " + filePath.name());
+            Log.error("Config file not found: %s", filePath.name());
             return null;
         }
         return configuration;

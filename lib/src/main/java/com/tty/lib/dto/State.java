@@ -10,7 +10,7 @@ public class State {
     /**
      * 基础计数
      */
-    private int count = 0;
+    private int count = 1;
     /**
      * 最大检查计数
      */

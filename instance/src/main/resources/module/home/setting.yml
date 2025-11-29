@@ -1,5 +1,5 @@
 main:
-  enable: false
+  enable: true
   name-length: 12
   teleport:
     delay: 3

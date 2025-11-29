@@ -180,6 +180,14 @@ server:
       fly_into_wall:
         - '&2[Victim] &7感受到了动能'
         - '&2[Victim] &7学会了什么是动量守恒'
+      kill:
+        - '&2[Victim] &7自杀了'
+      starvation:
+        - '&2[Victim] &7饿死了'
+      sonic_boom:
+        - '&2[Victim] &7被 &2[Killer] &7抹除了'
+      magic:
+        - '&2[Victim] &7被 &2[Killer] &7用魔法杀死了'
     mob:
       air:
         - '&2[Victim] &7被 &2[Killer]&7 杀死了'

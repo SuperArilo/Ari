@@ -86,6 +86,10 @@ public class CustomPlayerDeathListener implements Listener {
             case VOID -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.void"));
             case WITHER -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.wither"));
             case FLY_INTO_WALL -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.fly_into_wall"));
+            case KILL -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.kill"));
+            case MAGIC -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.magic"));
+            case STARVATION -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.starvation"));
+            case SONIC_BOOM -> textComponent = this.build(collect, PlayerDeathInfoCollector.getRandomOfList(BASE_PREFIX + "player.sonic_boom"));
         }
         event.deathMessage(textComponent);
     }

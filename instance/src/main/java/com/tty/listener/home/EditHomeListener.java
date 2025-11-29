@@ -16,7 +16,7 @@ import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.listener.BaseEditFunctionGuiListener;
-import com.tty.states.GuiEditStateServiceImpl;
+import com.tty.states.GuiEditStateService;
 import com.tty.tool.ConfigUtils;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
@@ -77,7 +77,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
                     });
             case RENAME -> {
                 Ari.instance.stateMachineManager
-                        .get(GuiEditStateServiceImpl.class)
+                        .get(GuiEditStateService.class)
                         .addState(new PlayerEditGuiState(
                                 player,
                                 holder,

@@ -8,7 +8,7 @@ import com.tty.enumType.TeleportType;
 import com.tty.lib.Log;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.teleport.TeleportStateServiceImpl;
+import com.tty.states.teleport.TeleportStateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
@@ -45,7 +45,7 @@ public class spawn extends BaseCommand<String> {
             return;
         }
         Ari.instance.stateMachineManager
-                .get(TeleportStateServiceImpl.class)
+                .get(TeleportStateService.class)
                 .addState(new EntityToLocationState(
                         player,
                         Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.SPAWN_CONFIG, Integer.class, 3),

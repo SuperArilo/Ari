@@ -20,6 +20,10 @@ public class RandomTpState extends State {
     @Setter
     private Location trueLocation;
 
+    @Getter
+    @Setter
+    private boolean isRunning = false;
+
     public RandomTpState(Entity owner, int max_count, @NonNull World world) {
         super(owner, max_count);
         this.world = world;

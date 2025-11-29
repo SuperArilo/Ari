@@ -5,15 +5,15 @@ import com.tty.enumType.FilePath;
 import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.lib.Log;
 import com.tty.lib.dto.State;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class GuiEditStateServiceImpl extends StateServiceImpl {
+public class GuiEditStateService extends StateService {
 
-    public GuiEditStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public GuiEditStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -23,7 +23,7 @@ public class GuiEditStateServiceImpl extends StateServiceImpl {
     }
 
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         if (!(state instanceof PlayerEditGuiState s)) {
             state.setOver(true);
             return;
@@ -32,6 +32,7 @@ public class GuiEditStateServiceImpl extends StateServiceImpl {
         if (!owner.isOnline()) {
             state.setOver(true);
         }
+        state.setPending(false);
         Log.debug("checking player %s edit gui %s. type %s", owner.getName(), s.getHolder().getType(), s.getFunctionType());
     }
 

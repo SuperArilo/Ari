@@ -7,7 +7,7 @@ import com.tty.lib.dto.State;
 import com.tty.dto.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -29,9 +29,9 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class PlayerSitActionStateServiceImpl extends StateServiceImpl {
+public class PlayerSitActionStateService extends StateService {
 
-    public PlayerSitActionStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PlayerSitActionStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -74,7 +74,7 @@ public class PlayerSitActionStateServiceImpl extends StateServiceImpl {
     }
 
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         if (!(state instanceof PlayerSitActionState s)) return;
         Player owner = (Player) s.getOwner();
         if (s.getTool_entity() == null) {
@@ -89,10 +89,12 @@ public class PlayerSitActionStateServiceImpl extends StateServiceImpl {
                 owner.isOnline() &&
                 owner.isInsideVehicle();
         if (b) {
+            state.setPending(false);
             Log.debug("player %s is sitting now.", owner.getName());
         } else {
             state.setOver(true);
         }
+        state.setPending(false);
     }
 
     @Override

@@ -7,7 +7,7 @@ import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
-import com.tty.states.GuiEditStateServiceImpl;
+import com.tty.states.GuiEditStateService;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.entity.Player;
@@ -27,7 +27,7 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
 
     @EventHandler
     public void onPlayerChat(AsyncChatEvent event) {
-        GuiEditStateServiceImpl stateService = Ari.instance.stateMachineManager.get(GuiEditStateServiceImpl.class);
+        GuiEditStateService stateService = Ari.instance.stateMachineManager.get(GuiEditStateService.class);
         Player player = event.getPlayer();
         if (stateService.getSTATE_LIST().isEmpty()) return;
         if (stateService.hasState(player)) return;

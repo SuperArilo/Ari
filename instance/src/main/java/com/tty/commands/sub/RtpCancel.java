@@ -5,7 +5,7 @@ import com.tty.Ari;
 import com.tty.lib.dto.State;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.teleport.RandomTpStateServiceImpl;
+import com.tty.states.teleport.RandomTpStateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
@@ -33,7 +33,7 @@ public class RtpCancel extends BaseCommand<String> {
     @Override
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
-        RandomTpStateServiceImpl machine = Ari.instance.stateMachineManager.get(RandomTpStateServiceImpl.class);
+        RandomTpStateService machine = Ari.instance.stateMachineManager.get(RandomTpStateService.class);
         List<State> states = machine.getStates((Entity) sender);
         if (states.isEmpty()) {
             player.sendMessage(ConfigUtils.t("function.rtp.no-rtp"));

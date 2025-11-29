@@ -6,9 +6,9 @@ import com.tty.lib.dto.State;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.states.CoolDownStateServiceImpl;
+import com.tty.states.CoolDownStateService;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.StateMachineManager;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -16,14 +16,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PreTeleportStateServiceImpl extends StateServiceImpl {
+public class PreTeleportStateService extends StateService {
 
-    public PreTeleportStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PreTeleportStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         if (!(state instanceof PreEntityToEntityState toPlayerState)) {
             state.setOver(true);
             return;
@@ -49,7 +49,7 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
             state.setOver(true);
             return;
         }
-
+        state.setPending(false);
         Log.debug("checking player %s -> %s request", owner.getName(), target.getName());
     }
 
@@ -105,7 +105,7 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
         Entity target = toPlayerState.getTarget();
         StateMachineManager manager = Ari.instance.stateMachineManager;
         //判断当前实体是否在传送冷却中
-        if (!manager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
+        if (!manager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.cooling"));
             return false;
         }
@@ -117,8 +117,8 @@ public class PreTeleportStateServiceImpl extends StateServiceImpl {
         }
 
         //判断当前发起玩家是否在传送状态中或者是否正在进行 rtp 传送
-        if (!manager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty() ||
-                !manager.get(RandomTpStateServiceImpl.class).getStates(owner).isEmpty()) {
+        if (!manager.get(TeleportStateService.class).getStates(owner).isEmpty() ||
+                !manager.get(RandomTpStateService.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }

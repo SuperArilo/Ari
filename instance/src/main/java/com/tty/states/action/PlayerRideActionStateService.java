@@ -5,7 +5,7 @@ import com.tty.lib.Log;
 import com.tty.lib.dto.State;
 import com.tty.dto.state.action.PlayerRideActionState;
 import com.tty.lib.Lib;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import lombok.SneakyThrows;
 import org.bukkit.entity.AreaEffectCloud;
 import org.bukkit.entity.Entity;
@@ -16,9 +16,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 
-public class PlayerRideActionStateServiceImpl extends StateServiceImpl {
+public class PlayerRideActionStateService extends StateService {
 
-    public PlayerRideActionStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public PlayerRideActionStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -40,23 +40,27 @@ public class PlayerRideActionStateServiceImpl extends StateServiceImpl {
 
     @SneakyThrows
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         if (!(state instanceof PlayerRideActionState s)) return;
         Player beRidePlayer = s.getBeRidePlayer();
         Player owner = (Player) s.getOwner();
         Entity toolEntity = s.getTool_entity();
-        boolean b = toolEntity.getPassengers().isEmpty() ||
-                !toolEntity.isInsideVehicle() ||
-                beRidePlayer.isDead() ||
-                owner.isSleeping() ||
-                owner.isSneaking() ||
-                owner.isDeeplySleeping() ||
-                !beRidePlayer.isOnline() ||
-                beRidePlayer.isSneaking() ||
-                beRidePlayer.isSwimming();
-        if (b) {
-            state.setOver(true);
-        }
+        Lib.Scheduler.runAtEntity(Ari.instance, toolEntity, i -> {
+            boolean b = toolEntity.getPassengers().isEmpty() ||
+                    !toolEntity.isInsideVehicle() ||
+                    beRidePlayer.isDead() ||
+                    owner.isSleeping() ||
+                    owner.isSneaking() ||
+                    owner.isDeeplySleeping() ||
+                    !beRidePlayer.isOnline() ||
+                    beRidePlayer.isSneaking() ||
+                    beRidePlayer.isSwimming();
+            if (b) {
+                state.setOver(true);
+            } else {
+                state.setPending(false);
+            }
+        }, null);
     }
 
     @Override

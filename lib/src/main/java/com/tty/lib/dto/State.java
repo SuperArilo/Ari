@@ -10,13 +10,23 @@ public class State {
     /**
      * 基础计数
      */
-    private int count = 1;
+    private int count = 0;
     /**
      * 最大检查计数
      */
     private int max_count;
 
+    /**
+     * 是否提前结束
+     */
     private boolean isOver = false;
+
+    /**
+     * 当前的次数是否在进行中
+     */
+    private boolean pending = false;
+
+    private int safeCount = 0;
 
     public State(Entity owner, int max_count) {
         this.owner = owner;
@@ -24,13 +34,20 @@ public class State {
     }
 
     public void increment() {
-        if (count < max_count) {
-            count++;
+        if (this.count < this.max_count) {
+            this.count++;
         }
     }
 
     public boolean isDone() {
-        return count >= max_count;
+        return this.count >= this.max_count;
     }
 
+    public void safeCountIncrement() {
+        this.safeCount++;
+    }
+
+    public boolean isOverload() {
+        return this.safeCount >= 5;
+    }
 }

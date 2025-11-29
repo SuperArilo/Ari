@@ -2,10 +2,7 @@ package com.tty.lib.tool;
 
 import com.tty.lib.Lib;
 import com.tty.lib.Log;
-import org.bukkit.Chunk;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -30,12 +27,8 @@ public record SearchSafeLocation(JavaPlugin plugin) {
                     chunk.getChunkSnapshot().getHighestBlockYAt(relativeX, relativeZ);
             Lib.Scheduler.runAtRegion(plugin, world, chunkX, chunkZ, i -> {
                 if (this.isLocationSafe(chunk, relativeX, highestBlockYAt, relativeZ)) {
-                    Log.debug("random location x: %s, y: %s, z: %s", x, highestBlockYAt, z);
-                    Location targetLocation = new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5);
-                    if (!future.isDone()) {
-                        future.complete(targetLocation);
-                    }
-                    Log.debug("search time: %sms", (System.currentTimeMillis() - l));
+                    Log.debug("random location x: %s, y: %s, z: %s. search time: %sms", x, highestBlockYAt, z, (System.currentTimeMillis() - l));
+                    future.complete(new Location(world, x + 0.5, highestBlockYAt + 1, z + 0.5));
                 } else {
                     future.complete(null);
                 }

@@ -10,7 +10,7 @@ import com.tty.lib.command.CommandRegister;
 import com.tty.lib.dto.AliasItem;
 import com.tty.lib.enum_type.PeriodicTaskEnum;
 import com.tty.lib.services.ConfigDataService;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.lib.task.PeriodicTask;
 import com.tty.lib.tool.*;
 import com.tty.listener.OnPluginReloadListener;
@@ -23,7 +23,7 @@ import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
-import com.tty.states.teleport.RandomTpStateServiceImpl;
+import com.tty.states.teleport.RandomTpStateService;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
 import net.milkbowl.vault.economy.Economy;
@@ -87,7 +87,7 @@ public class Ari extends JavaPlugin {
         this.sqlInstance.start();
 
         //初始化rtp
-        RandomTpStateServiceImpl.setRtpWorldConfig();
+        RandomTpStateService.setRtpWorldConfig();
 
         //玩家信息保存
         this.playerSave = new PeriodicTask(
@@ -118,7 +118,7 @@ public class Ari extends JavaPlugin {
 
         SQLInstance.close();
         C_INSTANCE.clearConfigs();
-        this.stateMachineManager.forEach(StateServiceImpl::abort);
+        this.stateMachineManager.forEach(StateService::abort);
     }
 
     private void registerListener() {

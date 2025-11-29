@@ -10,9 +10,9 @@ import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.FilePath;
 import com.tty.function.Teleporting;
 import com.tty.lib.enum_type.LangType;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.states.CoolDownStateServiceImpl;
+import com.tty.states.CoolDownStateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
@@ -22,17 +22,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-public class TeleportStateServiceImpl extends StateServiceImpl {
+public class TeleportStateService extends StateService {
 
     private final Map<UUID, Double> initHealthMap = new HashMap<>();
     private final Map<UUID, Location> initLocationMap = new HashMap<>();
 
-    public TeleportStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public TeleportStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         Entity owner = state.getOwner();
         this.addEntityInitData(owner);
 
@@ -66,6 +66,7 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
                 1000,
                 200
         ));
+        state.setPending(false);
         Log.debug("checking entity %s teleporting", owner.getName());
     }
 
@@ -74,12 +75,12 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
     protected boolean canAddState(State state) {
         Entity owner = state.getOwner();
         //判断当前实体是否在传送冷却中
-        if (!Ari.instance.stateMachineManager.get(CoolDownStateServiceImpl.class).getStates(owner).isEmpty()) {
+        if (!Ari.instance.stateMachineManager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.cooling"));
             return false;
         }
 
-        if(!Ari.instance.stateMachineManager.get(TeleportStateServiceImpl.class).getStates(owner).isEmpty()) {
+        if(!Ari.instance.stateMachineManager.get(TeleportStateService.class).getStates(owner).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }
@@ -111,17 +112,15 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
     protected void onFinished(State state) {
         Entity owner = state.getOwner();
         owner.clearTitle();
-        CoolDownStateServiceImpl machine = Ari.instance.stateMachineManager.get(CoolDownStateServiceImpl.class);
+        CoolDownStateService machine = Ari.instance.stateMachineManager.get(CoolDownStateService.class);
 
         Location targetLocation;
-        String targetName;
         Runnable afterAction;
 
         switch (state) {
             case EntityToEntityState toEntityState -> {
                 targetLocation = toEntityState.getTarget().getLocation();
-                targetName = toEntityState.getTarget().getName();
-                afterAction = () -> handleTeleportAfter(owner, targetName,
+                afterAction = () -> handleTeleportAfter(owner, targetLocation,
                         () -> this.removeEntityInitData(owner),
                         () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toEntityState.getType()), Integer.class, 10), toEntityState.getType()))
                 );
@@ -129,18 +128,16 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
             case EntityToLocationState toLocationState -> {
                 targetLocation = toLocationState.getLocation();
                 if (targetLocation == null) return;
-                targetName = targetLocation.toString();
-                afterAction = () -> handleTeleportAfter(owner, targetName,
+                afterAction = () -> handleTeleportAfter(owner, targetLocation,
                         () -> this.removeEntityInitData(owner),
                         () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toLocationState.getType()), Integer.class, 10), toLocationState.getType()))
                 );
             }
             case EntityToLocationCallbackState callbackState -> {
                 targetLocation = callbackState.getLocation();
-                targetName = targetLocation.toString();
                 afterAction = () -> {
                     callbackState.executeCallback();
-                    handleTeleportAfter(owner, targetName,
+                    handleTeleportAfter(owner, targetLocation,
                             () -> this.removeEntityInitData(owner),
                             () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(callbackState.getType()), Integer.class, 10), callbackState.getType()))
                     );
@@ -187,10 +184,10 @@ public class TeleportStateServiceImpl extends StateServiceImpl {
         this.initLocationMap.remove(entity.getUniqueId());
     }
 
-    private void handleTeleportAfter(Entity owner, String targetDesc, Runnable removeInit, Runnable addState) {
+    private void handleTeleportAfter(Entity owner, Location location, Runnable removeInit, Runnable addState) {
         removeInit.run();
         addState.run();
-        Log.debug("Entity %s teleport to %s success", owner.getName(), targetDesc);
+        Log.debug("Entity %s teleport to x: %s, y: %s, z: %s success.", owner.getName(), location.getX(), location.getY(), location.getZ());
     }
 
 }

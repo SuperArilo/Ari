@@ -6,7 +6,7 @@ import com.tty.dto.state.teleport.EntityToEntityState;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.command.SuperHandsomeCommand;
-import com.tty.states.teleport.TeleportStateServiceImpl;
+import com.tty.states.teleport.TeleportStateService;
 import com.tty.tool.ConfigUtils;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
@@ -51,7 +51,7 @@ public class tpaaccept extends TpaBase<PlayerSelectorArgumentResolver> {
         }
 
         //添加传送请求
-        Ari.instance.stateMachineManager.get(TeleportStateServiceImpl.class).addState(state);
+        Ari.instance.stateMachineManager.get(TeleportStateService.class).addState(state);
         player.sendMessage(ConfigUtils.t("function.tpa.agree"));
     }
 

@@ -3,15 +3,15 @@ package com.tty.states;
 import com.tty.lib.dto.State;
 import com.tty.lib.Log;
 import com.tty.dto.state.teleport.CooldownState;
-import com.tty.lib.services.impl.StateServiceImpl;
+import com.tty.lib.services.StateService;
 import com.tty.lib.tool.PermissionUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public class CoolDownStateServiceImpl extends StateServiceImpl {
+public class CoolDownStateService extends StateService {
 
-    public CoolDownStateServiceImpl(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+    public CoolDownStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
@@ -21,7 +21,7 @@ public class CoolDownStateServiceImpl extends StateServiceImpl {
     }
 
     @Override
-    protected void condition(State state) {
+    protected void runContent(State state) {
         if (state instanceof CooldownState s && state.getOwner() instanceof Player p && !p.isOp()) {
             if (PermissionUtils.hasPermission(p, "ari.cooldown." + s.getType().getKey())) {
                 state.setOver(true);

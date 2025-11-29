@@ -6,7 +6,7 @@ import com.tty.dto.state.teleport.EntityToEntityState;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.enumType.TeleportType;
-import com.tty.states.teleport.PreTeleportStateServiceImpl;
+import com.tty.states.teleport.PreTeleportStateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -39,7 +39,7 @@ public abstract class TpaBase<T> extends BaseCommand<T> {
      * @return 能够执行的列表
      */
     public List<String> getResponseList(CommandSender sender) {
-        return Ari.instance.stateMachineManager.get(PreTeleportStateServiceImpl.class).getSTATE_LIST().stream()
+        return Ari.instance.stateMachineManager.get(PreTeleportStateService.class).getSTATE_LIST().stream()
                 .filter(i -> i instanceof EntityToEntityState)
                 .filter(i -> ((EntityToEntityState) i).getTarget().equals(sender))
                 .filter(i -> ((EntityToEntityState) i).getType().equals(TeleportType.TPA))
@@ -58,7 +58,7 @@ public abstract class TpaBase<T> extends BaseCommand<T> {
             sender.sendMessage(ConfigUtils.t("teleport.unable-player"));
             return null;
         }
-        PreTeleportStateServiceImpl machine = Ari.instance.stateMachineManager.get(PreTeleportStateServiceImpl.class);
+        PreTeleportStateService machine = Ari.instance.stateMachineManager.get(PreTeleportStateService.class);
         //检查这个请求是否存在
         PreEntityToEntityState anElse = (PreEntityToEntityState) machine
                 .getStates(target)

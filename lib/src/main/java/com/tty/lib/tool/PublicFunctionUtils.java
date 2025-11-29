@@ -5,8 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.*;
-import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Consumer;
 
 public class PublicFunctionUtils {
@@ -64,7 +64,7 @@ public class PublicFunctionUtils {
         if (min > max) {
             throw new IllegalArgumentException("The maximum value must be greater than the minimum value");
         }
-        return new SecureRandom().nextInt(max - min + 1) + min;
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
 }

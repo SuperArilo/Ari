@@ -48,7 +48,7 @@ public class Log {
     }
 
     private static NamedTextColor getRandomColor() {
-        return RANDOM_COLORS[PublicFunctionUtils.randomGenerator(0, RANDOM_COLORS.length)];
+        return RANDOM_COLORS[PublicFunctionUtils.randomGenerator(0, RANDOM_COLORS.length - 1)];
     }
 
     public static void info(String msg, Object... args) {

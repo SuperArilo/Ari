@@ -46,7 +46,7 @@ public class tpa extends TpaBase<PlayerSelectorArgumentResolver> {
                 .addState(new PreEntityToEntityState(
                         owner,
                         player,
-                        Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.TPA_CONFIG, Integer.class, 3),
+                        Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.TPA_CONFIG, Integer.class, 3),
                         this.name()));
     }
 

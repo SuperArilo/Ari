@@ -1,8 +1,6 @@
 package com.tty.lib.command;
 
 import com.mojang.brigadier.tree.LiteralCommandNode;
-import com.tty.lib.enum_type.FilePath;
-import com.tty.lib.enum_type.FilePathEnum;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;

@@ -8,7 +8,6 @@ import com.tty.enumType.FilePath;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.states.teleport.RandomTpStateServiceImpl;
-import com.tty.tool.ConfigUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

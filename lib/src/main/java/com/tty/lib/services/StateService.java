@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class StateService {
+public abstract class StateService<T extends State> {
 
     private final JavaPlugin plugin;
     /**
@@ -33,7 +33,7 @@ public abstract class StateService {
     private CancellableTask task;
 
     @Getter
-    private final List<State> STATE_LIST = Collections.synchronizedList(new ArrayList<>());
+    private final List<T> STATE_LIST = Collections.synchronizedList(new ArrayList<>());
 
     public StateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         this.rate = rate;
@@ -56,7 +56,7 @@ public abstract class StateService {
             return;
         }
 
-        for (State state : new ArrayList<>(this.STATE_LIST)) {
+        for (T state : new ArrayList<>(this.STATE_LIST)) {
             state.safeCountIncrement();
             if (state.isOverload()) {
                 Log.error("state from player %s is overload. force removal. state class: %s", state.getOwner().getName(), state.getClass().getName());
@@ -92,11 +92,11 @@ public abstract class StateService {
         }
     }
 
-    public void addState(State state) {
+    public boolean addState(T state) {
         synchronized (this.STATE_LIST) {
             if (!this.canAddState(state)) {
                 this.abortAddState(state);
-                return;
+                return false;
             }
             this.STATE_LIST.add(state);
             this.passAddState(state);
@@ -104,16 +104,17 @@ public abstract class StateService {
                 this.task = createTask(rate, c, isAsync, this.plugin);
                 Log.debug("create state service");
             }
+            return true;
         }
     }
 
-    public boolean hasState(Entity owner) {
+    public boolean isNotHaveState(Entity owner) {
         synchronized (this.STATE_LIST) {
             return this.getStates(owner).isEmpty();
         }
     }
 
-    public List<State> getStates(Entity owner) {
+    public List<T> getStates(Entity owner) {
         synchronized (this.STATE_LIST) {
             return STATE_LIST.stream()
                     .filter(i -> i.getOwner().equals(owner))
@@ -121,7 +122,7 @@ public abstract class StateService {
         }
     }
 
-    public boolean removeState(State state) {
+    public boolean removeState(T state) {
         synchronized (this.STATE_LIST) {
             return STATE_LIST.remove(state);
         }
@@ -131,37 +132,37 @@ public abstract class StateService {
      * @param state 要添加的状态
      * @return true 表示允许添加，false 表示不允许
      */
-    protected abstract boolean canAddState(State state);
+    protected abstract boolean canAddState(T state);
 
     /**
      * 在当前计数下的执行内容
      *
      * @param state 当前检查的状态
      */
-    protected abstract void loopExecution(State state);
+    protected abstract void loopExecution(T state);
 
     /**
      * 终止当前的状态添加
      * @param state 添加的状态
      */
-    protected abstract void abortAddState(State state);
+    protected abstract void abortAddState(T state);
 
     /**
      * 当前的状态可添加
      * @param state 添加成功的状态
      */
-    protected abstract void passAddState(State state);
+    protected abstract void passAddState(T state);
 
     /**
      * 提前结束检查的回调方法
      * @param state 检查失败的状态
      */
-    protected abstract void onEarlyExit(State state);
+    protected abstract void onEarlyExit(T state);
 
     /**
      * 计数完成后正常结束
      * @param state 检查通过的状态
      */
-    protected abstract void onFinished(State state);
+    protected abstract void onFinished(T state);
 
 }

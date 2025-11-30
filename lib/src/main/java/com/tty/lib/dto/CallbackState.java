@@ -1,16 +1,21 @@
 package com.tty.lib.dto;
 
+import com.tty.lib.enum_type.TeleportType;
+import lombok.Getter;
 import org.bukkit.entity.Entity;
 
-public class CallbackState extends State {
+public class CallbackState extends TeleportState {
 
     private final StateCondition customCondition;
     private final Runnable successCallback;
+    @Getter
+    private final TeleportType type;
 
-    public CallbackState(Entity owner, int max_count, StateCondition customCondition, Runnable successCallback) {
-        super(owner, max_count);
+    public CallbackState(Entity owner, TeleportType type, int max_count, StateCondition customCondition, Runnable successCallback) {
+        super(owner, type, max_count);
         this.customCondition = customCondition;
         this.successCallback = successCallback;
+        this.type = type;
     }
 
     public boolean checkCondition() {

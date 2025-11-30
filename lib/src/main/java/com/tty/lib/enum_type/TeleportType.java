@@ -1,4 +1,4 @@
-package com.tty.enumType;
+package com.tty.lib.enum_type;
 
 import lombok.Getter;
 
@@ -9,6 +9,7 @@ public enum TeleportType {
     RTP("rtp"),
     HOME("home"),
     TPA("tpa"),
+    TPAHERE("tpahere"),
     SPAWN("spawn");
 
     private final String key;

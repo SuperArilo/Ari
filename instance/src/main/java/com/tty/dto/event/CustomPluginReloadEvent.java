@@ -12,7 +12,7 @@ public class CustomPluginReloadEvent extends Event implements Cancellable {
     private final static HandlerList handlerList = new HandlerList();
     private boolean isCancelled = false;
     @Getter
-    private CommandSender sender;
+    private final CommandSender sender;
 
     public CustomPluginReloadEvent(CommandSender sender) {
         this.sender = sender;

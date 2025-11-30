@@ -64,7 +64,7 @@ public abstract class BaseInventory {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
-        Log.debug("%S: render masks: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
+        Log.debug("%s: render masks: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
     }
 
     private void renderFunctionItems() {

@@ -1,19 +1,20 @@
 package com.tty.dto.state.teleport;
 
-import com.tty.lib.dto.State;
+import com.tty.lib.dto.TeleportState;
+import com.tty.lib.enum_type.TeleportType;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 
-public class PreEntityToEntityState extends State {
+public class PreEntityToEntityState extends TeleportState {
 
     @Getter
     private final Entity target;
     @Getter
-    private final String command;
+    private final TeleportType type;
 
-    public PreEntityToEntityState(Entity owner, Entity target, int max_count, String command) {
-        super(owner, max_count);
+    public PreEntityToEntityState(Entity owner, Entity target, TeleportType type, int max_count) {
+        super(owner, type, max_count);
         this.target = target;
-        this.command = command;
+        this.type = type;
     }
 }

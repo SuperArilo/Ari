@@ -1,10 +1,10 @@
 package com.tty.states.teleport;
 
 import com.tty.Ari;
+import com.tty.dto.state.teleport.PlayerToPlayerState;
 import com.tty.lib.Log;
 import com.tty.lib.dto.State;
-import com.tty.dto.state.teleport.CooldownState;
-import com.tty.dto.state.teleport.EntityToEntityState;
+import com.tty.dto.state.CooldownState;
 import com.tty.dto.state.teleport.EntityToLocationCallbackState;
 import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.FilePath;
@@ -22,7 +22,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;
 
-public class TeleportStateService extends StateService {
+public class TeleportStateService extends StateService<State> {
 
     private final Map<UUID, Double> initHealthMap = new HashMap<>();
     private final Map<UUID, Location> initLocationMap = new HashMap<>();
@@ -41,8 +41,8 @@ public class TeleportStateService extends StateService {
             return;
         }
 
-        if (state instanceof EntityToEntityState entityToEntityState) {
-            Entity target = entityToEntityState.getTarget();
+        if (state instanceof PlayerToPlayerState playerToPlayerState) {
+            Entity target = playerToPlayerState.getTarget();
             if (target instanceof Player targetPlayer && !targetPlayer.isOnline()) {
                 owner.sendMessage(ConfigUtils.t("teleport.break"));
                 state.setOver(true);
@@ -118,11 +118,11 @@ public class TeleportStateService extends StateService {
         Runnable afterAction;
 
         switch (state) {
-            case EntityToEntityState toEntityState -> {
-                targetLocation = toEntityState.getTarget().getLocation();
+            case PlayerToPlayerState toPlayerState -> {
+                targetLocation = toPlayerState.getTarget().getLocation();
                 afterAction = () -> handleTeleportAfter(owner, targetLocation,
                         () -> this.removeEntityInitData(owner),
-                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toEntityState.getType()), Integer.class, 10), toEntityState.getType()))
+                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toPlayerState.getType()), Integer.class, 10), toPlayerState.getType()))
                 );
             }
             case EntityToLocationState toLocationState -> {

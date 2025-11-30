@@ -2,7 +2,6 @@ package com.tty.states.action;
 
 import com.tty.Ari;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.dto.state.action.PlayerRideActionState;
 import com.tty.lib.Lib;
 import com.tty.lib.services.StateService;
@@ -16,17 +15,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 
 
-public class PlayerRideActionStateService extends StateService {
+public class PlayerRideActionStateService extends StateService<PlayerRideActionState> {
 
     public PlayerRideActionStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected boolean canAddState(State state) {
-        if (!(state instanceof PlayerRideActionState s)) return false;
+    protected boolean canAddState(PlayerRideActionState state) {
 
-        Player owner = (Player) s.getOwner();
+        Player owner = (Player) state.getOwner();
         String playerName = owner.getName();
         //判断玩家是否已经 ride 了
         if (!this.getStates(owner).isEmpty()) {
@@ -34,21 +32,16 @@ public class PlayerRideActionStateService extends StateService {
             return false;
         }
         //被点击的玩家如果有乘客（隐藏实体
-        return s.getBeRidePlayer().getPassengers().isEmpty();
-
+        return state.getBeRidePlayer().getPassengers().isEmpty();
     }
 
     @SneakyThrows
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof PlayerRideActionState s)) {
-            state.setOver(true);
-            return;
-        }
+    protected void loopExecution(PlayerRideActionState state) {
 
-        Player beRidePlayer = s.getBeRidePlayer();
-        Player owner = (Player) s.getOwner();
-        Entity toolEntity = s.getTool_entity();
+        Player beRidePlayer = state.getBeRidePlayer();
+        Player owner = (Player) state.getOwner();
+        Entity toolEntity = state.getTool_entity();
         Lib.Scheduler.runAtEntity(Ari.instance, toolEntity, i -> {
             boolean b = toolEntity.getPassengers().isEmpty() ||
                     !toolEntity.isInsideVehicle() ||
@@ -68,14 +61,14 @@ public class PlayerRideActionStateService extends StateService {
     }
 
     @Override
-    protected void abortAddState(State state) {
+    protected void abortAddState(PlayerRideActionState state) {
 
     }
 
     @Override
-    protected void passAddState(State state) {
-        if (!(state instanceof PlayerRideActionState s)) return;
-        Player beRidePlayer = s.getBeRidePlayer();
+    protected void passAddState(PlayerRideActionState state) {
+
+        Player beRidePlayer = state.getBeRidePlayer();
         Entity entity = beRidePlayer.getWorld().spawnEntity(
                 beRidePlayer.getEyeLocation(),
                 EntityType.AREA_EFFECT_CLOUD,
@@ -89,31 +82,30 @@ public class PlayerRideActionStateService extends StateService {
                         beRidePlayer.addPassenger(cloud);
                     }
                 });
-        s.setTool_entity(entity);
-        entity.addPassenger(s.getOwner());
+        state.setTool_entity(entity);
+        entity.addPassenger(state.getOwner());
     }
 
     @Override
-    protected void onEarlyExit(State state) {
-        if (!(state instanceof PlayerRideActionState s)) return;
-        Player owner = (Player) s.getOwner();
-        Entity toolEntity = s.getTool_entity();
+    protected void onEarlyExit(PlayerRideActionState state) {
+        Player owner = (Player) state.getOwner();
+        Entity toolEntity = state.getTool_entity();
         owner.eject();
-        Log.debug("player %s eject to player %s, remove tool entity", owner.getName(), s.getBeRidePlayer().getName());
+        Log.debug("player %s eject to player %s, remove tool entity", owner.getName(), state.getBeRidePlayer().getName());
         if (toolEntity != null) {
             Lib.Scheduler.runAtEntity(
                     Ari.instance,
                     toolEntity,
                     i -> {
                         toolEntity.remove();
-                        s.setTool_entity(null);
+                        state.setTool_entity(null);
                     },
                     () -> Log.error("error on player %s sit when remove tool entity", owner.getName()));
         }
     }
 
     @Override
-    protected void onFinished(State state) {
+    protected void onFinished(PlayerRideActionState state) {
 
     }
 }

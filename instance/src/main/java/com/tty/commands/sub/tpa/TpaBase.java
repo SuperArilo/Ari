@@ -2,10 +2,9 @@ package com.tty.commands.sub.tpa;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
-import com.tty.dto.state.teleport.EntityToEntityState;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.lib.command.BaseCommand;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.states.teleport.PreTeleportStateService;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.Bukkit;
@@ -40,9 +39,8 @@ public abstract class TpaBase<T> extends BaseCommand<T> {
      */
     public List<String> getResponseList(CommandSender sender) {
         return Ari.instance.stateMachineManager.get(PreTeleportStateService.class).getSTATE_LIST().stream()
-                .filter(i -> i instanceof EntityToEntityState)
-                .filter(i -> ((EntityToEntityState) i).getTarget().equals(sender))
-                .filter(i -> ((EntityToEntityState) i).getType().equals(TeleportType.TPA))
+                .filter(i -> i.getTarget().equals(sender))
+                .filter(i -> i.getType().equals(TeleportType.TPA))
                 .map(e -> e.getOwner().getName())
                 .toList();
     }
@@ -60,7 +58,7 @@ public abstract class TpaBase<T> extends BaseCommand<T> {
         }
         PreTeleportStateService machine = Ari.instance.stateMachineManager.get(PreTeleportStateService.class);
         //检查这个请求是否存在
-        PreEntityToEntityState anElse = (PreEntityToEntityState) machine
+        PreEntityToEntityState anElse = machine
                 .getStates(target)
                 .stream()
                 .filter(i -> i instanceof PreEntityToEntityState state && state.getTarget().equals(sender)).findFirst().orElse(null);

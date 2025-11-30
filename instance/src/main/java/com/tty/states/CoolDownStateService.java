@@ -1,33 +1,29 @@
 package com.tty.states;
 
-import com.tty.lib.dto.State;
 import com.tty.lib.Log;
-import com.tty.dto.state.teleport.CooldownState;
+import com.tty.dto.state.CooldownState;
 import com.tty.lib.services.StateService;
 import com.tty.lib.tool.PermissionUtils;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
-public class CoolDownStateService extends StateService {
+public class CoolDownStateService extends StateService<CooldownState> {
 
     public CoolDownStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected boolean canAddState(State state) {
+    protected boolean canAddState(CooldownState state) {
         return this.getStates(state.getOwner()).isEmpty();
     }
 
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof CooldownState s)) {
-            state.setOver(true);
-            return;
-        }
+    protected void loopExecution(CooldownState state) {
+
         Entity owner = state.getOwner();
-        if (PermissionUtils.hasPermission(owner, "ari.cooldown." + s.getType().getKey())) {
+        if (PermissionUtils.hasPermission(owner, "ari.cooldown." + state.getType().getKey())) {
             state.setOver(true);
             return;
         }
@@ -36,24 +32,22 @@ public class CoolDownStateService extends StateService {
     }
 
     @Override
-    protected void abortAddState(State state) {
+    protected void abortAddState(CooldownState state) {
 
     }
 
     @Override
-    protected void passAddState(State state) {
+    protected void passAddState(CooldownState state) {
 
     }
 
     @Override
-    protected void onEarlyExit(State state) {
+    protected void onEarlyExit(CooldownState state) {
         Log.debug("entity %s cd time has ended.", state.getOwner().getName());
     }
 
     @Override
-    protected void onFinished(State state) {
-        if (state instanceof CooldownState cdState) {
-            Log.debug("entity %s cd time has ended.", cdState.getOwner().getName());
-        }
+    protected void onFinished(CooldownState state) {
+        Log.debug("entity %s cd time has ended.", state.getOwner().getName());
     }
 }

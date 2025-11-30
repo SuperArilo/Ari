@@ -4,46 +4,42 @@ import com.tty.Ari;
 import com.tty.enumType.FilePath;
 import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class GuiEditStateService extends StateService {
+public class GuiEditStateService extends StateService<PlayerEditGuiState> {
 
     public GuiEditStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected boolean canAddState(State state) {
-        return this.hasState(state.getOwner());
+    protected boolean canAddState(PlayerEditGuiState state) {
+        return this.isNotHaveState(state.getOwner());
     }
 
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof PlayerEditGuiState s)) {
-            state.setOver(true);
-            return;
-        }
-        Player owner = (Player) s.getOwner();
+    protected void loopExecution(PlayerEditGuiState state) {
+
+        Player owner = (Player) state.getOwner();
         if (!owner.isOnline()) {
             state.setOver(true);
             return;
         }
         state.setPending(false);
-        Log.debug("checking player %s edit gui %s. type %s", owner.getName(), s.getHolder().getType(), s.getFunctionType());
+        Log.debug("checking player %s edit gui %s. type %s", owner.getName(), state.getHolder().getType(), state.getFunctionType());
     }
 
     @Override
-    protected void abortAddState(State state) {
+    protected void abortAddState(PlayerEditGuiState state) {
 
     }
 
     @Override
-    protected void passAddState(State state) {
+    protected void passAddState(PlayerEditGuiState state) {
         Player owner = (Player) state.getOwner();
         int i = Ari.instance.getConfig().getInt("server.gui-edit-timeout", 10);
         owner.showTitle(
@@ -56,13 +52,13 @@ public class GuiEditStateService extends StateService {
     }
 
     @Override
-    protected void onEarlyExit(State state) {
+    protected void onEarlyExit(PlayerEditGuiState state) {
         Player owner = (Player) state.getOwner();
         Log.debug("player %s edit status finish.", owner.getName());
     }
 
     @Override
-    protected void onFinished(State state) {
+    protected void onFinished(PlayerEditGuiState state) {
         Player owner = (Player) state.getOwner();
         owner.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
         Log.debug("player %s edit status timeout.", owner.getName());

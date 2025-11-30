@@ -5,6 +5,7 @@ import com.tty.commands.sub.tpa.TpaBase;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.command.SuperHandsomeCommand;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.states.teleport.PreTeleportStateService;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
@@ -41,8 +42,9 @@ public class tpahere extends TpaBase<PlayerSelectorArgumentResolver> {
                 .addState(new PreEntityToEntityState(
                         owner,
                         player,
-                        Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.TPA_CONFIG, Integer.class, 10),
-                        this.name()));
+                        TeleportType.TPAHERE,
+                        Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.TPA_CONFIG, Integer.class, 10)
+                ));
     }
 
     @Override

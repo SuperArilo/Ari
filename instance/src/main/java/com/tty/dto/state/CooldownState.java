@@ -1,7 +1,7 @@
-package com.tty.dto.state.teleport;
+package com.tty.dto.state;
 
 import com.tty.lib.dto.State;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.TeleportType;
 import lombok.Getter;
 import org.bukkit.entity.Entity;
 

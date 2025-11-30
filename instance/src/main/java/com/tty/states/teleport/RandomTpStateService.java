@@ -4,11 +4,10 @@ import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.rtp.RtpConfig;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.dto.state.teleport.RandomTpState;
 import com.tty.enumType.FilePath;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
@@ -29,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class RandomTpStateService extends StateService {
+public class RandomTpStateService extends StateService<RandomTpState> {
 
     private final SearchSafeLocation searchSafeLocation = new SearchSafeLocation(Ari.instance);
 
@@ -38,41 +37,43 @@ public class RandomTpStateService extends StateService {
     }
 
     @Override
-    protected boolean canAddState(State state) {
+    protected boolean canAddState(RandomTpState state) {
         Entity owner = state.getOwner();
-        if (state instanceof RandomTpState s) {
-            RtpConfig rtpConfig = this.rtpConfig(s.getWorld().getName());
-            if (rtpConfig == null || !rtpConfig.isEnable()) {
-                s.getOwner().sendMessage(ConfigUtils.t("function.rtp.world-disable"));
-                return false;
-            }
-            StateMachineManager manager = Ari.instance.stateMachineManager;
-
-            //判断当前实体是否在传送冷却中
-            if (!manager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
-                owner.sendMessage(ConfigUtils.t("teleport.cooling"));
-                return false;
-            }
-
-            //判断当前发起玩家是否在传送状态中
-            if (!manager.get(TeleportStateService.class).getStates(owner).isEmpty() ||
-                    !this.getStates(owner).isEmpty() ||
-                    !manager.get(PreTeleportStateService.class).getStates(owner).isEmpty()) {
-                owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
-                return false;
-            }
-
-            return true;
+        RtpConfig rtpConfig = this.rtpConfig(state.getWorld().getName());
+        if (rtpConfig == null || !rtpConfig.isEnable()) {
+            state.getOwner().sendMessage(ConfigUtils.t("function.rtp.world-disable"));
+            return false;
         }
-        return false;
+        StateMachineManager manager = Ari.instance.stateMachineManager;
+
+        //判断当前实体是否在传送冷却中
+        if (!manager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("teleport.cooling"));
+            return false;
+        }
+
+        //判断当前发起玩家是否在传送状态中
+        if (!manager.get(TeleportStateService.class).getStates(owner).isEmpty() ||
+                !this.getStates(owner).isEmpty() ||
+                !manager.get(PreTeleportStateService.class).getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
+            return false;
+        }
+
+        Ari.instance.stateMachineManager
+                .get(TeleportStateService.class)
+                .addState(new EntityToLocationState(
+                        owner,
+                        Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.RTP_CONFIG, Integer.class, 3),
+                        state.getTrueLocation(),
+                        TeleportType.RTP));
+
+
+        return true;
     }
 
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof RandomTpState s)) {
-            state.setOver(true);
-            return;
-        }
+    protected void loopExecution(RandomTpState state) {
         Player owner = (Player) state.getOwner();
         if (!owner.isOnline()
                 || owner.isSleeping()
@@ -86,8 +87,8 @@ public class RandomTpStateService extends StateService {
             return;
         }
 
-        this.sendCountTitle(owner, s);
-        this.search(s);
+        this.sendCountTitle(owner, state);
+        this.search(state);
     }
 
     private void search(RandomTpState state) {
@@ -112,33 +113,33 @@ public class RandomTpStateService extends StateService {
     }
 
     @Override
-    protected void abortAddState(State state) {
+    protected void abortAddState(RandomTpState state) {
 
     }
 
     @Override
-    protected void passAddState(State state) {
+    protected void passAddState(RandomTpState state) {
 
     }
 
     @Override
-    protected void onEarlyExit(State state) {
+    protected void onEarlyExit(RandomTpState state) {
         Entity owner = state.getOwner();
         owner.clearTitle();
         owner.sendMessage(ConfigUtils.t("function.rtp.location-found"));
-        if (state instanceof RandomTpState s) {
-            Ari.instance.stateMachineManager
-                    .get(TeleportStateService.class)
-                    .addState(new EntityToLocationState(
-                            owner,
-                            Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.RTP_CONFIG, Integer.class, 3),
-                            s.getTrueLocation(),
-                            TeleportType.RTP));
-        }
+
+        Ari.instance.stateMachineManager
+            .get(TeleportStateService.class)
+                .addState(new EntityToLocationState(
+                    owner,
+                    Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.RTP_CONFIG, Integer.class, 3),
+                    state.getTrueLocation(),
+                    TeleportType.RTP));
+
     }
 
     @Override
-    protected void onFinished(State state) {
+    protected void onFinished(RandomTpState state) {
         Entity owner = state.getOwner();
         owner.clearTitle();
         owner.sendMessage(ConfigUtils.t("function.rtp.search-failure"));

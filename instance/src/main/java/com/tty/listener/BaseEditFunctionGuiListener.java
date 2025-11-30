@@ -4,7 +4,6 @@ import com.tty.Ari;
 import com.tty.dto.state.PlayerEditGuiState;
 import com.tty.enumType.GuiType;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.states.GuiEditStateService;
@@ -30,13 +29,13 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
         GuiEditStateService stateService = Ari.instance.stateMachineManager.get(GuiEditStateService.class);
         Player player = event.getPlayer();
         if (stateService.getSTATE_LIST().isEmpty()) return;
-        if (stateService.hasState(player)) return;
-        List<State> states = stateService.getStates(player);
+        if (stateService.isNotHaveState(player)) return;
+        List<PlayerEditGuiState> states = stateService.getStates(player);
         if (states.isEmpty()) {
             Log.error("player %s on edit status error, states is empty", player.getName());
             return;
         }
-        PlayerEditGuiState first = (PlayerEditGuiState) states.getFirst();
+        PlayerEditGuiState first = states.getFirst();
         if (!first.getHolder().getType().equals(this.guiType)) return;
         event.setCancelled(true);
         String message = FormatUtils.componentToString(event.message());

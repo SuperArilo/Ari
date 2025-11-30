@@ -3,7 +3,6 @@ package com.tty.states.action;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.dto.state.action.PlayerSitActionState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.Lib;
@@ -29,16 +28,15 @@ import org.bukkit.util.Vector;
 
 import java.util.List;
 
-public class PlayerSitActionStateService extends StateService {
+public class PlayerSitActionStateService extends StateService<PlayerSitActionState> {
 
     public PlayerSitActionStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected boolean canAddState(State state) {
-        if (!(state instanceof PlayerSitActionState s)) return false;
-        Player owner = (Player) s.getOwner();
+    protected boolean canAddState(PlayerSitActionState state) {
+        Player owner = (Player) state.getOwner();
         String playerName = owner.getName();
         //判断玩家是否已经 sit 了
         if (!this.getStates(owner).isEmpty()) {
@@ -46,7 +44,7 @@ public class PlayerSitActionStateService extends StateService {
             return false;
         }
         //获取列表判断是否满足的方块
-        Block sitBlock = s.getSitBlock();
+        Block sitBlock = state.getSitBlock();
         String sitBlockName = sitBlock.getType().name();
         if (this.getDisableList().contains(sitBlockName)) {
             Log.debug("player %s interact the block %s is disabled", playerName, sitBlockName);
@@ -74,14 +72,10 @@ public class PlayerSitActionStateService extends StateService {
     }
 
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof PlayerSitActionState s)) {
-            state.setOver(true);
-            return;
-        };
+    protected void loopExecution(PlayerSitActionState state) {
 
-        Player owner = (Player) s.getOwner();
-        if (s.getTool_entity() == null) {
+        Player owner = (Player) state.getOwner();
+        if (state.getTool_entity() == null) {
             Log.error("player %s tool entity is null", owner.getName());
             state.setOver(true);
             return;
@@ -103,17 +97,15 @@ public class PlayerSitActionStateService extends StateService {
     }
 
     @Override
-    protected void abortAddState(State state) {
-        if (state instanceof PlayerSitActionState s) {
-            Log.debug("player %s try sit block %s fail", s.getOwner().getName(), s.getSitBlock().getType().name());
-        }
+    protected void abortAddState(PlayerSitActionState state) {
+        Log.debug("player %s try sit block %s fail", state.getOwner().getName(), state.getSitBlock().getType().name());
     }
 
     @Override
-    protected void passAddState(State state) {
-        if (!(state instanceof PlayerSitActionState s)) return;
-        Player player = (Player) s.getOwner();
-        Block sitBlock = s.getSitBlock();
+    protected void passAddState(PlayerSitActionState state) {
+
+        Player player = (Player) state.getOwner();
+        Block sitBlock = state.getSitBlock();
         Log.debug("create sit entity to player %s", player.getName());
         Location location = this.locationRecalculate(player, sitBlock);
         Entity entity = player.getWorld()
@@ -133,30 +125,28 @@ public class PlayerSitActionStateService extends StateService {
                 );
         player.setRotation(location.getYaw(), 0);
         player.sendActionBar(ConfigUtils.t("function.sit.tips"));
-        s.setTool_entity(entity);
+        state.setTool_entity(entity);
     }
 
     @Override
-    protected void onEarlyExit(State state) {
-        if (state instanceof PlayerSitActionState s) {
-            String playerName = s.getOwner().getName();
-            Log.debug("player %s sit check status fail, remove tool entity", playerName);
-            Entity toolEntity = s.getTool_entity();
-            if (toolEntity != null) {
-                Lib.Scheduler.runAtEntity(
+    protected void onEarlyExit(PlayerSitActionState state) {
+        String playerName = state.getOwner().getName();
+        Log.debug("player %s sit check status fail, remove tool entity", playerName);
+        Entity toolEntity = state.getTool_entity();
+        if (toolEntity != null) {
+            Lib.Scheduler.runAtEntity(
                     Ari.instance,
                     toolEntity,
                     i -> {
-                        s.getTool_entity().remove();
-                        s.setTool_entity(null);
+                        state.getTool_entity().remove();
+                        state.setTool_entity(null);
                     },
                     () -> Log.error("error on player %s sit when remove tool entity", playerName));
-            }
         }
     }
 
     @Override
-    protected void onFinished(State state) {
+    protected void onFinished(PlayerSitActionState state) {
 
     }
 

@@ -2,7 +2,7 @@ package com.tty.commands.sub;
 
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.tty.Ari;
-import com.tty.lib.dto.State;
+import com.tty.dto.state.teleport.RandomTpState;
 import com.tty.lib.command.BaseCommand;
 import com.tty.lib.command.SuperHandsomeCommand;
 import com.tty.states.teleport.RandomTpStateService;
@@ -34,7 +34,7 @@ public class RtpCancel extends BaseCommand<String> {
     public void execute(CommandSender sender, String[] args) {
         Player player = (Player) sender;
         RandomTpStateService machine = Ari.instance.stateMachineManager.get(RandomTpStateService.class);
-        List<State> states = machine.getStates((Entity) sender);
+        List<RandomTpState> states = machine.getStates((Entity) sender);
         if (states.isEmpty()) {
             player.sendMessage(ConfigUtils.t("function.rtp.no-rtp"));
             return;

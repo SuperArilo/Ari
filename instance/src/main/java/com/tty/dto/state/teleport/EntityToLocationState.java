@@ -1,23 +1,20 @@
 package com.tty.dto.state.teleport;
 
-import com.tty.lib.dto.State;
-import com.tty.enumType.TeleportType;
+import com.tty.lib.dto.TeleportState;
+import com.tty.lib.enum_type.TeleportType;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public class EntityToLocationState extends State {
+public class EntityToLocationState extends TeleportState {
 
     @Getter
     private final Location location;
-    @Getter
-    private final TeleportType type;
 
     public EntityToLocationState(Entity owner, int max_count, Location location, TeleportType type) {
-        super(owner, (owner instanceof Player p && p.isOp()) ? 0:max_count);
+        super(owner, type, (owner instanceof Player p && p.isOp()) ? 0:max_count);
         this.location = location;
-        this.type = type;
     }
 
 }

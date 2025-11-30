@@ -2,7 +2,6 @@ package com.tty.states.teleport;
 
 import com.tty.Ari;
 import com.tty.lib.Log;
-import com.tty.lib.dto.State;
 import com.tty.dto.state.teleport.PreEntityToEntityState;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
@@ -16,21 +15,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PreTeleportStateService extends StateService {
+public class PreTeleportStateService extends StateService<PreEntityToEntityState> {
 
     public PreTeleportStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
         super(rate, c, isAsync, javaPlugin);
     }
 
     @Override
-    protected void loopExecution(State state) {
-        if (!(state instanceof PreEntityToEntityState toPlayerState)) {
-            state.setOver(true);
-            return;
-        }
+    protected void loopExecution(PreEntityToEntityState state) {
 
-        Entity owner = toPlayerState.getOwner();
-        Entity target = toPlayerState.getTarget();
+        Entity owner = state.getOwner();
+        Entity target = state.getTarget();
 
         // 基本合法性检查
         if (target instanceof Player p && !p.isOnline()) {
@@ -54,55 +49,50 @@ public class PreTeleportStateService extends StateService {
     }
 
     @Override
-    protected void abortAddState(State state) {
+    protected void abortAddState(PreEntityToEntityState state) {
     }
 
     @Override
-    protected void passAddState(State state) {
-        if (state instanceof PreEntityToEntityState toEntityState) {
-            Entity owner = toEntityState.getOwner();
-            Entity target = toEntityState.getTarget();
+    protected void passAddState(PreEntityToEntityState state) {
+        Entity owner = state.getOwner();
+        Entity target = state.getTarget();
 
-            owner.sendMessage(ConfigUtils.t("function.tpa.send-message"));
+        owner.sendMessage(ConfigUtils.t("function.tpa.send-message"));
 
-            String message = Ari.C_INSTANCE.getValue(
-                    "function.tpa." + (toEntityState.getCommand().equals("tpa") ? "to-message" : "here-message"),
-                    FilePath.LANG
-            );
+        String message = Ari.C_INSTANCE.getValue(
+                "function.tpa." + (state.getType().getKey().equals("tpa") ? "to-message" : "here-message"),
+                FilePath.LANG
+        );
 
-            target.sendMessage(
-                    ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), owner.getName()))
-                            .appendNewline()
-                            .append(ComponentUtils.setClickEventText(
-                                    Ari.C_INSTANCE.getValue("function.public.agree", FilePath.LANG),
-                                    ClickEvent.Action.RUN_COMMAND,
-                                    "/ari tpaaccept " + owner.getName()))
-                            .append(ConfigUtils.t("function.public.center"))
-                            .append(ComponentUtils.setClickEventText(
-                                    Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.LANG),
-                                    ClickEvent.Action.RUN_COMMAND,
-                                    "/ari tparefuse " + owner.getName()))
-            );
-        }
+        target.sendMessage(
+                ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), owner.getName()))
+                        .appendNewline()
+                        .append(ComponentUtils.setClickEventText(
+                                Ari.C_INSTANCE.getValue("function.public.agree", FilePath.LANG),
+                                ClickEvent.Action.RUN_COMMAND,
+                                "/ari tpaaccept " + owner.getName()))
+                        .append(ConfigUtils.t("function.public.center"))
+                        .append(ComponentUtils.setClickEventText(
+                                Ari.C_INSTANCE.getValue("function.public.refuse", FilePath.LANG),
+                                ClickEvent.Action.RUN_COMMAND,
+                                "/ari tparefuse " + owner.getName()))
+        );
     }
 
     @Override
-    protected void onEarlyExit(State state) {
+    protected void onEarlyExit(PreEntityToEntityState state) {
     }
 
     @Override
-    protected void onFinished(State state) {
-        if (state instanceof PreEntityToEntityState preEntityToEntityState) {
-            Log.debug("player %s send to %s teleport request expired",  preEntityToEntityState.getOwner().getName(), preEntityToEntityState.getTarget().getName());
-        }
-
+    protected void onFinished(PreEntityToEntityState state) {
+        Log.debug("player %s send to %s teleport request expired",  state.getOwner().getName(), state.getTarget().getName());
     }
 
     @Override
-    protected boolean canAddState(State state) {
-        if (!(state instanceof PreEntityToEntityState toPlayerState)) return false;
-        Entity owner = toPlayerState.getOwner();
-        Entity target = toPlayerState.getTarget();
+    protected boolean canAddState(PreEntityToEntityState state) {
+
+        Entity owner = state.getOwner();
+        Entity target = state.getTarget();
         StateMachineManager manager = Ari.instance.stateMachineManager;
         //判断当前实体是否在传送冷却中
         if (!manager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
@@ -116,9 +106,11 @@ public class PreTeleportStateService extends StateService {
             return false;
         }
 
-        //判断当前发起玩家是否在传送状态中或者是否正在进行 rtp 传送
+        //判断当前发起玩家或目标玩家是否在传送状态中或者是否正在进行 rtp 传送
         if (!manager.get(TeleportStateService.class).getStates(owner).isEmpty() ||
-                !manager.get(RandomTpStateService.class).getStates(owner).isEmpty()) {
+                !manager.get(RandomTpStateService.class).getStates(owner).isEmpty() ||
+                !manager.get(TeleportStateService.class).getStates(target).isEmpty() ||
+                !manager.get(RandomTpStateService.class).getStates(target).isEmpty()) {
             owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
             return false;
         }

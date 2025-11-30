@@ -40,7 +40,7 @@ public class PlayerRideActionStateService extends StateService {
 
     @SneakyThrows
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof PlayerRideActionState s)) {
             state.setOver(true);
             return;

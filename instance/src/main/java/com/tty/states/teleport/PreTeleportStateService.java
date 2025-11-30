@@ -23,7 +23,7 @@ public class PreTeleportStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof PreEntityToEntityState toPlayerState)) {
             state.setOver(true);
             return;

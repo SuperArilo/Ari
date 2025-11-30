@@ -74,7 +74,7 @@ public class PlayerSitActionStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof PlayerSitActionState s)) {
             state.setOver(true);
             return;

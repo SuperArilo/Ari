@@ -32,7 +32,7 @@ public class TeleportStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         Entity owner = state.getOwner();
         this.addEntityInitData(owner);
 

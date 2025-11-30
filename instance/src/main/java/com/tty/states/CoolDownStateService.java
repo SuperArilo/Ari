@@ -21,7 +21,7 @@ public class CoolDownStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof CooldownState s)) {
             state.setOver(true);
             return;

@@ -23,7 +23,7 @@ public class GuiEditStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof PlayerEditGuiState s)) {
             state.setOver(true);
             return;

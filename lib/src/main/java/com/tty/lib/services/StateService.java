@@ -78,7 +78,7 @@ public abstract class StateService {
                 state.setPending(true);
                 state.increment();
                 state.setSafeCount(0);
-                this.runContent(state);
+                this.loopExecution(state);
             }
         }
     }
@@ -138,7 +138,7 @@ public abstract class StateService {
      *
      * @param state 当前检查的状态
      */
-    protected abstract void runContent(State state);
+    protected abstract void loopExecution(State state);
 
     /**
      * 终止当前的状态添加

@@ -68,7 +68,7 @@ public class RandomTpStateService extends StateService {
     }
 
     @Override
-    protected void runContent(State state) {
+    protected void loopExecution(State state) {
         if (!(state instanceof RandomTpState s)) {
             state.setOver(true);
             return;

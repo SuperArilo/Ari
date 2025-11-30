@@ -41,7 +41,11 @@ public class PlayerRideActionStateService extends StateService {
     @SneakyThrows
     @Override
     protected void runContent(State state) {
-        if (!(state instanceof PlayerRideActionState s)) return;
+        if (!(state instanceof PlayerRideActionState s)) {
+            state.setOver(true);
+            return;
+        }
+
         Player beRidePlayer = s.getBeRidePlayer();
         Player owner = (Player) s.getOwner();
         Entity toolEntity = s.getTool_entity();

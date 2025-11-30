@@ -5,7 +5,7 @@ import com.tty.lib.Log;
 import com.tty.dto.state.teleport.CooldownState;
 import com.tty.lib.services.StateService;
 import com.tty.lib.tool.PermissionUtils;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.Entity;
 import org.bukkit.plugin.java.JavaPlugin;
 
 
@@ -22,14 +22,17 @@ public class CoolDownStateService extends StateService {
 
     @Override
     protected void runContent(State state) {
-        if (state instanceof CooldownState s && state.getOwner() instanceof Player p && !p.isOp()) {
-            if (PermissionUtils.hasPermission(p, "ari.cooldown." + s.getType().getKey())) {
-                state.setOver(true);
-            }
-            Log.debug("entity %s teleport cd time is cooling down", state.getOwner().getName());
+        if (!(state instanceof CooldownState s)) {
+            state.setOver(true);
             return;
         }
-        state.setOver(true);
+        Entity owner = state.getOwner();
+        if (PermissionUtils.hasPermission(owner, "ari.cooldown." + s.getType().getKey())) {
+            state.setOver(true);
+            return;
+        }
+        Log.debug("entity %s teleport cd time is cooling down", state.getOwner().getName());
+        state.setPending(false);
     }
 
     @Override

@@ -75,10 +75,15 @@ public class PlayerSitActionStateService extends StateService {
 
     @Override
     protected void runContent(State state) {
-        if (!(state instanceof PlayerSitActionState s)) return;
+        if (!(state instanceof PlayerSitActionState s)) {
+            state.setOver(true);
+            return;
+        };
+
         Player owner = (Player) s.getOwner();
         if (s.getTool_entity() == null) {
             Log.error("player %s tool entity is null", owner.getName());
+            state.setOver(true);
             return;
         }
 

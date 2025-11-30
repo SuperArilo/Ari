@@ -31,6 +31,7 @@ public class GuiEditStateService extends StateService {
         Player owner = (Player) s.getOwner();
         if (!owner.isOnline()) {
             state.setOver(true);
+            return;
         }
         state.setPending(false);
         Log.debug("checking player %s edit gui %s. type %s", owner.getName(), s.getHolder().getType(), s.getFunctionType());

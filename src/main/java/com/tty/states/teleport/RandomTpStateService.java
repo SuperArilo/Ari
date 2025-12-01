@@ -3,6 +3,7 @@ package com.tty.states.teleport;
 import com.google.gson.reflect.TypeToken;
 import com.tty.Ari;
 import com.tty.dto.rtp.RtpConfig;
+import com.tty.lib.Lib;
 import com.tty.lib.Log;
 import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.dto.state.teleport.RandomTpState;
@@ -26,7 +27,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class RandomTpStateService extends StateService<RandomTpState> {
 
@@ -98,18 +98,19 @@ public class RandomTpStateService extends StateService<RandomTpState> {
         int x = (int) Math.min(PublicFunctionUtils.randomGenerator((int) rtpConfig.getMin(), (int) rtpConfig.getMax()), world.getWorldBorder().getMaxSize());
         int z = (int) Math.min(PublicFunctionUtils.randomGenerator((int) rtpConfig.getMin(), (int) rtpConfig.getMax()), world.getWorldBorder().getMaxSize());
         Log.debug("player %s search count %s.", state.getOwner().getName(), state.getCount());
-        if (state.getTrueLocation() == null && !state.isRunning() && !state.isOver()) {
+        synchronized (state) {
+            if (state.getTrueLocation() != null || state.isRunning() || state.isOver()) return;
             state.setRunning(true);
-            this.searchSafeLocation.search(world, x, z)
-                    .orTimeout(3, TimeUnit.SECONDS)
-                    .whenComplete((location, ex) -> {
+        }
+        this.searchSafeLocation.search(world, x, z)
+            .whenComplete((location, ex) ->
+                    Lib.Scheduler.run(Ari.instance, i -> {
                         state.setPending(false);
                         state.setRunning(false);
                         if (location == null) return;
                         state.setTrueLocation(location);
                         state.setOver(true);
-                    });
-        }
+                    }));
     }
 
     @Override

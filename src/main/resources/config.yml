@@ -31,5 +31,5 @@ server:
   save-interval: 5 # 5分钟
 
 debug:
-  enable: true
-  overwrite-file: true
+  enable: false
+  overwrite-file: false

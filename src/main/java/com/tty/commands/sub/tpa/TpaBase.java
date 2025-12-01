@@ -1,0 +1,74 @@
+package com.tty.commands.sub.tpa;
+
+import com.mojang.brigadier.arguments.ArgumentType;
+import com.tty.Ari;
+import com.tty.dto.state.teleport.PreEntityToEntityState;
+import com.tty.lib.command.BaseCommand;
+import com.tty.lib.enum_type.TeleportType;
+import com.tty.states.teleport.PreTeleportStateService;
+import com.tty.tool.ConfigUtils;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public abstract class TpaBase<T> extends BaseCommand<T> {
+
+    protected TpaBase(boolean allowConsole, ArgumentType<T> type, int correctArgsLength) {
+        super(allowConsole, type, correctArgsLength);
+    }
+
+    /**
+     * 获取适合 tpa 的玩家列表
+     * @param sender 发起者
+     * @return 返回玩家名称列表
+     */
+    public List<String> getOnlinePlayers(CommandSender sender) {
+        return Bukkit.getOnlinePlayers().stream()
+                .map(Player::getName)
+                .filter(name -> !name.equals(sender.getName()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 接收者获取它获取到的列表
+     * @param sender 接收者
+     * @return 能够执行的列表
+     */
+    public List<String> getResponseList(CommandSender sender) {
+        return Ari.instance.stateMachineManager.get(PreTeleportStateService.class).getSTATE_LIST().stream()
+                .filter(i -> i.getTarget().equals(sender))
+                .filter(i -> i.getType().equals(TeleportType.TPA))
+                .map(e -> e.getOwner().getName())
+                .toList();
+    }
+
+    /**
+     * 检查执行逻辑
+     * @param sender 接收者
+     * @param target 发起者
+     * @return 如果满足则返回 发起者的 PreEntityToEntityState 对象
+     */
+    public PreEntityToEntityState checkAfterResponse(Player sender, Player target) {
+        if (target == null) {
+            sender.sendMessage(ConfigUtils.t("teleport.unable-player"));
+            return null;
+        }
+        PreTeleportStateService machine = Ari.instance.stateMachineManager.get(PreTeleportStateService.class);
+        //检查这个请求是否存在
+        PreEntityToEntityState anElse = machine
+                .getStates(target)
+                .stream()
+                .filter(i -> i instanceof PreEntityToEntityState state && state.getTarget().equals(sender)).findFirst().orElse(null);
+        if (anElse == null) {
+            sender.sendMessage(ConfigUtils.t("function.tpa.been-done"));
+            return null;
+        }
+        //移除发起者的请求
+        machine.removeState(anElse);
+        return anElse;
+    }
+
+}

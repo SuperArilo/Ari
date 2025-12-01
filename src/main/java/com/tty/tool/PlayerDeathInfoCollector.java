@@ -1,0 +1,114 @@
+package com.tty.tool;
+
+import com.google.common.reflect.TypeToken;
+import com.tty.Ari;
+import com.tty.enumType.FilePath;
+import com.tty.lib.tool.PublicFunctionUtils;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
+import java.util.Optional;
+
+public class PlayerDeathInfoCollector {
+
+    /** 玩家死亡信息 */
+    public static class DeathInfo {
+        //受害者
+        public Player victim;
+        //死亡时间
+        public long deathTime;
+        //死亡原因
+        public EntityDamageEvent.DamageCause deathCause;
+        //
+        public EntityDamageEvent event;
+        //是否是实体造成的
+        public boolean isEntityCause;
+        //是否是远程舞曲
+        public boolean isProjectile;
+        //实施者
+        public Entity killer;
+        //实施者使用的武器，如果有
+        public ItemStack weapon;   // 武器或手
+        public boolean isEscapeAttempt; // 可自定义逻辑
+
+        @Override
+        public String toString() {
+            return "DeathInfo{" +
+                    "victim=" + victim.getName() +
+                    ", deathTime=" + deathTime +
+                    ", event=" + event +
+                    ", deathCause=" + deathCause +
+                    ", isEntityCause=" + isEntityCause +
+                    ", isProjectile=" + isProjectile +
+                    ", killer=" + (killer != null ? killer.getName() : "null") +
+                    ", weapon=" + (weapon != null ? weapon.getType().name() : "null") +
+                    '}';
+        }
+    }
+
+    /** 收集 PlayerDeathEvent 信息 */
+    public static DeathInfo collect(PlayerDeathEvent event) {
+        DeathInfo info = new DeathInfo();
+        info.victim = event.getEntity();
+        info.deathTime = System.currentTimeMillis();
+        info.event = event.getEntity().getLastDamageCause();
+        info.deathCause = event.getEntity().getLastDamageCause() != null
+                ? event.getEntity().getLastDamageCause().getCause()
+                : EntityDamageEvent.DamageCause.CUSTOM;
+        info.isEscapeAttempt = false;
+
+        info.weapon = null;
+        info.isEntityCause = false;
+        info.isProjectile = false;
+        info.killer = null;
+
+        // 检查是否由实体造成伤害
+        if (event.getEntity().getLastDamageCause() instanceof EntityDamageByEntityEvent damageEvent) {
+            Entity damager = damageEvent.getDamager();
+            info.isEntityCause = true;
+
+            // 处理远程攻击（箭、雪球等）
+            if (damager instanceof Projectile projectile) {
+                info.isProjectile = true;
+                if (projectile.getShooter() instanceof Entity shooter) {
+                    damager = shooter;
+                }
+            }
+
+            info.killer = damager;
+
+            // 玩家攻击
+            if (damager instanceof Player playerDamager) {
+                info.weapon = Optional.of(playerDamager.getEquipment())
+                        .map(EntityEquipment::getItemInMainHand)
+                        .orElse(null);
+            }
+            // 怪物或其他生物攻击
+            else if (damager instanceof LivingEntity entityDamager) {
+                Optional.ofNullable(entityDamager.getEquipment())
+                        .map(EntityEquipment::getItemInMainHand).ifPresent(weaponItem -> info.weapon = weaponItem);
+            }
+        }
+
+        return info;
+    }
+
+    public static String getRandomOfList(String keyPath) {
+        List<String> many = Ari.C_INSTANCE.getValue(keyPath, FilePath.LANG, new TypeToken<List<String>>() {
+        }.getType(), List.of());
+        int size = many.size();
+        if (size == 0) {
+            return "";
+        }
+        int i = PublicFunctionUtils.randomGenerator(0, many.size());
+        if(i == many.size() && i != 0) {
+            i--;
+        }
+        return many.get(i);
+    }
+}

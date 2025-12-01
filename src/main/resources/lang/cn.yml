@@ -1,0 +1,219 @@
+base:
+  page-change:
+    none-prev: '&e这已经是第一页了哦'
+    none-next: '&e这已经是最后一页了哦'
+  on-error: '&c服务器执行过程发生错误，请联系管理员'
+  yes_re: '&a是'
+  no_re: '&c否'
+  free: '&a免费'
+  no-record: '&c无记录'
+  status-not-allow: '&c当前状态不允许此操作！'
+  on-edit:
+    cancel: '&e已取消操作！'
+    timeout-cancel: '&7编辑超时，已自动取消！'
+    title: '&f请输入新内容'
+    sub-title: '&6cancel &7取消'
+    input-error: '&c输入有错误，请检查！'
+    rename:
+      name-error: '&c名称不满足'
+      name-too-long: '&c名称过长'
+    permission:
+      permission-error: '&c权限节点不满足'
+    cost:
+      format-error: '&c不是有效的数字'
+  save:
+    done: '&a✔ 保存成功'
+    ing: '&e⏳ 保存中...'
+    error: '&c✖ 保存失败，请联系管理员'
+  on-player:
+    hand-no-item: '&c当前手上并没有物品'
+    unable-player: '&c该玩家离线或者不存在！'
+    data-changed: '&a你的数据发生更变，请重新登录服务器!'
+
+teleport:
+  title:
+    main: '&e请不要移动...'
+    sub-title: '&6[TeleportDelay]'
+  success: '&a✔ 传送成功！'
+  break: '&c✖ 传送过程中被阻断或者取消'
+  unable-player: '&c该玩家离线或者不存在！'
+  cooling: '&e传送冷却中...'
+  none-location: '&e没有上一个保存的位置'
+  costed: '&a本次传送花费了 [Costed]'
+  has-teleport: '&e你有一个传送正在进行中'
+  again: '&e你已经发起过传送请求了，请等待一段时间再重试。'
+  tips-back: '&b上次死亡的地点: [DeathLocation] &7/back返回或者点击此消息'
+
+function:
+  public:
+    agree: '&a✔ [同意]'
+    center: '&f或者'
+    refuse: '&c✖ [拒绝]'
+    not-player: '&c这个指令只能在游戏里使用！'
+    fail: '&c指令缺少集合或者输入不正确！'
+  tpa:
+    again: '&e您已经发送过请求给 [TpaBeSender]'
+    send-message: '&e已发送传送请求给玩家...'
+    to-message: '&6玩家 &a[TpaSender] &6想传送到您这里'
+    here-message: '&6玩家 &a[TpaSender] &6想让您传送到TA那'
+    agree: '&a✔ 您同意了此次传送请求'
+    been-done: '&c该请求已经处理过，或者不存在！'
+    refuse-success: '&a✔ 拒绝成功！'
+    refused: '&6玩家 &a[TpaBeSender] &6拒绝了您的传送请求'
+    error: '&c传送状态错误，无法完成传送'
+  reload:
+    doing: '&e重载插件中...'
+    success: '&a✔ 重载插件成功！'
+  home:
+    create-success: '&a✔ 创建家成功！'
+    id-error: '&chome的id不满足'
+    exceeds: '&c超出当前权限组设置的数量！'
+    exist: '&c已存在相同ID的家'
+    delete-success: '&a✔ 删除成功'
+    not-found: '&chome的id不存在'
+  warp:
+    no-permission-teleport: '&c你没有权限传送到该地标'
+    no-permission-edit: '&c你没有权限编辑该地标'
+    create-success: '&a✔ 创建地标成功！'
+    delete-success: '&a✔ 删除成功'
+    id-error: '&cwarp的id不满足'
+    exist: '&c已存在相同ID的地标'
+    exceeds: '&c超出数量！'
+    not-found: '&cwarp的id错误、找不到或者已被删除'
+    not-enough-money: '&c你没有足够的金钱传送到该地标'
+  spawn:
+    no-spawn: '&c服务器目前没有创建出生点'
+    create-success: '&a✔ 出生点创建成功！'
+  deletewarp:
+    success: '&a✔ 删除成功'
+    none: '&c删除失败，尝试联系管理员'
+  rtp:
+    title-searching: '&e正在搜索中...'
+    title-search-count: '&e剩余尝试次数 &6[RtpSearchCount]'
+    location-found: '&a✔ 位置已找到，正在传送...'
+    search-failure: '&c✖ 搜索失败，请重试'
+    world-disable: '&8当前世界已经被禁用随机传送'
+    no-rtp: '&e你当前没有使用过随机传送'
+    rtp-cancel: '&7已取消当前的随机传送运行'
+    abort-search: "&c✖ 当前次数下预加载区块超时，跳过..."
+  sit:
+    tips: '&f按下 &2潜行键 &f来取消'
+    error-location: '&c当前位置不允许坐下'
+  zako:
+    add-success: '&a✔ 白名单添加成功'
+    add-failure: '&c✖ 添加失败，请查看控制台'
+    player-exist: '&c✖ 添加失败，玩家已经存在'
+    remove-success: '&a✔ 白名单移除成功'
+    remove-failure: '&c✖ 白名单移除失败，不存在或者存在错误'
+    not-exist: '&c✖ 查询失败，被查询的对象不存在'
+  unknown: '&c未知指令，请重新输入'
+
+server:
+  time:
+    tips: '&e将时间调整为 &6[Time]'
+    not-exist-period: '&c不存在的时间段: &3[Period]'
+    not-allowed-world: '&c当前世界不允许调整时间'
+    skip-to-night: '&e将加速跳过夜晚'
+    report-status: '<#BEBEBE>当前有 [SleepPlayers]名玩家在睡觉，时间加速为 [SkipNightTickIncrement]</#BEBEBE>'
+    name:
+      sunrise: '&e黎明'
+      day: '&f白天'
+      noon: '&f正午'
+      sunset: '&e黄昏'
+      night: '&7夜晚'
+      midnight: '&8午夜'
+      daylight: '&f破晓时刻'
+      wake_up: '&f起床时间'
+  message:
+    on-whitelist-login: '&c您尚未在此服务器的白名单，请联系管理员添加！'
+    tips-whitelist: '&a请联系管理员来添加白名单'
+    on-first-login: '&a欢迎玩家 &6[PlayerName] &a加入我们的服务器！'
+    on-login: '&f玩家 &6[PlayerName] &f加入了服务器！'
+    on-leave: '&f玩家 &6[PlayerName] &f离开了服务器！'
+    no-economy: '&c服务器未使用经济插件'
+  player:
+    info:
+      - "&f玩家 &6[PlayerName] &f的信息"
+      - "&f第一次登录服务器时间: &6[FirstLoginServerTime]"
+      - "&f上次登录服务器的时间: &6[LastLoginServerTime]"
+      - "&f累计在线时间: &6[TotalOnServer]"
+      - "&f所在世界：&8[PlayerWorld]"
+      - "&f当前位置: [PlayerLocation]"
+
+  # 以下不支持十六进制颜色
+  custom-death:
+    running-away:
+      - ' &7试图逃离 &2[Killer]&7 时'
+      - ' &7与 &2[Killer]&7 战斗时'
+    player:
+      air:
+        - '&2[Victim] &7死于 &2[Killer]'
+        - '&2[Victim] &7死于 &2[Killer] &7强大的手下'
+        - '&2[Victim] &7被 &2[Killer] &7一拳打死'
+      item:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7杀死了'
+      projectile:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+      fall:
+        - '&2[Victim] &7落地过猛'
+        - '&2[Victim] &7从高处摔了下来'
+        - '&2[Victim] &7坠机了, &4Man!'
+      fire:
+        - '&2[Victim] &7浴火焚身'
+        - '&2[Victim] &7被烧死了'
+      lightning:
+        - '&2[Victim] &7被闪电击中'
+        - '&2[Victim] &7渡劫失败'
+      suffocation:
+        - '&2[Victim] &7在墙里窒息而亡'
+      drowning:
+        - '&2[Victim] &7淹死了'
+      freeze:
+        - '&2[Victim] &7被冻死了'
+      suicide:
+        - '&2[Victim] &7结束了自己的生命'
+      void:
+        - '&2[Victim] &7掉出了这个世界'
+        - '&2[Victim] &7去往了二刺螈'
+      wither:
+        - '&2[Victim] &7凋零了'
+      fly_into_wall:
+        - '&2[Victim] &7感受到了动能'
+        - '&2[Victim] &7学会了什么是动量守恒'
+      kill:
+        - '&2[Victim] &7自杀了'
+      starvation:
+        - '&2[Victim] &7饿死了'
+      sonic_boom:
+        - '&2[Victim] &7被 &2[Killer] &7抹除了'
+      magic:
+        - '&2[Victim] &7被 &2[Killer] &7用魔法杀死了'
+    mob:
+      air:
+        - '&2[Victim] &7被 &2[Killer]&7 杀死了'
+      item:
+        - '&2[Victim] &7被 &2[Killer]&7 用 &2[Killer_Item]&7 杀死了'
+      projectile:
+        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+    falling-blocks:
+      anvil:
+        - '&2[Victim] &7被坠落的铁砧压扁了'
+        - '&2[Victim] &7被铁砧碾碎'
+        - '&2[Victim] &7用头撞击铁砧'
+        - '&2[Victim] &7尝试亲吻铁砧'
+    block:
+      cactus:
+        - '&2[Victim] &7被戳死了'
+        - '&2[Victim] &7试图 曰 仙人掌被反杀'
+      magma_block:
+        - '&2[Victim] &7发现了地板是熔岩做的'
+      sweet_berry_bush:
+        - '&2[Victim] &7被甜浆果丛刺死了'
+      lava:
+        - '&2[Victim] &7试图在熔岩里游泳'
+      pointed_dripstone:
+        - '&2[Victim] &7被石笋刺穿了'
+
+
+debug:
+  on-open: '调试模式开启'

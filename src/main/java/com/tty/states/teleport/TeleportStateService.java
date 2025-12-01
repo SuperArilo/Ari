@@ -1,0 +1,193 @@
+package com.tty.states.teleport;
+
+import com.tty.Ari;
+import com.tty.dto.state.teleport.PlayerToPlayerState;
+import com.tty.lib.Log;
+import com.tty.lib.dto.State;
+import com.tty.dto.state.CooldownState;
+import com.tty.dto.state.teleport.EntityToLocationCallbackState;
+import com.tty.dto.state.teleport.EntityToLocationState;
+import com.tty.enumType.FilePath;
+import com.tty.function.Teleporting;
+import com.tty.lib.enum_type.LangType;
+import com.tty.lib.services.StateService;
+import com.tty.lib.tool.ComponentUtils;
+import com.tty.states.CoolDownStateService;
+import com.tty.tool.ConfigUtils;
+import org.bukkit.Location;
+import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.*;
+
+public class TeleportStateService extends StateService<State> {
+
+    private final Map<UUID, Double> initHealthMap = new HashMap<>();
+    private final Map<UUID, Location> initLocationMap = new HashMap<>();
+
+    public TeleportStateService(long rate, long c, boolean isAsync, JavaPlugin javaPlugin) {
+        super(rate, c, isAsync, javaPlugin);
+    }
+
+    @Override
+    protected void loopExecution(State state) {
+        Entity owner = state.getOwner();
+        this.addEntityInitData(owner);
+
+        if (owner instanceof Player player && !player.isOnline()) {
+            state.setOver(true);
+            return;
+        }
+
+        if (state instanceof PlayerToPlayerState playerToPlayerState) {
+            Entity target = playerToPlayerState.getTarget();
+            if (target instanceof Player targetPlayer && !targetPlayer.isOnline()) {
+                owner.sendMessage(ConfigUtils.t("teleport.break"));
+                state.setOver(true);
+                return;
+            }
+        }
+
+        if (owner instanceof Damageable damageable) {
+            if (this.hasMoved(owner) || this.hasLostHealth(damageable)) {
+                owner.sendMessage(ConfigUtils.t("teleport.break"));
+                state.setOver(true);
+                return;
+            }
+        }
+
+        owner.showTitle(ComponentUtils.setPlayerTitle(
+                Ari.C_INSTANCE.getValue("teleport.title.main", FilePath.LANG),
+                Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.LANG)
+                        .replace(LangType.TELEPORTDELAY.getType(), String.valueOf(state.getMax_count() - state.getCount())),
+                200,
+                1000,
+                200
+        ));
+        state.setPending(false);
+        Log.debug("checking entity %s teleporting", owner.getName());
+    }
+
+
+    @Override
+    protected boolean canAddState(State state) {
+        Entity owner = state.getOwner();
+        //判断当前实体是否在传送冷却中
+        if (!Ari.instance.stateMachineManager.get(CoolDownStateService.class).getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("teleport.cooling"));
+            return false;
+        }
+
+        if(!Ari.instance.stateMachineManager.get(TeleportStateService.class).getStates(owner).isEmpty()) {
+            owner.sendMessage(ConfigUtils.t("teleport.has-teleport"));
+            return false;
+        }
+
+        if (state instanceof EntityToLocationCallbackState callbackState) {
+            return callbackState.checkCondition();
+        }
+
+        return true;
+    }
+
+    @Override
+    protected void abortAddState(State state) {
+
+    }
+
+    @Override
+    protected void passAddState(State state) {
+
+    }
+
+    @Override
+    protected void onEarlyExit(State state) {
+        Entity owner = state.getOwner();
+        this.removeEntityInitData(owner);
+    }
+
+    @Override
+    protected void onFinished(State state) {
+        Entity owner = state.getOwner();
+        owner.clearTitle();
+        CoolDownStateService machine = Ari.instance.stateMachineManager.get(CoolDownStateService.class);
+
+        Location targetLocation;
+        Runnable afterAction;
+
+        switch (state) {
+            case PlayerToPlayerState toPlayerState -> {
+                targetLocation = toPlayerState.getTarget().getLocation();
+                afterAction = () -> handleTeleportAfter(owner, targetLocation,
+                        () -> this.removeEntityInitData(owner),
+                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toPlayerState.getType()), Integer.class, 10), toPlayerState.getType()))
+                );
+            }
+            case EntityToLocationState toLocationState -> {
+                targetLocation = toLocationState.getLocation();
+                if (targetLocation == null) return;
+                afterAction = () -> handleTeleportAfter(owner, targetLocation,
+                        () -> this.removeEntityInitData(owner),
+                        () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(toLocationState.getType()), Integer.class, 10), toLocationState.getType()))
+                );
+            }
+            case EntityToLocationCallbackState callbackState -> {
+                targetLocation = callbackState.getLocation();
+                afterAction = () -> {
+                    callbackState.executeCallback();
+                    handleTeleportAfter(owner, targetLocation,
+                            () -> this.removeEntityInitData(owner),
+                            () -> machine.addState(new CooldownState(owner, Ari.C_INSTANCE.getValue("main.teleport.cooldown", FilePath.get(callbackState.getType()), Integer.class, 10), callbackState.getType()))
+                    );
+                };
+            }
+            default -> {
+                return;
+            }
+        }
+        Teleporting.create(owner, targetLocation)
+                .teleport()
+                .after(afterAction);
+    }
+
+    /**
+     * 检查是否受伤
+     */
+    private boolean hasLostHealth(Damageable entity) {
+        Double initHealth = this.initHealthMap.get(entity.getUniqueId());
+        if (initHealth == null) return false;
+        return entity.getHealth() < initHealth;
+    }
+
+    /**
+     * 检查是否移动
+     */
+    protected boolean hasMoved(Entity entity) {
+        Location initLocation = this.initLocationMap.get(entity.getUniqueId());
+        if (initLocation == null) return false;
+        return entity.getLocation().distanceSquared(initLocation) > 0.1;
+    }
+
+    private void addEntityInitData(Entity entity) {
+        if (!this.initLocationMap.containsKey(entity.getUniqueId()))  {
+            this.initLocationMap.put(entity.getUniqueId(), entity.getLocation().clone());
+        }
+        if (entity instanceof Damageable damageable && !this.initHealthMap.containsKey(entity.getUniqueId())) {
+            this.initHealthMap.put(entity.getUniqueId(), damageable.getHealth());
+        }
+    }
+
+    private void removeEntityInitData(Entity entity) {
+        this.initHealthMap.remove(entity.getUniqueId());
+        this.initLocationMap.remove(entity.getUniqueId());
+    }
+
+    private void handleTeleportAfter(Entity owner, Location location, Runnable removeInit, Runnable addState) {
+        removeInit.run();
+        addState.run();
+        Log.debug("Entity %s teleport to x: %s, y: %s, z: %s success.", owner.getName(), location.getX(), location.getY(), location.getZ());
+    }
+
+}

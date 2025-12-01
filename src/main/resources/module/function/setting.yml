@@ -1,0 +1,38 @@
+tab:
+  enable: true
+  # tick
+  update-interval: 20
+  layout:
+    header:
+      - '<#00EEEE>测试服务器</#FFF5EE>'
+    footer:
+      - 'TPS: %server_tps_1_colored% &fMem: &2%server_ram_used%/&2%server_ram_max%'
+  groups:
+    owner:
+      prefix: '<#ffffff>[</#ffffff><#B22222>腐竹</#B22222><#ffffff>]</#ffffff> '
+      suffix: ''
+    admin:
+      prefix: '&f[&e管理员&f] '
+      suffix: ''
+    default:
+      prefix: '&f[&a玩家&f] '
+      suffix: ''
+    _default_:
+      prefix: '&f[&a玩家&f] '
+      suffix: ''
+  slot:
+    - 'owner'
+    - 'admin'
+    - 'default'
+chat:
+  enable: true
+  groups-pattern:
+    owner: '<<#CD5555>腐竹</#CD5555>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    admin: '<<#EEEE00>管理员</#EEEE00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    default: '<<#00AA00>玩家</#00AA00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+action:
+  sit:
+    enable: true
+    disable-block:
+      - 'example'

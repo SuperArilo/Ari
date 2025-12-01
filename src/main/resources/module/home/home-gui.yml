@@ -1,0 +1,36 @@
+title: '%player_name%的家列表'
+row: 3
+mask:
+  name: ''
+  material: glass_pane
+  slot: [0,1,2,3,4,5,6,7,8,9,17,18,19,21,23,25,26]
+functionItems:
+  back:
+    name: '返回'
+    type: BACK
+    material: redstone
+    slot: [22]
+    lore:
+      - '&6点击返回或者关闭'
+  prev:
+    name: '上一页'
+    type: PREV
+    material: arrow
+    slot: [20]
+    lore:
+      - '&6点击切换到上一页'
+  next:
+    name: '下一页'
+    type: NEXT
+    material: arrow
+    slot: [24]
+    lore:
+      - '&6点击切换到下一页'
+dataItems:
+  slot: [10,11,12,13,14,15,16]
+  lore:
+    - "&2ID: &6[ID]"
+    - "&2x: &6[X] &2y: &6[Y] &2z: &6[Z]"
+    - "&2世界: &6[worldName]"
+    - "&7左击: &6传送"
+    - "&7右击: &6编辑"

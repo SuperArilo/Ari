@@ -1,0 +1,35 @@
+lang: cn
+data:
+  # mysql, sqlite
+  storage-type: sqlite
+  # mysql 才有效
+  address: localhost
+  port: 3306
+  database: ari
+  table-prefix: ari_
+  username: root
+  password: 123456
+  maximum-pool-size: 10
+  minimum-idle: 10
+  maximum-lifetime: 1800000
+  connection-timeout: 5000
+  keepalive-time: 0
+server:
+  custom-death: false
+  gui-edit-timeout: 10 #秒
+  skip-night:
+    enable: true
+    tick-increment: 5
+    max-tick-increment: 50
+  message:
+    on-first-login: true
+    on-login: true
+    on-leave: true
+  whitelist:
+    enable: true
+  #秒
+  save-interval: 5 # 5分钟
+
+debug:
+  enable: true
+  overwrite-file: true

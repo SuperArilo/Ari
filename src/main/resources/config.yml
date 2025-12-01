@@ -28,7 +28,7 @@ server:
   whitelist:
     enable: true
   #秒
-  save-interval: 5 # 5分钟
+  save-interval: 300 # 5分钟
 
 debug:
   enable: false

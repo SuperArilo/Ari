@@ -1,7 +1,7 @@
 # Ari - 基于现代化 Minecraft 服务器插件
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Java 17+](https://img.shields.io/badge/Java-17%2B-orange)](https://adoptium.net/)
+[![Java 21+](https://img.shields.io/badge/Java-21%2B-orange)](https://adoptium.net/)
 [![Folia](https://img.shields.io/badge/Folia-1.21.3%2B-brightgreen)](https://papermc.io/folia)
 [![PaperMC](https://img.shields.io/badge/PaperMC-1.21.3%2B-brightgreen)](https://papermc.io/)
 [![Vault Dependency](https://img.shields.io/badge/Vault-Required-blue)](https://github.com/MilkBowl/Vault)

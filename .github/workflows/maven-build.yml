@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 拉取代码
+      - name: 拉取 ari 仓库代码
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -31,11 +31,19 @@ jobs:
         with:
           maven-version: ${{ env.MAVEN_VERSION }}
 
-      - name: 构建 Maven
-        run: |
-          mvn clean package -DskipTests
+      - name: 克隆 arilib 仓库到子目录
+        run: git clone https://github.com/SuperArilo/ARILIB.git arilib
 
-      - name: 查找构建结果 jar
+      - name: 安装 arilib 到本地 Maven 仓库
+        run: |
+          cd arilib
+          mvn clean install -DskipTests
+          cd ..
+
+      - name: 构建 ari
+        run: mvn clean package -DskipTests
+
+      - name: 收集所有构建 jar
         run: |
           mkdir -p build-artifacts
           find . -name "*.jar" -path "*/target/*" ! -name "*-sources.jar" ! -name "*-javadoc.jar" ! -name "original-*.jar" | while read jar; do

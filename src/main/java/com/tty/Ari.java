@@ -20,7 +20,6 @@ import com.tty.listener.skip_sleep.PlayerSkipNight;
 import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
-import com.tty.papi.HomePAPI;
 import com.tty.states.teleport.RandomTpStateService;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
@@ -71,10 +70,6 @@ public class Ari extends JavaPlugin {
         this.registerListener();
         CommandRegister.register(this, "com.tty.commands", FormatUtils.yamlConvertToObj(Ari.C_INSTANCE.getObject(FilePath.COMMAND_ALIAS.name()).saveToString(), new TypeToken<Map<String, AliasItem>>() {}.getType()));
 
-        //PAPI
-        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
-            new HomePAPI().register();
-        }
         this.sqlInstance = new SQLInstance();
         this.sqlInstance.start();
 

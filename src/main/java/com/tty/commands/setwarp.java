@@ -18,8 +18,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class setwarp extends BaseCommand<String> {
+
+    private final WarpManager warpManager = new WarpManager(true);
 
     public setwarp() {
         super(false, StringArgumentType.string(), 2);
@@ -42,19 +45,25 @@ public class setwarp extends BaseCommand<String> {
         String warpId = args[1];
         Player player = (Player) sender;
 
-        if(FormatUtils.checkIdName(warpId)) {
-            WarpManager warpManager = new WarpManager(true);
-            warpManager.getCountByPlayer(player.getUniqueId().toString())
-                .thenAccept(serverWarps -> {
+        if(!FormatUtils.checkIdName(warpId)) {
+            player.sendMessage(ConfigUtils.t("function.warp.id-error"));
+            return;
+        }
+
+        this.warpManager.getCountByPlayer(player.getUniqueId().toString())
+                .thenCompose(serverWarps -> {
                     if (serverWarps.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "warp")) {
                         player.sendMessage(ConfigUtils.t("function.warp.exceeds"));
-                        return;
+                        return CompletableFuture.completedFuture(null);
                     }
-
-                    if (serverWarps.stream().anyMatch(i -> i.getWarpId().equals(warpId))) {
+                    return this.warpManager.getInstance(warpId);
+                })
+                .thenCompose(warp -> {
+                    if (warp != null) {
                         player.sendMessage(ConfigUtils.t("function.warp.exist", player));
-                        return;
+                        return CompletableFuture.completedFuture(null);
                     }
+                    CompletableFuture<ServerWarp> futureWarp = new CompletableFuture<>();
                     Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), task -> {
                         ServerWarp serverWarp = new ServerWarp();
                         serverWarp.setWarpId(warpId);
@@ -62,23 +71,23 @@ public class setwarp extends BaseCommand<String> {
                         serverWarp.setCreateBy(player.getUniqueId().toString());
                         serverWarp.setLocation(player.getLocation().toString());
                         serverWarp.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
-
-                        warpManager.createInstance(serverWarp)
-                                .thenAccept(i -> player.sendMessage(ConfigUtils.t(i ? "function.warp.create-success":"base.save.on-error")))
-                                .exceptionally(i -> {
-                                    Log.error(i, "create warp error");
-                                    player.sendMessage(ConfigUtils.t("base.save.on-error"));
-                                    return null;
-                                });
+                        futureWarp.complete(serverWarp);
                     });
-                }).exceptionally(i -> {
+                    return futureWarp.thenCompose(warpManager::createInstance);
+                })
+                .thenAccept(status -> {
+                    if(status == null) return;
+                    if (status) {
+                        player.sendMessage(ConfigUtils.t("function.warp.create-success"));
+                    } else {
+                        player.sendMessage(ConfigUtils.t("base.save.on-error"));
+                    }
+                })
+                .exceptionally(i -> {
                     Log.error(i, "create warp error");
                     player.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
-        } else {
-            player.sendMessage(ConfigUtils.t("function.warp.id-error"));
-        }
     }
 
     @Override

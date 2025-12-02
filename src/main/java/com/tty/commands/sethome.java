@@ -19,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class sethome extends BaseCommand<String> {
 
@@ -45,35 +46,40 @@ public class sethome extends BaseCommand<String> {
             Player player = (Player) sender;
             HomeManager homeManager = new HomeManager(player, true);
             homeManager.getList(Page.create(1, Integer.MAX_VALUE))
-                .thenAccept(serverHomes -> {
-                    if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
-                        sender.sendMessage(ConfigUtils.t("function.home.exceeds"));
-                        return;
+                    .thenCompose(serverHomes -> {
+                        if (serverHomes.size() + 1 > PermissionUtils.getMaxCountInPermission(player, "home")) {
+                            sender.sendMessage(ConfigUtils.t("function.home.exceeds"));
+                            return CompletableFuture.completedFuture(null);
+                        }
+                        return homeManager.getInstance(homeId);
+                    })
+                    .thenCompose(home -> {
+                        if (home != null) {
+                            sender.sendMessage(ConfigUtils.t("function.home.exist", player));
+                            return CompletableFuture.completedFuture(null);
+                        }
+                        CompletableFuture<ServerHome> future = new CompletableFuture<>();
+                        Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), task -> {
+                            ServerHome serverHome = new ServerHome();
+                            serverHome.setHomeId(homeId);
+                            serverHome.setHomeName(homeId);
+                            serverHome.setPlayerUUID(player.getUniqueId().toString());
+                            serverHome.setLocation(player.getLocation().toString());
+                            serverHome.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
+                            future.complete(serverHome);
+                        });
+                        return future.thenCompose(homeManager::createInstance);
+                    })
+                .thenAccept(status -> {
+                    if (status == null) return;
+                    if (status) {
+                        sender.sendMessage(ConfigUtils.t("function.home.create-success", player));
+                    } else {
+                        sender.sendMessage(ConfigUtils.t("base.save.on-error", player));
                     }
-                    if (serverHomes.stream().anyMatch(c -> c.getHomeId().equals(homeId))) {
-                        sender.sendMessage(ConfigUtils.t("function.home.exist", player));
-                        return;
-                    }
-
-                    Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), task -> {
-                        ServerHome serverHome = new ServerHome();
-                        serverHome.setHomeId(homeId);
-                        serverHome.setHomeName(homeId);
-                        serverHome.setPlayerUUID(player.getUniqueId().toString());
-                        serverHome.setLocation(player.getLocation().toString());
-                        serverHome.setShowMaterial(PublicFunctionUtils.checkIsItem(player.getLocation().getBlock().getRelative(BlockFace.DOWN).getType()).name());
-
-                        homeManager.createInstance(serverHome)
-                                .thenAccept(status -> sender.sendMessage(ConfigUtils.t(status ? "function.home.create-success":"base.save.on-error", player)))
-                                .exceptionally(i -> {
-                                    Log.error(i, "create home error");
-                                    sender.sendMessage(ConfigUtils.t("base.on-error"));
-                                    return null;
-                                });
-                    });
                 }).exceptionally(i -> {
                     Log.error(i, "create home error");
-                    sender.sendMessage(ConfigUtils.t("base.on-error"));
+                    player.sendMessage(ConfigUtils.t("base.on-error"));
                     return null;
                 });
         } else {

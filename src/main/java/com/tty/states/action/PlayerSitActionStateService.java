@@ -150,6 +150,11 @@ public class PlayerSitActionStateService extends StateService<PlayerSitActionSta
 
     }
 
+    @Override
+    protected void onServiceAbort(PlayerSitActionState state) {
+
+    }
+
     //计算正确 sit 的 location
     private Location locationRecalculate(Player player, Block sitBlock) {
         Location location = sitBlock.getLocation();

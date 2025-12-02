@@ -108,4 +108,9 @@ public class PlayerRideActionStateService extends StateService<PlayerRideActionS
     protected void onFinished(PlayerRideActionState state) {
 
     }
+
+    @Override
+    protected void onServiceAbort(PlayerRideActionState state) {
+
+    }
 }

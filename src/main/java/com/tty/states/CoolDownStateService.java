@@ -50,4 +50,9 @@ public class CoolDownStateService extends StateService<CooldownState> {
     protected void onFinished(CooldownState state) {
         Log.debug("entity %s cd time has ended.", state.getOwner().getName());
     }
+
+    @Override
+    protected void onServiceAbort(CooldownState state) {
+
+    }
 }

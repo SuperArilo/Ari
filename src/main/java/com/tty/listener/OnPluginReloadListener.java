@@ -21,7 +21,9 @@ public class OnPluginReloadListener implements Listener {
         }
         RandomTpStateService.setRtpWorldConfig();
         Ari.instance.stateMachineManager.forEach(StateService::abort);
-        PlayerSaveStateService.onPluginReload();
+
+        //重新添加玩家保存state
+        PlayerSaveStateService.addPlayerState();
         event.getSender().sendMessage(ConfigUtils.t("function.reload.success"));
     }
 

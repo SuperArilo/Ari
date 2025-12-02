@@ -146,6 +146,11 @@ public class RandomTpStateService extends StateService<RandomTpState> {
         owner.sendMessage(ConfigUtils.t("function.rtp.search-failure"));
     }
 
+    @Override
+    protected void onServiceAbort(RandomTpState state) {
+
+    }
+
     private void sendCountTitle(Player player, RandomTpState state) {
         String sub = Ari.C_INSTANCE.getValue(
                 "function.rtp.title-search-count",

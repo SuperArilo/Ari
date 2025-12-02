@@ -63,4 +63,9 @@ public class GuiEditStateService extends StateService<PlayerEditGuiState> {
         owner.sendMessage(ConfigUtils.t("base.on-edit.timeout-cancel"));
         Log.debug("player %s edit status timeout.", owner.getName());
     }
+
+    @Override
+    protected void onServiceAbort(PlayerEditGuiState state) {
+
+    }
 }

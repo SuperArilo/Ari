@@ -21,7 +21,6 @@ import com.tty.listener.teleport.RecordLastLocationListener;
 import com.tty.listener.warp.EditWarpListener;
 import com.tty.listener.warp.WarpListListener;
 import com.tty.papi.HomePAPI;
-import com.tty.states.PlayerSaveStateService;
 import com.tty.states.teleport.RandomTpStateService;
 import com.tty.tool.*;
 import io.papermc.paper.plugin.configuration.PluginMeta;
@@ -85,8 +84,6 @@ public class Ari extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        //player save
-        PlayerSaveStateService.onServerShutdownSave();
         this.stateMachineManager.forEach(StateService::abort);
         SQLInstance.close();
         C_INSTANCE.clearConfigs();

@@ -89,6 +89,11 @@ public class PreTeleportStateService extends StateService<PreEntityToEntityState
     }
 
     @Override
+    protected void onServiceAbort(PreEntityToEntityState state) {
+
+    }
+
+    @Override
     protected boolean canAddState(PreEntityToEntityState state) {
 
         Entity owner = state.getOwner();

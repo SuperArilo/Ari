@@ -152,6 +152,11 @@ public class TeleportStateService extends StateService<State> {
                 .after(afterAction);
     }
 
+    @Override
+    protected void onServiceAbort(State state) {
+
+    }
+
     /**
      * 检查是否受伤
      */

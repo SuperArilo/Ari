@@ -19,6 +19,7 @@ import com.tty.lib.tool.FormatUtils;
 import com.tty.tool.ConfigUtils;
 import com.tty.lib.tool.EconomyUtils;
 import com.tty.lib.tool.PermissionUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
@@ -33,8 +34,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
-    private final String baseYesRe = "base.yes_re";
-    private final String baseNoRe = "base.no_re";
     private final String baseFree = Ari.C_INSTANCE.getValue("base.free", FilePath.LANG);
 
     public WarpList(Player player) {
@@ -80,30 +79,29 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                     PermissionUtils.hasPermission(this.player, serverWarp.getPermission()) ||
                     UUID.fromString(serverWarp.getCreateBy()).equals(this.player.getUniqueId());
 
-            rawLore.forEach(line -> {
-                StringBuilder sb = new StringBuilder(line);
+            for (String line : rawLore) {
+                Map<String, Component> replacements = new HashMap<>();
+
                 for (IconKeyType keyType : IconKeyType.values()) {
-                    String replacement = switch (keyType) {
-                        case ID -> serverWarp.getWarpId();
-                        case X -> FormatUtils.formatTwoDecimalPlaces(location.getX());
-                        case Y -> FormatUtils.formatTwoDecimalPlaces(location.getY());
-                        case Z -> FormatUtils.formatTwoDecimalPlaces(location.getZ());
-                        case WORLDNAME -> location.getWorld().getName();
-                        case PLAYERNAME -> playName;
+                    switch (keyType) {
+                        case ID -> replacements.put(keyType.getKey(), ComponentUtils.text(serverWarp.getWarpId()));
+                        case X -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getX())));
+                        case Y -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getY())));
+                        case Z -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getZ())));
+                        case WORLD_NAME -> replacements.put(keyType.getKey(), ComponentUtils.text(location.getWorld().getName()));
+                        case PLAYER_NAME -> replacements.put(keyType.getKey(), ComponentUtils.text(playName));
                         case COST -> {
                             Double cost = serverWarp.getCost();
-                            yield cost == null || cost == 0 ? baseFree : cost + EconomyUtils.getNamePlural();
+                            replacements.put(keyType.getKey(), ComponentUtils.text(cost == null || cost == 0 ? baseFree : cost + EconomyUtils.getNamePlural()));
                         }
-                        case TOP_SLOT -> serverWarp.isTopSlot() ? this.baseYesRe:this.baseNoRe;
-                        case PERMISSION -> Ari.C_INSTANCE.getValue(hasPermission ? this.baseYesRe:this.baseNoRe, FilePath.LANG);
-                    };
-                    int index;
-                    while ((index = sb.indexOf(keyType.getKey())) != -1) {
-                        sb.replace(index, index + keyType.getKey().length(), replacement);
+                        case TOP_SLOT -> replacements.put(keyType.getKey(), ComponentUtils.text(serverWarp.isTopSlot() ? "base.yes_re":"base.no_re"));
+                        case PERMISSION -> replacements.put(keyType.getKey(), ConfigUtils.t(hasPermission ? "base.yes_re":"base.no_re"));
                     }
                 }
-                textComponents.add(ComponentUtils.text(sb.toString(), player));
-            });
+
+                textComponents.add(ComponentUtils.text(line, replacements));
+            }
+
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(serverWarp.getWarpName(), this.player));
             itemMeta.lore(textComponents);
@@ -131,7 +129,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, GuiType.WARPLIST, this);
+        return new CustomInventoryHolder(player, GuiType.WARP_LIST, this);
     }
 
 }

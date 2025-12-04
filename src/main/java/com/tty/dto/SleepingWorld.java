@@ -9,11 +9,15 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.task.CancellableTask;
 import com.tty.lib.tool.ComponentUtils;
+import com.tty.tool.ConfigUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
 
 
 public class SleepingWorld {
@@ -60,11 +64,12 @@ public class SleepingWorld {
     private void sendTipsActionBar() {
         for (Player player : this.world.getPlayers()) {
             if (!player.isSleeping()) {
-                String l = Ari.C_INSTANCE.getValue("server.time.report-status", FilePath.LANG);
                 player.sendActionBar(
-                        ComponentUtils.text(
-                                l.replace(LangType.SLEEPPLAYERS.getType(), String.valueOf(this.getSleepPlayers()))
-                                        .replace(LangType.SKIPNIGHTTICKINCREMENT.getType(), String.valueOf(this.timeManager.getAddTick()))));
+                        ConfigUtils.t(
+                                "server.time.report-status",
+                                Map.of(
+                                        LangType.SLEEP_PLAYERS.getType(), Component.text(this.getSleepPlayers()),
+                                        LangType.SKIP_NIGHT_TICK_INCREMENT.getType(), Component.text(this.timeManager.getAddTick()))));
             }
         }
     }

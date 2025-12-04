@@ -31,6 +31,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class EditWarpListener extends BaseEditFunctionGuiListener {
@@ -138,9 +139,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
                 warpEditor.baseInstance.getFunctionItems().forEach((k, v) -> {
                     if (v.getType().equals(FunctionType.TOP_SLOT)) {
                         List<String> lore = v.getLore();
-                        List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(
-                                p.replace(IconKeyType.TOP_SLOT.getKey(),
-                                        Ari.C_INSTANCE.getValue(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re", FilePath.LANG)))).toList();
+                        List<TextComponent> list = lore.stream().map(p -> ComponentUtils.text(p, Map.of(IconKeyType.TOP_SLOT.getKey(), ConfigUtils.t(warpEditor.currentWarp.isTopSlot() ? "base.yes_re" : "base.no_re")))).toList();
                         clickMeta.lore(list);
                         clickItem.setItemMeta(clickMeta);
                     }

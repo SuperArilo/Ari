@@ -10,10 +10,13 @@ import com.tty.lib.tool.ComponentUtils;
 import com.tty.states.CoolDownStateService;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.StateMachineManager;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.Map;
 
 public class PreTeleportStateService extends StateService<PreEntityToEntityState> {
 
@@ -65,7 +68,7 @@ public class PreTeleportStateService extends StateService<PreEntityToEntityState
         );
 
         target.sendMessage(
-                ComponentUtils.text(message.replace(LangType.TPASENDER.getType(), owner.getName()))
+                ComponentUtils.text(message, Map.of(LangType.TPA_SENDER.getType(), ComponentUtils.text(owner.getName())))
                         .appendNewline()
                         .append(ComponentUtils.setClickEventText(
                                 Ari.C_INSTANCE.getValue("function.public.agree", FilePath.LANG),
@@ -107,7 +110,7 @@ public class PreTeleportStateService extends StateService<PreEntityToEntityState
 
         //检查是否已经发过请求了
         if (!this.getStates(owner).isEmpty()) {
-            owner.sendMessage(ConfigUtils.t("function.tpa.again", LangType.TPABESENDER.getType(), target.getName()));
+            owner.sendMessage(ConfigUtils.t("function.tpa.again", Map.of(LangType.TPA_BE_SENDER.getType(), Component.text(target.getName()))));
             return false;
         }
 

@@ -1,8 +1,8 @@
 package com.tty.enumType;
 
 public enum GuiType {
-    HOMELIST,
-    HOMEEDIT,
-    WARPLIST,
-    WARPEDIT
+    HOME_LIST,
+    HOME_EDIT,
+    WARP_LIST,
+    WARP_EDIT
 }

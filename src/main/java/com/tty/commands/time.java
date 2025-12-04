@@ -10,12 +10,14 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.enum_type.TimePeriod;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.tool.ConfigUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class time extends BaseCommand<String> {
 
@@ -45,7 +47,7 @@ public class time extends BaseCommand<String> {
         try {
             period = TimePeriod.valueOf(timePeriod.toUpperCase());
         } catch (Exception e) {
-            player.sendMessage(ConfigUtils.t("server.time.not-exist-period", LangType.PERIOD.getType(), timePeriod));
+            player.sendMessage(ConfigUtils.t("server.time.not-exist-period", Map.of(LangType.PERIOD.getType(), Component.text(timePeriod))));
             return;
         }
         World world = player.getWorld();
@@ -59,8 +61,7 @@ public class time extends BaseCommand<String> {
             player.sendMessage("no content " + timePeriod + "in lang");
             return;
         }
-        value = value.replace(LangType.TIME.getType(), Ari.C_INSTANCE.getValue("server.time.name." + period.getDescription(), FilePath.LANG));
-        player.sendMessage(ComponentUtils.text(value));
+        player.sendMessage(ComponentUtils.text(value, Map.of(LangType.TIME.getType(), ConfigUtils.t("server.time.name." + period.getDescription()))));
     }
 
     @Override

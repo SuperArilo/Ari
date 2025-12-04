@@ -4,12 +4,12 @@ tab:
   update-interval: 20
   layout:
     header:
-      - '<#00EEEE>测试服务器</#FFF5EE>'
+      - '<gradient:#00EEEE:#FFF5EE>测试服务器</gradient>'
     footer:
       - 'TPS: %server_tps_1_colored% &fMem: &2%server_ram_used%/&2%server_ram_max%'
   groups:
     owner:
-      prefix: '<#ffffff>[</#ffffff><#B22222>腐竹</#B22222><#ffffff>]</#ffffff> '
+      prefix: '<color:#ffffff>[</color><color:#B22222>腐竹</color><color:#ffffff>]</color> '
       suffix: ''
     admin:
       prefix: '&f[&e管理员&f] '
@@ -27,10 +27,10 @@ tab:
 chat:
   enable: true
   groups-pattern:
-    owner: '<<#CD5555>腐竹</#CD5555>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
-    admin: '<<#EEEE00>管理员</#EEEE00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
-    default: '<<#00AA00>玩家</#00AA00>> <#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
-    _default_: '<#FFAA00>[SourceDisplayNane]</#FFAA00><#AAAAAA>:</#AAAAAA> <#ffffff>[Message]</#ffffff>'
+    owner: '<color:#CD5555>腐竹</color> <color:#FFAA00>[SourceDisplayName]</color><color:#AAAAAA>:</color> <color:#ffffff>[Message]</color>'
+    admin: '<color:#EEEE00>管理员</color> <color:#FFAA00>[SourceDisplayName]</color><color:#AAAAAA>:</color> <color:#ffffff>[Message]</color>'
+    default: '<color:#00AA00>玩家</color> <color:#FFAA00>[SourceDisplayName]</color><color:#AAAAAA>:</color> <color:#ffffff>[Message]</color>'
+    _default_: '<color:#FFAA00>[SourceDisplayName]</color><color:#AAAAAA>:</color> <color:#ffffff>[Message]</color>'
 action:
   sit:
     enable: true

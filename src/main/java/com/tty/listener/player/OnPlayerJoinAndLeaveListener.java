@@ -13,6 +13,7 @@ import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.states.PlayerSaveStateService;
 import com.tty.tool.ConfigUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 
@@ -87,7 +89,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                             }
                         }
                         if(first) {
-                            Bukkit.broadcast(ConfigUtils.t("server.message.on-first-login", LangType.PLAYERNAME.getType(), player.getName()));
+                            Bukkit.broadcast(ConfigUtils.t("server.message.on-first-login", Map.of(LangType.PLAYER_NAME.getType(), Component.text(player.getName()))));
                         }
                     }
                     if(i == null) {
@@ -101,7 +103,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
                         manager.modify(i);
                     }
                     if(login) {
-                        Bukkit.broadcast(ConfigUtils.t("server.message.on-login", LangType.PLAYERNAME.getType(), player.getName()));
+                        Bukkit.broadcast(ConfigUtils.t("server.message.on-login", Map.of(LangType.PLAYER_NAME.getType(), Component.text(player.getName()))));
                     }
 
                     PlayerSaveState state = new PlayerSaveState(player);
@@ -119,7 +121,7 @@ public class OnPlayerJoinAndLeaveListener implements Listener {
     public void onPlayerLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
         if(Ari.instance.getConfig().getBoolean("server.message.on-leave")) {
-            event.quitMessage(ConfigUtils.t("server.message.on-leave", LangType.PLAYERNAME.getType(), player.getName()));
+            event.quitMessage(ConfigUtils.t("server.message.on-leave", Map.of(LangType.PLAYER_NAME.getType(), Component.text(player.getName()))));
         }
         List<PlayerSaveState> states = Ari.instance.stateMachineManager
                 .get(PlayerSaveStateService.class)

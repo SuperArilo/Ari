@@ -86,12 +86,12 @@ public class Ari extends JavaPlugin {
 
     private void registerListener() {
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new HomeListListener(GuiType.HOMELIST), this);
-        pluginManager.registerEvents(new EditHomeListener(GuiType.HOMEEDIT), this);
+        pluginManager.registerEvents(new HomeListListener(GuiType.HOME_LIST), this);
+        pluginManager.registerEvents(new EditHomeListener(GuiType.HOME_EDIT), this);
         pluginManager.registerEvents(new RecordLastLocationListener(), this);
         pluginManager.registerEvents(new PlayerListener(), this);
-        pluginManager.registerEvents(new WarpListListener(GuiType.WARPLIST), this);
-        pluginManager.registerEvents(new EditWarpListener(GuiType.WARPEDIT), this);
+        pluginManager.registerEvents(new WarpListListener(GuiType.WARP_LIST), this);
+        pluginManager.registerEvents(new EditWarpListener(GuiType.WARP_EDIT), this);
         pluginManager.registerEvents(new OnPlayerJoinAndLeaveListener(), this);
         pluginManager.registerEvents(new PlayerSkipNight(), this);
         pluginManager.registerEvents(new OnPluginReloadListener(), this);

@@ -16,6 +16,7 @@ import com.tty.lib.tool.EconomyUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class WarpEditor extends BaseInventory {
@@ -41,17 +42,12 @@ public class WarpEditor extends BaseInventory {
                     case ICON -> item.setMaterial(this.currentWarp.getShowMaterial());
                     case RENAME -> item.setName(this.currentWarp.getWarpName());
                     case LOCATION -> {
-                        String name = item.getName();
                         Location location = FormatUtils.parseLocation(this.currentWarp.getLocation());
-                        for (IconKeyType keyType : IconKeyType.values()) {
-                            name = switch (keyType) {
-                                case X -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
-                                case Y -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
-                                case Z -> name.replace(keyType.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
-                                default -> name;
-                            };
-                        }
-                        item.setName(name);
+                        Map<String, String> m = new HashMap<>();
+                        m.put(IconKeyType.X.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getX()));
+                        m.put(IconKeyType.Y.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getY()));
+                        m.put(IconKeyType.Z.getKey(), FormatUtils.formatTwoDecimalPlaces(location.getZ()));
+                        item.setName(this.replaceKey(item.getName(), m));
                     }
                     case PERMISSION -> {
                         String permission = this.currentWarp.getPermission();
@@ -66,11 +62,7 @@ public class WarpEditor extends BaseInventory {
                             item.setName(cost == null ? "":cost.toString());
                         }
                     }
-                    case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> lore.replace(
-                            IconKeyType.TOP_SLOT.getKey(),
-                            Ari.C_INSTANCE.getValue(
-                                    this.currentWarp.isTopSlot() ? "base.yes_re":"base.no_re",
-                                    FilePath.LANG))).toList());
+                    case TOP_SLOT -> item.setLore(item.getLore().stream().map(lore -> this.replaceKey(lore, Map.of(IconKeyType.TOP_SLOT.getKey(), Ari.C_INSTANCE.getValue(this.currentWarp.isTopSlot() ? "base.yes_re":"base.no_re", FilePath.LANG)))).toList());
                 }
             }
         }
@@ -79,7 +71,7 @@ public class WarpEditor extends BaseInventory {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, GuiType.WARPEDIT, this);
+        return new CustomInventoryHolder(player, GuiType.WARP_EDIT, this);
     }
 
 }

@@ -58,6 +58,6 @@ public class RecordLastLocationListener implements Listener {
         //构建显示坐标
         String location = FormatUtils.XYZText(deathLocation.getX(), deathLocation.getY(), deathLocation.getZ());
         String value = Ari.C_INSTANCE.getValue("teleport.tips-back", FilePath.LANG);
-        event.getPlayer().sendMessage(ComponentUtils.setClickEventText(value.replace(LangType.DEATHLOCATION.getType(), location), ClickEvent.Action.RUN_COMMAND, "/back"));
+        event.getPlayer().sendMessage(ComponentUtils.setClickEventText(value, Map.of(LangType.DEATH_LOCATION.getType(), ComponentUtils.text(location)), ClickEvent.Action.RUN_COMMAND, "/back"));
     }
 }

@@ -20,7 +20,7 @@ functionItems:
     lore:
       - '&6拖拽其他方块替换图标'
   location:
-    name: "&2x: &6[X] &2y: &6[Y] &2z: &6[Z]"
+    name: "&2x: &6<x> &2y: &6<y> &2z: &6<z>"
     type: LOCATION
     material: compass
     slot: [20]
@@ -33,7 +33,7 @@ functionItems:
     slot: [22]
     lore:
       - '&2左击: &6将当前地标置顶显示'
-      - '&7当前置顶状态: [top_slot]'
+      - '&7当前置顶状态: <top_slot>'
   rename:
     type: RENAME
     material: name_tag

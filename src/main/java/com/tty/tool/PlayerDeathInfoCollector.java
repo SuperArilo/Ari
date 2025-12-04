@@ -16,7 +16,6 @@ import java.util.Optional;
 
 public class PlayerDeathInfoCollector {
 
-    /** 玩家死亡信息 */
     public static class DeathInfo {
         //受害者
         public Player victim;
@@ -51,7 +50,6 @@ public class PlayerDeathInfoCollector {
         }
     }
 
-    /** 收集 PlayerDeathEvent 信息 */
     public static DeathInfo collect(PlayerDeathEvent event) {
         DeathInfo info = new DeathInfo();
         info.victim = event.getEntity();

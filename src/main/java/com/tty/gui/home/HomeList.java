@@ -16,6 +16,7 @@ import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.IconKeyType;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.lib.tool.FormatUtils;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -64,24 +65,21 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
 
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(ph.getLocation());
-            rawLore.forEach(line -> {
-                StringBuilder sb = new StringBuilder(line);
+
+            for (String line : rawLore) {
+                Map<String, Component> replacements = new HashMap<>();
+
                 for (IconKeyType keyType : IconKeyType.values()) {
-                    String replacedLine = switch (keyType) {
-                        case ID -> ph.getHomeId();
-                        case X -> FormatUtils.formatTwoDecimalPlaces(location.getX());
-                        case Y -> FormatUtils.formatTwoDecimalPlaces(location.getY());
-                        case Z -> FormatUtils.formatTwoDecimalPlaces(location.getZ());
-                        case WORLDNAME -> location.getWorld().getName();
-                        default -> "";
-                    };
-                    int index;
-                    while ((index = sb.indexOf(keyType.getKey())) != -1) {
-                        sb.replace(index, index + keyType.getKey().length(), replacedLine);
+                    switch (keyType) {
+                        case ID -> replacements.put(keyType.getKey(), ComponentUtils.text(ph.getHomeId()));
+                        case X -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getX())));
+                        case Y -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getY())));
+                        case Z -> replacements.put(keyType.getKey(), ComponentUtils.text(FormatUtils.formatTwoDecimalPlaces(location.getZ())));
+                        case WORLD_NAME -> replacements.put(keyType.getKey(), ComponentUtils.text(location.getWorld().getName()));
                     }
                 }
-                textComponents.add(ComponentUtils.text(sb.toString()));
-            });
+                textComponents.add(ComponentUtils.text(line, replacements));
+            }
 
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(ph.getHomeName(), this.player));
@@ -110,7 +108,7 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, GuiType.HOMELIST, this);
+        return new CustomInventoryHolder(player, GuiType.HOME_LIST, this);
     }
 
 }

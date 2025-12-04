@@ -59,7 +59,7 @@ public abstract class BaseInventory {
             ItemStack itemStack = new ItemStack(Material.valueOf(mask.getMaterial().toUpperCase()));
             ItemMeta itemMeta = itemStack.getItemMeta();
             itemMeta.displayName(ComponentUtils.text(mask.getName(), this.player));
-            itemMeta.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, FunctionType.MASKICON.name());
+            itemMeta.getPersistentDataContainer().set(this.renderType, PersistentDataType.STRING, FunctionType.MASK_ICON.name());
             itemMeta.lore(collect);
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
@@ -85,6 +85,19 @@ public abstract class BaseInventory {
             }
         });
         Log.debug("%s: render function items: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
+    }
+
+    protected String replaceKey(String content, Map<String, String> map) {
+        if (content == null || map == null || map.isEmpty()) {
+            return content;
+        }
+        String result = content;
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                result = result.replace("<" + entry.getKey() + ">" , entry.getValue());
+            }
+        }
+        return result;
     }
 
     protected abstract CustomInventoryHolder createHolder();

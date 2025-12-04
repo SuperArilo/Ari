@@ -33,16 +33,16 @@ base:
 teleport:
   title:
     main: '&e请不要移动...'
-    sub-title: '&6[TeleportDelay]'
+    sub-title: '&6<teleport_delay>'
   success: '&a✔ 传送成功！'
   break: '&c✖ 传送过程中被阻断或者取消'
   unable-player: '&c该玩家离线或者不存在！'
   cooling: '&e传送冷却中...'
   none-location: '&e没有上一个保存的位置'
-  costed: '&a本次传送花费了 [Costed]'
+  costed: '&a本次传送花费了 <costed>'
   has-teleport: '&e你有一个传送正在进行中'
   again: '&e你已经发起过传送请求了，请等待一段时间再重试。'
-  tips-back: '&b上次死亡的地点: [DeathLocation] &7/back返回或者点击此消息'
+  tips-back: '&b上次死亡的地点: <death_location> &7/back返回或者点击此消息'
 
 function:
   public:
@@ -52,14 +52,14 @@ function:
     not-player: '&c这个指令只能在游戏里使用！'
     fail: '&c指令缺少集合或者输入不正确！'
   tpa:
-    again: '&e您已经发送过请求给 [TpaBeSender]'
+    again: '&e您已经发送过请求给 <tpa_be_sender>'
     send-message: '&e已发送传送请求给玩家...'
-    to-message: '&6玩家 &a[TpaSender] &6想传送到您这里'
-    here-message: '&6玩家 &a[TpaSender] &6想让您传送到TA那'
+    to-message: '&6玩家 &a<tpa_sender> &6想传送到您这里'
+    here-message: '&6玩家 &a<tpa_sender> &6想让您传送到TA那'
     agree: '&a✔ 您同意了此次传送请求'
     been-done: '&c该请求已经处理过，或者不存在！'
     refuse-success: '&a✔ 拒绝成功！'
-    refused: '&6玩家 &a[TpaBeSender] &6拒绝了您的传送请求'
+    refused: '&6玩家 &a<tpa_be_sender> &6拒绝了您的传送请求'
     error: '&c传送状态错误，无法完成传送'
   reload:
     doing: '&e重载插件中...'
@@ -89,7 +89,7 @@ function:
     none: '&c删除失败，尝试联系管理员'
   rtp:
     title-searching: '&e正在搜索中...'
-    title-search-count: '&e剩余尝试次数 &6[RtpSearchCount]'
+    title-search-count: '&e剩余尝试次数 &6<rtp_search_count>'
     location-found: '&a✔ 位置已找到，正在传送...'
     search-failure: '&c✖ 搜索失败，请重试'
     world-disable: '&8当前世界已经被禁用随机传送'
@@ -110,11 +110,11 @@ function:
 
 server:
   time:
-    tips: '&e将时间调整为 &6[Time]'
-    not-exist-period: '&c不存在的时间段: &3[Period]'
+    tips: '&e将时间调整为 &6<time>'
+    not-exist-period: '&c不存在的时间段: &3<period>'
     not-allowed-world: '&c当前世界不允许调整时间'
     skip-to-night: '&e将加速跳过夜晚'
-    report-status: '<#BEBEBE>当前有 [SleepPlayers]名玩家在睡觉，时间加速为 [SkipNightTickIncrement]</#BEBEBE>'
+    report-status: '&7当前有 <sleep_players> 名玩家在睡觉，时间加速为 <skip_night_tick_increment>'
     name:
       sunrise: '&e黎明'
       day: '&f白天'
@@ -127,92 +127,92 @@ server:
   message:
     on-whitelist-login: '&c您尚未在此服务器的白名单，请联系管理员添加！'
     tips-whitelist: '&a请联系管理员来添加白名单'
-    on-first-login: '&a欢迎玩家 &6[PlayerName] &a加入我们的服务器！'
-    on-login: '&f玩家 &6[PlayerName] &f加入了服务器！'
-    on-leave: '&f玩家 &6[PlayerName] &f离开了服务器！'
+    on-first-login: '&a欢迎玩家 &6<player_name> &a加入我们的服务器！'
+    on-login: '&f玩家 &6<player_name> &f加入了服务器！'
+    on-leave: '&f玩家 &6<player_name> &f离开了服务器！'
     no-economy: '&c服务器未使用经济插件'
   player:
     info:
-      - "&f玩家 &6[PlayerName] &f的信息"
-      - "&f第一次登录服务器时间: &6[FirstLoginServerTime]"
-      - "&f上次登录服务器的时间: &6[LastLoginServerTime]"
-      - "&f累计在线时间: &6[TotalOnServer]"
-      - "&f所在世界：&8[PlayerWorld]"
-      - "&f当前位置: [PlayerLocation]"
+      - "&f玩家 &6<player_name> &f的信息"
+      - "&f第一次登录服务器时间: &6<first_login_server_time>"
+      - "&f上次登录服务器的时间: &6<last_login_server_time>"
+      - "&f累计在线时间: &6<total_on_server>"
+      - "&f所在世界：&8<player_world>"
+      - "&f当前位置: <player_location>"
 
   # 以下不支持十六进制颜色
   custom-death:
     running-away:
-      - ' &7试图逃离 &2[Killer]&7 时'
-      - ' &7与 &2[Killer]&7 战斗时'
+      - ' &7试图逃离 &2<killer>&7 时'
+      - ' &7与 &2<killer>&7 战斗时'
     player:
       air:
-        - '&2[Victim] &7死于 &2[Killer]'
-        - '&2[Victim] &7死于 &2[Killer] &7强大的手下'
-        - '&2[Victim] &7被 &2[Killer] &7一拳打死'
+        - '&2<victim> &7死于 &2<killer>'
+        - '&2<victim> &7死于 &2<killer> &7强大的手下'
+        - '&2<victim> &7被 &2<killer> &7一拳打死'
       item:
-        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7杀死了'
+        - '&2<victim> &7被 &2<killer> &7用 &2<killer_item> &7杀死了'
       projectile:
-        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+        - '&2<victim> &7被 &2<killer> &7用 &2<killer_item> &7射杀'
       fall:
-        - '&2[Victim] &7落地过猛'
-        - '&2[Victim] &7从高处摔了下来'
-        - '&2[Victim] &7坠机了, &4Man!'
+        - '&2<victim> &7落地过猛'
+        - '&2<victim> &7从高处摔了下来'
+        - '&2<victim> &7坠机了, &4Man!'
       fire:
-        - '&2[Victim] &7浴火焚身'
-        - '&2[Victim] &7被烧死了'
+        - '&2<victim> &7浴火焚身'
+        - '&2<victim> &7被烧死了'
       lightning:
-        - '&2[Victim] &7被闪电击中'
-        - '&2[Victim] &7渡劫失败'
+        - '&2<victim> &7被闪电击中'
+        - '&2<victim> &7渡劫失败'
       suffocation:
-        - '&2[Victim] &7在墙里窒息而亡'
+        - '&2<victim> &7在墙里窒息而亡'
       drowning:
-        - '&2[Victim] &7淹死了'
+        - '&2<victim> &7淹死了'
       freeze:
-        - '&2[Victim] &7被冻死了'
+        - '&2<victim> &7被冻死了'
       suicide:
-        - '&2[Victim] &7结束了自己的生命'
+        - '&2<victim> &7结束了自己的生命'
       void:
-        - '&2[Victim] &7掉出了这个世界'
-        - '&2[Victim] &7去往了二刺螈'
+        - '&2<victim> &7掉出了这个世界'
+        - '&2<victim> &7去往了二刺螈'
       wither:
-        - '&2[Victim] &7凋零了'
+        - '&2<victim> &7凋零了'
       fly_into_wall:
-        - '&2[Victim] &7感受到了动能'
-        - '&2[Victim] &7学会了什么是动量守恒'
+        - '&2<victim> &7感受到了动能'
+        - '&2<victim> &7学会了什么是动量守恒'
       kill:
-        - '&2[Victim] &7自杀了'
+        - '&2<victim> &7自杀了'
       starvation:
-        - '&2[Victim] &7饿死了'
+        - '&2<victim> &7饿死了'
       sonic_boom:
-        - '&2[Victim] &7被 &2[Killer] &7抹除了'
+        - '&2<victim> &7被 &2<killer> &7抹除了'
       magic:
-        - '&2[Victim] &7被 &2[Killer] &7用魔法杀死了'
+        - '&2<victim> &7被 &2<killer> &7用魔法杀死了'
     mob:
       air:
-        - '&2[Victim] &7被 &2[Killer]&7 杀死了'
+        - '&2<victim> &7被 &2<killer>&7 杀死了'
       item:
-        - '&2[Victim] &7被 &2[Killer]&7 用 &2[Killer_Item]&7 杀死了'
+        - '&2<victim> &7被 &2<killer>&7 用 &2<killer_item>&7 杀死了'
       projectile:
-        - '&2[Victim] &7被 &2[Killer] &7用 &2[Killer_Item] &7射杀'
+        - '&2<victim> &7被 &2<killer> &7用 &2<killer_item> &7射杀'
     falling-blocks:
       anvil:
-        - '&2[Victim] &7被坠落的铁砧压扁了'
-        - '&2[Victim] &7被铁砧碾碎'
-        - '&2[Victim] &7用头撞击铁砧'
-        - '&2[Victim] &7尝试亲吻铁砧'
+        - '&2<victim> &7被坠落的铁砧压扁了'
+        - '&2<victim> &7被铁砧碾碎'
+        - '&2<victim> &7用头撞击铁砧'
+        - '&2<victim> &7尝试亲吻铁砧'
     block:
       cactus:
-        - '&2[Victim] &7被戳死了'
-        - '&2[Victim] &7试图 曰 仙人掌被反杀'
+        - '&2<victim> &7被戳死了'
+        - '&2<victim> &7试图 曰 仙人掌被反杀'
       magma_block:
-        - '&2[Victim] &7发现了地板是熔岩做的'
+        - '&2<victim> &7发现了地板是熔岩做的'
       sweet_berry_bush:
-        - '&2[Victim] &7被甜浆果丛刺死了'
+        - '&2<victim> &7被甜浆果丛刺死了'
       lava:
-        - '&2[Victim] &7试图在熔岩里游泳'
+        - '&2<victim> &7试图在熔岩里游泳'
       pointed_dripstone:
-        - '&2[Victim] &7被石笋刺穿了'
+        - '&2<victim> &7被石笋刺穿了'
 
 
 debug:

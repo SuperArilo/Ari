@@ -14,6 +14,7 @@ import com.tty.lib.services.StateService;
 import com.tty.lib.tool.ComponentUtils;
 import com.tty.states.CoolDownStateService;
 import com.tty.tool.ConfigUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
@@ -58,10 +59,12 @@ public class TeleportStateService extends StateService<State> {
             }
         }
 
+        Map<String, Component> p = new HashMap<>();
+        p.put(LangType.TELEPORT_DELAY.getType(), Component.text(state.getMax_count() - state.getCount()));
         owner.showTitle(ComponentUtils.setPlayerTitle(
                 Ari.C_INSTANCE.getValue("teleport.title.main", FilePath.LANG),
-                Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.LANG)
-                        .replace(LangType.TELEPORTDELAY.getType(), String.valueOf(state.getMax_count() - state.getCount())),
+                Ari.C_INSTANCE.getValue("teleport.title.sub-title", FilePath.LANG),
+                p,
                 200,
                 1000,
                 200

@@ -6,9 +6,9 @@ import com.tty.dto.event.CustomPluginReloadEvent;
 import com.tty.enumType.FilePath;
 import com.tty.lib.enum_type.LangType;
 import com.tty.lib.tool.ComponentUtils;
-import com.tty.lib.tool.FormatUtils;
 import com.tty.lib.tool.PermissionUtils;
 import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,12 +28,10 @@ public class CustomChatFormantListener implements Listener {
     @EventHandler
     public void playerSendMessage(AsyncChatEvent event) {
         if (!this.isEnable()) return;
-        event.renderer((source, sourceDisplayName, msg, viewer) -> {
-            String format = this.getPattern(source);
-            format = format.replace(LangType.SOURCEDISPLAYNAME.getType(), source.getName())
-                    .replace(LangType.CHATMESSAGE.getType(), FormatUtils.componentToString(msg));
-            return ComponentUtils.text(format);
-        });
+        event.renderer((source, sourceDisplayName, msg, viewer) ->
+                ComponentUtils.text(
+                        this.getPattern(source),
+                        Map.of(LangType.SOURCE_DISPLAY_NAME.getType(), Component.text(source.getName()), LangType.CHAT_MESSAGE.getType(), msg)));
     }
     @EventHandler
     public void whenPluginReload(CustomPluginReloadEvent event) {

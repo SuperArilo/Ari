@@ -17,6 +17,7 @@ import com.tty.lib.tool.SearchSafeLocation;
 import com.tty.states.CoolDownStateService;
 import com.tty.tool.ConfigUtils;
 import com.tty.tool.StateMachineManager;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -157,10 +158,10 @@ public class RandomTpStateService extends StateService<RandomTpState> {
                 FilePath.LANG,
                 String.class,
                 "null");
-        sub = sub.replace(LangType.RTPSEARCHCOUNT.getType(), String.valueOf(state.getMax_count() - state.getCount()));
         Title title = ComponentUtils.setPlayerTitle(
                 Ari.C_INSTANCE.getValue("function.rtp.title-searching", FilePath.LANG, String.class, "null"),
                 sub,
+                Map.of(LangType.RTP_SEARCH_COUNT.getType(), Component.text(state.getMax_count() - state.getCount())),
                 0,
                 1000L,
                 1000L);

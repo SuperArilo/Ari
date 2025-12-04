@@ -19,6 +19,7 @@ import com.tty.lib.tool.PermissionUtils;
 import com.tty.listener.BaseGuiListener;
 import com.tty.states.teleport.TeleportStateService;
 import com.tty.tool.*;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
@@ -28,6 +29,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -98,7 +100,7 @@ public class WarpListListener extends BaseGuiListener {
                                                         Ari.C_INSTANCE.getValue("main.cost", FilePath.WARP_CONFIG, Boolean.class, false) &&
                                                         !EconomyUtils.isNull()) {
                                                     EconomyUtils.withdrawPlayer(player, instance.getCost());
-                                                    player.sendMessage(ConfigUtils.t("teleport.costed", LangType.COSTED.getType(), instance.getCost().toString() + EconomyUtils.getNamePlural()));
+                                                    player.sendMessage(ConfigUtils.t("teleport.costed", Map.of(LangType.COSTED.getType(), Component.text(instance.getCost().toString() + EconomyUtils.getNamePlural()))));
                                                 }
                                             },
                                             TeleportType.WARP));

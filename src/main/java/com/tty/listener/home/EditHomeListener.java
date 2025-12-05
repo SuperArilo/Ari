@@ -46,7 +46,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
         CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
         assert holder != null;
 
-        Player player = holder.getPlayer();
+        Player player = holder.player();
         ItemStack clickItem = event.getCurrentItem();
         assert clickItem != null;
 
@@ -56,7 +56,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
         event.setCancelled(true);
         if (type == null) return;
 
-        HomeEditor homeEditor = (HomeEditor) holder.getMeta();
+        HomeEditor homeEditor = (HomeEditor) holder.meta();
         HomeManager homeManager = new HomeManager(player, true);
         switch (type) {
             case REBACK -> {
@@ -143,7 +143,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
     @Override
     public boolean onTitleEditStatus(String message, PlayerEditGuiState state) {
         CustomInventoryHolder holder = state.getHolder();
-        Player player = holder.getPlayer();
+        Player player = holder.player();
         List<Object> checkList = Ari.C_INSTANCE
                 .getValue(
                         "main.name-check",
@@ -159,7 +159,7 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }
-        HomeEditor editor = (HomeEditor) holder.getMeta();
+        HomeEditor editor = (HomeEditor) holder.meta();
         editor.currentHome.setHomeName(message);
         Lib.Scheduler.runAtEntity(Ari.instance, player, p -> editor.open(), () -> {});
         return true;

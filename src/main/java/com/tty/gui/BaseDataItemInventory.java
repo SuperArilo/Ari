@@ -25,7 +25,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
             this.data = list;
             this.renderDataItem();
         }).exceptionally(i -> {
-            Log.error(i, "%s: request data error!", this.holder.getType().name());
+            Log.error(i, "%s: request data error!", this.holder.type().name());
             return null;
         });
     }
@@ -44,7 +44,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
             this.data = list;
             this.renderDataItem();
         }).exceptionally(i -> {
-            Log.error(i, "%s: request data error!", this.holder.getType().name());
+            Log.error(i, "%s: request data error!", this.holder.type().name());
             return null;
         });
     }
@@ -63,7 +63,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
                 this.renderDataItem();
             }
         }).exceptionally(i -> {
-            Log.error( i, "%s: request data error!", this.holder.getType().name());
+            Log.error( i, "%s: request data error!", this.holder.type().name());
             return null;
         });
     }
@@ -86,7 +86,7 @@ public abstract class BaseDataItemInventory<T> extends BaseInventory {
                 this.setItem(index, renderItem.get(index));
             }
         }
-        Log.debug("%s: render data items: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
+        Log.debug("%s: render data items: %sms", this.holder.type().name(), (System.currentTimeMillis() - l));
     }
 
 }

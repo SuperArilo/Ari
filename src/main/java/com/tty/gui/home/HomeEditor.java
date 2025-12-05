@@ -28,12 +28,12 @@ public class HomeEditor extends BaseInventory {
     }
 
     @Override
-    protected Mask getMasks() {
+    protected Mask renderCustomMasks() {
         return null;
     }
 
     @Override
-    protected Map<String, FunctionItems> getFunctionItems() {
+    protected Map<String, FunctionItems> renderCustomFunctionItems() {
         Map<String, FunctionItems> functionItems = PublicFunctionUtils.deepCopyBySerialization(this.baseInstance.getFunctionItems());
         if (functionItems != null) {
             for (FunctionItems item : functionItems.values()) {
@@ -57,7 +57,7 @@ public class HomeEditor extends BaseInventory {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, GuiType.HOME_EDIT, this);
+        return new CustomInventoryHolder(player, this.inventory, GuiType.HOME_EDIT, this);
     }
 
 }

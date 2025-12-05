@@ -40,8 +40,8 @@ public class HomeListListener extends BaseGuiListener {
 
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
         if(type == null) return;
-        Player player = holder.getPlayer();
-        HomeList homeList = (HomeList) holder.getMeta();
+        Player player = holder.player();
+        HomeList homeList = (HomeList) holder.meta();
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {

@@ -1,28 +1,16 @@
 package com.tty.dto;
 
 import com.tty.enumType.GuiType;
-import com.tty.lib.task.CancellableTask;
-import lombok.Data;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-@Data
-public class CustomInventoryHolder implements InventoryHolder {
-
-    private final Player player;
-    private final GuiType type;
-    private final Object meta;
-
-    public CustomInventoryHolder(Player player, GuiType type, Object meta) {
-        this.player = player;
-        this.type = type;
-        this.meta = meta;
-    }
+public record CustomInventoryHolder(Player player, Inventory inventory, GuiType type,
+                                    Object meta) implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {
-        return null;
+        return this.inventory;
     }
 }

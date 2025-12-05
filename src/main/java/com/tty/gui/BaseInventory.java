@@ -26,7 +26,7 @@ public abstract class BaseInventory {
 
     public final BaseMenu baseInstance;
     protected final Player player;
-    private Inventory inventory;
+    protected Inventory inventory;
     public CustomInventoryHolder holder;
 
     private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
@@ -44,13 +44,13 @@ public abstract class BaseInventory {
         this.renderFunctionItems();
     }
 
-    protected abstract Mask getMasks();
+    protected abstract Mask renderCustomMasks();
 
-    protected abstract Map<String, FunctionItems> getFunctionItems();
+    protected abstract Map<String, FunctionItems> renderCustomFunctionItems();
 
     private void renderMasks() {
         long l = System.currentTimeMillis();
-        Mask mask = this.getMasks();
+        Mask mask = this.renderCustomMasks();
         if (mask == null) {
             mask = this.baseInstance.getMask();
         }
@@ -64,12 +64,12 @@ public abstract class BaseInventory {
             itemStack.setItemMeta(itemMeta);
             this.inventory.setItem(i, itemStack);
         }
-        Log.debug("%s: render masks: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
+        Log.debug("%s: render masks: %sms", this.holder.type().name(), (System.currentTimeMillis() - l));
     }
 
     private void renderFunctionItems() {
         long l = System.currentTimeMillis();
-        Map<String, FunctionItems> functionItems = this.getFunctionItems();
+        Map<String, FunctionItems> functionItems = this.renderCustomFunctionItems();
         if (functionItems == null || functionItems.isEmpty()) {
             functionItems = this.baseInstance.getFunctionItems();
         }
@@ -84,7 +84,7 @@ public abstract class BaseInventory {
                 this.inventory.setItem(integer, o);
             }
         });
-        Log.debug("%s: render function items: %sms", this.holder.getType().name(), (System.currentTimeMillis() - l));
+        Log.debug("%s: render function items: %sms", this.holder.type().name(), (System.currentTimeMillis() - l));
     }
 
     protected String replaceKey(String content, Map<String, String> map) {

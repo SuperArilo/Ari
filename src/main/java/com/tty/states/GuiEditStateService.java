@@ -30,7 +30,7 @@ public class GuiEditStateService extends StateService<PlayerEditGuiState> {
             return;
         }
         state.setPending(false);
-        Log.debug("checking player %s edit gui %s. type %s", owner.getName(), state.getHolder().getType(), state.getFunctionType());
+        Log.debug("checking player %s edit gui %s. type %s", owner.getName(), state.getHolder().type(), state.getFunctionType());
     }
 
     @Override

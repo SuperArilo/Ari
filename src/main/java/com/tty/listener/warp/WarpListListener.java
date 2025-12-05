@@ -54,8 +54,8 @@ public class WarpListListener extends BaseGuiListener {
 
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
         if(type == null) return;
-        Player player = holder.getPlayer();
-        WarpList warpList = (WarpList) holder.getMeta();
+        Player player = holder.player();
+        WarpList warpList = (WarpList) holder.meta();
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {

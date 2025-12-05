@@ -8,7 +8,6 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
-
 import org.bukkit.inventory.InventoryView;
 
 public abstract class BaseGuiListener implements Listener {
@@ -25,37 +24,38 @@ public abstract class BaseGuiListener implements Listener {
         Inventory clickedInventory = event.getClickedInventory();
         if (clickedInventory == null) return;
 
-        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR &&
-                clickedInventory.getHolder() instanceof CustomInventoryHolder) {
+        CustomInventoryHolder clickedHolder = clickedInventory.getHolder() instanceof CustomInventoryHolder c ? c : null;
+        CustomInventoryHolder topHolder = topInventory.getHolder() instanceof CustomInventoryHolder t ? t : null;
+
+        if (event.getAction() == InventoryAction.COLLECT_TO_CURSOR && clickedHolder != null) {
             event.setCancelled(true);
             return;
         }
 
-        boolean isTopCustom = topInventory.getHolder() instanceof CustomInventoryHolder;
-        boolean isClickedCustom = clickedInventory.getHolder() instanceof CustomInventoryHolder;
-
-        if (isTopCustom && isClickedCustom) {
-            CustomInventoryHolder holder = (CustomInventoryHolder) clickedInventory.getHolder();
-            if (holder.getType().equals(this.guiType)) {
-                event.setCancelled(true);
-                if (event.getCurrentItem() == null) return;
-                if (event.isShiftClick()) return;
-                this.passClick(event);
-            }
+        if (topHolder != null && clickedHolder != null && clickedHolder.type().equals(this.guiType)) {
+            event.setCancelled(true);
+            if (event.getCurrentItem() == null) return;
+            if (event.isShiftClick()) return;
+            this.passClick(event);
             return;
         }
 
-        if (isTopCustom && event.isShiftClick()) {
+        // 阻止 shift-click 将物品从背包放入自定义 GUI
+        if (topHolder != null && event.isShiftClick()) {
             event.setCancelled(true);
         }
     }
+
     @EventHandler
-    public void dragWarpEdit(InventoryDragEvent event) {
+    public void onDrag(InventoryDragEvent event) {
         InventoryView view = event.getView();
-        Inventory topInventory = view.getTopInventory(); // 获取自定义 GUI（顶部库存）
-        if (!(topInventory.getHolder() instanceof CustomInventoryHolder holder && holder.getType().equals(this.guiType))) {
+        Inventory topInventory = view.getTopInventory();
+
+        if (!(topInventory.getHolder() instanceof CustomInventoryHolder holder &&
+                holder.type().equals(this.guiType))) {
             return;
         }
+
         int topSize = topInventory.getSize();
         for (int rawSlot : event.getRawSlots()) {
             if (rawSlot < topSize) {
@@ -66,9 +66,9 @@ public abstract class BaseGuiListener implements Listener {
     }
 
     /**
-     * 检查通过的gui
-     * @param event 点击事件
+     * 当点击通过 GUI 检查时调用，由子类实现具体点击处理逻辑
+     *
+     * @param event InventoryClickEvent
      */
     public abstract void passClick(InventoryClickEvent event);
-
 }

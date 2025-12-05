@@ -48,14 +48,14 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         assert clickItem != null;
         CustomInventoryHolder holder = (CustomInventoryHolder) inventory.getHolder();
         assert holder != null;
-        Player player = holder.getPlayer();
+        Player player = holder.player();
 
         ItemMeta clickMeta = clickItem.getItemMeta();
         NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
         if(type == null) return;
 
-        WarpEditor warpEditor = (WarpEditor) holder.getMeta();
+        WarpEditor warpEditor = (WarpEditor) holder.meta();
         WarpManager warpManager = new WarpManager(true);
         switch (type) {
             case REBACK -> {
@@ -152,14 +152,14 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
     public boolean onTitleEditStatus(String message, PlayerEditGuiState state) {
         CustomInventoryHolder holder = state.getHolder();
         FunctionType type = state.getFunctionType();
-        Player player = holder.getPlayer();
+        Player player = holder.player();
         List<String> value = Ari.C_INSTANCE.getValue("main.name-check", FilePath.WARP_CONFIG, new TypeToken<List<String>>(){}.getType(), List.of());
         if(value == null) {
             Log.error("name-check list is null, check config");
             player.sendMessage(ConfigUtils.t("base.on-error"));
             return false;
         }
-        WarpEditor warpEditor = (WarpEditor) holder.getMeta();
+        WarpEditor warpEditor = (WarpEditor) holder.meta();
         switch (type) {
             case RENAME -> {
                 if(!FormatUtils.checkName(message) || value.contains(message) || !FormatUtils.checkName(message)) {

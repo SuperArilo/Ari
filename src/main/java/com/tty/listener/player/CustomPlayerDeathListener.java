@@ -26,7 +26,7 @@ public class CustomPlayerDeathListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event){
-        if (Ari.instance.getConfig().getBoolean("server.custom.death", false)) return;
+        if (!Ari.instance.getConfig().getBoolean("server.custom-death", false)) return;
         PlayerDeathInfoCollector.DeathInfo collect = PlayerDeathInfoCollector.collect(event);
         Log.debug(collect.toString());
         String BASE_PREFIX = "server.custom-death.";

@@ -96,8 +96,10 @@ public class SQLInstance {
 
     public static void close() {
         try {
-            SQLInstance.SESSION_FACTORY.getConnectionSource().getConnection().close();
-            Log.debug("Connection closed successfully");
+            if (SQLInstance.SESSION_FACTORY != null) {
+                SQLInstance.SESSION_FACTORY.getConnectionSource().getConnection().close();
+                Log.debug("Connection closed successfully");
+            }
         } catch (SQLException e) {
             Log.error(e, "close sql connection error");
         }

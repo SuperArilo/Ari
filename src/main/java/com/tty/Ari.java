@@ -36,6 +36,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.Map;
 
+import static com.tty.lib.tool.PublicFunctionUtils.checkServerVersion;
+
 
 public class Ari extends JavaPlugin {
 
@@ -55,6 +57,10 @@ public class Ari extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if(!checkServerVersion()) {
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         reloadAllConfig();
         Log.init(this.getComponentLogger(), DEBUG);
@@ -80,7 +86,9 @@ public class Ari extends JavaPlugin {
     }
     @Override
     public void onDisable() {
-        this.stateMachineManager.forEach(StateService::abort);
+        if (this.stateMachineManager != null) {
+            this.stateMachineManager.forEach(StateService::abort);
+        }
         SQLInstance.close();
         C_INSTANCE.clearConfigs();
     }

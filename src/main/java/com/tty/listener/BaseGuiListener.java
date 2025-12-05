@@ -11,7 +11,6 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 
-import java.lang.ref.WeakReference;
 
 public abstract class BaseGuiListener implements Listener {
 
@@ -69,9 +68,7 @@ public abstract class BaseGuiListener implements Listener {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T extends BaseInventory> T getGui(WeakReference<BaseInventory> reference, Class<T> tClass) {
-        if (reference == null) return null;
-        BaseInventory inventory = reference.get();
+    protected <T extends BaseInventory> T getGui(BaseInventory inventory, Class<T> tClass) {
         if (inventory == null) return null;
         if (!tClass.isInstance(inventory)) return null;
         return (T) inventory;

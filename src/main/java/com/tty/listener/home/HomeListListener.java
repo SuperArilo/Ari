@@ -46,6 +46,12 @@ public class HomeListListener extends BaseGuiListener {
         if(type == null) return;
         Player player = holder.player();
         HomeList homeList = this.getGui(holder.meta(), HomeList.class);
+
+        if (homeList == null) {
+            inventory.close();
+            return;
+        }
+
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {

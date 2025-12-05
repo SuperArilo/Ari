@@ -7,10 +7,9 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.ref.WeakReference;
 
 public record CustomInventoryHolder(Player player, Inventory inventory, GuiType type,
-                                    WeakReference<BaseInventory> meta) implements InventoryHolder {
+                                    BaseInventory meta) implements InventoryHolder {
 
     @Override
     public @NotNull Inventory getInventory() {

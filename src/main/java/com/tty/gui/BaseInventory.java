@@ -25,14 +25,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BaseInventory {
 
-    public final BaseMenu baseInstance;
+    public BaseMenu baseInstance;
     protected final Player player;
     protected Inventory inventory;
     public CustomInventoryHolder holder;
 
     private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
 
-    // closed flag to avoid double cleanup / prevent callbacks after closed
     private final AtomicBoolean closed = new AtomicBoolean(false);
 
     public BaseInventory(BaseMenu instance, Player player) {
@@ -41,7 +40,6 @@ public abstract class BaseInventory {
     }
 
     public void open() {
-        // create holder (subclass should put a WeakReference to 'this' in meta)
         this.holder = this.createHolder();
         this.inventory = Bukkit.createInventory(this.holder, this.baseInstance.getRow() * 9, ComponentUtils.text(this.baseInstance.getTitle(), player));
         this.player.openInventory(this.inventory);
@@ -128,6 +126,7 @@ public abstract class BaseInventory {
         }
         this.inventory = null;
         this.holder = null;
+        this.baseInstance = null;
         this.onCleanup();
     }
 

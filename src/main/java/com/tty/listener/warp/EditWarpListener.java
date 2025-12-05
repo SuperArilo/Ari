@@ -55,6 +55,12 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
         if(type == null) return;
         WarpEditor warpEditor = this.getGui(holder.meta(), WarpEditor.class);
+
+        if (warpEditor == null) {
+            inventory.close();
+            return;
+        }
+
         WarpManager warpManager = new WarpManager(true);
         switch (type) {
             case REBACK -> {

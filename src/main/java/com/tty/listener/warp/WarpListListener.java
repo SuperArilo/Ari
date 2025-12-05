@@ -54,6 +54,10 @@ public class WarpListListener extends BaseGuiListener {
         if(type == null) return;
         Player player = holder.player();
         WarpList warpList = this.getGui(holder.meta(), WarpList.class);
+        if (warpList == null) {
+            inventory.close();
+            return;
+        }
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {

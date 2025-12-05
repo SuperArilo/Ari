@@ -29,7 +29,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -133,6 +132,6 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_LIST, new WeakReference<>(this));
+        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_LIST, this);
     }
 }

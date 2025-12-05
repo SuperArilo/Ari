@@ -1,6 +1,8 @@
 package com.tty.listener.player;
 
+import com.tty.Ari;
 import com.tty.lib.tool.PermissionUtils;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,11 +13,12 @@ public class KeepInventoryAndExperience implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         Player player = event.getPlayer();
-        if (PermissionUtils.hasPermission(player, "ari.keepinventory")) {
+        FileConfiguration config = Ari.instance.getConfig();
+        if (PermissionUtils.hasPermission(player, "ari.keepinventory") && config.getBoolean("server.enable-keep-inventory", true)) {
             event.setKeepInventory(true);
             event.getDrops().clear();
         }
-        if (PermissionUtils.hasPermission(player, "ari.keepexperience")) {
+        if (PermissionUtils.hasPermission(player, "ari.keepexperience") && config.getBoolean("server.enable-keep-experience", true)) {
             event.setKeepLevel(true);
             event.setDroppedExp(0);
         }

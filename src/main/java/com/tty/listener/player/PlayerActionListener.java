@@ -20,7 +20,7 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayInteract(PlayerInteractEvent event) {
         //未开启
-        if (!this.isEnable()) return;
+        if (this.isNotEnableSit()) return;
         Player player = event.getPlayer();
         //动作不匹配
         if (!event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || player.getGameMode().equals(GameMode.SPECTATOR)) return;
@@ -41,7 +41,7 @@ public class PlayerActionListener implements Listener {
     @EventHandler
     public void onPlayerInteractEntity(PlayerInteractEntityEvent event) {
         //未开启
-        if (!this.isEnable()) return;
+        if (this.isNotEnablePlayerSitPlayer()) return;
         //发起骑乘的玩家
         Player player = event.getPlayer();
         //右手必须为空才能骑乘
@@ -53,7 +53,12 @@ public class PlayerActionListener implements Listener {
                 .get(PlayerRideActionStateService.class)
                 .addState(new PlayerRideActionState(player, clickedPlayer));
     }
-    private boolean isEnable() {
+
+    private boolean isNotEnableSit() {
         return Ari.C_INSTANCE.getValue("action.sit.enable", FilePath.FUNCTION_CONFIG, Boolean.class, false);
+    }
+
+    private boolean isNotEnablePlayerSitPlayer() {
+        return Ari.C_INSTANCE.getValue("action.player-sit-player.enable", FilePath.FUNCTION_CONFIG, Boolean.class, false);
     }
 }

@@ -27,6 +27,10 @@ server:
     on-leave: true
   whitelist:
     enable: true
+  # 开启死亡保留物品栏的功能（需要对应玩家添加权限
+  enable-keep-inventory: true
+  # 开启死亡保留经验的功能（需要对应玩家添加权限
+  enable-keep-experience: true
   #秒
   save-interval: 300 # 5分钟
 

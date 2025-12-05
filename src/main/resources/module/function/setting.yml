@@ -36,3 +36,5 @@ action:
     enable: true
     disable-block:
       - 'example'
+  player-sit-player:
+    enable: true

@@ -2,6 +2,7 @@ package com.tty.listener;
 
 import com.tty.dto.CustomInventoryHolder;
 import com.tty.enumType.GuiType;
+import com.tty.gui.BaseInventory;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryAction;
@@ -9,6 +10,8 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+
+import java.lang.ref.WeakReference;
 
 public abstract class BaseGuiListener implements Listener {
 
@@ -63,6 +66,15 @@ public abstract class BaseGuiListener implements Listener {
                 break;
             }
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T extends BaseInventory> T getGui(WeakReference<BaseInventory> reference, Class<T> tClass) {
+        if (reference == null) return null;
+        BaseInventory inventory = reference.get();
+        if (inventory == null) return null;
+        if (!tClass.isInstance(inventory)) return null;
+        return (T) inventory;
     }
 
     /**

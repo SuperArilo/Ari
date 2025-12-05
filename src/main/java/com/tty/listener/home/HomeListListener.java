@@ -2,30 +2,34 @@ package com.tty.listener.home;
 
 import com.tty.Ari;
 import com.tty.dto.CustomInventoryHolder;
-import com.tty.entity.sql.ServerHome;
 import com.tty.dto.state.teleport.EntityToLocationState;
 import com.tty.enumType.FilePath;
 import com.tty.enumType.GuiType;
+import com.tty.function.HomeManager;
 import com.tty.gui.home.HomeEditor;
 import com.tty.gui.home.HomeList;
 import com.tty.lib.Lib;
+import com.tty.lib.Log;
 import com.tty.lib.enum_type.FunctionType;
 import com.tty.lib.enum_type.TeleportType;
 import com.tty.lib.tool.FormatUtils;
 import com.tty.listener.BaseGuiListener;
 import com.tty.states.teleport.TeleportStateService;
+import com.tty.tool.ConfigUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 
 public class HomeListListener extends BaseGuiListener {
+
+    private final NamespacedKey homeIdKey = new NamespacedKey(Ari.instance, "home_id");
+
     public HomeListListener(GuiType guiType) {
         super(guiType);
     }
@@ -41,31 +45,39 @@ public class HomeListListener extends BaseGuiListener {
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "type"), PersistentDataType.STRING));
         if(type == null) return;
         Player player = holder.player();
-        HomeList homeList = (HomeList) holder.meta();
+        HomeList homeList = this.getGui(holder.meta(), HomeList.class);
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {
-                String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(new NamespacedKey(Ari.instance, "home_id"), PersistentDataType.STRING);
+                String homeId = currentItem.getItemMeta().getPersistentDataContainer().get(this.homeIdKey, PersistentDataType.STRING);
                 if (homeId == null) break;
-                Optional<ServerHome> first = homeList.data.stream().filter(j -> j.getHomeId().equals(homeId) && j.getPlayerUUID().equals(player.getUniqueId().toString())).findFirst();
-                if(first.isEmpty()) return;
-                ServerHome home = first.get();
-                ClickType click = event.getClick();
-                if (click.equals(ClickType.LEFT)) {
-                    Ari.instance.stateMachineManager
-                            .get(TeleportStateService.class)
-                            .addState(new EntityToLocationState(
-                                    player,
-                                    Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.HOME_CONFIG, Integer.class, 3),
-                                    FormatUtils.parseLocation(home.getLocation()),
-                                    TeleportType.HOME));
-                } else if (click.equals(ClickType.RIGHT)) {
-                    Lib.Scheduler.run(Ari.instance, p -> {
-                        inventory.close();
-                        new HomeEditor(home,(Player) event.getWhoClicked()).open();
-                    });
-                }
-                Lib.Scheduler.runAtRegion(Ari.instance, player.getLocation(), o -> inventory.close());
+                new HomeManager(player, true).getInstance(homeId)
+                        .thenCompose(home -> {
+                            if (home == null) {
+                                player.sendMessage(ConfigUtils.t("function.home.not-found"));
+                                return CompletableFuture.completedFuture(false);
+                            }
+                            if (event.isLeftClick()) {
+                                Ari.instance.stateMachineManager
+                                    .get(TeleportStateService.class)
+                                    .addState(new EntityToLocationState(
+                                        player,
+                                        Ari.C_INSTANCE.getValue("main.teleport.delay", FilePath.HOME_CONFIG, Integer.class, 3),
+                                        FormatUtils.parseLocation(home.getLocation()),
+                                        TeleportType.HOME));
+                            } else if (event.isRightClick()) {
+                                Lib.Scheduler.run(Ari.instance, p -> {
+                                    inventory.close();
+                                    new HomeEditor(home,(Player) event.getWhoClicked()).open();
+                                });
+                            }
+                            return CompletableFuture.completedFuture(true);
+                        }).whenComplete((i, ex) -> {
+                           if (ex != null) {
+                               Log.error(ex, "error on get player homes");
+                           }
+                            Lib.Scheduler.run(Ari.instance, o -> inventory.close());
+                        });
             }
             case PREV -> homeList.prev();
             case NEXT -> homeList.next();

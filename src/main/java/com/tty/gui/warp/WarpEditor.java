@@ -16,6 +16,7 @@ import com.tty.lib.tool.EconomyUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +72,7 @@ public class WarpEditor extends BaseInventory {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_EDIT, this);
+        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_EDIT, new WeakReference<>(this));
     }
 
 }

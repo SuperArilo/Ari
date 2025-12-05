@@ -32,7 +32,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Map;
 import java.util.UUID;
 
-
 public class WarpListListener extends BaseGuiListener {
 
     private final WarpManager warpManager = new WarpManager(true);
@@ -42,7 +41,6 @@ public class WarpListListener extends BaseGuiListener {
     public WarpListListener(GuiType guiType) {
         super(guiType);
     }
-
 
     @Override
     public void passClick(InventoryClickEvent event) {
@@ -55,7 +53,7 @@ public class WarpListListener extends BaseGuiListener {
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(currentItem.getItemMeta().getPersistentDataContainer().get(this.TYPE_KEY, PersistentDataType.STRING));
         if(type == null) return;
         Player player = holder.player();
-        WarpList warpList = (WarpList) holder.meta();
+        WarpList warpList = this.getGui(holder.meta(), WarpList.class);
         switch (type) {
             case BACK -> inventory.close();
             case DATA -> {

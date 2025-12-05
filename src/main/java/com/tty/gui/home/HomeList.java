@@ -28,12 +28,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.enchantments.Enchantment;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-
 
 public class HomeList extends BaseDataItemInventory<ServerHome> {
 
@@ -108,7 +108,7 @@ public class HomeList extends BaseDataItemInventory<ServerHome> {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, this.inventory, GuiType.HOME_LIST, this);
+        return new CustomInventoryHolder(player, this.inventory, GuiType.HOME_LIST, new WeakReference<>(this));
     }
 
 }

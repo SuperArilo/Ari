@@ -54,8 +54,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
         NamespacedKey icon_type = new NamespacedKey(Ari.instance, "type");
         FunctionType type = FormatUtils.ItemNBT_TypeCheck(clickMeta.getPersistentDataContainer().get(icon_type, PersistentDataType.STRING));
         if(type == null) return;
-
-        WarpEditor warpEditor = (WarpEditor) holder.meta();
+        WarpEditor warpEditor = this.getGui(holder.meta(), WarpEditor.class);
         WarpManager warpManager = new WarpManager(true);
         switch (type) {
             case REBACK -> {
@@ -159,7 +158,7 @@ public class EditWarpListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-error"));
             return false;
         }
-        WarpEditor warpEditor = (WarpEditor) holder.meta();
+        WarpEditor warpEditor = this.getGui(holder.meta(), WarpEditor.class);
         switch (type) {
             case RENAME -> {
                 if(!FormatUtils.checkName(message) || value.contains(message) || !FormatUtils.checkName(message)) {

@@ -11,6 +11,7 @@ import com.tty.lib.dto.AliasItem;
 import com.tty.lib.services.ConfigDataService;
 import com.tty.lib.services.StateService;
 import com.tty.lib.tool.*;
+import com.tty.listener.GuiCleanupListener;
 import com.tty.listener.OnPluginReloadListener;
 import com.tty.listener.PlayerListener;
 import com.tty.listener.home.EditHomeListener;
@@ -86,6 +87,7 @@ public class Ari extends JavaPlugin {
 
     private void registerListener() {
         PluginManager pluginManager = Bukkit.getPluginManager();
+        pluginManager.registerEvents(new GuiCleanupListener(), this);
         pluginManager.registerEvents(new HomeListListener(GuiType.HOME_LIST), this);
         pluginManager.registerEvents(new EditHomeListener(GuiType.HOME_EDIT), this);
         pluginManager.registerEvents(new RecordLastLocationListener(), this);

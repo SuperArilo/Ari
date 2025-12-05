@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BaseInventory {
 
@@ -31,12 +32,16 @@ public abstract class BaseInventory {
 
     private final NamespacedKey renderType = new NamespacedKey(Ari.instance, "type");
 
+    // closed flag to avoid double cleanup / prevent callbacks after closed
+    private final AtomicBoolean closed = new AtomicBoolean(false);
+
     public BaseInventory(BaseMenu instance, Player player) {
         this.baseInstance = instance;
         this.player = player;
     }
 
     public void open() {
+        // create holder (subclass should put a WeakReference to 'this' in meta)
         this.holder = this.createHolder();
         this.inventory = Bukkit.createInventory(this.holder, this.baseInstance.getRow() * 9, ComponentUtils.text(this.baseInstance.getTitle(), player));
         this.player.openInventory(this.inventory);
@@ -103,10 +108,30 @@ public abstract class BaseInventory {
     protected abstract CustomInventoryHolder createHolder();
 
     protected void clearItem(int index) {
-        this.inventory.clear(index);
+        if (this.inventory != null) {
+            this.inventory.clear(index);
+        }
     }
 
     protected void setItem(int index, @NotNull ItemStack itemStack) {
-        this.inventory.setItem(index, itemStack);
+        if (this.inventory != null) {
+            this.inventory.setItem(index, itemStack);
+        }
+    }
+
+    public void cleanup() {
+        if (!this.closed.compareAndSet(false, true)) {
+            return;
+        }
+        if (this.inventory != null) {
+            this.inventory.clear();
+        }
+        this.inventory = null;
+        this.holder = null;
+        this.onCleanup();
+    }
+
+    protected void onCleanup() {
+
     }
 }

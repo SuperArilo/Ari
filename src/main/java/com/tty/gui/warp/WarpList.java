@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -50,7 +51,8 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
         Map<Integer, ItemStack> map = new HashMap<>();
         List<Integer> dataSlot = this.baseDataInstance.getDataItems().getSlot();
         List<String> rawLore = this.baseDataInstance.getDataItems().getLore();
-        for (int i = 0;i < this.data.size();i++) {
+
+        for (int i = 0; i < this.data.size(); i++) {
             ServerWarp serverWarp = this.data.get(i);
             ItemStack itemStack;
             try {
@@ -61,6 +63,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
                 this.player.sendMessage(ConfigUtils.t("base.on-error"));
                 continue;
             }
+
             List<TextComponent> textComponents = new ArrayList<>();
             Location location = FormatUtils.parseLocation(serverWarp.getLocation());
 
@@ -114,6 +117,7 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
             itemStack.setItemMeta(itemMeta);
             map.put(dataSlot.get(i), itemStack);
         }
+
         return map;
     }
 
@@ -129,7 +133,6 @@ public class WarpList extends BaseDataItemInventory<ServerWarp> {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_LIST, this);
+        return new CustomInventoryHolder(player, this.inventory, GuiType.WARP_LIST, new WeakReference<>(this));
     }
-
 }

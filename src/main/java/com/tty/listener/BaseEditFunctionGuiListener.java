@@ -62,4 +62,5 @@ public abstract class BaseEditFunctionGuiListener extends BaseGuiListener {
      * @return true 检查通过，反之
      */
     public abstract boolean onTitleEditStatus(String message, PlayerEditGuiState state);
+
 }

@@ -29,6 +29,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -56,7 +57,9 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
         event.setCancelled(true);
         if (type == null) return;
 
-        HomeEditor homeEditor = (HomeEditor) holder.meta();
+        HomeEditor homeEditor = this.getGui(holder.meta(), HomeEditor.class);
+        if (homeEditor == null) return;
+
         HomeManager homeManager = new HomeManager(player, true);
         switch (type) {
             case REBACK -> {
@@ -159,7 +162,8 @@ public class EditHomeListener extends BaseEditFunctionGuiListener {
             player.sendMessage(ConfigUtils.t("base.on-edit.rename.name-too-long"));
             return false;
         }
-        HomeEditor editor = (HomeEditor) holder.meta();
+        HomeEditor editor = this.getGui(holder.meta(), HomeEditor.class);
+        if (editor == null) return false;
         editor.currentHome.setHomeName(message);
         Lib.Scheduler.runAtEntity(Ari.instance, player, p -> editor.open(), () -> {});
         return true;

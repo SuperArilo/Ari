@@ -15,6 +15,7 @@ import com.tty.lib.tool.PublicFunctionUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,7 +58,7 @@ public class HomeEditor extends BaseInventory {
 
     @Override
     protected CustomInventoryHolder createHolder() {
-        return new CustomInventoryHolder(player, this.inventory, GuiType.HOME_EDIT, this);
+        return new CustomInventoryHolder(player, this.inventory, GuiType.HOME_EDIT, new WeakReference<>(this));
     }
 
 }
